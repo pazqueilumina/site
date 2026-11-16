@@ -851,34 +851,99 @@ function renderizarContato() {
     "</div></div>";
 }
 
-/* ---------------- BUSCA GLOBAL ---------------- */
+/* ---------------- BUSCA GLOBAL EM TODO O ACERVO ---------------- */
 
-const PAGINAS_COM_LISTA = ["inicio", "apresentacoes", "videos", "audios", "slides", "agenda"];
+function normalizarBusca(valor) {
+  return String(valor || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
+}
+
+function montarResultadosGlobais(termo) {
+  const q = normalizarBusca(termo.trim());
+  const corresponde = (...campos) => normalizarBusca(campos.join(" ")).includes(q);
+  const palestras = ordenarPorDataDesc(prepararApresentacoes());
+  const itens = [];
+
+  palestras.forEach((a) => {
+    if (!corresponde(a.titulo, a.serieNome, a.autor, a.descricao)) return;
+    itens.push({ tipo: "Vídeo", titulo: a.titulo, url: a.youtube, data: a.data });
+    if (a.audio) itens.push({ tipo: "Áudio", titulo: a.titulo, url: a.audio, data: a.data });
+    if (a.slides) itens.push({ tipo: "PDF", titulo: a.titulo, url: a.slides, data: a.data });
+  });
+
+  (DADOS.shorts || []).forEach((v) => {
+    if (corresponde(v.t)) itens.push({ tipo: "Short", titulo: v.t, url: "https://www.youtube.com/shorts/" + v.id });
+  });
+
+  (DADOS.agenda || []).forEach((e) => {
+    if (corresponde(e.titulo, e.local, e.endereco, e.horario, e.data)) {
+      itens.push({ tipo: "Agenda", titulo: e.titulo, detalhe: [e.data, e.horario, e.local].filter(Boolean).join(" · "), url: "agenda.html?q=" + encodeURIComponent(termo) });
+    }
+  });
+
+  if (DADOS.livro && corresponde(DADOS.livro.titulo, DADOS.livro.autor, (DADOS.livro.texto || []).join(" "))) {
+    itens.push({ tipo: "Livro", titulo: DADOS.livro.titulo, url: "livro.html" });
+  }
+  if (DADOS.sobre && corresponde((DADOS.sobre.texto || []).join(" "))) {
+    itens.push({ tipo: "Sobre", titulo: "Sobre o palestrante", url: "sobre.html" });
+  }
+
+  const ordem = ["Vídeo", "Áudio", "PDF", "Short", "Agenda", "Livro", "Sobre"];
+  const nomes = { "Vídeo": "Vídeos das palestras", "Áudio": "Áudios", "PDF": "Slides em PDF", "Short": "Vídeos curtos", "Agenda": "Agenda", "Livro": "Livro", "Sobre": "Sobre" };
+  let html = '<h1 class="titulo-pagina">Resultados da pesquisa</h1>' +
+    '<p class="subtitulo-pagina">Busca por “' + escapar(termo) + '” — ' + itens.length + ' resultado(s) em todo o site.</p>';
+  if (!itens.length) return html + '<div class="vazio">Nenhum conteúdo encontrado. Tente outra palavra.</div>';
+
+  ordem.forEach((tipo) => {
+    const grupo = itens.filter((x) => x.tipo === tipo);
+    if (!grupo.length) return;
+    html += '<section class="secao" style="margin-bottom:24px"><h2 style="margin-bottom:12px">' + nomes[tipo] + ' (' + grupo.length + ')</h2>' +
+      '<div style="display:grid;gap:9px">' + grupo.map((x) =>
+        '<a href="' + escapar(x.url) + '"' + (tipo === "Agenda" || tipo === "Livro" || tipo === "Sobre" ? '' : ' target="_blank" rel="noopener"') +
+        ' style="display:block;padding:13px 16px;background:#fff;border:1px solid #e8e0d5;border-radius:10px;text-decoration:none;color:#1e3a5f">' +
+        '<strong>' + escapar(x.titulo) + '</strong>' +
+        (x.detalhe ? '<span style="display:block;margin-top:5px;font-size:13px;color:#667085">' + escapar(x.detalhe) + '</span>' : '') +
+        '</a>'
+      ).join("") + '</div></section>';
+  });
+  return html;
+}
 
 function configurarBusca() {
   const campo = document.getElementById("campoBusca");
-  if (!campo) return;
+  const principal = document.getElementById("principal");
+  if (!campo || !principal) return;
 
-  const termoInicial = new URLSearchParams(location.search).get("q");
+  const termoInicial = new URLSearchParams(location.search).get("q") || "";
   if (termoInicial) campo.value = termoInicial;
 
-  const paginaAtual = document.body.dataset.page;
-  const emLista = PAGINAS_COM_LISTA.includes(paginaAtual);
+  // Painel independente: não destrói os filtros e eventos das páginas originais.
+  const painel = document.createElement("div");
+  painel.id = "resultadosBuscaGlobal";
+  painel.setAttribute("aria-live", "polite");
+  painel.style.display = "none";
+  principal.parentNode.insertBefore(painel, principal);
 
-  campo.addEventListener("input", () => {
-    if (emLista && window.__filtroLista) window.__filtroLista(campo.value);
-  });
-
-  campo.addEventListener("keydown", (ev) => {
-    if (ev.key !== "Enter") return;
+  function atualizarBusca() {
     const termo = campo.value.trim();
-    if (!termo) return;
-    // Enter busca na própria página (quando ela tem lista); fora delas, vai para Apresentações
-    const destino = emLista && paginaAtual !== "inicio"
-      ? paginaAtual + ".html?q=" + encodeURIComponent(termo)
-      : "apresentacoes.html?q=" + encodeURIComponent(termo);
-    location.href = destino;
+    if (!termo) {
+      painel.style.display = "none";
+      principal.style.display = "";
+      if (window.__filtroLista) window.__filtroLista("");
+      return;
+    }
+    principal.style.display = "none";
+    painel.style.display = "block";
+    painel.innerHTML = montarResultadosGlobais(termo);
+  }
+
+  campo.addEventListener("input", atualizarBusca);
+  campo.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      atualizarBusca();
+    }
   });
+  if (termoInicial) atualizarBusca();
 }
 
 /* ---------------- ANÁLISE DE VISITAS (GoatCounter) ----------------
