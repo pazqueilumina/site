@@ -908,7 +908,7 @@ function montarResultadosGlobais(termo) {
   return html;
 }
 
-function configurarBusca() {
+function configurarBuscaGlobalAcervo() {
   const campo = document.getElementById("campoBusca");
   const principal = document.getElementById("principal");
   if (!campo || !principal) return;
@@ -936,13 +936,17 @@ function configurarBusca() {
     painel.innerHTML = montarResultadosGlobais(termo);
   }
 
-  campo.addEventListener("input", atualizarBusca);
+  campo.addEventListener("input", (ev) => {
+    ev.stopImmediatePropagation();
+    atualizarBusca();
+  }, true);
   campo.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") {
       ev.preventDefault();
+      ev.stopImmediatePropagation();
       atualizarBusca();
     }
-  });
+  }, true);
   if (termoInicial) atualizarBusca();
 }
 
@@ -999,6 +1003,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   (renderizadores[pagina] || renderizarInicio)();
 
-  configurarBusca();
+  configurarBuscaGlobalAcervo();
   configurarAnalytics();
 });
