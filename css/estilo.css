@@ -1134,3 +1134,7 @@ body[data-page="inicio"] .hero-conteudo { display: none; }
   body[data-page="inicio"] .topbar .busca { width: 100%; max-width: none; }
   body[data-page="inicio"] .hero { margin: 0 -18px; }
 }
+
+/* Logotipo transparente, sem moldura ou fundo */
+.sidebar .logo-bloco { background: transparent; border: none; border-radius: 0; box-shadow: none; }
+.sidebar .logo-img { display: block; width: 100%; max-width: 145px; height: auto; margin: 0 auto; border: none; border-radius: 0; background: transparent; box-shadow: none; }
