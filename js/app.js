@@ -883,7 +883,8 @@ function montarResultadosGlobais(termo) {
   const ordem = ["Vídeo", "Áudio", "PDF", "Short", "Agenda", "Livro", "Sobre"];
   const nomes = { Vídeo: "Vídeos das palestras", Áudio: "Áudios", PDF: "Slides em PDF", Short: "Vídeos curtos", Agenda: "Agenda", Livro: "Livro", Sobre: "Sobre" };
   const icones = { Áudio: "audio", PDF: "slides", Agenda: "agenda", Livro: "livro", Sobre: "info" };
-  const acoes = { Vídeo: "Assistir vídeo", Short: "Assistir vídeo", Áudio: "Ouvir áudio", PDF: "Abrir PDF", Agenda: "Ver evento", Livro: "Ver livro", Sobre: "Saiba mais" };
+  const iconesAcao = { Vídeo: "play", Short: "play", Áudio: "audio", PDF: "download", Agenda: "agenda", Livro: "livro", Sobre: "info" };
+  const acoes = { Vídeo: "Assistir vídeo", Short: "Assistir vídeo", Áudio: "Ouvir áudio", PDF: "Baixar slides (PDF)", Agenda: "Ver evento", Livro: "Ver livro", Sobre: "Saiba mais" };
   const estilos = `<style>
     #resultadosBuscaGlobal { box-sizing:border-box; width:100%; min-width:0; padding:26px 32px 48px; color:#1e3a5f; }
     #resultadosBuscaGlobal .busca-titulo { margin:0 0 5px; font-family:Georgia,serif; font-size:clamp(24px,2.3vw,34px); font-weight:500; }
@@ -902,7 +903,7 @@ function montarResultadosGlobais(termo) {
     #resultadosBuscaGlobal .busca-item-corpo { display:flex; flex-direction:column; gap:4px; min-width:0; flex:1; }
     #resultadosBuscaGlobal .busca-item-titulo { font-size:14px; font-weight:600; line-height:1.35; }
     #resultadosBuscaGlobal .busca-item-meta { font-size:12px; color:#7a8390; }
-    #resultadosBuscaGlobal .busca-item-acao { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:#315b89; }
+    #resultadosBuscaGlobal .busca-item-acao { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:#2563eb; }
     #resultadosBuscaGlobal .busca-item-acao .icone { width:13px; height:13px; }
     #resultadosBuscaGlobal .busca-seta { flex:none; color:#8c9aab; }
     #resultadosBuscaGlobal .busca-seta .icone { width:16px; height:16px; }
@@ -927,7 +928,7 @@ function montarResultadosGlobais(termo) {
         return '<a class="busca-item" href="' + escapar(x.url) + '"' + (externo ? ' target="_blank" rel="noopener"' : '') + '>' +
           midia + '<span class="busca-item-corpo"><span class="busca-item-titulo">' + escapar(x.titulo) + '</span>' +
           '<span class="busca-item-meta">' + escapar(detalhe) + '</span>' +
-          '<span class="busca-item-acao">' + escapar(acoes[tipo]) + ' ' + icone("externo") + '</span></span>' +
+          '<span class="busca-item-acao">' + icone(iconesAcao[tipo]) + ' ' + escapar(acoes[tipo]) + '</span></span>' +
           '<span class="busca-seta">' + icone("seta") + '</span></a>';
       }).join("") + '</div></section>';
   });
