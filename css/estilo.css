@@ -391,10 +391,10 @@ h1, h2, h3, .serif {
   box-shadow: var(--sombra);
   overflow: hidden;
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: minmax(0, 42%) minmax(0, 1fr);
 }
 
-.destaque-midia { position: relative; min-height: 220px; }
+.destaque-midia { position: relative; min-width: 0; min-height: 0; aspect-ratio: 16 / 9; background: #111827; align-self: start; }
 
 .destaque-midia svg.cena {
   position: absolute;
@@ -507,6 +507,9 @@ h1, h2, h3, .serif {
   height: 100%;
   object-fit: cover;
 }
+
+/* No destaque, mostrar a miniatura completa sem cortar as bordas. */
+.destaque-midia img.thumb-img { object-fit: contain; }
 
 .miniatura .botao-play {
   position: absolute;
@@ -1088,7 +1091,7 @@ body[data-page="inicio"] .pagina { padding-top: 0; }
   .hero-conteudo h1 { font-size: 38px; }
 
   .cartao-destaque { grid-template-columns: 1fr; }
-  .destaque-midia { min-height: 190px; }
+  .destaque-midia { min-height: 0; width: 100%; }
 
   .item-agenda { flex-wrap: wrap; }
 
@@ -1097,4 +1100,3 @@ body[data-page="inicio"] .pagina { padding-top: 0; }
   .item-audio .audio-info { flex: 1 1 170px; }
   .item-audio .plataforma { margin-left: auto; margin-top: 6px; font-size: 9.5px; padding: 3px 8px; }
 }
-
