@@ -279,7 +279,7 @@ const MENU = [
   { pagina: "apresentacoes", rotulo: "Apresentações", icone: "apresentacao" },
   { pagina: "videos", rotulo: "Vídeos", icone: "video" },
   { pagina: "audios", rotulo: "Áudios", icone: "audio" },
-  { pagina: "slides", rotulo: "Slides (PPT)", icone: "slides" },
+  { pagina: "slides", rotulo: "Slides (PDF)", icone: "slides" },
   { pagina: "agenda", rotulo: "Agenda", icone: "agenda" },
   { pagina: "livro", rotulo: "Livro", icone: "livro" },
   { divisor: true },
@@ -494,7 +494,7 @@ function renderizarInicio() {
       ? '<a class="botao-acao" href="' + escapar(destaque.audio) + '" target="_blank" rel="noopener">' + icone("audio") + "Ouvir áudio</a>"
       : '<span class="botao-acao botao-acao--desabilitado">' + icone("audio") + "Áudio não disponível</span>") +
     (destaque.slides
-      ? '<a class="botao-acao" href="' + escapar(destaque.slides) + '" target="_blank" rel="noopener">' + icone("download") + "Baixar slides (PPT)</a>"
+      ? '<a class="botao-acao" href="' + escapar(destaque.slides) + '" target="_blank" rel="noopener">' + icone("download") + "Baixar slides (PDF)</a>"
       : '<span class="botao-acao botao-acao--desabilitado">' + icone("download") + "Apresentação não disponível</span>") +
     "</div></div></article></section>" +
 
@@ -728,7 +728,7 @@ function renderizarSlides() {
       '<div class="cartao-meta"><span>' + icone("agenda") + fmtData(a.data) + "</span></div>" +
       '<div class="cartao-rodape">' +
       '<span class="etiqueta ' + a.etiquetaClasseCss + '">' + a.etiquetaClasse + "</span>" +
-      '<a class="link-icone" href="' + escapar(a.slides) + '" target="_blank" rel="noopener">Baixar PPT ' + icone("download") + "</a>" +
+      '<a class="link-icone" href="' + escapar(a.slides) + '" target="_blank" rel="noopener">Baixar PDF ' + icone("download") + "</a>" +
       "</div></div></article>"
     );
   }
@@ -746,7 +746,7 @@ function renderizarSlides() {
 
   principal.innerHTML =
     "<h1 class=\"titulo-pagina\">Slides das apresentações</h1>" +
-    '<p class="subtitulo-pagina">Baixe os arquivos de apresentação (PPT) para estudar ou reutilizar nos seus grupos de estudo.</p>' +
+    '<p class="subtitulo-pagina">Baixe os arquivos de apresentação (PDF) para estudar ou reutilizar nos seus grupos de estudo.</p>' +
     '<div class="grade-cartoes" id="gradeSlides"></div>';
 
   pintar("");
