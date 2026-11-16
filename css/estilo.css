@@ -1100,3 +1100,87 @@ body[data-page="inicio"] .pagina { padding-top: 0; }
   .item-audio .audio-info { flex: 1 1 170px; }
   .item-audio .plataforma { margin-left: auto; margin-top: 6px; font-size: 9.5px; padding: 3px 8px; }
 }
+
+
+/* ============ NOVO BANNER CAMINHANDO COM JESUS ============
+   A imagem contém o título e o nome do palestrante.
+   Preservamos a citação do site, sem repetir títulos.
+   A busca fica acima do banner para não encobrir o texto da arte.
+   ========================================================= */
+body[data-page="inicio"] .topbar {
+  position: relative;
+  top: auto; left: auto; right: auto;
+  background: var(--creme-claro);
+  padding: 14px 32px;
+}
+body[data-page="inicio"] .pagina { padding-top: 0; }
+body[data-page="inicio"] .hero-fundo { display: none; }
+body[data-page="inicio"] .hero::before {
+  content: "";
+  position: relative;
+  display: block;
+  inset: auto;
+  width: 100%;
+  aspect-ratio: 2172 / 365;
+  background: url("../img/banner-jesus.jpg") center center / 100% 100% no-repeat;
+}
+body[data-page="inicio"] .hero-conteudo {
+  padding: 14px 32px 20px;
+  max-width: none;
+  background: var(--creme-claro);
+}
+body[data-page="inicio"] .hero-conteudo h1,
+body[data-page="inicio"] .hero-subtitulo { display: none; }
+body[data-page="inicio"] .hero-citacao {
+  margin: 0;
+  max-width: none;
+  color: var(--navy);
+}
+@media (max-width: 880px) {
+  body[data-page="inicio"] .topbar { padding: 14px 18px; }
+  body[data-page="inicio"] .hero::before {
+    background: url("../img/banner-jesus.jpg") center center / 100% 100% no-repeat;
+  }
+  body[data-page="inicio"] .hero-conteudo { padding: 12px 18px 16px; }
+  body[data-page="inicio"] .hero-citacao {
+    background: transparent;
+    padding: 0;
+    text-shadow: none;
+  }
+}
+
+/* ===== BANNER FINAL: busca funcional sobre a arte ===== */
+body[data-page="inicio"] .conteudo { position: relative; }
+body[data-page="inicio"] .topbar {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+  background: transparent; padding: clamp(12px, 1.6vw, 28px) 16px;
+  pointer-events: none;
+}
+body[data-page="inicio"] .topbar .busca {
+  width: min(35vw, 640px); max-width: 640px; flex: none;
+  margin-left: 30%; margin-right: 0; pointer-events: auto;
+}
+body[data-page="inicio"] .topbar .busca input {
+  min-height: 42px; background: #fff; border-radius: 40px;
+  box-shadow: 0 3px 12px rgba(36, 30, 22, .13);
+}
+body[data-page="inicio"] .hero::before {
+  position: relative; display: block; content: ""; inset: auto;
+  width: 100%; aspect-ratio: 1894 / 443;
+  background: url("../img/banner-jesus.jpg") center / 100% 100% no-repeat;
+}
+body[data-page="inicio"] .hero-conteudo { display: none; }
+body[data-page="inicio"] .hero-fundo { display: none; }
+body[data-page="inicio"] .logo-img { content: url("../img/logo-banner.png"); max-width: 190px; }
+@media (max-width: 880px) {
+ body[data-page="inicio"] .topbar { position: relative; padding: 12px 18px; pointer-events: auto; }
+ body[data-page="inicio"] .topbar .busca { width: 100%; max-width: none; margin: 0; }
+ body[data-page="inicio"] .hero::before { aspect-ratio: 1894 / 443; }
+}
+
+/* Ajuste final: barra funcional alinhada com a arte clara aprovada */
+@media (min-width: 881px) {
+  body[data-page="inicio"] .topbar { padding: 0; }
+  body[data-page="inicio"] .topbar .busca { width: 34.3%; max-width: none; margin: 1.85% 0 0 16.5%; }
+  body[data-page="inicio"] .topbar .busca input { min-height: 42px; }
+}
