@@ -1251,3 +1251,75 @@ body[data-page="inicio"] .hero-conteudo { display: none; }
   body[data-page="inicio"] .topbar { padding: 5px 10px; gap: 7px; }
   body[data-page="inicio"] .topbar .busca input { font-size: 10px; }
 }
+
+
+/* ============ MOBILE: PESQUISA ABAIXO DO BANNER ============
+   Mantém o menu sobre a imagem e a busca funcional fora dela.
+   O banner ocupa a largura da tela, com proporção 1894:443. */
+@media (max-width: 880px) {
+  body[data-page="inicio"] .topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    display: block;
+    background: transparent;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  body[data-page="inicio"] .topbar .btn-menu-mobile {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    padding: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+  }
+
+  body[data-page="inicio"] .topbar .busca {
+    position: absolute;
+    top: calc(100vw * 443 / 1894 + 14px);
+    left: 18px;
+    right: 18px;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    flex: none;
+    pointer-events: auto;
+  }
+
+  body[data-page="inicio"] .topbar .busca input {
+    height: 46px;
+    min-height: 46px;
+    width: 100%;
+    font-size: 13px;
+    padding: 10px 14px 10px 42px;
+    border-radius: 28px;
+    box-shadow: 0 2px 8px rgba(30,58,95,.12);
+  }
+
+  body[data-page="inicio"] .topbar .busca .icone {
+    left: 15px;
+    width: 17px;
+    height: 17px;
+  }
+
+  /* Reserva espaço para a pesquisa entre o banner e o destaque. */
+  body[data-page="inicio"] .grade-home {
+    margin-top: 92px;
+  }
+}
+
+@media (max-width: 380px) {
+  body[data-page="inicio"] .topbar .busca input { font-size: 12px; }
+}
