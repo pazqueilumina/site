@@ -859,51 +859,77 @@ function normalizarBusca(valor) {
 
 function montarResultadosGlobais(termo) {
   const q = normalizarBusca(termo.trim());
-  const corresponde = (...campos) => normalizarBusca(campos.join(" ")).includes(q);
-  const palestras = ordenarPorDataDesc(prepararApresentacoes());
+  const corresponde = (...campos) => normalizarBusca(campos.filter(Boolean).join(" ")).includes(q);
   const itens = [];
-
-  palestras.forEach((a) => {
+  ordenarPorDataDesc(prepararApresentacoes()).forEach((a) => {
     if (!corresponde(a.titulo, a.serieNome, a.autor, a.descricao)) return;
-    itens.push({ tipo: "Vídeo", titulo: a.titulo, url: a.youtube, data: a.data });
+    itens.push({ tipo: "Vídeo", titulo: a.titulo, url: a.youtube, thumb: a.thumb, data: a.data });
     if (a.audio) itens.push({ tipo: "Áudio", titulo: a.titulo, url: a.audio, data: a.data });
     if (a.slides) itens.push({ tipo: "PDF", titulo: a.titulo, url: a.slides, data: a.data });
   });
-
   (DADOS.shorts || []).forEach((v) => {
-    if (corresponde(v.t)) itens.push({ tipo: "Short", titulo: v.t, url: "https://www.youtube.com/shorts/" + v.id });
+    if (corresponde(v.t)) itens.push({ tipo: "Short", titulo: v.t, url: "https://www.youtube.com/shorts/" + v.id,
+      thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg" });
   });
-
   (DADOS.agenda || []).forEach((e) => {
-    if (corresponde(e.titulo, e.local, e.endereco, e.horario, e.data)) {
+    if (corresponde(e.titulo, e.local, e.endereco, e.horario, e.data))
       itens.push({ tipo: "Agenda", titulo: e.titulo, detalhe: [e.data, e.horario, e.local].filter(Boolean).join(" · "), url: "agenda.html?q=" + encodeURIComponent(termo) });
-    }
   });
-
-  if (DADOS.livro && corresponde(DADOS.livro.titulo, DADOS.livro.autor, (DADOS.livro.texto || []).join(" "))) {
+  if (DADOS.livro && corresponde(DADOS.livro.titulo, DADOS.livro.autor, (DADOS.livro.texto || []).join(" ")))
     itens.push({ tipo: "Livro", titulo: DADOS.livro.titulo, url: "livro.html" });
-  }
-  if (DADOS.sobre && corresponde((DADOS.sobre.texto || []).join(" "))) {
+  if (DADOS.sobre && corresponde((DADOS.sobre.texto || []).join(" ")))
     itens.push({ tipo: "Sobre", titulo: "Sobre o palestrante", url: "sobre.html" });
-  }
 
   const ordem = ["Vídeo", "Áudio", "PDF", "Short", "Agenda", "Livro", "Sobre"];
-  const nomes = { "Vídeo": "Vídeos das palestras", "Áudio": "Áudios", "PDF": "Slides em PDF", "Short": "Vídeos curtos", "Agenda": "Agenda", "Livro": "Livro", "Sobre": "Sobre" };
-  let html = '<h1 class="titulo-pagina">Resultados da pesquisa</h1>' +
-    '<p class="subtitulo-pagina">Busca por “' + escapar(termo) + '” — ' + itens.length + ' resultado(s) em todo o site.</p>';
+  const nomes = { Vídeo: "Vídeos das palestras", Áudio: "Áudios", PDF: "Slides em PDF", Short: "Vídeos curtos", Agenda: "Agenda", Livro: "Livro", Sobre: "Sobre" };
+  const icones = { Áudio: "audio", PDF: "slides", Agenda: "agenda", Livro: "livro", Sobre: "info" };
+  const acoes = { Vídeo: "Assistir vídeo", Short: "Assistir vídeo", Áudio: "Ouvir áudio", PDF: "Abrir PDF", Agenda: "Ver evento", Livro: "Ver livro", Sobre: "Saiba mais" };
+  const estilos = `<style>
+    #resultadosBuscaGlobal { box-sizing:border-box; width:100%; min-width:0; padding:26px 32px 48px; color:#1e3a5f; }
+    #resultadosBuscaGlobal .busca-titulo { margin:0 0 5px; font-family:Georgia,serif; font-size:clamp(24px,2.3vw,34px); font-weight:500; }
+    #resultadosBuscaGlobal .busca-resumo { margin:0 0 25px; color:#69758a; font-size:14px; }
+    #resultadosBuscaGlobal .busca-secao { margin:0 0 27px; }
+    #resultadosBuscaGlobal .busca-secao-topo { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:0 0 11px; }
+    #resultadosBuscaGlobal .busca-secao h2 { margin:0; font-family:Georgia,serif; font-size:21px; font-weight:500; }
+    #resultadosBuscaGlobal .busca-contagem { font-size:12px; color:#7a8390; white-space:nowrap; }
+    #resultadosBuscaGlobal .busca-grade-video { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr)); gap:11px; }
+    #resultadosBuscaGlobal .busca-lista { display:grid; gap:9px; }
+    #resultadosBuscaGlobal .busca-item { display:flex; align-items:center; gap:13px; min-width:0; padding:11px 13px; border:1px solid #e8e0d5; border-radius:12px; background:#fff; color:#1e3a5f; text-decoration:none; transition:border-color .15s,box-shadow .15s; }
+    #resultadosBuscaGlobal .busca-item:hover, #resultadosBuscaGlobal .busca-item:focus-visible { border-color:#b7a58d; box-shadow:0 3px 12px #1e3a5f12; }
+    #resultadosBuscaGlobal .busca-thumb { width:116px; aspect-ratio:16/9; flex:none; object-fit:cover; border-radius:7px; background:#ede8df; }
+    #resultadosBuscaGlobal .busca-simbolo { display:flex; align-items:center; justify-content:center; width:44px; height:44px; flex:none; border-radius:10px; background:#f1ece3; color:#1e3a5f; }
+    #resultadosBuscaGlobal .busca-simbolo .icone { width:21px; height:21px; }
+    #resultadosBuscaGlobal .busca-item-corpo { display:flex; flex-direction:column; gap:4px; min-width:0; flex:1; }
+    #resultadosBuscaGlobal .busca-item-titulo { font-size:14px; font-weight:600; line-height:1.35; }
+    #resultadosBuscaGlobal .busca-item-meta { font-size:12px; color:#7a8390; }
+    #resultadosBuscaGlobal .busca-item-acao { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:#315b89; }
+    #resultadosBuscaGlobal .busca-item-acao .icone { width:13px; height:13px; }
+    #resultadosBuscaGlobal .busca-seta { flex:none; color:#8c9aab; }
+    #resultadosBuscaGlobal .busca-seta .icone { width:16px; height:16px; }
+    @media(max-width:700px) { #resultadosBuscaGlobal { padding:20px 16px 36px; } #resultadosBuscaGlobal .busca-thumb { width:92px; } #resultadosBuscaGlobal .busca-item { padding:10px; gap:10px; } }
+  </style>`;
+  let html = estilos + '<h1 class="busca-titulo">Resultados da pesquisa</h1>' +
+    '<p class="busca-resumo">Resultados para “' + escapar(termo) + '” · ' + itens.length + ' conteúdo(s) encontrado(s)</p>';
   if (!itens.length) return html + '<div class="vazio">Nenhum conteúdo encontrado. Tente outra palavra.</div>';
 
   ordem.forEach((tipo) => {
     const grupo = itens.filter((x) => x.tipo === tipo);
     if (!grupo.length) return;
-    html += '<section class="secao" style="margin-bottom:24px"><h2 style="margin-bottom:12px">' + nomes[tipo] + ' (' + grupo.length + ')</h2>' +
-      '<div style="display:grid;gap:9px">' + grupo.map((x) =>
-        '<a href="' + escapar(x.url) + '"' + (tipo === "Agenda" || tipo === "Livro" || tipo === "Sobre" ? '' : ' target="_blank" rel="noopener"') +
-        ' style="display:block;padding:13px 16px;background:#fff;border:1px solid #e8e0d5;border-radius:10px;text-decoration:none;color:#1e3a5f">' +
-        '<strong>' + escapar(x.titulo) + '</strong>' +
-        (x.detalhe ? '<span style="display:block;margin-top:5px;font-size:13px;color:#667085">' + escapar(x.detalhe) + '</span>' : '') +
-        '</a>'
-      ).join("") + '</div></section>';
+    const comImagem = tipo === "Vídeo" || tipo === "Short";
+    html += '<section class="busca-secao"><div class="busca-secao-topo"><h2>' + nomes[tipo] +
+      '</h2><span class="busca-contagem">' + grupo.length + ' resultado(s)</span></div>' +
+      '<div class="' + (comImagem ? 'busca-grade-video' : 'busca-lista') + '">' + grupo.map((x) => {
+        const externo = !["Agenda", "Livro", "Sobre"].includes(tipo);
+        const midia = comImagem
+          ? '<img class="busca-thumb" src="' + escapar(x.thumb || "") + '" alt="" loading="lazy" onload="__thumbCarregou(this)" onerror="__thumbErro(this)">'
+          : '<span class="busca-simbolo">' + icone(icones[tipo]) + '</span>';
+        const detalhe = x.detalhe || (x.data ? fmtData(x.data) : (comImagem ? 'Vídeo do canal' : nomes[tipo]));
+        return '<a class="busca-item" href="' + escapar(x.url) + '"' + (externo ? ' target="_blank" rel="noopener"' : '') + '>' +
+          midia + '<span class="busca-item-corpo"><span class="busca-item-titulo">' + escapar(x.titulo) + '</span>' +
+          '<span class="busca-item-meta">' + escapar(detalhe) + '</span>' +
+          '<span class="busca-item-acao">' + escapar(acoes[tipo]) + ' ' + icone("externo") + '</span></span>' +
+          '<span class="busca-seta">' + icone("seta") + '</span></a>';
+      }).join("") + '</div></section>';
   });
   return html;
 }
