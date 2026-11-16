@@ -1188,3 +1188,66 @@ body[data-page="inicio"] .hero-conteudo { display: none; }
 /* Logotipo transparente, sem moldura ou fundo */
 .sidebar .logo-bloco { background: transparent; border: none; border-radius: 0; box-shadow: none; }
 .sidebar .logo-img { display: block; width: 100%; max-width: 145px; height: auto; margin: 0 auto; border: none; border-radius: 0; background: transparent; box-shadow: none; }
+
+
+/* ============ AJUSTE FINAL: MENU E BUSCA NO BANNER MOBILE ============ */
+@media (max-width: 880px) {
+  body[data-page="inicio"] .topbar {
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 6px 12px;
+    gap: 8px;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  body[data-page="inicio"] .topbar .btn-menu-mobile {
+    box-sizing: border-box;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    padding: 7px;
+    border-radius: 8px;
+    flex: 0 0 36px;
+    margin: 0;
+  }
+
+  body[data-page="inicio"] .topbar .btn-menu-mobile .icone {
+    width: 20px;
+    height: 20px;
+  }
+
+  body[data-page="inicio"] .topbar .busca {
+    flex: 1 1 auto;
+    width: 0;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  body[data-page="inicio"] .topbar .busca input {
+    box-sizing: border-box;
+    height: 36px;
+    min-height: 36px;
+    padding: 7px 12px 7px 34px;
+    font-size: 11px;
+    line-height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body[data-page="inicio"] .topbar .busca .icone {
+    left: 11px;
+    width: 15px;
+    height: 15px;
+  }
+}
+
+@media (max-width: 380px) {
+  body[data-page="inicio"] .topbar { padding: 5px 10px; gap: 7px; }
+  body[data-page="inicio"] .topbar .busca input { font-size: 10px; }
+}
