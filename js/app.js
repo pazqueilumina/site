@@ -173,7 +173,7 @@ const APARENCIA_SERIE = {
   "parabolas":    { etiqueta: "PARÁBOLAS",    classe: "etiqueta-parabolas",    icone: "folha",    cor: "verde",    arte: "semente" },
   "evangelho":    { etiqueta: "EVANGELHO",    classe: "etiqueta-evangelho",    icone: "livro",    cor: "roxo",     arte: "evangelho" },
   "doutrina":     { etiqueta: "DOUTRINA",     classe: "etiqueta-doutrina",     icone: "espirito", cor: "vermelho", arte: "amanhecer" },
-  "temas":        { etiqueta: "TEMA",         classe: "etiqueta-temas",        icone: "coracao",  cor: "areia",    arte: "maos" }
+  "temas":        { etiqueta: "REFLEXÕES",         classe: "etiqueta-temas",        icone: "coracao",  cor: "areia",    arte: "maos" }
 };
 
 /* ---------------- NORMALIZAÇÃO DOS DADOS ---------------- */
@@ -185,7 +185,7 @@ function prepararApresentacoes() {
       id: v.id,
       titulo: titleCase(v.t),
       serie: v.s,
-      serieNome: (DADOS.series && DADOS.series[v.s]) || "Temas e Reflexões",
+      serieNome: (DADOS.series && DADOS.series[v.s]) || "Reflexões",
       etiquetaClasse: aparencia.etiqueta,
       etiquetaClasseCss: aparencia.classe,
       iconeTema: aparencia.icone,

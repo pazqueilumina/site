@@ -53,7 +53,7 @@ const DADOS = {
     "parabolas":    "Parábolas",
     "evangelho":    "Histórias do Evangelho",
     "doutrina":     "Doutrina e História",
-    "temas":        "Temas e Reflexões"
+    "temas":        "Reflexões"
   },
 
   /* ---------- Banner da página inicial ---------- */
