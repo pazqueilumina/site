@@ -1393,3 +1393,27 @@ body[data-page="inicio"] .hero-conteudo { display: none; }
     height: 17px;
   }
 }
+
+/* Correção de interação do campo na tela de resultados (somente celular) */
+@media (max-width: 700px) {
+  body.busca-global-aberta #resultadosBuscaGlobal > .topbar {
+    position: relative;
+    z-index: 30;
+    isolation: isolate;
+    overflow: visible;
+  }
+  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .busca {
+    position: relative;
+    z-index: 31;
+    pointer-events: auto;
+  }
+  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .busca input {
+    position: relative;
+    z-index: 32;
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
+  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .busca .icone {
+    pointer-events: none;
+  }
+}
