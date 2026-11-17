@@ -1324,96 +1324,124 @@ body[data-page="inicio"] .hero-conteudo { display: none; }
   body[data-page="inicio"] .topbar .busca input { font-size: 12px; }
 }
 
+/* ============ BUSCA GLOBAL — CABEÇALHO MÓVEL, SEM MOVER INPUT ============ */
+/* O cabeçalho adicional não aparece no computador nem na home sem busca. */
+.topbar .busca-cabecalho-mobile { display: none; }
 
-/* ============ RESULTADOS DA PESQUISA: ORGANIZAÇÃO MOBILE ============
-   Somente enquanto a busca global está aberta em telas pequenas. */
+@media (max-width: 880px) {
+  /* Aproxima o texto da lupa nas outras páginas, sem alterar a home. */
+  body:not([data-page="inicio"]) .topbar .busca .icone { left: 12px; }
+  body:not([data-page="inicio"]) .topbar .busca input { padding-left: 35px; }
+}
+
 @media (max-width: 700px) {
-  body.busca-global-aberta #resultadosBuscaGlobal {
-    position: relative;
-    padding-top: 20px;
-  }
-  body.busca-global-aberta #resultadosBuscaGlobal .busca-titulo {
-    padding-left: 54px;
-    min-height: 42px;
-    display: flex;
-    align-items: center;
-    font-size: clamp(21px, 5.4vw, 28px);
-    line-height: 1.2;
-    margin-bottom: 12px;
-  }
-  body.busca-global-aberta #resultadosBuscaGlobal .busca-resumo {
-    margin: 0 0 12px;
-    line-height: 1.5;
-    overflow-wrap: break-word;
-  }
-  body.busca-global-aberta #resultadosBuscaGlobal > .topbar {
-    position: static;
-    display: block;
-    width: 100%;
-    height: auto;
-    padding: 0;
-    margin: 0 0 26px;
-    background: transparent;
-    pointer-events: auto;
-  }
-  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .btn-menu-mobile {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 20px;
-    left: 16px;
-    width: 40px;
-    height: 40px;
-    padding: 8px;
-    margin: 0;
-    transform: none;
-  }
-  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .busca {
+  /* Os resultados têm menu + título, resumo e campo em linhas separadas.
+     A topbar permanece na sua posição original no DOM. */
+  body.busca-global-aberta .conteudo > .topbar {
     position: relative;
     top: auto;
     left: auto;
     right: auto;
+    z-index: 10;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 14px;
+    justify-content: stretch;
+    align-items: start;
     width: 100%;
+    height: auto;
+    padding: 20px 16px 0;
+    margin: 0;
+    background: var(--creme);
+    pointer-events: auto;
+  }
+  body.busca-global-aberta .conteudo > .topbar .btn-menu-mobile {
+    display: flex;
+    position: static;
+    grid-column: 1;
+    grid-row: 1;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 8px;
+    margin: 0;
+    flex: none;
+    transform: none;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+  }
+  body.busca-global-aberta .conteudo > .topbar .busca-cabecalho-mobile {
+    display: block;
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    padding: 0;
+  }
+  body.busca-global-aberta .busca-titulo-mobile {
+    margin: 0 0 4px;
+    font-family: var(--fonte-serif);
+    font-size: clamp(21px, 5.4vw, 28px);
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  body.busca-global-aberta .busca-resumo-mobile {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--cinza-claro);
+    overflow-wrap: break-word;
+  }
+  body.busca-global-aberta .conteudo > .topbar .busca {
+    display: block;
+    position: relative;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    top: auto;
+    left: auto;
+    right: auto;
+    z-index: 11;
+    width: 100%;
+    height: auto;
+    min-width: 0;
     max-width: none;
     margin: 0;
     flex: none;
-  }
-  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .busca input {
-    width: 100%;
-    height: 46px;
-    min-height: 46px;
-    padding: 10px 14px 10px 39px;
-    font-size: 13px;
-    text-overflow: ellipsis;
-  }
-  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .busca .icone {
-    left: 15px;
-    width: 17px;
-    height: 17px;
-  }
-}
-
-/* Correção de interação do campo na tela de resultados (somente celular) */
-@media (max-width: 700px) {
-  body.busca-global-aberta #resultadosBuscaGlobal > .topbar {
-    position: relative;
-    z-index: 30;
-    isolation: isolate;
-    overflow: visible;
-  }
-  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .busca {
-    position: relative;
-    z-index: 31;
     pointer-events: auto;
   }
-  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .busca input {
+  body.busca-global-aberta .conteudo > .topbar .busca .icone {
+    left: 13px;
+    width: 16px;
+    height: 16px;
+    z-index: 12; /* lupa acima do fundo do campo */
+    pointer-events: none;
+  }
+  body.busca-global-aberta .conteudo > .topbar .busca input {
+    display: block;
     position: relative;
-    z-index: 32;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    min-height: 46px;
+    padding: 10px 14px 10px 35px;
+    font-size: 14px;
+    line-height: normal;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(30,58,95,.12);
     pointer-events: auto;
     touch-action: manipulation;
   }
-  body.busca-global-aberta #resultadosBuscaGlobal > .topbar .busca .icone {
-    pointer-events: none;
+  body.busca-global-aberta #resultadosBuscaGlobal {
+    padding: 20px 16px 36px;
+  }
+  /* Há somente um título/resumo visível no celular, no topo da página. */
+  body.busca-global-aberta #resultadosBuscaGlobal > .busca-titulo,
+  body.busca-global-aberta #resultadosBuscaGlobal > .busca-resumo {
+    display: none;
   }
 }
