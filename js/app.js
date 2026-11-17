@@ -984,10 +984,24 @@ function configurarBuscaGlobalAcervo() {
     }
     principal.style.display = "none";
     painel.style.display = "block";
-    // Antes de substituir o HTML, preserve a barra e seus eventos.
-    if (topbar.parentNode === painel) organizarBuscaMobileRestaurando();
-    painel.innerHTML = montarResultadosGlobais(termo);
-    organizarBuscaMobile();
+    // Não mover nem recriar o input durante a digitação: em navegadores
+    // móveis isso faz o campo perder o foco e fecha o teclado virtual.
+    const novoConteudo = document.createElement("div");
+    novoConteudo.innerHTML = montarResultadosGlobais(termo);
+    const tituloNovo = novoConteudo.querySelector(".busca-titulo");
+    const resumoNovo = novoConteudo.querySelector(".busca-resumo");
+    const tituloAtual = painel.querySelector(".busca-titulo");
+    const resumoAtual = painel.querySelector(".busca-resumo");
+    if (!tituloAtual || !resumoAtual) {
+      painel.innerHTML = novoConteudo.innerHTML;
+      organizarBuscaMobile();
+    } else {
+      tituloAtual.textContent = tituloNovo ? tituloNovo.textContent : "";
+      resumoAtual.textContent = resumoNovo ? resumoNovo.textContent : "";
+      painel.querySelectorAll(".busca-secao").forEach(secao => secao.remove());
+      novoConteudo.querySelectorAll(".busca-secao").forEach(secao => painel.appendChild(secao));
+      // A topbar permanece conectada ao mesmo nó, preservando o foco.
+    }
   }
 
   campo.addEventListener("input", (ev) => {
