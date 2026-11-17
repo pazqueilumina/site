@@ -75,6 +75,7 @@ const DADOS = {
      Datas aproximadas conforme informadas pelo YouTube.
      ============================================================ */
   videos: [
+    { id: "LkVBXqm3hxU", t: "O CRISTO CONSOLADOR - O Evangelho Segundo o Espiritismo, Cap VI", s: "doutrina", d: "2026-11-16", dur: "00:52:12", audio: "/audio/O%20CRISTO%20CONSOLADOR%20-%20O%20Evangelho%20Segundo%20o%20Espiritismo%20Cap%20VI.mp3", audioPlataforma: "Cloudflare Pages" },
     { id: "Dsv3EV-JIfU", t: "PRISIONEIROS DOS PRÓPRIOS PENSAMENTOS - Como a fixação mental aprisiona o espírito", s: "temas", d: "2026-11-10", dur: "00:48:16", audio: "https://archive.org/details/prisioneiros-dos-pro-prios-pensamentos-como-a-fixacao-mental-aprisiona-o-espirito", audioPlataforma: "Internet Archive", slides: "https://archive.org/details/fixacao-mental" },
     { id: "f6S0ckF1-Mo", t: "A PRISÃO DE JESUS: SERÁ QUE JUDAS FOI APENAS UM TRAIDOR?", s: "ultimos-dias", d: "2026-11-07", dur: "1:02:36", audio: "https://archive.org/details/a-prisa-o-de-jesus-sera-que-judas-foi-apenas-um-traidor", audioPlataforma: "Internet Archive" },
     { id: "Xpw_979dH5g", t: "DO OUTRO LADO DA VIDA - O que a Doutrina Espírita nos ensina sobre a morte?", s: "temas", d: "2026-11-05", dur: "54:50", audio: "https://archive.org/details/do-outro-lado-da-vida-o-que-a-doutrina-espirita-nos-ensina-sobre-a-morte", audioPlataforma: "Internet Archive", slides: "https://archive.org/details/o-fenomeno-da-morte" },
