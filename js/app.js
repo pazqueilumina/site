@@ -318,7 +318,7 @@ function renderizarTopbar() {
   document.getElementById("topbar").innerHTML =
     '<button class="btn-menu-mobile" id="btnMenu" aria-label="Abrir menu">' + icone("menu") + "</button>" +
     '<div class="busca">' + icone("busca") +
-    '<input type="search" id="campoBusca" placeholder="Buscar apresentações, temas, autores, eventos..." aria-label="Buscar"></div>';
+    '<input type="search" id="campoBusca" placeholder="Buscar apresentações, temas e mais..." aria-label="Buscar"></div>';
 
   const btn = document.getElementById("btnMenu");
   const sidebar = document.getElementById("sidebar");
