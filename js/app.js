@@ -950,17 +950,44 @@ function configurarBuscaGlobalAcervo() {
   painel.style.display = "none";
   principal.parentNode.insertBefore(painel, principal);
 
+  const topbar = document.getElementById("topbar");
+  const posicaoOriginalTopbar = document.createComment("Posição original da barra de pesquisa");
+  topbar.parentNode.insertBefore(posicaoOriginalTopbar, topbar);
+
+  function organizarBuscaMobileRestaurando() {
+    posicaoOriginalTopbar.parentNode.insertBefore(topbar, posicaoOriginalTopbar.nextSibling);
+  }
+
+  function organizarBuscaMobile() {
+    const mobile = window.matchMedia("(max-width: 700px)").matches;
+    const aberta = painel.style.display !== "none";
+    if (mobile && aberta) {
+      document.body.classList.add("busca-global-aberta");
+      const resumo = painel.querySelector(".busca-resumo");
+      if (resumo) resumo.insertAdjacentElement("afterend", topbar);
+    } else {
+      document.body.classList.remove("busca-global-aberta");
+      posicaoOriginalTopbar.parentNode.insertBefore(topbar, posicaoOriginalTopbar.nextSibling);
+    }
+  }
+
+  window.addEventListener("resize", organizarBuscaMobile);
+
   function atualizarBusca() {
     const termo = campo.value.trim();
     if (!termo) {
       painel.style.display = "none";
+      organizarBuscaMobile();
       principal.style.display = "";
       if (window.__filtroLista) window.__filtroLista("");
       return;
     }
     principal.style.display = "none";
     painel.style.display = "block";
+    // Antes de substituir o HTML, preserve a barra e seus eventos.
+    if (topbar.parentNode === painel) organizarBuscaMobileRestaurando();
     painel.innerHTML = montarResultadosGlobais(termo);
+    organizarBuscaMobile();
   }
 
   campo.addEventListener("input", (ev) => {
