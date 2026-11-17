@@ -1445,3 +1445,11 @@ body[data-page="inicio"] .hero-conteudo { display: none; }
     display: none;
   }
 }
+
+/* Ajuste fino: mesma distancia entre lupa e texto da home, no celular. */
+@media (max-width: 880px) {
+  body:not([data-page="inicio"]) .topbar .busca input { padding-left: 32px; }
+}
+@media (max-width: 700px) {
+  body.busca-global-aberta .conteudo > .topbar .busca input { padding-left: 32px; }
+}
