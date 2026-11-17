@@ -938,83 +938,67 @@ function montarResultadosGlobais(termo) {
 function configurarBuscaGlobalAcervo() {
   const campo = document.getElementById("campoBusca");
   const principal = document.getElementById("principal");
-  if (!campo || !principal) return;
+  const topbar = document.getElementById("topbar");
+  if (!campo || !principal || !topbar) return;
 
   const termoInicial = new URLSearchParams(location.search).get("q") || "";
   if (termoInicial) campo.value = termoInicial;
 
-  // Painel independente: não destrói os filtros e eventos das páginas originais.
+  // Mantém o input SEMPRE na topbar original. Movê-lo para o painel de
+  // resultados fazia o teclado virtual perder o foco no navegador móvel.
+  const cabecalhoMobile = document.createElement("div");
+  cabecalhoMobile.className = "busca-cabecalho-mobile";
+  cabecalhoMobile.innerHTML =
+    '<h1 class="busca-titulo-mobile">Resultados da pesquisa</h1>' +
+    '<p class="busca-resumo-mobile" aria-live="polite"></p>';
+  const blocoCampo = topbar.querySelector(".busca");
+  if (blocoCampo) topbar.insertBefore(cabecalhoMobile, blocoCampo);
+
+  // Resultados ficam em painel próprio; a topbar permanece fora dele.
   const painel = document.createElement("div");
   painel.id = "resultadosBuscaGlobal";
   painel.setAttribute("aria-live", "polite");
   painel.style.display = "none";
   principal.parentNode.insertBefore(painel, principal);
 
-  const topbar = document.getElementById("topbar");
-  const posicaoOriginalTopbar = document.createComment("Posição original da barra de pesquisa");
-  topbar.parentNode.insertBefore(posicaoOriginalTopbar, topbar);
-
-  function organizarBuscaMobileRestaurando() {
-    posicaoOriginalTopbar.parentNode.insertBefore(topbar, posicaoOriginalTopbar.nextSibling);
+  function ajustarVisualizacaoMobile() {
+    const noCelular = window.matchMedia("(max-width: 700px)").matches;
+    document.body.classList.toggle(
+      "busca-global-aberta", noCelular && painel.style.display !== "none"
+    );
   }
-
-  function organizarBuscaMobile() {
-    const mobile = window.matchMedia("(max-width: 700px)").matches;
-    const aberta = painel.style.display !== "none";
-    if (mobile && aberta) {
-      document.body.classList.add("busca-global-aberta");
-      const resumo = painel.querySelector(".busca-resumo");
-      if (resumo) resumo.insertAdjacentElement("afterend", topbar);
-    } else {
-      document.body.classList.remove("busca-global-aberta");
-      posicaoOriginalTopbar.parentNode.insertBefore(topbar, posicaoOriginalTopbar.nextSibling);
-    }
-  }
-
-  window.addEventListener("resize", organizarBuscaMobile);
+  window.addEventListener("resize", ajustarVisualizacaoMobile);
 
   function atualizarBusca() {
     const termo = campo.value.trim();
     if (!termo) {
       painel.style.display = "none";
-      organizarBuscaMobile();
       principal.style.display = "";
+      cabecalhoMobile.querySelector(".busca-resumo-mobile").textContent = "";
+      ajustarVisualizacaoMobile();
       if (window.__filtroLista) window.__filtroLista("");
       return;
     }
-    principal.style.display = "none";
+
+    // Atualiza APENAS o painel de resultados, sem remover, mover ou
+    // reconstruir a barra de pesquisa: o input mantém foco e teclado.
+    painel.innerHTML = montarResultadosGlobais(termo);
     painel.style.display = "block";
-    // Não mover nem recriar o input durante a digitação: em navegadores
-    // móveis isso faz o campo perder o foco e fecha o teclado virtual.
-    const novoConteudo = document.createElement("div");
-    novoConteudo.innerHTML = montarResultadosGlobais(termo);
-    const tituloNovo = novoConteudo.querySelector(".busca-titulo");
-    const resumoNovo = novoConteudo.querySelector(".busca-resumo");
-    const tituloAtual = painel.querySelector(".busca-titulo");
-    const resumoAtual = painel.querySelector(".busca-resumo");
-    if (!tituloAtual || !resumoAtual) {
-      painel.innerHTML = novoConteudo.innerHTML;
-      organizarBuscaMobile();
-    } else {
-      tituloAtual.textContent = tituloNovo ? tituloNovo.textContent : "";
-      resumoAtual.textContent = resumoNovo ? resumoNovo.textContent : "";
-      painel.querySelectorAll(".busca-secao").forEach(secao => secao.remove());
-      novoConteudo.querySelectorAll(".busca-secao").forEach(secao => painel.appendChild(secao));
-      // A topbar permanece conectada ao mesmo nó, preservando o foco.
-    }
+    principal.style.display = "none";
+    const resumo = painel.querySelector(".busca-resumo");
+    cabecalhoMobile.querySelector(".busca-resumo-mobile").textContent =
+      resumo ? resumo.textContent : "";
+    ajustarVisualizacaoMobile();
   }
 
-  campo.addEventListener("input", (ev) => {
-    ev.stopImmediatePropagation();
-    atualizarBusca();
-  }, true);
+  campo.addEventListener("input", atualizarBusca);
+  campo.addEventListener("search", atualizarBusca); // botão de limpar nativo
   campo.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") {
       ev.preventDefault();
-      ev.stopImmediatePropagation();
       atualizarBusca();
     }
-  }, true);
+  });
   if (termoInicial) atualizarBusca();
 }
 
