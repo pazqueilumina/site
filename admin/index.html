@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="same-origin">
+  <title>Administração da Agenda | Estudos e Reflexões Espíritas</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+  <script defer src="/admin/admin.js"></script>
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-conteudo">
+      <div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Área administrativa · Agenda</span></div></div>
+      <a class="voltar" href="/agenda.html" target="_blank" rel="noopener">Ver agenda pública ↗</a>
+    </div>
+  </header>
+  <main class="container">
+    <div class="intro">
+      <div><p class="sobretitulo">PAINEL DE CONTROLE</p><h1>Agenda de apresentações</h1><p>Cadastre, atualize ou exclua eventos. As mudanças só ficam públicas depois de clicar em <strong>Publicar alterações</strong>.</p></div>
+      <button id="publicar" type="button" class="botao principal" disabled>Publicar alterações</button>
+    </div>
+    <div id="mensagem" class="mensagem" role="status" aria-live="polite">Conectando à agenda…</div>
+    <div class="indicadores" aria-label="Resumo da agenda">
+      <div class="indicador"><span>Total de eventos</span><strong id="total">—</strong></div>
+      <div class="indicador"><span>Próximos</span><strong id="futuros">—</strong></div>
+      <div class="indicador"><span>Realizados</span><strong id="passados">—</strong></div>
+      <div class="indicador"><span>Situação</span><strong id="situacao" class="situacao">Carregando</strong></div>
+    </div>
+    <div class="painel">
+      <section class="cartao lista" aria-labelledby="tituloLista">
+        <div class="cartao-cabecalho"><div><h2 id="tituloLista">Compromissos</h2><p>Selecione um evento para editar.</p></div><button type="button" id="novo" class="botao secundario">+ Novo evento</button></div>
+        <div class="filtros"><label class="campo-busca"><span class="sr-only">Buscar eventos</span><input id="busca" type="search" placeholder="Buscar por título ou local…"></label><select id="filtro" aria-label="Filtrar eventos"><option value="todos">Todos</option><option value="futuros">Próximos</option><option value="passados">Realizados</option></select></div>
+        <div id="listaEventos" class="lista-eventos"><p class="vazio">Carregando…</p></div>
+      </section>
+      <section class="cartao editor" aria-labelledby="tituloEditor">
+        <div class="cartao-cabecalho"><div><h2 id="tituloEditor">Novo evento</h2><p>Os campos marcados com * são obrigatórios.</p></div></div>
+        <form id="formEvento">
+          <div class="duas-colunas">
+            <label>Data *<input id="data" type="date" required></label>
+            <label>Horário *<input id="horario" type="time" required></label>
+          </div>
+          <label>Título da palestra ou atividade *<input id="titulo" type="text" maxlength="180" placeholder="Ex.: A Bênção da Dor" required></label>
+          <label>Local ou instituição *<input id="local" type="text" maxlength="180" placeholder="Ex.: Centro Espírita União Fraterna" required></label>
+          <label>Endereço físico ou identificação da plataforma<input id="endereco" type="text" maxlength="500" placeholder="Rua, número, bairro… ou YouTube (online)"></label>
+          <label>Link da transmissão ou do evento<input id="link" type="url" maxlength="500" placeholder="https://www.youtube.com/…" pattern="https://.*"><small>Opcional. Use o endereço completo começando por https://.</small></label>
+          <div class="acoes"><button class="botao principal" type="submit" id="salvar">Salvar na lista</button><button class="botao discreto" type="button" id="cancelar">Limpar</button><button class="botao perigoso" type="button" id="excluir" hidden>Excluir evento</button></div>
+          <p class="ajuda">Salvar na lista prepara a mudança. <strong>Publicar alterações</strong> envia todas as mudanças ao GitHub.</p>
+        </form>
+      </section>
+    </div>
+    <p class="rodape">Acesso protegido pelo Cloudflare Access. Os arquivos do site permanecem no GitHub.</p>
+  </main>
+</body>
+</html>
