@@ -161,6 +161,7 @@ const DADOS = {
      id → código do vídeo · t → título
      ============================================================ */
   shorts: [
+    { id: "Wr_eRBjhmuU", t: "A conversa da dor com a caridade" },
     { id: "5S_wWvHYNL4", t: "Precisamos falar sobre as nossas emoções." },
     { id: "r2SR558SF2s", t: "Eternidade Card: o grande presente de Deus." },
     { id: "oGbjt-UKIg0", t: "Deixe a sua resposta nos comentários." },
