@@ -318,7 +318,7 @@ function renderizarTopbar() {
   document.getElementById("topbar").innerHTML =
     '<button class="btn-menu-mobile" id="btnMenu" aria-label="Abrir menu">' + icone("menu") + "</button>" +
     '<div class="busca">' + icone("busca") +
-    '<input type="search" id="campoBusca" placeholder="Buscar apresentações, temas e mais..." aria-label="Buscar"></div>';
+    '<input type="search" id="campoBusca" placeholder="Buscar apresentações, temas, autores, eventos..." aria-label="Buscar"></div>';
 
   const btn = document.getElementById("btnMenu");
   const sidebar = document.getElementById("sidebar");
@@ -415,13 +415,19 @@ function itemAgenda(evento, compacto) {
         ? '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(maps) + '" target="_blank" rel="noopener" title="' + tituloLink + '">' + icone("pin") + escapar(evento.endereco) + icone("externo") + "</a></div>"
         : '<div class="agenda-linha"><span class="agenda-endereco">' + icone("pin") + escapar(evento.endereco) + "</span></div>")
     : "";
+  // Link direto opcional, definido pelo painel administrativo.
+  const linkEvento = typeof evento.link === "string" && /^https:\/\/[^\s]+$/i.test(evento.link)
+    ? evento.link : null;
+  const linhaLink = linkEvento
+    ? '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(linkEvento) + '" target="_blank" rel="noopener noreferrer" title="Abrir link do evento">' + icone("externo") + ' Acessar evento / transmissão</a></div>'
+    : "";
 
   return (
     '<article class="item-agenda">' +
     '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div></div>" +
     '<div class="agenda-info"><h3>' + escapar(evento.titulo) + "</h3>" +
     '<div class="agenda-linha"><span class="agenda-centro">' + escapar(evento.local) + "</span></div>" +
-    linhaEndereco +
+    linhaEndereco + linhaLink +
     "</div>" + icone("seta", "agenda-seta") +
     "</article>"
   );
@@ -938,67 +944,42 @@ function montarResultadosGlobais(termo) {
 function configurarBuscaGlobalAcervo() {
   const campo = document.getElementById("campoBusca");
   const principal = document.getElementById("principal");
-  const topbar = document.getElementById("topbar");
-  if (!campo || !principal || !topbar) return;
+  if (!campo || !principal) return;
 
   const termoInicial = new URLSearchParams(location.search).get("q") || "";
   if (termoInicial) campo.value = termoInicial;
 
-  // Mantém o input SEMPRE na topbar original. Movê-lo para o painel de
-  // resultados fazia o teclado virtual perder o foco no navegador móvel.
-  const cabecalhoMobile = document.createElement("div");
-  cabecalhoMobile.className = "busca-cabecalho-mobile";
-  cabecalhoMobile.innerHTML =
-    '<h1 class="busca-titulo-mobile">Resultados da pesquisa</h1>' +
-    '<p class="busca-resumo-mobile" aria-live="polite"></p>';
-  const blocoCampo = topbar.querySelector(".busca");
-  if (blocoCampo) topbar.insertBefore(cabecalhoMobile, blocoCampo);
-
-  // Resultados ficam em painel próprio; a topbar permanece fora dele.
+  // Painel independente: não destrói os filtros e eventos das páginas originais.
   const painel = document.createElement("div");
   painel.id = "resultadosBuscaGlobal";
   painel.setAttribute("aria-live", "polite");
   painel.style.display = "none";
   principal.parentNode.insertBefore(painel, principal);
 
-  function ajustarVisualizacaoMobile() {
-    const noCelular = window.matchMedia("(max-width: 700px)").matches;
-    document.body.classList.toggle(
-      "busca-global-aberta", noCelular && painel.style.display !== "none"
-    );
-  }
-  window.addEventListener("resize", ajustarVisualizacaoMobile);
-
   function atualizarBusca() {
     const termo = campo.value.trim();
     if (!termo) {
       painel.style.display = "none";
       principal.style.display = "";
-      cabecalhoMobile.querySelector(".busca-resumo-mobile").textContent = "";
-      ajustarVisualizacaoMobile();
       if (window.__filtroLista) window.__filtroLista("");
       return;
     }
-
-    // Atualiza APENAS o painel de resultados, sem remover, mover ou
-    // reconstruir a barra de pesquisa: o input mantém foco e teclado.
-    painel.innerHTML = montarResultadosGlobais(termo);
-    painel.style.display = "block";
     principal.style.display = "none";
-    const resumo = painel.querySelector(".busca-resumo");
-    cabecalhoMobile.querySelector(".busca-resumo-mobile").textContent =
-      resumo ? resumo.textContent : "";
-    ajustarVisualizacaoMobile();
+    painel.style.display = "block";
+    painel.innerHTML = montarResultadosGlobais(termo);
   }
 
-  campo.addEventListener("input", atualizarBusca);
-  campo.addEventListener("search", atualizarBusca); // botão de limpar nativo
+  campo.addEventListener("input", (ev) => {
+    ev.stopImmediatePropagation();
+    atualizarBusca();
+  }, true);
   campo.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") {
       ev.preventDefault();
+      ev.stopImmediatePropagation();
       atualizarBusca();
     }
-  });
+  }, true);
   if (termoInicial) atualizarBusca();
 }
 
