@@ -196,9 +196,22 @@ const DADOS = {
     { data: "2026-11-03", titulo: "A Parábola do Bom Samaritano", local: "Aliança do Divino Pastor", endereco: "Rua Jardim Botânico, 94, Jardim Botânico, Rio de Janeiro", horario: "20:00" },
     { data: "2026-11-04", titulo: "O Fenômeno da Morte", local: "Lar Paulo de Tarso", endereco: "Rua Souza Lima, 423, Copacabana, Rio de Janeiro", horario: "17:00" },
     { data: "2026-11-04", titulo: "Do Outro Lado da Vida", local: "Consolador - Comunidade Espírita Cristã", endereco: "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro", horario: "20:00" },
-    { data: "2026-11-13", titulo: "O Quinto Dos Últimos Dias de Jesus (Parte 1)", local: "Cristo Consolador", endereco: "YouTube (online)", horario: "19:00" },
     { data: "2026-11-09", titulo: "Fixação Mental", local: "Consolador - Comunidade Espírita Cristã", endereco: "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro", horario: "20:00" },
-    { data: "2026-11-27", titulo: "O Quinto Dos Últimos Dias de Jesus (Parte 2)", local: "Cristo Consolador", endereco: "YouTube (online)", horario: "19:00" }
+    { data: "2026-11-13", titulo: "O Quinto Dos Últimos Dias de Jesus (Parte 1)", local: "Cristo Consolador", endereco: "YouTube (online)", horario: "19:00" },
+    { data: "2026-11-20", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
+    { data: "2026-11-27", titulo: "O Quinto Dos Últimos Dias de Jesus (Parte 2)", local: "Cristo Consolador", endereco: "YouTube (online)", horario: "19:00" },
+    { data: "2026-11-27", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
+    { data: "2026-11-27", titulo: "Live no Instagram", local: "Consolador - Comunidade Espírita Cristã", endereco: "Instagram (online)", horario: "20:00" },
+    { data: "2026-11-28", titulo: "A Bênção da Dor", local: "Grupo de Estudos Saint Germain", horario: "18:00" },
+    { data: "2026-12-04", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
+    { data: "2026-12-08", titulo: "A Fixação Mental", local: "Cruzado dos Militares Espíritas", horario: "19:30" },
+    { data: "2026-12-09", titulo: "Vá e Não Peques Mais", local: "Consolador - Comunidade Espírita Cristã", horario: "20:00" },
+    { data: "2026-12-11", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
+    { data: "2026-12-16", titulo: "O Caminho da Vida", local: "Centro Espírita União Fraterna", horario: "19:30" },
+    { data: "2026-12-18", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
+    { data: "2026-12-19", titulo: "A Vinda de Jesus", local: "Centro Espírita Cristófilos", horario: "20:00" },
+    { data: "2026-12-23", titulo: "Homenagem a Yvonne do Amaral Pereira", local: "Consolador - Comunidade Espírita Cristã", horario: "20:00" },
+    { data: "2026-12-25", titulo: "Live de Natal", local: "Consolador - Comunidade Espírita Cristã", endereco: "Instagram (online)", horario: "20:00" }
   ],
 
   /* ---------- Página "Livro" ---------- */
