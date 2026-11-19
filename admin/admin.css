@@ -8,3 +8,11 @@
 .filtros-com-ordenacao .botao-ordenacao:hover{background:#edf3f8;border-color:#a8bfce}
 .filtros-com-ordenacao .botao-ordenacao:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @media(max-width:590px){.filtros-com-ordenacao{grid-template-columns:minmax(0,1fr) 108px 38px}}
+
+/* Navegação do painel: Agenda ↔ Palestras, igual ao cabeçalho de Palestras. */
+.navegacao{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.navegacao a{color:#f4e2c5;text-decoration:none;font-size:13px;white-space:nowrap}
+.navegacao a[aria-current="page"]{font-weight:800;text-decoration:underline}
+.navegacao a:hover{text-decoration:underline}
+.navegacao a:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:2px}
+@media(max-width:590px){.navegacao{gap:10px}.navegacao a{font-size:11px}}
