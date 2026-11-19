@@ -1,6 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
-const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false};
+const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false};
 function msg(s,type=''){ $('mensagemP').textContent=s;$('mensagemP').className='mensagem'+(type?' '+type:''); }
 function idYoutube(url){
  if(!url.trim())return '';
@@ -78,7 +78,7 @@ function render(){const rows=state.dados.palestras; $('totalP').textContent=rows
  $('publicarP').disabled=!state.sha||!state.dirty;
  const term=$('buscaP').value.trim().toLocaleLowerCase('pt-BR');const filtro=$('filtroP').value;
  const filtered=rows.filter(p=>(!term||(p.pid+' '+p.titulo).toLocaleLowerCase('pt-BR').includes(term))&&(filtro==='todos'||(filtro==='semAudio'&&!p.audio)||(filtro==='semPdf'&&!p.pdf)))
- .sort((a,b)=>(a.data||'9999').localeCompare(b.data||'9999')||a.pid.localeCompare(b.pid));
+ .sort((a,b)=>{const comparacao=(a.data||'9999').localeCompare(b.data||'9999')||a.pid.localeCompare(b.pid);return state.ordemDesc?-comparacao:comparacao;});
  const list=$('listaP');list.replaceChildren();if(!filtered.length){const e=document.createElement('p');e.className='vazio';e.textContent='Nenhuma palestra encontrada.';list.append(e);return;}
  filtered.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='evento'+(state.selecionado===p.pid?' ativo':'');
  const n=document.createElement('span');n.className='evento-data';const strong=document.createElement('strong');strong.textContent=String(i+1).padStart(3,'0');const small=document.createElement('span');small.textContent='ORDEM';n.append(strong,small);
@@ -116,6 +116,15 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
 function exportar(){const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];for(const p of state.dados.palestras)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
  const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='palestras-com-ids.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}
 $('formP').addEventListener('submit',e=>{e.preventDefault();salvar();});$('formP').addEventListener('input',()=>{state.formDirty=true;});$('formP').addEventListener('change',()=>{state.formDirty=true;});$('novoP').addEventListener('click',()=>state.aba==='nova'?limpar():trocarAba('nova'));$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',publicar);$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
+$('ordenarP').addEventListener('click',()=>{
+ state.ordemDesc=!state.ordemDesc;
+ const botao=$('ordenarP');
+ const descricao=state.ordemDesc?'Mais recentes primeiro. Clique para mostrar as mais antigas primeiro.':'Mais antigas primeiro. Clique para mostrar as mais recentes primeiro.';
+ botao.setAttribute('aria-pressed',String(state.ordemDesc));
+ botao.setAttribute('aria-label',descricao);
+ botao.title=descricao;
+ render();
+});
 $('csvP').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{importar(parseCSV(await f.text()));}catch(err){msg('CSV inválido: '+err.message,'erro');}e.target.value='';});$('exportarP').addEventListener('click',exportar);
 $('colarP').addEventListener('click',()=>{$('urlsP').hidden=!$('urlsP').hidden;$('aplicarUrlsP').hidden=$('urlsP').hidden;$('rotuloUrlsP').hidden=$('urlsP').hidden;});
 $('aplicarUrlsP').addEventListener('click',()=>{const urls=$('urlsP').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);const items=urls.map((url,i)=>({linha:i+1,id:'',titulo:'',data:'',youtube:url,arquivo:''}));

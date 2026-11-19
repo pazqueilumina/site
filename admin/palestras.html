@@ -32,7 +32,11 @@
     <div class="painel">
       <section class="cartao lista" aria-labelledby="tituloAcervo">
         <div class="cartao-cabecalho"><div><h2 id="tituloAcervo">Acervo</h2><p>Selecione uma palestra para editar. Ordem cronológica.</p></div><button id="novoP" class="botao secundario" type="button">+ Nova</button></div>
-        <div class="filtros"><label class="campo-busca"><span class="sr-only">Buscar palestra</span><input id="buscaP" type="search" placeholder="Título ou ID…"></label><select id="filtroP" aria-label="Filtrar palestras"><option value="todos">Todas</option><option value="semAudio">Sem áudio</option><option value="semPdf">Sem PDF</option></select></div>
+        <div class="filtros">
+          <label class="campo-busca"><span class="sr-only">Buscar palestra</span><input id="buscaP" type="search" placeholder="Título ou ID…"></label>
+          <select id="filtroP" aria-label="Filtrar palestras"><option value="todos">Todas</option><option value="semAudio">Sem áudio</option><option value="semPdf">Sem PDF</option></select>
+          <button id="ordenarP" class="botao-ordenacao" type="button" aria-pressed="false" aria-label="Mais antigas primeiro. Clique para mostrar as mais recentes primeiro." title="Mais antigas primeiro. Clique para mostrar as mais recentes primeiro.">↑↓</button>
+        </div>
         <div id="listaP" class="lista-eventos" aria-label="Lista de palestras"></div>
       </section>
       <section class="cartao editor" aria-labelledby="gerenciarTitulo">

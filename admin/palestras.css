@@ -19,6 +19,12 @@
 .importacao .rotulo-importacao{font-size:12px;font-weight:700;display:block;margin-top:18px}
 .importacao .acoes{margin:15px 0}
 .importacao button{margin-top:5px}
+/* Controle compacto de ordenação, ao lado do filtro de palestras. */
+.lista .filtros{display:grid;grid-template-columns:minmax(0,1fr) minmax(92px,120px) 38px;align-items:center;gap:8px}
+.lista .filtros .campo-busca,.lista .filtros select{min-width:0;width:100%}
+.lista .filtros .botao-ordenacao{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:38px;height:38px;padding:0;border:1px solid #d7dfe4;border-radius:8px;background:#fff;color:var(--navy);font-size:19px;font-weight:700;line-height:1;cursor:pointer;white-space:nowrap}
+.lista .filtros .botao-ordenacao:hover{background:#edf3f8;border-color:#a8bfce}
+.lista .filtros .botao-ordenacao:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .lista-eventos .evento-data{min-width:72px}
 .evento-corpo small{display:block;color:#697987;margin-top:5px}
 [hidden]{display:none!important}
