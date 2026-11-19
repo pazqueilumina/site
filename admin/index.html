@@ -13,7 +13,7 @@
   <header class="topo">
     <div class="topo-conteudo">
       <div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Área administrativa · Agenda</span></div></div>
-      <nav class="navegacao"><a class="voltar" href="/admin/palestras.html">Gerenciar palestras</a> &nbsp; <a class="voltar" href="/agenda.html" target="_blank" rel="noopener">Ver agenda pública ↗</a></nav>
+      <a class="voltar" href="/agenda.html" target="_blank" rel="noopener">Ver agenda pública ↗</a>
     </div>
   </header>
   <main class="container">
@@ -31,7 +31,11 @@
     <div class="painel">
       <section class="cartao lista" aria-labelledby="tituloLista">
         <div class="cartao-cabecalho"><div><h2 id="tituloLista">Compromissos</h2><p>Selecione um evento para editar.</p></div><button type="button" id="novo" class="botao secundario">+ Novo evento</button></div>
-        <div class="filtros"><label class="campo-busca"><span class="sr-only">Buscar eventos</span><input id="busca" type="search" placeholder="Buscar por título ou local…"></label><select id="filtro" aria-label="Filtrar eventos"><option value="todos">Todos</option><option value="futuros">Próximos</option><option value="passados">Realizados</option></select></div>
+        <div class="filtros filtros-com-ordenacao">
+          <label class="campo-busca"><span class="sr-only">Buscar eventos</span><input id="busca" type="search" placeholder="Buscar por título ou local…"></label>
+          <select id="filtro" aria-label="Filtrar eventos"><option value="todos">Todos</option><option value="futuros">Próximos</option><option value="passados">Realizados</option></select>
+          <button id="ordenarAgenda" class="botao-ordenacao" type="button" aria-pressed="false" aria-label="Mais antigos primeiro. Clique para mostrar os mais recentes primeiro." title="Mais antigos primeiro. Clique para mostrar os mais recentes primeiro.">↑↓</button>
+        </div>
         <div id="listaEventos" class="lista-eventos"><p class="vazio">Carregando…</p></div>
       </section>
       <section class="cartao editor" aria-labelledby="tituloEditor">

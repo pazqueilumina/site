@@ -2,7 +2,7 @@
 const API = '/api/admin/agenda';
 const $ = id => document.getElementById(id);
 const campos = ['data', 'horario', 'titulo', 'local', 'endereco', 'link'];
-const estado = { agenda: [], sha: null, selecionado: null, alterado: false, formularioAlterado: false, sequencia: 0 };
+const estado = { agenda: [], sha: null, selecionado: null, alterado: false, formularioAlterado: false, sequencia: 0, ordemDesc: false };
 const MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 function chave() { return 'e' + (++estado.sequencia); }
 function hojeISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
@@ -25,6 +25,8 @@ function renderizar() {
     if (filtro === 'passados' && e.data >= hoje) return false;
     return !busca || `${e.titulo} ${e.local} ${e.endereco || ''}`.toLocaleLowerCase('pt-BR').includes(busca);
   });
+  // Inverter apenas a apresentação, sem alterar os registros ou o estado de publicação.
+  if (estado.ordemDesc) filtrados.reverse();
   const lista = $('listaEventos'); lista.replaceChildren();
   if (!filtrados.length) { const p=document.createElement('p');p.className='vazio';p.textContent='Nenhum evento encontrado.';lista.append(p);return; }
   for (const e of filtrados) {
@@ -107,5 +109,16 @@ $('excluir').addEventListener('click',()=>{
 });
 $('publicar').addEventListener('click',publicar);
 $('busca').addEventListener('input',renderizar);$('filtro').addEventListener('change',renderizar);
+$('ordenarAgenda').addEventListener('click',()=>{
+  estado.ordemDesc=!estado.ordemDesc;
+  const botao=$('ordenarAgenda');
+  const descricao=estado.ordemDesc
+    ? 'Mais recentes primeiro. Clique para mostrar os mais antigos primeiro.'
+    : 'Mais antigos primeiro. Clique para mostrar os mais recentes primeiro.';
+  botao.setAttribute('aria-pressed',String(estado.ordemDesc));
+  botao.setAttribute('aria-label',descricao);
+  botao.title=descricao;
+  renderizar();
+});
 window.addEventListener('beforeunload',e=>{if(estado.alterado||estado.formularioAlterado){e.preventDefault();e.returnValue='';}});
 carregar();
