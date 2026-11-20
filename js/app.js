@@ -832,8 +832,9 @@ function renderizarAgenda() {
     '<h1 class="titulo-pagina">Agenda de apresentações</h1>' +
     '<p class="subtitulo-pagina">Próximos encontros, palestras e estudos abertos. Participe — a entrada é gratuita.</p>' +
     '<div class="filtro-agenda-publica" role="search" aria-label="Filtrar eventos da agenda">' +
-      '<label>Filtrar por Centro / Local<select id="filtroCentroAgenda"><option value="">Todos os Centros e locais</option>' +
-      centros.map(([id,nome])=>'<option value="'+escapar(id)+'">'+escapar(nome)+'</option>').join('')+'</select></label>' +
+      '<label>Filtrar por Centro / Local<input id="filtroCentroAgenda" type="search" list="opcoesCentroAgenda" placeholder="Todos os Centros e locais" maxlength="180" autocomplete="off" title="Digite o nome do Centro ou selecione na lista">' +
+      '<datalist id="opcoesCentroAgenda">' +
+      centros.map(([,nome])=>'<option value="'+escapar(nome)+'"></option>').join('')+'</datalist></label>' +
       '<label>Período<select id="filtroPeriodoAgenda"><option value="todos">Todos</option><option value="futuros">Próximos</option><option value="passados">Realizados</option></select></label>' +
       '<label>Buscar na agenda<input id="buscaAgendaPublica" type="search" placeholder="Título, tema ou palestrante…" maxlength="180"></label>' +
       '<div class="filtro-agenda-botoes"><button type="button" id="limparFiltrosAgenda">Limpar filtros</button><button type="button" id="compartilharCentroAgenda" hidden>Copiar link do Centro</button></div>' +
@@ -847,15 +848,17 @@ function renderizarAgenda() {
   const centro = document.getElementById('filtroCentroAgenda');
   const periodo = document.getElementById('filtroPeriodoAgenda');
   const busca = document.getElementById('buscaAgendaPublica');
-  centro.value = centros.some(([id])=>id===centroInicial) ? centroInicial : '';
+  const centroPorNome = nome => centros.find(([,titulo]) => normalizarLocalAgenda(titulo) === normalizarLocalAgenda(nome));
+  const centroSelecionado = () => centroPorNome(centro.value)?.[0] || '';
+  centro.value = centros.find(([id]) => id === centroInicial)?.[1] || parametros.get('buscaCentro') || '';
   periodo.value = periodoInicial;
   busca.value = buscaInicial;
   let buscaGlobal = '';
   function pintar(termoGlobal) {
     if (termoGlobal !== undefined) buscaGlobal = termoGlobal;
-    const c = centro.value, p = periodo.value;
+    const c = normalizarLocalAgenda(centro.value), centroId = centroSelecionado(), p = periodo.value;
     const t = normalizarLocalAgenda([busca.value,buscaGlobal].filter(Boolean).join(' '));
-    const corresponde = e => (!c || chaveLocalAgenda(e)===c) && (!t || t.split(/\s+/).every(palavra=>normalizarLocalAgenda([e.titulo,e.local,e.endereco||''].join(' ')).includes(palavra)));
+    const corresponde = e => (!c || (centroId ? chaveLocalAgenda(e) === centroId : normalizarLocalAgenda(opcoes.get(chaveLocalAgenda(e)) || e.local).includes(c))) && (!t || t.split(/\s+/).every(palavra=>normalizarLocalAgenda([e.titulo,e.local,e.endereco||''].join(' ')).includes(palavra)));
     const futuros = (p==='passados' ? [] : eventos).filter(corresponde);
     const antigos = (p==='futuros' ? [] : passados).filter(corresponde);
     const alvo = document.getElementById('listaAgenda');
@@ -867,24 +870,34 @@ function renderizarAgenda() {
     document.getElementById('listaPassados').innerHTML = antigos.map(itemAgendaPassado).join('');
     const total = futuros.length + antigos.length;
     document.getElementById('contagemAgenda').textContent = total + (total===1?' evento encontrado':' eventos encontrados');
-    document.getElementById('compartilharCentroAgenda').hidden = !c;
+    document.getElementById('compartilharCentroAgenda').hidden = !centroId;
   }
   function atualizarUrl() {
     const url = new URL(location.href);
-    if (centro.value) url.searchParams.set('centro',centro.value); else url.searchParams.delete('centro');
+    const centroId = centroSelecionado();
+    if (centroId) {
+      url.searchParams.set('centro',centroId);
+      url.searchParams.delete('buscaCentro');
+    } else {
+      url.searchParams.delete('centro');
+      if (centro.value.trim()) url.searchParams.set('buscaCentro',centro.value.trim());
+      else url.searchParams.delete('buscaCentro');
+    }
     if (periodo.value!=='todos') url.searchParams.set('periodo',periodo.value); else url.searchParams.delete('periodo');
     if (busca.value) url.searchParams.set('buscaAgenda',busca.value); else url.searchParams.delete('buscaAgenda');
     history.replaceState(null,'',url.pathname+url.search+url.hash);
   }
   function atualizar(){pintar();atualizarUrl();}
-  centro.addEventListener('change',atualizar);
+  centro.addEventListener('input',atualizar);
   periodo.addEventListener('change',atualizar);
   busca.addEventListener('input',atualizar);
   document.getElementById('limparFiltrosAgenda').addEventListener('click',()=>{centro.value='';periodo.value='todos';busca.value='';atualizar();});
   document.getElementById('compartilharCentroAgenda').addEventListener('click',async()=>{
     const url=new URL(location.href);
-    url.searchParams.set('centro',centro.value);
-    url.searchParams.delete('periodo');url.searchParams.delete('buscaAgenda');url.searchParams.delete('q');
+    const centroId = centroSelecionado();
+    if (!centroId) return;
+    url.searchParams.set('centro',centroId);
+    url.searchParams.delete('buscaCentro');url.searchParams.delete('periodo');url.searchParams.delete('buscaAgenda');url.searchParams.delete('q');
     try{await navigator.clipboard.writeText(url.toString());const botao=document.getElementById('compartilharCentroAgenda');botao.textContent='Link copiado!';setTimeout(()=>{botao.textContent='Copiar link do Centro';},2000);}
     catch{window.prompt('Copie o link do Centro:',url.toString());}
   });

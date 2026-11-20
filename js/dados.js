@@ -311,7 +311,10 @@ const DADOS = {
       "data": "2026-12-09",
       "horario": "20:00",
       "titulo": "Vá e Não Peques Mais",
-      "local": "Consolador - Comunidade Espírita Cristã"
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro",
+      "bairro": "Copacabana",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "data": "2026-12-11",
@@ -347,7 +350,10 @@ const DADOS = {
       "data": "2026-12-23",
       "horario": "20:00",
       "titulo": "Homenagem a Yvonne do Amaral Pereira",
-      "local": "Consolador - Comunidade Espírita Cristã"
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro",
+      "bairro": "Copacabana",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "data": "2026-12-25",
