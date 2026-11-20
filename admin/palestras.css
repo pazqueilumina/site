@@ -41,3 +41,8 @@
 .upload-r2-status{font-size:12px;line-height:1.5;color:var(--muted);margin:10px 0 0}
 .upload-r2-status.erro{color:#a13636}
 .upload-r2-status.sucesso{color:#266846}
+
+/* Mensagens de envio também podem ser fechadas manualmente. */
+.upload-aviso{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-top:10px}
+.upload-aviso .upload-r2-status{flex:1;min-width:0;margin:0}
+.upload-aviso .fechar-mensagem{width:24px;height:24px;margin:0;font-size:19px}
