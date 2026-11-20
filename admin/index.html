@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="same-origin">
   <title>Administração da Agenda | Estudos e Reflexões Espíritas</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=csvbox3">
-  <script defer src="/admin/admin.js?v=csvbox3"></script>
+  <link rel="stylesheet" href="/admin/admin.css?v=bairro1">
+  <script defer src="/admin/admin.js?v=bairro1"></script>
 </head>
 <body>
   <header class="topo">
@@ -80,12 +80,12 @@
         <div><h2 id="tituloImportacao">Importar eventos por CSV</h2><p id="arquivoCsvNome">Revise os registros antes de acrescentá-los à agenda.</p></div>
       </div>
       <div class="importacao-conteudo">
-        <p class="importacao-instrucao">Os eventos já cadastrados serão preservados. Registros inválidos serão rejeitados, e os válidos poderão ser importados. Duplicados serão ignorados. Aceita datas DD/MM/AAAA ou AAAA-MM-DD e horários HH:MM. Nenhuma alteração será publicada sem clicar em <strong>Publicar alterações</strong>.</p>
+        <p class="importacao-instrucao">Os eventos já cadastrados serão preservados. Registros inválidos serão rejeitados, e os válidos poderão ser importados. Duplicados serão ignorados. A coluna Bairro é opcional e pode ser preenchida automaticamente para locais cadastrados. Aceita datas DD/MM/AAAA ou AAAA-MM-DD e horários HH:MM. Nenhuma alteração será publicada sem clicar em <strong>Publicar alterações</strong>.</p>
         <div id="resumoCsv" class="importacao-resumo" role="status" aria-live="polite"></div>
         <p id="avisoCsv" class="importacao-aviso" role="alert" hidden></p>
         <div class="importacao-tabela-rolagem">
           <table class="importacao-tabela">
-            <thead><tr><th>Linha</th><th>Data</th><th>Horário</th><th>Título</th><th>Local</th><th>Endereço</th><th>Link</th><th>Status</th></tr></thead>
+            <thead><tr><th>Linha</th><th>Data</th><th>Horário</th><th>Título</th><th>Local</th><th>Endereço</th><th>Bairro</th><th>Link</th><th>Status</th></tr></thead>
             <tbody id="linhasCsv"></tbody>
           </table>
         </div>

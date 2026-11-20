@@ -74,6 +74,13 @@ function lerFormulario() {
 }
 function salvarNaLista({ silencioso = false } = {}) {
   const obj=lerFormulario();if(!obj)return false;
+  const anterior = estado.selecionado ? estado.agenda.find(e=>e._key===estado.selecionado) : null;
+  // O editor mantém o bairro do CSV quando os dados do local não mudam.
+  if (anterior && anterior.local === obj.local && (anterior.endereco || '') === (obj.endereco || '') && anterior.bairro) obj.bairro = anterior.bairro;
+  else {
+    const cadastrado = estado.locais.find(l => l.id === obj.localId);
+    if (cadastrado?.bairro && normalizarCsv(obj.endereco) === normalizarCsv(cadastrado.endereco)) obj.bairro = cadastrado.bairro;
+  }
   if(estado.selecionado){const i=estado.agenda.findIndex(e=>e._key===estado.selecionado);if(i<0)return false;estado.agenda[i]={...obj,_key:estado.selecionado};}
   else {const id=chave();estado.agenda.push({...obj,_key:id});estado.selecionado=id;}
   estado.formularioAlterado=false;estado.alterado=true;
@@ -112,7 +119,7 @@ async function publicar() {
 const CABECALHOS_CSV = {
   data: ['data', 'dia'], horario: ['horario', 'hora'],
   titulo: ['titulo', 'palestra', 'atividade', 'evento', 'tema'],
-  local: ['local', 'instituicao'], endereco: ['endereco'], link: ['link', 'url']
+  local: ['local', 'instituicao'], endereco: ['endereco'], bairro: ['bairro'], link: ['link', 'url']
 };
 function normalizarCsv(valor) {
   return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
@@ -166,7 +173,7 @@ function prepararCsv(texto) {
   const melhor = tentativas[0];
   if (melhor.pontuacao < 4) {
     const erro = tentativas.find(t => t.erro)?.erro;
-    throw new Error(erro?.message || 'Cabeçalho inválido. Use as colunas data;horario;titulo;local;endereco;link.');
+    throw new Error(erro?.message || 'Cabeçalho inválido. Use as colunas data;horario;titulo;local;endereco;bairro;link.');
   }
   if (new Set(melhor.cabecalhos.filter(Boolean)).size !== melhor.cabecalhos.filter(Boolean).length) {
     throw new Error('O arquivo CSV contém colunas repetidas no cabeçalho.');
@@ -206,7 +213,7 @@ function validarEventoCsv(item) {
   if (!e.data) return { erro: item.evento.data ? 'Data inválida. Use DD/MM/AAAA ou AAAA-MM-DD.' : 'Data obrigatória não informada.' };
   if (!e.horario) return { erro: item.evento.horario ? 'Horário inválido. Use HH:MM.' : 'Horário obrigatório não informado.' };
   if (!e.titulo || !e.local) return { erro: [!e.titulo && 'Título', !e.local && 'Local'].filter(Boolean).join(' e ') + ' obrigatório(s) não informado(s).' };
-  for (const campo of campos) {
+  for (const campo of [...campos, 'bairro']) {
     const limite = ['endereco', 'link', 'mapa'].includes(campo) ? 500 : 180;
     if (String(e[campo] || '').length > limite) return { erro: `O campo ${campo} excede ${limite} caracteres.` };
   }
@@ -215,11 +222,12 @@ function validarEventoCsv(item) {
   if (local) {
     const semEndereco = !e.endereco;
     if (semEndereco) e.endereco=local.endereco;
+    if (!e.bairro && local.bairro && !/(youtube|instagram|online|zoom|meet\.google|teams\.microsoft)/i.test(e.endereco || '')) e.bairro = local.bairro;
     if (semEndereco || normalizarCsv(e.endereco) === normalizarCsv(local.endereco)) { e.localId=local.id; if(local.maps)e.mapa=local.maps; }
     e.local=local.nome;
   }
   const evento = {};
-  for (const campo of [...campos, 'localId']) if (e[campo]) evento[campo] = e[campo];
+  for (const campo of [...campos, 'bairro', 'localId']) if (e[campo]) evento[campo] = e[campo];
   return { evento };
 }
 function identidadeEventoCsv(e) {
@@ -262,7 +270,7 @@ function renderizarPreviaCsv() {
   for (const r of a.resultado) {
     const tr = document.createElement('tr'), e = r.evento;
     adicionarCelulaCsv(tr, String(r.linha));
-    for (const campo of ['data', 'horario', 'titulo', 'local', 'endereco', 'link']) adicionarCelulaCsv(tr, e[campo]);
+    for (const campo of ['data', 'horario', 'titulo', 'local', 'endereco', 'bairro', 'link']) adicionarCelulaCsv(tr, e[campo]);
     adicionarCelulaCsv(tr, r.status === 'Inválido' ? `Inválido: ${r.detalhe}` : r.status,
       r.status === 'Novo' ? 'status-novo' : r.status === 'Duplicado' ? 'status-duplicado' : 'status-invalido');
     tbody.append(tr);
@@ -343,8 +351,8 @@ function aplicarLocalDigitado() {
 function textoCsvCelula(v) { let s=String(v??''); if(/^[\s]*[=+@-]/.test(s))s="'"+s; return /[;"\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }
 function baixarRelatorioCsv(a) {
   if(!a)return;
-  const linhas=[['linha','data','horario','titulo','local','status','motivo']];
-  for(const r of a.resultado.filter(x=>x.status!=='Novo')) linhas.push([r.linha,r.evento.data||'',r.evento.horario||'',r.evento.titulo||'',r.evento.local||'',r.status==='Inválido'?'Rejeitado':'Duplicado',r.detalhe]);
+  const linhas=[['linha','data','horario','titulo','local','endereco','bairro','link','status','motivo']];
+  for(const r of a.resultado.filter(x=>x.status!=='Novo')) linhas.push([r.linha,r.evento.data||'',r.evento.horario||'',r.evento.titulo||'',r.evento.local||'',r.evento.endereco||'',r.evento.bairro||'',r.evento.link||'',r.status==='Inválido'?'Rejeitado':'Duplicado',r.detalhe]);
   const csv='\uFEFF'+linhas.map(row=>row.map(textoCsvCelula).join(';')).join('\r\n')+'\r\n';
   const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
   const link=document.createElement('a');link.href=url;link.download='relatorio-importacao-agenda.csv';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);

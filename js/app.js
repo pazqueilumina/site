@@ -390,6 +390,38 @@ function cartaoApresentacao(item) {
 /* Item da agenda.
    compacto=true (home): data + tema + [pin] centro | [relógio] horário.
    completo (agenda): horário sob a data; centro; endereço linkado ao Maps. */
+
+/* Bairro separado do endereço, sem repetir bairro/cidade em endereços antigos. */
+function removerSufixoEnderecoAgenda(texto, parte) {
+  if (!parte) return texto;
+  const limpo = texto.trim().replace(/[\s,·–—-]+$/g, '');
+  if (normalizarLocalAgenda(limpo.slice(-parte.length)) !== normalizarLocalAgenda(parte)) return texto;
+  const prefixo = limpo.slice(0, -parte.length);
+  if (!/[,·–—\/-]\s*$/.test(prefixo)) return texto;
+  return prefixo.replace(/[\s,·–—\/-]+$/g, '');
+}
+function enderecoExibidoAgenda(evento) {
+  const original = String(evento.endereco || '').trim();
+  if (!original) return '';
+  if (/(youtube|instagram|online|zoom|meet\.google|teams\.microsoft)/i.test(original)) return original;
+  const cadastro = CADASTRO_LOCAIS_AGENDA.find(l => l.id === evento.localId)
+    || CADASTRO_LOCAIS_AGENDA.find(l => normalizarLocalAgenda(l.nome) === normalizarLocalAgenda(evento.local));
+  const bairro = String(evento.bairro || cadastro?.bairro || '').trim();
+  const cidade = String(cadastro?.cidade || '').trim();
+  const uf = String(cadastro?.uf || '').trim();
+  if (!bairro && !cidade) return original;
+  let rua = original;
+  if (uf) rua = removerSufixoEnderecoAgenda(rua, uf);
+  if (cidade) rua = removerSufixoEnderecoAgenda(rua, cidade);
+  if (bairro) rua = removerSufixoEnderecoAgenda(rua, bairro);
+  if (cadastro?.bairro && normalizarLocalAgenda(cadastro.bairro) !== normalizarLocalAgenda(bairro))
+    rua = removerSufixoEnderecoAgenda(rua, cadastro.bairro);
+  const segmentos = rua.split(/[,·]/).map(normalizarLocalAgenda);
+  const temBairro = bairro && segmentos.includes(normalizarLocalAgenda(bairro));
+  const temCidade = cidade && segmentos.some(p => p === normalizarLocalAgenda(cidade) || p === normalizarLocalAgenda(cidade + '/' + uf));
+  return [rua, bairro && !temBairro ? bairro : '', cidade && !temCidade ? (uf ? cidade + '/' + uf : cidade) : ''].filter(Boolean).join(' · ');
+}
+
 function itemAgenda(evento, compacto) {
   const bloco = fmtAgendaBloco(evento.data);
   const hora = fmtHora(evento.horario);
@@ -405,15 +437,16 @@ function itemAgenda(evento, compacto) {
     );
   }
 
-  const maps = evento.mapa && /^https:\/\/[^\s/]+/i.test(evento.mapa) ? evento.mapa : linkMaps(evento.endereco);
+  const enderecoExibido = enderecoExibidoAgenda(evento);
+  const maps = evento.mapa && /^https:\/\/[^\s/]+/i.test(evento.mapa) ? evento.mapa : linkMaps(enderecoExibido.replace(/ · /g, ', ').replace(/\/([A-Z]{2})$/, ', $1'));
   const tituloLink = !maps ? ""
     : maps.indexOf("google.com/maps") > -1 ? "Ver no Google Maps"
     : maps.indexOf("youtube") > -1 ? "Abrir no YouTube"
     : maps.indexOf("instagram") > -1 ? "Abrir no Instagram" : "Ver no Google Maps";
-  const linhaEndereco = evento.endereco
+  const linhaEndereco = enderecoExibido
     ? (maps
-        ? '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(maps) + '" target="_blank" rel="noopener" title="' + tituloLink + '">' + icone("pin") + escapar(evento.endereco) + icone("externo") + "</a></div>"
-        : '<div class="agenda-linha"><span class="agenda-endereco">' + icone("pin") + escapar(evento.endereco) + "</span></div>")
+        ? '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(maps) + '" target="_blank" rel="noopener" title="' + tituloLink + '">' + icone("pin") + escapar(enderecoExibido) + icone("externo") + "</a></div>"
+        : '<div class="agenda-linha"><span class="agenda-endereco">' + icone("pin") + escapar(enderecoExibido) + "</span></div>")
     : "";
   // Link direto opcional, definido pelo painel administrativo.
   const linkEvento = typeof evento.link === "string" && /^https:\/\/[^\s]+$/i.test(evento.link)

@@ -64,7 +64,7 @@ function dataValida(value) {
 
 export function validarAgenda(input) {
   if (!Array.isArray(input) || input.length > 500) throw new Error('A agenda deve ter no máximo 500 eventos.');
-  const keys = ['data', 'horario', 'titulo', 'local', 'endereco', 'link', 'mapa', 'localId'];
+  const keys = ['data', 'horario', 'titulo', 'local', 'endereco', 'bairro', 'link', 'mapa', 'localId'];
   const output = input.map((item, index) => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) throw new Error(`Evento ${index + 1} inválido.`);
     const obj = {};

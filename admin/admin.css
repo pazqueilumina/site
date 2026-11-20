@@ -89,7 +89,7 @@
 .fechar-mensagem{flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin:-5px -7px -5px 0;border:0;border-radius:7px;background:transparent;color:inherit;font-size:24px;line-height:1}
 .fechar-mensagem:hover{background:rgba(24,54,81,.09)}
 .fechar-mensagem:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
-#painelCsv .importacao-tabela{min-width:1050px;table-layout:fixed}
+#painelCsv .importacao-tabela{min-width:1170px;table-layout:fixed}
 #painelCsv .importacao-tabela th{white-space:nowrap}
 #painelCsv .importacao-tabela th:nth-child(1),#painelCsv .importacao-tabela td:nth-child(1){width:65px;white-space:nowrap}
 #painelCsv .importacao-tabela th:nth-child(2),#painelCsv .importacao-tabela td:nth-child(2){width:105px}
@@ -97,5 +97,6 @@
 #painelCsv .importacao-tabela th:nth-child(4),#painelCsv .importacao-tabela td:nth-child(4){width:180px}
 #painelCsv .importacao-tabela th:nth-child(5),#painelCsv .importacao-tabela td:nth-child(5){width:160px}
 #painelCsv .importacao-tabela th:nth-child(6),#painelCsv .importacao-tabela td:nth-child(6){width:185px}
-#painelCsv .importacao-tabela th:nth-child(7),#painelCsv .importacao-tabela td:nth-child(7){width:170px}
-#painelCsv .importacao-tabela th:nth-child(8),#painelCsv .importacao-tabela td:nth-child(8){width:95px;white-space:nowrap}
+#painelCsv .importacao-tabela th:nth-child(7),#painelCsv .importacao-tabela td:nth-child(7){width:120px}
+#painelCsv .importacao-tabela th:nth-child(8),#painelCsv .importacao-tabela td:nth-child(8){width:170px}
+#painelCsv .importacao-tabela th:nth-child(9),#painelCsv .importacao-tabela td:nth-child(9){width:95px;white-space:nowrap}
