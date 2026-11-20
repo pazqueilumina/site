@@ -209,7 +209,9 @@ const DADOS = {
       "horario": "19:00",
       "titulo": "Espíritos Que Vieram no Séc. XVI na França e Reencarnaram no Brasil",
       "local": "Grupo Espírita Fabiano",
-      "endereco": "R. Paulo Silva Araújo, 52, Méier, Rio de Janeiro"
+      "endereco": "Rua Paulo Silva Araújo, 52",
+      "bairro": "Méier",
+      "localId": "grupo-espirita-fabiano"
     },
     {
       "data": "2026-10-23",
@@ -223,7 +225,9 @@ const DADOS = {
       "horario": "20:00",
       "titulo": "A Parábola do Bom Samaritano",
       "local": "Aliança do Divino Pastor",
-      "endereco": "Rua Jardim Botânico, 94, Jardim Botânico, Rio de Janeiro"
+      "endereco": "Rua Jardim Botânico, 94",
+      "bairro": "Jardim Botânico",
+      "localId": "alianca-do-divino-pastor"
     },
     {
       "data": "2026-11-04",
@@ -283,7 +287,10 @@ const DADOS = {
       "data": "2026-11-28",
       "horario": "18:00",
       "titulo": "A Bênção da Dor",
-      "local": "Grupo de Estudos Saint Germain"
+      "local": "Grupo Espírita Saint Germain",
+      "endereco": "Rua Domingos Cabral, 111",
+      "bairro": "Freguesia (Jacarepaguá)",
+      "localId": "grupo-espirita-saint-germain"
     },
     {
       "data": "2026-12-04",
@@ -295,7 +302,10 @@ const DADOS = {
       "data": "2026-12-08",
       "horario": "19:30",
       "titulo": "A Fixação Mental",
-      "local": "Cruzado dos Militares Espíritas"
+      "local": "Cruzada dos Militares Espíritas",
+      "endereco": "Praça General Tibúrcio, 83 – Subsolo, coluna 25 (Edifício Praia Vermelha)",
+      "bairro": "Urca",
+      "localId": "cruzada-dos-militares-espiritas"
     },
     {
       "data": "2026-12-09",
@@ -313,7 +323,10 @@ const DADOS = {
       "data": "2026-12-16",
       "horario": "19:30",
       "titulo": "O Caminho da Vida",
-      "local": "Centro Espírita União Fraterna"
+      "local": "Associação Espírita União Fraterna",
+      "endereco": "Rua Diniz Cordeiro, 23",
+      "bairro": "Botafogo",
+      "localId": "associacao-espirita-uniao-fraterna"
     },
     {
       "data": "2026-12-18",
@@ -325,7 +338,10 @@ const DADOS = {
       "data": "2026-12-19",
       "horario": "20:00",
       "titulo": "A Vinda de Jesus",
-      "local": "Centro Espírita Cristófilos"
+      "local": "Centro Espírita Cristófilos",
+      "endereco": "Rua Martins Ferreira, 57",
+      "bairro": "Botafogo",
+      "localId": "centro-espirita-cristofilos"
     },
     {
       "data": "2026-12-23",
@@ -345,7 +361,9 @@ const DADOS = {
       "horario": "20:00",
       "titulo": "Ano Novo, vida nova: o que precisamos transformar em nós?",
       "local": "Grupo Espírita Fabiano",
-      "endereco": "Rua Paulo Silva Araújo, 52 – Méier, Rio de Janeiro – RJ"
+      "endereco": "Rua Paulo Silva Araújo, 52",
+      "bairro": "Méier",
+      "localId": "grupo-espirita-fabiano"
     }
   ],
 

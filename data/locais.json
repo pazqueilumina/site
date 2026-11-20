@@ -3,8 +3,24 @@
     {
       "id": "alianca-do-divino-pastor",
       "nome": "Aliança do Divino Pastor",
-      "endereco": "Rua Jardim Botânico, 94, Jardim Botânico, Rio de Janeiro",
+      "endereco": "Rua Jardim Botânico, 94",
       "bairro": "Jardim Botânico",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    {
+      "id": "associacao-espirita-uniao-fraterna",
+      "nome": "Associação Espírita União Fraterna",
+      "endereco": "Rua Diniz Cordeiro, 23",
+      "bairro": "Botafogo",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    {
+      "id": "centro-espirita-cristofilos",
+      "nome": "Centro Espírita Cristófilos",
+      "endereco": "Rua Martins Ferreira, 57",
+      "bairro": "Botafogo",
       "cidade": "Rio de Janeiro",
       "uf": "RJ"
     },
@@ -17,10 +33,26 @@
       "uf": "RJ"
     },
     {
+      "id": "cruzada-dos-militares-espiritas",
+      "nome": "Cruzada dos Militares Espíritas",
+      "endereco": "Praça General Tibúrcio, 83 – Subsolo, coluna 25 (Edifício Praia Vermelha)",
+      "bairro": "Urca",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    {
       "id": "grupo-espirita-fabiano",
       "nome": "Grupo Espírita Fabiano",
-      "endereco": "R. Paulo Silva Araújo, 52, Méier, Rio de Janeiro",
+      "endereco": "Rua Paulo Silva Araújo, 52",
       "bairro": "Méier",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    {
+      "id": "grupo-espirita-saint-germain",
+      "nome": "Grupo Espírita Saint Germain",
+      "endereco": "Rua Domingos Cabral, 111",
+      "bairro": "Freguesia (Jacarepaguá)",
       "cidade": "Rio de Janeiro",
       "uf": "RJ"
     },
