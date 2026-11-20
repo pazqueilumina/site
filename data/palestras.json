@@ -699,12 +699,12 @@
       "dataAproximada": true,
       "serie": "doutrina",
       "duracao": "47:40",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/teste-admin/PAL-0042.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
-      "statusPdf": "pendente"
+      "statusAudio": "existente",
+      "statusPdf": "sem-arquivo"
     },
     {
       "pid": "PAL-0025",
