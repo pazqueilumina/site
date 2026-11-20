@@ -15,7 +15,7 @@ function atualizarResumo() {
   $('situacao').textContent = estado.alterado ? 'Não publicado' : 'Atualizada';
   $('situacao').style.color = estado.alterado ? '#94691f' : '#3a795e';
   $('publicar').disabled = !estado.sha || !estado.alterado;
-  $('importarCsv').disabled = !estado.sha;
+  $('importarCsv').disabled = !estado.sha || !$('arquivoCsv').files?.length;
 }
 function ordenar() { estado.agenda.sort((a,b) => a.data.localeCompare(b.data) || a.horario.localeCompare(b.horario) || a.titulo.localeCompare(b.titulo,'pt-BR')); }
 function renderizar() {
@@ -270,10 +270,16 @@ function renderizarPreviaCsv() {
   $('confirmarCsv').disabled = !estado.sha || a.novos === 0 || !!a.erroGeral;
   $('baixarErrosPrevia').hidden = a.invalidos === 0;
 }
+function atualizarArquivoCsvSelecionado() {
+  const arquivo = $('arquivoCsv').files?.[0];
+  $('arquivoCsvSelecionado').textContent = arquivo ? arquivo.name : 'Nenhum arquivo selecionado';
+  $('importarCsv').disabled = !estado.sha || !arquivo;
+}
 function cancelarImportacaoCsv() {
   estado.importacao = null;
   $('painelCsv').hidden = true;
   $('arquivoCsv').value = '';
+  atualizarArquivoCsvSelecionado();
 }
 async function abrirImportacaoCsv(arquivo) {
   if (!arquivo) return;
@@ -357,8 +363,9 @@ $('local').addEventListener('input',()=>{ $('idLocal').value=''; atualizarAvisoL
 $('local').addEventListener('change',aplicarLocalDigitado);
 $('baixarErrosPrevia').addEventListener('click',()=>baixarRelatorioCsv(avaliarImportacaoCsv()));
 $('baixarErrosCsv').addEventListener('click',()=>baixarRelatorioCsv(estado.relatorioCsv));
-$('importarCsv').addEventListener('click', () => { $('arquivoCsv').value = ''; $('arquivoCsv').click(); });
-$('arquivoCsv').addEventListener('change', e => abrirImportacaoCsv(e.target.files?.[0]));
+$('selecionarCsv').addEventListener('click', () => $('arquivoCsv').click());
+$('arquivoCsv').addEventListener('change', atualizarArquivoCsvSelecionado);
+$('importarCsv').addEventListener('click', () => abrirImportacaoCsv($('arquivoCsv').files?.[0]));
 $('cancelarCsv').addEventListener('click', cancelarImportacaoCsv);
 $('confirmarCsv').addEventListener('click', confirmarImportacaoCsv);
 

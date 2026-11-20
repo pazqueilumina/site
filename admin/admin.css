@@ -71,3 +71,13 @@
 .link-modelo,.link-modelo-inline{color:var(--navy);text-decoration:none}
 .link-modelo-inline{text-decoration:underline}
 @media(max-width:590px){.importacao-conteudo{padding:0 16px 18px}.acoes-cabecalho{justify-content:flex-end}.cartao-cabecalho{flex-wrap:wrap}}
+
+/* Importação CSV abaixo do editor, preservando as duas colunas originais. */
+.coluna-editor{min-width:0;display:flex;flex-direction:column;gap:18px}
+.coluna-editor .importacao-csv{margin:0}
+.caixa-importar-csv{border-color:#c8dce9}
+.caixa-importar-csv .cartao-cabecalho{flex-wrap:wrap}
+.caixa-importar-csv .cartao-cabecalho .botao{text-decoration:none}
+.caixa-importar-acoes{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:0 24px 23px}
+.caixa-importar-acoes #arquivoCsvSelecionado{flex:1;min-width:120px;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+@media(max-width:590px){.caixa-importar-acoes{padding:0 16px 18px}.caixa-importar-csv .cartao-cabecalho .botao{white-space:normal}}
