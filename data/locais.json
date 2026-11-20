@@ -1,0 +1,36 @@
+{
+  "locais": [
+    {
+      "id": "alianca-do-divino-pastor",
+      "nome": "Aliança do Divino Pastor",
+      "endereco": "Rua Jardim Botânico, 94, Jardim Botânico, Rio de Janeiro",
+      "bairro": "Jardim Botânico",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    {
+      "id": "consolador-comunidade-espirita-crista",
+      "nome": "Consolador - Comunidade Espírita Cristã",
+      "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro",
+      "bairro": "Copacabana",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    {
+      "id": "grupo-espirita-fabiano",
+      "nome": "Grupo Espírita Fabiano",
+      "endereco": "R. Paulo Silva Araújo, 52, Méier, Rio de Janeiro",
+      "bairro": "Méier",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    {
+      "id": "lar-paulo-de-tarso",
+      "nome": "Lar Paulo de Tarso",
+      "endereco": "Rua Souza Lima, 423, Copacabana, Rio de Janeiro",
+      "bairro": "Copacabana",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    }
+  ]
+}

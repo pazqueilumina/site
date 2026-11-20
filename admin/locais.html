@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
+  <title>Cadastro de Locais | Estudos e Reflexões Espíritas</title>
+  <link rel="stylesheet" href="/admin/admin.css?v=locais1"><script defer src="/admin/locais.js?v=locais1"></script>
+</head>
+<body>
+  <header class="topo"><div class="topo-conteudo">
+    <div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Área administrativa · Cadastro de Locais</span></div></div>
+    <nav class="navegacao" aria-label="Navegação administrativa"><a href="/admin/">Agenda</a><a href="/admin/locais.html" aria-current="page">Locais</a><a href="/admin/palestras.html">Palestras</a><a href="/agenda.html" target="_blank" rel="noopener">Ver agenda pública ↗</a></nav>
+  </div></header>
+  <main class="container">
+    <div class="intro"><div><p class="sobretitulo">PAINEL DE CONTROLE</p><h1>Cadastro de Centros e Locais</h1><p>Cadastre instituições e endereços para preencher automaticamente os eventos da Agenda. Os eventos antigos não são alterados quando um local é editado.</p></div><button type="button" id="publicarLocais" class="botao principal" disabled>Publicar alterações</button></div>
+    <div id="mensagemLocais" class="mensagem" role="status" aria-live="polite">Carregando locais…</div>
+    <div class="indicadores"><div class="indicador"><span>Locais cadastrados</span><strong id="totalLocais">—</strong></div><div class="indicador"><span>Situação</span><strong id="situacaoLocais" class="situacao">Carregando</strong></div></div>
+    <div class="painel">
+      <section class="cartao lista"><div class="cartao-cabecalho"><div><h2>Centros e locais</h2><p>Selecione um local para editar.</p></div><button type="button" id="novoLocal" class="botao secundario">+ Novo local</button></div><div class="filtros"><label class="campo-busca"><span class="sr-only">Buscar locais</span><input id="buscaLocal" type="search" placeholder="Buscar por nome, bairro ou cidade…"></label></div><div id="listaLocais" class="lista-eventos"><p class="vazio">Carregando…</p></div></section>
+      <section class="cartao editor"><div class="cartao-cabecalho"><div><h2 id="tituloEditorLocal">Novo local</h2><p>Campos com * são obrigatórios.</p></div></div>
+        <form id="formLocal">
+          <label>Nome do Centro / Local *<input id="nomeLocal" maxlength="180" required placeholder="Ex.: Centro Espírita União Fraterna"></label>
+          <label>Endereço completo *<input id="enderecoLocal" maxlength="500" required placeholder="Rua, número e complemento"></label>
+          <label>Bairro<input id="bairroLocal" maxlength="180" placeholder="Opcional"></label>
+          <div class="duas-colunas"><label>Cidade *<input id="cidadeLocal" maxlength="180" required></label><label>UF *<input id="ufLocal" maxlength="2" minlength="2" pattern="[A-Za-z]{2}" required placeholder="RJ" style="text-transform:uppercase"></label></div>
+          <label>Link do Google Maps<input id="mapsLocal" type="url" maxlength="500" pattern="https://.*" placeholder="https://maps.google.com/…"><small>Opcional. Não é o link de transmissão da palestra.</small></label>
+          <div class="acoes"><button id="salvarLocal" type="submit" class="botao principal">Adicionar à lista</button><button id="limparLocal" type="button" class="botao discreto">Limpar</button><button id="excluirLocal" type="button" class="botao perigoso" hidden>Excluir local</button></div>
+          <p class="ajuda">As alterações só serão enviadas ao GitHub ao clicar em <strong>Publicar alterações</strong>. A exclusão de um local não apaga eventos da Agenda.</p>
+        </form>
+      </section>
+    </div>
+    <p class="rodape">Acesso protegido pelo Cloudflare Access. O cadastro é armazenado em data/locais.json no GitHub.</p>
+  </main>
+</body>
+</html>

@@ -64,20 +64,22 @@ function dataValida(value) {
 
 export function validarAgenda(input) {
   if (!Array.isArray(input) || input.length > 500) throw new Error('A agenda deve ter no máximo 500 eventos.');
-  const keys = ['data', 'horario', 'titulo', 'local', 'endereco', 'link'];
+  const keys = ['data', 'horario', 'titulo', 'local', 'endereco', 'link', 'mapa', 'localId'];
   const output = input.map((item, index) => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) throw new Error(`Evento ${index + 1} inválido.`);
     const obj = {};
     for (const key of keys) {
       if (item[key] !== undefined && typeof item[key] !== 'string') throw new Error(`Campo ${key} inválido no evento ${index + 1}.`);
       const val = (item[key] || '').trim();
-      if (val.length > (key === 'endereco' || key === 'link' ? 500 : 180)) throw new Error(`Campo ${key} muito longo no evento ${index + 1}.`);
+      if (val.length > (['endereco', 'link', 'mapa'].includes(key) ? 500 : 180)) throw new Error(`Campo ${key} muito longo no evento ${index + 1}.`);
       if (val) obj[key] = val;
     }
     if (!dataValida(obj.data || '')) throw new Error(`Data inválida no evento ${index + 1}.`);
     if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(obj.horario || '')) throw new Error(`Horário inválido no evento ${index + 1}.`);
     if (!obj.titulo || !obj.local) throw new Error(`Preencha título e local do evento ${index + 1}.`);
     if (obj.link && !/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/i.test(obj.link)) throw new Error(`O link do evento ${index + 1} deve começar com https://.`);
+    if (obj.mapa && !/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/i.test(obj.mapa)) throw new Error(`O link do mapa do evento ${index + 1} deve começar com https://.`);
+    if (obj.localId && !/^[a-z0-9][a-z0-9-]{0,79}$/.test(obj.localId)) throw new Error(`Identificador do local inválido no evento ${index + 1}.`);
     return obj;
   });
   output.sort((a, b) => a.data.localeCompare(b.data) || a.horario.localeCompare(b.horario) || a.titulo.localeCompare(b.titulo, 'pt-BR'));

@@ -37,3 +37,23 @@ export async function gravarDados(token, content, sha, branch) {
   if (!res.ok) throw new Error(`O GitHub não aceitou a atualização (HTTP ${res.status}). Verifique as permissões do token.`);
   return res.json();
 }
+
+// Cadastro de locais em arquivo separado, preservando o js/dados.js da agenda.
+const LOCAIS_FILE = 'data/locais.json';
+const LOCAIS_URL = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${LOCAIS_FILE}`;
+export async function obterLocais(token, branch) {
+  const res = await fetch(LOCAIS_URL + '?ref=' + encodeURIComponent(branch), { headers: headers(token), cache: 'no-store' });
+  if (!res.ok) throw new Error(`Não foi possível ler data/locais.json (HTTP ${res.status}). Publique primeiro o arquivo inicial.`);
+  const result = await res.json();
+  if (result.encoding !== 'base64' || !result.content || !result.sha) throw new Error('Resposta inesperada do GitHub para locais.');
+  return { content: decodeBase64(result.content), sha: result.sha };
+}
+export async function gravarLocais(token, content, sha, branch) {
+  const res = await fetch(LOCAIS_URL, {
+    method: 'PUT', headers: headers(token),
+    body: JSON.stringify({ message: 'Atualizar cadastro de locais pelo painel', content: encodeBase64(content), sha, branch })
+  });
+  if (res.status === 409 || res.status === 422) throw new Error('CONFLITO: cadastro alterado no GitHub. Recarregue antes de publicar.');
+  if (!res.ok) throw new Error(`O GitHub não aceitou o cadastro de locais (HTTP ${res.status}).`);
+  return res.json();
+}

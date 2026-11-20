@@ -405,11 +405,11 @@ function itemAgenda(evento, compacto) {
     );
   }
 
-  const maps = linkMaps(evento.endereco);
+  const maps = evento.mapa && /^https:\/\/[^\s/]+/i.test(evento.mapa) ? evento.mapa : linkMaps(evento.endereco);
   const tituloLink = !maps ? ""
     : maps.indexOf("google.com/maps") > -1 ? "Ver no Google Maps"
     : maps.indexOf("youtube") > -1 ? "Abrir no YouTube"
-    : "Abrir no Instagram";
+    : maps.indexOf("instagram") > -1 ? "Abrir no Instagram" : "Ver no Google Maps";
   const linhaEndereco = evento.endereco
     ? (maps
         ? '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(maps) + '" target="_blank" rel="noopener" title="' + tituloLink + '">' + icone("pin") + escapar(evento.endereco) + icone("externo") + "</a></div>"
@@ -761,45 +761,101 @@ function renderizarSlides() {
 
 /* ---------------- PÁGINA: AGENDA ---------------- */
 
+/* Filtros exclusivos da Agenda completa. A página inicial permanece sem filtros. */
+let CADASTRO_LOCAIS_AGENDA = [];
+function normalizarLocalAgenda(valor) {
+  return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
+}
+function slugLocalAgenda(valor) {
+  return normalizarLocalAgenda(valor).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function chaveLocalAgenda(evento) {
+  const local = CADASTRO_LOCAIS_AGENDA.find(l => l.id === evento.localId)
+    || CADASTRO_LOCAIS_AGENDA.find(l => normalizarLocalAgenda(l.nome) === normalizarLocalAgenda(evento.local));
+  return local ? local.id : slugLocalAgenda(evento.local);
+}
 function renderizarAgenda() {
-  const principal = document.getElementById("principal");
+  const principal = document.getElementById('principal');
   const eventos = proximosEventos();
-
-  // Eventos já realizados (do mais recente para o mais antigo)
   const hoje = new Date();
-  const chaveHoje = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, "0") + "-" + String(hoje.getDate()).padStart(2, "0");
-  const passados = (DADOS.agenda || [])
-    .filter((e) => e.data < chaveHoje)
-    .sort((x, y) => (x.data < y.data ? 1 : -1));
-
-  function pintar(termo) {
-    const t = (termo || "").trim().toLowerCase();
-    const filtraEvento = (e) => !t || [e.titulo, e.local].join(" ").toLowerCase().includes(t);
-    const filtrados = eventos.filter(filtraEvento);
-    const filtradosPassados = passados.filter(filtraEvento);
-
-    const alvo = document.getElementById("listaAgenda");
-    alvo.innerHTML = filtrados.length
-      ? filtrados.map((e) => itemAgenda(e, false)).join("")
-      : '<div class="vazio">Nenhum evento futuro corresponde à busca.</div>';
-
-    const alvoPassados = document.getElementById("secaoPassados");
-    if (alvoPassados) {
-      alvoPassados.style.display = filtradosPassados.length ? "" : "none";
-      document.getElementById("listaPassados").innerHTML = filtradosPassados.map(itemAgendaPassado).join("");
+  const chaveHoje = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0') + '-' + String(hoje.getDate()).padStart(2, '0');
+  const passados = (DADOS.agenda || []).filter(e => e.data < chaveHoje).sort((a,b) => b.data.localeCompare(a.data));
+  const todos = [...eventos, ...passados];
+  const opcoes = new Map();
+  for(const e of todos) {
+    if (!e.local) continue;
+    const key = chaveLocalAgenda(e);
+    if (!opcoes.has(key)) {
+      const cadastro = CADASTRO_LOCAIS_AGENDA.find(l => l.id === key);
+      opcoes.set(key, cadastro ? cadastro.nome : e.local);
     }
   }
-
+  const centros = [...opcoes].sort((a,b) => a[1].localeCompare(b[1], 'pt-BR'));
+  const parametros = new URLSearchParams(location.search);
+  const centroInicial = parametros.get('centro') || '';
+  const periodoInicial = ['todos','futuros','passados'].includes(parametros.get('periodo')) ? parametros.get('periodo') : 'todos';
+  const buscaInicial = parametros.get('buscaAgenda') || '';
   principal.innerHTML =
-    "<h1 class=\"titulo-pagina\">Agenda de apresentações</h1>" +
+    '<h1 class="titulo-pagina">Agenda de apresentações</h1>' +
     '<p class="subtitulo-pagina">Próximos encontros, palestras e estudos abertos. Participe — a entrada é gratuita.</p>' +
+    '<div class="filtro-agenda-publica" role="search" aria-label="Filtrar eventos da agenda">' +
+      '<label>Filtrar por Centro / Local<select id="filtroCentroAgenda"><option value="">Todos os Centros e locais</option>' +
+      centros.map(([id,nome])=>'<option value="'+escapar(id)+'">'+escapar(nome)+'</option>').join('')+'</select></label>' +
+      '<label>Período<select id="filtroPeriodoAgenda"><option value="todos">Todos</option><option value="futuros">Próximos</option><option value="passados">Realizados</option></select></label>' +
+      '<label>Buscar na agenda<input id="buscaAgendaPublica" type="search" placeholder="Título, tema ou palestrante…" maxlength="180"></label>' +
+      '<div class="filtro-agenda-botoes"><button type="button" id="limparFiltrosAgenda">Limpar filtros</button><button type="button" id="compartilharCentroAgenda" hidden>Copiar link do Centro</button></div>' +
+    '</div>' +
+    '<p id="contagemAgenda" class="contagem-agenda" aria-live="polite"></p>' +
     '<div class="agenda-lista" id="listaAgenda"></div>' +
     '<section class="secao" id="secaoPassados" style="margin-top:38px">' +
     '<div class="cabecalho-secao"><h2>Eventos passados</h2></div>' +
     '<div class="agenda-lista agenda-passados" id="listaPassados"></div>' +
-    "</section>";
-
-  pintar("");
+    '</section>';
+  const centro = document.getElementById('filtroCentroAgenda');
+  const periodo = document.getElementById('filtroPeriodoAgenda');
+  const busca = document.getElementById('buscaAgendaPublica');
+  centro.value = centros.some(([id])=>id===centroInicial) ? centroInicial : '';
+  periodo.value = periodoInicial;
+  busca.value = buscaInicial;
+  let buscaGlobal = '';
+  function pintar(termoGlobal) {
+    if (termoGlobal !== undefined) buscaGlobal = termoGlobal;
+    const c = centro.value, p = periodo.value;
+    const t = normalizarLocalAgenda([busca.value,buscaGlobal].filter(Boolean).join(' '));
+    const corresponde = e => (!c || chaveLocalAgenda(e)===c) && (!t || t.split(/\s+/).every(palavra=>normalizarLocalAgenda([e.titulo,e.local,e.endereco||''].join(' ')).includes(palavra)));
+    const futuros = (p==='passados' ? [] : eventos).filter(corresponde);
+    const antigos = (p==='futuros' ? [] : passados).filter(corresponde);
+    const alvo = document.getElementById('listaAgenda');
+    alvo.innerHTML = futuros.length ? futuros.map(e=>itemAgenda(e,false)).join('') : '<div class="vazio">Nenhum evento futuro corresponde aos filtros.</div>';
+    // Ao selecionar apenas realizados, ocultar a lista de próximos eventos.
+    alvo.style.display = p==='passados' ? 'none' : '';
+    const historico = document.getElementById('secaoPassados');
+    historico.style.display = antigos.length ? '' : 'none';
+    document.getElementById('listaPassados').innerHTML = antigos.map(itemAgendaPassado).join('');
+    const total = futuros.length + antigos.length;
+    document.getElementById('contagemAgenda').textContent = total + (total===1?' evento encontrado':' eventos encontrados');
+    document.getElementById('compartilharCentroAgenda').hidden = !c;
+  }
+  function atualizarUrl() {
+    const url = new URL(location.href);
+    if (centro.value) url.searchParams.set('centro',centro.value); else url.searchParams.delete('centro');
+    if (periodo.value!=='todos') url.searchParams.set('periodo',periodo.value); else url.searchParams.delete('periodo');
+    if (busca.value) url.searchParams.set('buscaAgenda',busca.value); else url.searchParams.delete('buscaAgenda');
+    history.replaceState(null,'',url.pathname+url.search+url.hash);
+  }
+  function atualizar(){pintar();atualizarUrl();}
+  centro.addEventListener('change',atualizar);
+  periodo.addEventListener('change',atualizar);
+  busca.addEventListener('input',atualizar);
+  document.getElementById('limparFiltrosAgenda').addEventListener('click',()=>{centro.value='';periodo.value='todos';busca.value='';atualizar();});
+  document.getElementById('compartilharCentroAgenda').addEventListener('click',async()=>{
+    const url=new URL(location.href);
+    url.searchParams.set('centro',centro.value);
+    url.searchParams.delete('periodo');url.searchParams.delete('buscaAgenda');url.searchParams.delete('q');
+    try{await navigator.clipboard.writeText(url.toString());const botao=document.getElementById('compartilharCentroAgenda');botao.textContent='Link copiado!';setTimeout(()=>{botao.textContent='Copiar link do Centro';},2000);}
+    catch{window.prompt('Copie o link do Centro:',url.toString());}
+  });
+  pintar('');
   window.__filtroLista = pintar;
 }
 
@@ -1046,6 +1102,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     sobre: renderizarSobre,
     contato: renderizarContato
   };
+  if (pagina === 'agenda') {
+    try { const r = await fetch('/data/locais.json', {cache:'no-cache'}); if (r.ok) { const d=await r.json(); if(Array.isArray(d.locais)) CADASTRO_LOCAIS_AGENDA=d.locais; } }
+    catch(e) { console.warn('Cadastro público de locais indisponível; usando nomes da agenda.'); }
+  }
   (renderizadores[pagina] || renderizarInicio)();
 
   configurarBuscaGlobalAcervo();
