@@ -190,29 +190,163 @@ const DADOS = {
      os que já passaram vão para o histórico na página da Agenda.
      ============================================================ */
   agenda: [
-    { data: "2026-10-09", titulo: "Jesus no Lar (6º Capítulo)", local: "Consolador - Comunidade Espírita Cristã", endereco: "Instagram (online)", horario: "20:00" },
-    { data: "2026-10-16", titulo: "O Terceiro Ano do Ministério de Jesus (Parte 13)", local: "Cristo Consolador", endereco: "YouTube (online)", horario: "19:00" },
-    { data: "2026-10-19", titulo: "Espíritos Que Vieram no Séc. XVI na França e Reencarnaram no Brasil", local: "Grupo Espírita Fabiano", endereco: "R. Paulo Silva Araújo, 52, Méier, Rio de Janeiro", horario: "19:00" },
-    { data: "2026-10-23", titulo: "O Terceiro Ano do Ministério de Jesus (Parte 14)", local: "Cristo Consolador", endereco: "YouTube (online)", horario: "19:00" },
-    { data: "2026-11-03", titulo: "A Parábola do Bom Samaritano", local: "Aliança do Divino Pastor", endereco: "Rua Jardim Botânico, 94, Jardim Botânico, Rio de Janeiro", horario: "20:00" },
-    { data: "2026-11-04", titulo: "O Fenômeno da Morte", local: "Lar Paulo de Tarso", endereco: "Rua Souza Lima, 423, Copacabana, Rio de Janeiro", horario: "17:00" },
-    { data: "2026-11-04", titulo: "Do Outro Lado da Vida", local: "Consolador - Comunidade Espírita Cristã", endereco: "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro", horario: "20:00" },
-    { data: "2026-11-09", titulo: "Fixação Mental", local: "Consolador - Comunidade Espírita Cristã", endereco: "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro", horario: "20:00" },
-    { data: "2026-11-13", titulo: "O Quinto Dos Últimos Dias de Jesus (Parte 1)", local: "Cristo Consolador", endereco: "YouTube (online)", horario: "19:00" },
-    { data: "2026-11-20", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
-    { data: "2026-11-27", titulo: "O Quinto Dos Últimos Dias de Jesus (Parte 2)", local: "Cristo Consolador", endereco: "YouTube (online)", horario: "19:00" },
-    { data: "2026-11-27", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
-    { data: "2026-11-27", titulo: "Live no Instagram", local: "Consolador - Comunidade Espírita Cristã", endereco: "Instagram (online)", horario: "20:00" },
-    { data: "2026-11-28", titulo: "A Bênção da Dor", local: "Grupo de Estudos Saint Germain", horario: "18:00" },
-    { data: "2026-12-04", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
-    { data: "2026-12-08", titulo: "A Fixação Mental", local: "Cruzado dos Militares Espíritas", horario: "19:30" },
-    { data: "2026-12-09", titulo: "Vá e Não Peques Mais", local: "Consolador - Comunidade Espírita Cristã", horario: "20:00" },
-    { data: "2026-12-11", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
-    { data: "2026-12-16", titulo: "O Caminho da Vida", local: "Centro Espírita União Fraterna", horario: "19:30" },
-    { data: "2026-12-18", titulo: "Programa Pelos Caminhos de Jesus", local: "Web Rádio Cristo Consolador (YouTube)", horario: "20:00" },
-    { data: "2026-12-19", titulo: "A Vinda de Jesus", local: "Centro Espírita Cristófilos", horario: "20:00" },
-    { data: "2026-12-23", titulo: "Homenagem a Yvonne do Amaral Pereira", local: "Consolador - Comunidade Espírita Cristã", horario: "20:00" },
-    { data: "2026-12-25", titulo: "Live de Natal", local: "Consolador - Comunidade Espírita Cristã", endereco: "Instagram (online)", horario: "20:00" }
+    {
+      "data": "2026-10-09",
+      "horario": "20:00",
+      "titulo": "Jesus no Lar (6º Capítulo)",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "endereco": "Instagram (online)"
+    },
+    {
+      "data": "2026-10-16",
+      "horario": "19:00",
+      "titulo": "O Terceiro Ano do Ministério de Jesus (Parte 13)",
+      "local": "Cristo Consolador",
+      "endereco": "YouTube (online)"
+    },
+    {
+      "data": "2026-10-19",
+      "horario": "19:00",
+      "titulo": "Espíritos Que Vieram no Séc. XVI na França e Reencarnaram no Brasil",
+      "local": "Grupo Espírita Fabiano",
+      "endereco": "R. Paulo Silva Araújo, 52, Méier, Rio de Janeiro"
+    },
+    {
+      "data": "2026-10-23",
+      "horario": "19:00",
+      "titulo": "O Terceiro Ano do Ministério de Jesus (Parte 14)",
+      "local": "Cristo Consolador",
+      "endereco": "YouTube (online)"
+    },
+    {
+      "data": "2026-11-03",
+      "horario": "20:00",
+      "titulo": "A Parábola do Bom Samaritano",
+      "local": "Aliança do Divino Pastor",
+      "endereco": "Rua Jardim Botânico, 94, Jardim Botânico, Rio de Janeiro"
+    },
+    {
+      "data": "2026-11-04",
+      "horario": "17:00",
+      "titulo": "O Fenômeno da Morte",
+      "local": "Lar Paulo de Tarso",
+      "endereco": "Rua Souza Lima, 423, Copacabana, Rio de Janeiro"
+    },
+    {
+      "data": "2026-11-04",
+      "horario": "20:00",
+      "titulo": "Do Outro Lado da Vida",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro"
+    },
+    {
+      "data": "2026-11-09",
+      "horario": "20:00",
+      "titulo": "Fixação Mental",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro"
+    },
+    {
+      "data": "2026-11-13",
+      "horario": "19:00",
+      "titulo": "O Quinto Dos Últimos Dias de Jesus (Parte 1)",
+      "local": "Cristo Consolador",
+      "endereco": "YouTube (online)"
+    },
+    {
+      "data": "2026-11-20",
+      "horario": "20:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador (YouTube)"
+    },
+    {
+      "data": "2026-11-27",
+      "horario": "19:00",
+      "titulo": "O Quinto Dos Últimos Dias de Jesus (Parte 2)",
+      "local": "Cristo Consolador",
+      "endereco": "YouTube (online)"
+    },
+    {
+      "data": "2026-11-27",
+      "horario": "20:00",
+      "titulo": "Live no Instagram",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "endereco": "Instagram (online)"
+    },
+    {
+      "data": "2026-11-27",
+      "horario": "20:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador (YouTube)"
+    },
+    {
+      "data": "2026-11-28",
+      "horario": "18:00",
+      "titulo": "A Bênção da Dor",
+      "local": "Grupo de Estudos Saint Germain"
+    },
+    {
+      "data": "2026-12-04",
+      "horario": "20:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador (YouTube)"
+    },
+    {
+      "data": "2026-12-08",
+      "horario": "19:30",
+      "titulo": "A Fixação Mental",
+      "local": "Cruzado dos Militares Espíritas"
+    },
+    {
+      "data": "2026-12-09",
+      "horario": "20:00",
+      "titulo": "Vá e Não Peques Mais",
+      "local": "Consolador - Comunidade Espírita Cristã"
+    },
+    {
+      "data": "2026-12-11",
+      "horario": "20:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador (YouTube)"
+    },
+    {
+      "data": "2026-12-16",
+      "horario": "19:30",
+      "titulo": "O Caminho da Vida",
+      "local": "Centro Espírita União Fraterna"
+    },
+    {
+      "data": "2026-12-18",
+      "horario": "20:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador (YouTube)"
+    },
+    {
+      "data": "2026-12-19",
+      "horario": "20:00",
+      "titulo": "A Vinda de Jesus",
+      "local": "Centro Espírita Cristófilos"
+    },
+    {
+      "data": "2026-12-23",
+      "horario": "20:00",
+      "titulo": "Homenagem a Yvonne do Amaral Pereira",
+      "local": "Consolador - Comunidade Espírita Cristã"
+    },
+    {
+      "data": "2026-12-25",
+      "horario": "20:00",
+      "titulo": "Live de Natal",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "endereco": "Instagram (online)"
+    },
+    {
+      "data": "2026-12-28",
+      "horario": "20:00",
+      "titulo": "Ano Novo, vida nova: o que precisamos transformar em nós?",
+      "local": "Grupo Espírita Fabiano",
+      "endereco": "Rua Paulo Silva Araújo, 52 – Méier, Rio de Janeiro – RJ"
+    }
   ],
 
   /* ---------- Página "Livro" ---------- */
