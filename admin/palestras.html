@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="same-origin">
+  <title>Palestras | Administração</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="stylesheet" href="/admin/palestras.css">
+  <script defer src="/admin/palestras.js"></script>
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-conteudo">
+      <div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Administração · Palestras</span></div></div>
+      <nav class="navegacao"><a href="/admin/">Agenda</a><a href="/admin/palestras.html" aria-current="page">Palestras</a><a href="/videos.html" target="_blank" rel="noopener">Ver site ↗</a></nav>
+    </div>
+  </header>
+  <main class="container">
+    <div class="intro">
+      <div><p class="sobretitulo">ACERVO DE PALESTRAS</p><h1>Gerenciar palestras</h1><p>Cadastre vídeos, associe MP3 e PDFs existentes e prepare importações. Os IDs são permanentes e não aparecem no site público.</p></div>
+      <button id="publicarP" class="botao principal" type="button" disabled>Publicar alterações</button>
+    </div>
+    <div id="mensagemP" class="mensagem" role="status" aria-live="polite">Carregando cadastro…</div>
+    <div class="indicadores">
+      <div class="indicador"><span>Palestras</span><strong id="totalP">—</strong></div>
+      <div class="indicador"><span>Com vídeo</span><strong id="videosP">—</strong></div>
+      <div class="indicador"><span>Com áudio</span><strong id="audiosP">—</strong></div>
+      <div class="indicador"><span>Com PDF</span><strong id="pdfsP">—</strong></div>
+    </div>
+    <div class="painel">
+      <section class="cartao lista" aria-labelledby="tituloAcervo">
+        <div class="cartao-cabecalho"><div><h2 id="tituloAcervo">Acervo</h2><p>Selecione uma palestra para editar. Ordem cronológica.</p></div><button id="novoP" class="botao secundario" type="button">+ Nova</button></div>
+        <div class="filtros">
+          <label class="campo-busca"><span class="sr-only">Buscar palestra</span><input id="buscaP" type="search" placeholder="Título ou ID…"></label>
+          <select id="filtroP" aria-label="Filtrar palestras"><option value="todos">Todas</option><option value="semAudio">Sem áudio</option><option value="semPdf">Sem PDF</option></select>
+          <button id="ordenarP" class="botao-ordenacao" type="button" aria-pressed="false" aria-label="Mais antigas primeiro. Clique para mostrar as mais recentes primeiro." title="Mais antigas primeiro. Clique para mostrar as mais recentes primeiro.">↑↓</button>
+        </div>
+        <div id="listaP" class="lista-eventos" aria-label="Lista de palestras"></div>
+      </section>
+      <section class="cartao editor" aria-labelledby="gerenciarTitulo">
+        <div class="gerenciar-cabecalho"><h2 id="gerenciarTitulo">Gerenciamento de palestras</h2></div>
+        <div class="editor-abas" role="tablist" aria-label="Ações de gerenciamento">
+          <button id="abaEditar" type="button" class="editor-aba" role="tab" aria-selected="false" aria-controls="painelFormulario">✎ Editar palestra</button>
+          <button id="abaNova" type="button" class="editor-aba ativa" role="tab" aria-selected="true" aria-controls="painelFormulario">＋ Nova palestra</button>
+          <button id="abaImportar" type="button" class="editor-aba" role="tab" aria-selected="false" aria-controls="painelImportar">⇧ Importar em lote</button>
+        </div>
+        <div id="avisoSelecionar" class="editor-vazio" hidden>Selecione uma palestra no acervo à esquerda para editar seus dados.</div>
+        <div id="painelFormulario" role="tabpanel" aria-label="Cadastro e edição de palestra">
+          <div class="cartao-cabecalho"><div><h2 id="tituloP">Nova palestra</h2><p>Campos vazios de material significam que ele ainda não está disponível.</p></div></div>
+          <form id="formP">
+            <label>ID permanente<input id="pid" readonly placeholder="Gerado automaticamente"></label>
+            <label>Título *<input id="titulo" maxlength="300" required></label>
+            <div class="duas-colunas"><label>Data da palestra / publicação<input id="data" type="date"></label><label>Data aproximada<select id="aproximada"><option value="sim">Sim</option><option value="nao">Não</option></select></label></div>
+            <label>URL do YouTube<input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=..."></label>
+            <label>Link do MP3 existente<input id="audio" placeholder="https://... ou /audio/..." maxlength="1500"></label>
+            <div class="upload-r2" aria-labelledby="tituloUploadR2">
+              <strong id="tituloUploadR2">Enviar MP3 do computador para o R2</strong>
+              <p class="ajuda">O nome no armazenamento será o ID permanente da palestra (ex.: PAL-0080.mp3). O arquivo é enviado separadamente do cadastro.</p>
+              <label for="arquivoMp3R2">Arquivo MP3 (até 300 MB)
+                <input id="arquivoMp3R2" type="file" accept=".mp3,audio/mpeg" disabled>
+              </label>
+              <button id="enviarAudioR2" class="botao secundario" type="button" disabled>↑ Enviar MP3 ao R2</button>
+              <progress id="progressoAudioR2" max="100" value="0" hidden></progress>
+              <p id="statusAudioR2" class="upload-r2-status" role="status" aria-live="polite">Verificando integração com o R2…</p>
+            </div>
+            <label>Link do PDF existente<input id="pdf" placeholder="https://... ou /pdf/..." maxlength="1500"></label>
+            <label>Nome do arquivo PPTX/PDF para processamento posterior<input id="arquivo" placeholder="Apresentacao.pptx" maxlength="250"></label>
+            <label>Série<select id="serie"><option value="temas">Reflexões</option><option value="doutrina">Doutrina e História</option><option value="evangelho">Histórias do Evangelho</option><option value="ministerio">O Ministério de Jesus</option><option value="parabolas">Parábolas</option><option value="ultimos-dias">Os Últimos Dias de Jesus</option></select></label>
+            <div class="acoes"><button type="submit" class="botao principal">Salvar na lista</button><button id="cancelarP" type="button" class="botao discreto">Descartar alterações</button></div>
+            <p class="ajuda">Salvar na lista prepara a alteração. Somente <strong>Publicar alterações</strong> envia o cadastro ao GitHub.</p>
+          </form>
+        </div>
+        <div id="painelImportar" class="importacao" role="tabpanel" aria-labelledby="abaImportar" hidden>
+          <h2>Importar em lote</h2>
+          <p>Importe um CSV com as colunas <code>ID,Titulo,Data,YouTube,Apresentacao</code>. Linhas existentes são atualizadas sem apagar campos vazios. Revise o resultado antes de publicar.</p>
+          <label for="csvP" class="rotulo-importacao">Arquivo CSV</label><input type="file" id="csvP" accept=".csv,text/csv">
+          <div class="acoes"><button id="colarP" type="button" class="botao secundario">Adicionar URLs em lote</button><button id="exportarP" type="button" class="botao discreto">Exportar CSV com IDs</button></div>
+          <label for="urlsP" class="rotulo-importacao" id="rotuloUrlsP" hidden>URLs do YouTube</label><textarea id="urlsP" rows="5" placeholder="Cole uma URL do YouTube por linha" hidden></textarea>
+          <button id="aplicarUrlsP" class="botao principal" type="button" hidden>Preparar URLs</button>
+          <p class="ajuda">A importação prepara os registros para revisão. Não envia arquivos de áudio ou apresentações e não publica automaticamente.</p>
+        </div>
+      </section>
+    </div>
+    <p class="rodape">O upload de MP3 utiliza o R2. A conversão PPTX → PDF permanece para uma etapa posterior. Salve e publique o cadastro após cada envio.</p>
+  </main>
+</body>
+</html>

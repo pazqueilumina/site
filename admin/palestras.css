@@ -1,0 +1,43 @@
+.navegacao{display:flex;gap:18px;flex-wrap:wrap}
+.navegacao a{color:#f4e2c5;text-decoration:none;font-size:13px}
+.navegacao a[aria-current]{font-weight:800;text-decoration:underline}
+.editor select{display:block;margin-top:8px;width:100%;height:43px;border:1px solid #d7dfe4;border-radius:8px;padding:0 12px;background:white}
+.editor input[readonly]{background:#f2f4f5;color:#53616d}
+.gerenciar-cabecalho{padding:23px 24px 12px}
+.gerenciar-cabecalho h2{margin:0}
+.editor-abas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0 24px 8px;padding:4px;gap:4px;border:1px solid var(--line);border-radius:10px;background:#f6f8fa}
+.editor-aba{min-width:0;min-height:43px;padding:10px 6px;border:0;border-radius:7px;background:transparent;color:var(--navy);font-size:12px;font-weight:700;cursor:pointer}
+.editor-aba:hover{background:#e7eef4}
+.editor-aba.ativa,.editor-aba[aria-selected="true"]{background:var(--navy);color:#fff;box-shadow:0 2px 5px rgba(0,0,0,.12)}
+.editor-aba:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.editor-vazio{margin:20px 24px 24px;padding:22px 18px;border:1px dashed #bdcbd6;border-radius:9px;color:var(--muted);font-size:13px;line-height:1.6;background:#f8fafb}
+.importacao{padding:16px 24px 24px}
+.importacao h2{font:600 23px Georgia,serif;margin:0 0 8px;color:var(--navy)}
+.importacao p{font-size:13px;line-height:1.6;color:var(--muted)}
+.importacao textarea{width:100%;padding:12px;margin-top:8px;border:1px solid var(--line);border-radius:8px;resize:vertical}
+.importacao input[type=file]{max-width:100%;display:block;margin:10px 0 14px}
+.importacao .rotulo-importacao{font-size:12px;font-weight:700;display:block;margin-top:18px}
+.importacao .acoes{margin:15px 0}
+.importacao button{margin-top:5px}
+/* Controle compacto de ordenação, ao lado do filtro de palestras. */
+.lista .filtros{display:grid;grid-template-columns:minmax(0,1fr) minmax(92px,120px) 38px;align-items:center;gap:8px}
+.lista .filtros .campo-busca,.lista .filtros select{min-width:0;width:100%}
+.lista .filtros .botao-ordenacao{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:38px;height:38px;padding:0;border:1px solid #d7dfe4;border-radius:8px;background:#fff;color:var(--navy);font-size:19px;font-weight:700;line-height:1;cursor:pointer;white-space:nowrap}
+.lista .filtros .botao-ordenacao:hover{background:#edf3f8;border-color:#a8bfce}
+.lista .filtros .botao-ordenacao:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.lista-eventos .evento-data{min-width:72px}
+.evento-corpo small{display:block;color:#697987;margin-top:5px}
+[hidden]{display:none!important}
+@media(max-width:590px){.navegacao{gap:8px}.gerenciar-cabecalho{padding:18px 16px 10px}.editor-abas{margin:0 16px 8px}.editor-aba{font-size:11px;padding:9px 3px}.importacao{padding:16px}.editor-vazio{margin:16px}}
+
+/* Upload de MP3: mantém a aparência do editor e não interfere no cadastro. */
+.upload-r2{padding:15px;margin:0 0 18px;border:1px solid #d7dfe4;border-radius:10px;background:#f8fafb}
+.upload-r2>strong{display:block;color:var(--navy);font-size:13px}
+.upload-r2 .ajuda{margin:6px 0 12px}
+.editor .upload-r2 label{margin:0 0 10px}
+.editor .upload-r2 input[type=file]{height:auto;min-height:43px;padding:10px;background:#fff;max-width:100%;font-size:12px}
+.upload-r2 .botao{max-width:100%;white-space:normal}
+.upload-r2 progress{display:block;width:100%;height:12px;margin:12px 0 0;accent-color:var(--navy)}
+.upload-r2-status{font-size:12px;line-height:1.5;color:var(--muted);margin:10px 0 0}
+.upload-r2-status.erro{color:#a13636}
+.upload-r2-status.sucesso{color:#266846}

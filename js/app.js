@@ -1018,7 +1018,19 @@ function configurarAnalytics() {
 
 /* ---------------- INICIALIZAÇÃO ---------------- */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("/data/palestras.json", {cache:"no-cache"});
+    if (res.ok) {
+      const catalogo = await res.json();
+      if (Array.isArray(catalogo.palestras)) {
+        DADOS.videos = catalogo.palestras.filter(p => p.youtubeId).map(p => ({
+          id:p.youtubeId, pid:p.pid, t:p.titulo, d:p.data, s:p.serie || "temas",
+          dur:p.duracao || "", audio:p.audio || "", audioPlataforma:p.audioPlataforma || "", slides:p.pdf || ""
+        }));
+      }
+    }
+  } catch(e) { console.warn("Cadastro externo indisponível; usando dados originais."); }
   renderizarSidebar();
   renderizarTopbar();
 
