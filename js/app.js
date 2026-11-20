@@ -391,7 +391,7 @@ function cartaoApresentacao(item) {
    compacto=true (home): data + tema + [pin] centro | [relógio] horário.
    completo (agenda): horário sob a data; centro; endereço linkado ao Maps. */
 
-/* Bairro separado do endereço, sem repetir bairro/cidade em endereços antigos. */
+/* Endereços de centros cadastrados são a fonte única da agenda presencial. */
 function removerSufixoEnderecoAgenda(texto, parte) {
   if (!parte) return texto;
   const limpo = texto.trim().replace(/[\s,·–—-]+$/g, '');
@@ -400,26 +400,46 @@ function removerSufixoEnderecoAgenda(texto, parte) {
   if (!/[,·–—\/-]\s*$/.test(prefixo)) return texto;
   return prefixo.replace(/[\s,·–—\/-]+$/g, '');
 }
+
+function cadastroDoEventoAgenda(evento) {
+  return CADASTRO_LOCAIS_AGENDA.find(l => l.id === evento.localId)
+    || CADASTRO_LOCAIS_AGENDA.find(l => normalizarLocalAgenda(l.nome) === normalizarLocalAgenda(evento.local));
+}
+function eventoOnlineAgenda(evento) {
+  const endereco = String(evento.endereco || '').trim();
+  return /(youtube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(endereco)
+    || (!endereco && /(youtube|on-?line|web rádio|webrádio)/i.test(evento.local || ''));
+}
+function cadastroEnderecoAgenda(evento) {
+  if (eventoOnlineAgenda(evento) || evento.enderecoProprio === 'sim') return null;
+  return cadastroDoEventoAgenda(evento);
+}
 function enderecoExibidoAgenda(evento) {
   const original = String(evento.endereco || '').trim();
-  if (!original) return '';
-  if (/(youtube|instagram|online|zoom|meet\.google|teams\.microsoft)/i.test(original)) return original;
-  const cadastro = CADASTRO_LOCAIS_AGENDA.find(l => l.id === evento.localId)
-    || CADASTRO_LOCAIS_AGENDA.find(l => normalizarLocalAgenda(l.nome) === normalizarLocalAgenda(evento.local));
-  const bairro = String(evento.bairro || cadastro?.bairro || '').trim();
+  if (eventoOnlineAgenda(evento)) return original;
+  const cadastro = cadastroEnderecoAgenda(evento);
+  const endereco = String(cadastro?.endereco || original).trim();
+  if (!endereco) return '';
+  // Em um centro vinculado, bairro/cidade/UF vêm sempre do cadastro atualizado.
+  const bairro = String(cadastro ? (cadastro.bairro || '') : (evento.bairro || '')).trim();
   const cidade = String(cadastro?.cidade || '').trim();
   const uf = String(cadastro?.uf || '').trim();
-  if (!bairro && !cidade) return original;
-  let rua = original;
+  if (!bairro && !cidade) return endereco;
+  let rua = endereco;
   if (uf) rua = removerSufixoEnderecoAgenda(rua, uf);
   if (cidade) rua = removerSufixoEnderecoAgenda(rua, cidade);
   if (bairro) rua = removerSufixoEnderecoAgenda(rua, bairro);
-  if (cadastro?.bairro && normalizarLocalAgenda(cadastro.bairro) !== normalizarLocalAgenda(bairro))
-    rua = removerSufixoEnderecoAgenda(rua, cadastro.bairro);
   const segmentos = rua.split(/[,·]/).map(normalizarLocalAgenda);
   const temBairro = bairro && segmentos.includes(normalizarLocalAgenda(bairro));
   const temCidade = cidade && segmentos.some(p => p === normalizarLocalAgenda(cidade) || p === normalizarLocalAgenda(cidade + '/' + uf));
   return [rua, bairro && !temBairro ? bairro : '', cidade && !temCidade ? (uf ? cidade + '/' + uf : cidade) : ''].filter(Boolean).join(' · ');
+}
+function mapaExibidoAgenda(evento, enderecoExibido) {
+  const cadastro = cadastroEnderecoAgenda(evento);
+  // O mapa de um evento on-line ou excepcional continua sendo o do próprio evento.
+  const mapa = cadastro ? (cadastro.maps || '') : (evento.mapa || '');
+  if (/^https:\/\/[^\s/]+/i.test(mapa)) return mapa;
+  return linkMaps(enderecoExibido.replace(/ · /g, ', ').replace(/\/([A-Z]{2})$/, ', $1'));
 }
 
 function itemAgenda(evento, compacto) {
@@ -438,7 +458,7 @@ function itemAgenda(evento, compacto) {
   }
 
   const enderecoExibido = enderecoExibidoAgenda(evento);
-  const maps = evento.mapa && /^https:\/\/[^\s/]+/i.test(evento.mapa) ? evento.mapa : linkMaps(enderecoExibido.replace(/ · /g, ', ').replace(/\/([A-Z]{2})$/, ', $1'));
+  const maps = mapaExibidoAgenda(evento, enderecoExibido);
   const tituloLink = !maps ? ""
     : maps.indexOf("google.com/maps") > -1 ? "Ver no Google Maps"
     : maps.indexOf("youtube") > -1 ? "Abrir no YouTube"

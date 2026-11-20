@@ -64,7 +64,7 @@ function dataValida(value) {
 
 export function validarAgenda(input) {
   if (!Array.isArray(input) || input.length > 500) throw new Error('A agenda deve ter no máximo 500 eventos.');
-  const keys = ['data', 'horario', 'titulo', 'local', 'endereco', 'bairro', 'link', 'mapa', 'localId'];
+  const keys = ['data', 'horario', 'titulo', 'local', 'endereco', 'bairro', 'link', 'mapa', 'localId', 'enderecoProprio'];
   const output = input.map((item, index) => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) throw new Error(`Evento ${index + 1} inválido.`);
     const obj = {};
@@ -80,6 +80,7 @@ export function validarAgenda(input) {
     if (obj.link && !/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/i.test(obj.link)) throw new Error(`O link do evento ${index + 1} deve começar com https://.`);
     if (obj.mapa && !/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/i.test(obj.mapa)) throw new Error(`O link do mapa do evento ${index + 1} deve começar com https://.`);
     if (obj.localId && !/^[a-z0-9][a-z0-9-]{0,79}$/.test(obj.localId)) throw new Error(`Identificador do local inválido no evento ${index + 1}.`);
+    if (obj.enderecoProprio && obj.enderecoProprio !== 'sim') throw new Error(`Endereço próprio inválido no evento ${index + 1}.`);
     return obj;
   });
   output.sort((a, b) => a.data.localeCompare(b.data) || a.horario.localeCompare(b.horario) || a.titulo.localeCompare(b.titulo, 'pt-BR'));

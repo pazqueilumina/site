@@ -1,7 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false};
-function msg(s,type=''){ $('mensagemP').textContent=s;$('mensagemP').className='mensagem'+(type?' '+type:''); }
+function msg(s,type=''){ $('mensagemTexto').textContent=s;$('mensagemP').className='mensagem'+(type?' '+type:'');$('mensagemP').hidden=false; }
 function idYoutube(url){
  if(!url.trim())return '';
  try{const u=new URL(url.trim());const host=u.hostname.toLowerCase().replace(/^www\./,'').replace(/^m\./,'');let id='';
@@ -190,6 +190,7 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
 }
 function exportar(){const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];for(const p of state.dados.palestras)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
  const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='palestras-com-ids.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}
+$('fecharMensagemP').addEventListener('click',()=>{ $('mensagemP').hidden=true; });
 $('formP').addEventListener('submit',e=>{e.preventDefault();salvar();});$('formP').addEventListener('input',e=>{if(e.target.id!=='arquivoMp3R2')state.formDirty=true;});$('formP').addEventListener('change',e=>{if(e.target.id!=='arquivoMp3R2')state.formDirty=true;});$('arquivoMp3R2').addEventListener('change',atualizarUploadR2);$('enviarAudioR2').addEventListener('click',enviarMp3R2);$('novoP').addEventListener('click',()=>state.aba==='nova'?limpar():trocarAba('nova'));$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',publicar);$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
 $('ordenarP').addEventListener('click',()=>{
  state.ordemDesc=!state.ordemDesc;

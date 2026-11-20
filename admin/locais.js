@@ -5,7 +5,7 @@ const estado = { locais: [], sha: null, selecionado: null, alterado: false, form
 const campos = { nome:'nomeLocal', endereco:'enderecoLocal', bairro:'bairroLocal', cidade:'cidadeLocal', uf:'ufLocal', maps:'mapsLocal' };
 const normalizar = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
 const slug = s => normalizar(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'local';
-function mensagem(t, classe='') { $('mensagemLocais').textContent=t; $('mensagemLocais').className='mensagem' + (classe?' '+classe:''); }
+function mensagem(t, classe='') { $('mensagemTexto').textContent=t; $('mensagemLocais').className='mensagem' + (classe?' '+classe:''); $('mensagemLocais').hidden=false; }
 function atualizarResumo() {
   $('totalLocais').textContent=estado.locais.length;
   $('situacaoLocais').textContent=estado.alterado?'Não publicado':'Atualizado';
@@ -64,6 +64,7 @@ $('formLocal').addEventListener('input',()=>{estado.formularioAlterado=true;});
 $('novoLocal').addEventListener('click',()=>{if(confirmarDescarte()){limpar();$('nomeLocal').focus();}});
 $('limparLocal').addEventListener('click',()=>{if(confirmarDescarte())limpar();});
 $('excluirLocal').addEventListener('click',()=>{const l=estado.locais.find(x=>x.id===estado.selecionado);if(!l)return;if(!confirm(`Excluir o cadastro de “${l.nome}”? Eventos existentes serão preservados, mas deixarão de receber preenchimento automático por este local.`))return;estado.locais=estado.locais.filter(x=>x.id!==l.id);estado.alterado=true;limpar();mensagem('Local excluído da lista. Publique para efetivar.','alerta');});
+$('fecharMensagemLocais').addEventListener('click',()=>{ $('mensagemLocais').hidden=true; });
 $('publicarLocais').addEventListener('click',publicar);
 $('buscaLocal').addEventListener('input',renderizar);
 window.addEventListener('beforeunload',e=>{if(estado.alterado||estado.formularioAlterado){e.preventDefault();e.returnValue='';}});

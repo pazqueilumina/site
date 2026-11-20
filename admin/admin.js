@@ -75,6 +75,13 @@ function lerFormulario() {
 function salvarNaLista({ silencioso = false } = {}) {
   const obj=lerFormulario();if(!obj)return false;
   const anterior = estado.selecionado ? estado.agenda.find(e=>e._key===estado.selecionado) : null;
+  // Endereços excepcionais são identificados quando um endereço diferente é informado
+  // explicitamente; apenas editar o título de um evento antigo não o transforma em exceção.
+  const localCadastro = estado.locais.find(l => l.id === obj.localId) || encontrarLocal(obj.local);
+  const enderecoMudou = !anterior || (anterior.endereco || '') !== (obj.endereco || '');
+  if (localCadastro && obj.endereco && !/(youtube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(obj.endereco)
+      && enderecoForaDoCadastro(obj.endereco, localCadastro)
+      && (enderecoMudou || anterior?.enderecoProprio === 'sim')) obj.enderecoProprio = 'sim';
   // O editor mantém o bairro do CSV quando os dados do local não mudam.
   if (anterior && anterior.local === obj.local && (anterior.endereco || '') === (obj.endereco || '') && anterior.bairro) obj.bairro = anterior.bairro;
   else {
@@ -123,6 +130,12 @@ const CABECALHOS_CSV = {
 };
 function normalizarCsv(valor) {
   return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
+}
+function enderecoForaDoCadastro(endereco, cadastro) {
+  const informado = normalizarCsv(endereco);
+  const padrao = normalizarCsv(cadastro?.endereco);
+  return !!(informado && padrao && informado !== padrao
+    && !informado.startsWith(padrao + ',') && !informado.startsWith(padrao + ' ·'));
 }
 function colunaCsv(valor) {
   const cab = normalizarCsv(valor).replace(/[^a-z0-9]/g, '');
@@ -223,11 +236,14 @@ function validarEventoCsv(item) {
     const semEndereco = !e.endereco;
     if (semEndereco) e.endereco=local.endereco;
     if (!e.bairro && local.bairro && !/(youtube|instagram|online|zoom|meet\.google|teams\.microsoft)/i.test(e.endereco || '')) e.bairro = local.bairro;
-    if (semEndereco || normalizarCsv(e.endereco) === normalizarCsv(local.endereco)) { e.localId=local.id; if(local.maps)e.mapa=local.maps; }
+    const online = /(youtube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(e.endereco || '');
+    if (!online && enderecoForaDoCadastro(e.endereco, local)) e.enderecoProprio='sim';
+    e.localId=local.id;
+    if (!e.enderecoProprio && local.maps && !online) e.mapa=local.maps;
     e.local=local.nome;
   }
   const evento = {};
-  for (const campo of [...campos, 'bairro', 'localId']) if (e[campo]) evento[campo] = e[campo];
+  for (const campo of [...campos, 'bairro', 'localId', 'enderecoProprio']) if (e[campo]) evento[campo] = e[campo];
   return { evento };
 }
 function identidadeEventoCsv(e) {

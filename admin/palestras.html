@@ -8,7 +8,7 @@
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
   <link rel="stylesheet" href="/admin/palestras.css">
-  <script defer src="/admin/palestras.js"></script>
+  <script defer src="/admin/palestras.js?v=msgclose1"></script>
 </head>
 <body>
   <header class="topo">
@@ -22,7 +22,7 @@
       <div><p class="sobretitulo">ACERVO DE PALESTRAS</p><h1>Gerenciar palestras</h1><p>Cadastre vídeos, associe MP3 e PDFs existentes e prepare importações. Os IDs são permanentes e não aparecem no site público.</p></div>
       <button id="publicarP" class="botao principal" type="button" disabled>Publicar alterações</button>
     </div>
-    <div id="mensagemP" class="mensagem" role="status" aria-live="polite">Carregando cadastro…</div>
+    <div id="mensagemP" class="mensagem" role="status" aria-live="polite"><span id="mensagemTexto">Carregando cadastro…</span><button id="fecharMensagemP" type="button" class="fechar-mensagem" aria-label="Fechar mensagem" title="Fechar mensagem">×</button></div>
     <div class="indicadores">
       <div class="indicador"><span>Palestras</span><strong id="totalP">—</strong></div>
       <div class="indicador"><span>Com vídeo</span><strong id="videosP">—</strong></div>
