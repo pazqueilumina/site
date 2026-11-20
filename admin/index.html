@@ -6,13 +6,13 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="same-origin">
   <title>Administração da Agenda | Estudos e Reflexões Espíritas</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=csvbox2">
-  <script defer src="/admin/admin.js?v=csvbox2"></script>
+  <link rel="stylesheet" href="/admin/admin.css?v=csvbox3">
+  <script defer src="/admin/admin.js?v=csvbox3"></script>
 </head>
 <body>
   <header class="topo">
     <div class="topo-conteudo">
-      <div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Área administrativa · Agenda</span></div></div>
+      <div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Área administrativa</span></div></div>
       <nav class="navegacao" aria-label="Navegação administrativa">
         <a href="/admin/" aria-current="page">Agenda</a>
         <a href="/admin/locais.html">Locais</a>
@@ -26,7 +26,7 @@
       <div><p class="sobretitulo">PAINEL DE CONTROLE</p><h1>Agenda de apresentações</h1><p>Cadastre, atualize ou exclua eventos. As mudanças só ficam públicas depois de clicar em <strong>Publicar alterações</strong>.</p></div>
       <button id="publicar" type="button" class="botao principal" disabled>Publicar alterações</button>
     </div>
-    <div id="mensagem" class="mensagem" role="status" aria-live="polite">Conectando à agenda…</div>
+    <div id="mensagem" class="mensagem" role="status" aria-live="polite"><span id="mensagemTexto">Conectando à agenda…</span><button id="fecharMensagem" type="button" class="fechar-mensagem" aria-label="Fechar mensagem" title="Fechar mensagem">×</button></div>
     <div class="indicadores" aria-label="Resumo da agenda">
       <div class="indicador"><span>Total de eventos</span><strong id="total">—</strong></div>
       <div class="indicador"><span>Próximos</span><strong id="futuros">—</strong></div>
@@ -52,7 +52,7 @@
             <label>Horário *<input id="horario" type="time" required></label>
           </div>
           <label>Título da palestra ou atividade *<input id="titulo" type="text" maxlength="180" placeholder="Ex.: A Bênção da Dor" required></label>
-          <label>Local ou instituição *<input id="local" list="opcoesLocais" autocomplete="off" type="text" maxlength="180" placeholder="Ex.: Centro Espírita União Fraterna" required></label>
+          <label>Local ou instituição *<input id="local" list="opcoesLocais" autocomplete="off" type="text" maxlength="180" placeholder="Ex.: Consolador - Comunidade Espírita Cristã" required></label>
           <datalist id="opcoesLocais"></datalist>
           <input id="idLocal" type="hidden">
           <p id="avisoLocal" class="ajuda aviso-local">Digite ou selecione um Centro cadastrado. Se não existir, o local poderá ser informado manualmente.</p>
@@ -85,7 +85,7 @@
         <p id="avisoCsv" class="importacao-aviso" role="alert" hidden></p>
         <div class="importacao-tabela-rolagem">
           <table class="importacao-tabela">
-            <thead><tr><th>Linha</th><th>Data</th><th>Horário</th><th>Título</th><th>Local</th><th>Endereço</th><th>Link</th><th>Resultado</th></tr></thead>
+            <thead><tr><th>Linha</th><th>Data</th><th>Horário</th><th>Título</th><th>Local</th><th>Endereço</th><th>Link</th><th>Status</th></tr></thead>
             <tbody id="linhasCsv"></tbody>
           </table>
         </div>

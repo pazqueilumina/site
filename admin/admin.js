@@ -6,7 +6,7 @@ const estado = { agenda: [], sha: null, selecionado: null, alterado: false, form
 const MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 function chave() { return 'e' + (++estado.sequencia); }
 function hojeISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function mensagem(texto, tipo = '') { $('mensagem').textContent = texto; $('mensagem').className = 'mensagem' + (tipo ? ' ' + tipo : ''); }
+function mensagem(texto, tipo = '') { $('mensagemTexto').textContent = texto; $('mensagem').className = 'mensagem' + (tipo ? ' ' + tipo : ''); $('mensagem').hidden = false; }
 function atualizarResumo() {
   const hoje = hojeISO();
   $('total').textContent = estado.agenda.length;
@@ -262,7 +262,7 @@ function renderizarPreviaCsv() {
   for (const r of a.resultado) {
     const tr = document.createElement('tr'), e = r.evento;
     adicionarCelulaCsv(tr, String(r.linha));
-    for (const campo of campos) adicionarCelulaCsv(tr, e[campo]);
+    for (const campo of ['data', 'horario', 'titulo', 'local', 'endereco', 'link']) adicionarCelulaCsv(tr, e[campo]);
     adicionarCelulaCsv(tr, r.status === 'Inválido' ? `Inválido: ${r.detalhe}` : r.status,
       r.status === 'Novo' ? 'status-novo' : r.status === 'Duplicado' ? 'status-duplicado' : 'status-invalido');
     tbody.append(tr);
@@ -369,6 +369,7 @@ $('importarCsv').addEventListener('click', () => abrirImportacaoCsv($('arquivoCs
 $('cancelarCsv').addEventListener('click', cancelarImportacaoCsv);
 $('confirmarCsv').addEventListener('click', confirmarImportacaoCsv);
 
+$('fecharMensagem').addEventListener('click',()=>{ $('mensagem').hidden = true; });
 $('formEvento').addEventListener('submit',e=>{e.preventDefault();salvarNaLista();});
 $('formEvento').addEventListener('input',()=>{estado.formularioAlterado=true;$('link').setCustomValidity('');$('mapa').setCustomValidity('');});
 $('novo').addEventListener('click',()=>{if(confirmarDescarte()){formularioEmBranco();$('titulo').focus();}});
