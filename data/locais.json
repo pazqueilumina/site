@@ -27,7 +27,7 @@
     {
       "id": "consolador-comunidade-espirita-crista",
       "nome": "Consolador - Comunidade Espírita Cristã",
-      "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro",
+      "endereco": "Rua Cinco de Julho, 276",
       "bairro": "Copacabana",
       "cidade": "Rio de Janeiro",
       "uf": "RJ"
@@ -35,7 +35,7 @@
     {
       "id": "cruzada-dos-militares-espiritas",
       "nome": "Cruzada dos Militares Espíritas",
-      "endereco": "Praça General Tibúrcio, 83 – Subsolo, coluna 25 (Edifício Praia Vermelha)",
+      "endereco": "Praça General Tibúrcio, 83 – Subsolo, Coluna 25 (Edifício Praia Vermelha)",
       "bairro": "Urca",
       "cidade": "Rio de Janeiro",
       "uf": "RJ"
@@ -52,14 +52,14 @@
       "id": "grupo-espirita-saint-germain",
       "nome": "Grupo Espírita Saint Germain",
       "endereco": "Rua Domingos Cabral, 111",
-      "bairro": "Freguesia (Jacarepaguá)",
+      "bairro": "Freguesia",
       "cidade": "Rio de Janeiro",
       "uf": "RJ"
     },
     {
       "id": "lar-paulo-de-tarso",
       "nome": "Lar Paulo de Tarso",
-      "endereco": "Rua Souza Lima, 423, Copacabana, Rio de Janeiro",
+      "endereco": "Rua Souza Lima, 423",
       "bairro": "Copacabana",
       "cidade": "Rio de Janeiro",
       "uf": "RJ"
