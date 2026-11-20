@@ -264,9 +264,17 @@ function ordenarPorDataDesc(lista) {
   return [...lista].sort((x, y) => (x.data < y.data ? 1 : x.data > y.data ? -1 : 0));
 }
 
+function dataHojeAgenda() {
+  // Todos os eventos da agenda são anunciados no horário do Rio de Janeiro.
+  const partes = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(new Date());
+  const parte = tipo => partes.find(p => p.type === tipo)?.value || "";
+  return parte("year") + "-" + parte("month") + "-" + parte("day");
+}
+
 function proximosEventos() {
-  const hoje = new Date();
-  const chave = hoje.getFullYear() + "-" + String(hoje.getMonth() + 1).padStart(2, "0") + "-" + String(hoje.getDate()).padStart(2, "0");
+  const chave = dataHojeAgenda();
   return (DADOS.agenda || [])
     .filter((e) => e.data >= chave)
     .sort((x, y) => (x.data > y.data ? 1 : -1));
@@ -442,17 +450,41 @@ function mapaExibidoAgenda(evento, enderecoExibido) {
   return linkMaps(enderecoExibido.replace(/ · /g, ', ').replace(/\/([A-Z]{2})$/, ', $1'));
 }
 
+function linkLocalAgenda(evento) {
+  const urlEvento = typeof evento.link === "string" && /^https:\/\/[^\s]+$/i.test(evento.link)
+    ? evento.link : null;
+  if (eventoOnlineAgenda(evento)) {
+    if (urlEvento) return urlEvento;
+    // Instagram do Consolador tem perfil público conhecido no cadastro do site.
+    if (/instagram/i.test(evento.endereco || '') && /consolador/i.test(evento.local || '')) {
+      return /^https:\/\/[^\s]+$/i.test(DADOS.site.instagram || '') ? DADOS.site.instagram : null;
+    }
+    // Não inventar canal do YouTube para transmissões sem link cadastrado.
+    return null;
+  }
+  const endereco = enderecoExibidoAgenda(evento);
+  return endereco ? mapaExibidoAgenda(evento, endereco) : null;
+}
+
 function itemAgenda(evento, compacto) {
   const bloco = fmtAgendaBloco(evento.data);
   const hora = fmtHora(evento.horario);
+  const hoje = evento.data === dataHojeAgenda();
+  const classeHoje = hoje ? " item-agenda--hoje" : "";
+  const etiquetaHoje = hoje ? '<span class="agenda-etiqueta-hoje">HOJE</span>' : "";
 
   if (compacto) {
+    const linkLocal = linkLocalAgenda(evento);
+    const local = linkLocal
+      ? '<a class="agenda-local-link" href="' + escapar(linkLocal) + '" target="_blank" rel="noopener noreferrer" title="' + (eventoOnlineAgenda(evento) ? "Abrir transmissão" : "Ver no Google Maps") + '">' +
+        icone("pin") + '<span class="agenda-local-texto">' + escapar(evento.local) + '</span>' + icone("externo") + '</a>'
+      : icone("pin") + '<span class="agenda-local-texto">' + escapar(evento.local) + '</span>';
     return (
-      '<article class="item-agenda">' +
-      '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div></div>" +
+      '<article class="item-agenda' + classeHoje + '">' +
+      '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div>" + etiquetaHoje + "</div>" +
       '<div class="agenda-info"><h3>' + escapar(evento.titulo) + "</h3>" +
       '<div class="agenda-detalhes">' +
-      '<span class="agenda-campo">' + icone("pin") + escapar(evento.local) + "</span>" +
+      '<span class="agenda-campo">' + local + "</span>" +
       "</div></div></article>"
     );
   }
@@ -476,8 +508,8 @@ function itemAgenda(evento, compacto) {
     : "";
 
   return (
-    '<article class="item-agenda">' +
-    '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div></div>" +
+    '<article class="item-agenda' + classeHoje + '">' +
+    '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div>" + etiquetaHoje + "</div>" +
     '<div class="agenda-info"><h3>' + escapar(evento.titulo) + "</h3>" +
     '<div class="agenda-linha"><span class="agenda-centro">' + escapar(evento.local) + "</span></div>" +
     linhaEndereco + linhaLink +
@@ -830,8 +862,7 @@ function chaveLocalAgenda(evento) {
 function renderizarAgenda() {
   const principal = document.getElementById('principal');
   const eventos = proximosEventos();
-  const hoje = new Date();
-  const chaveHoje = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0') + '-' + String(hoje.getDate()).padStart(2, '0');
+  const chaveHoje = dataHojeAgenda();
   const passados = (DADOS.agenda || []).filter(e => e.data < chaveHoje).sort((a,b) => b.data.localeCompare(a.data));
   const todos = [...eventos, ...passados];
   const opcoes = new Map();
@@ -1168,7 +1199,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     sobre: renderizarSobre,
     contato: renderizarContato
   };
-  if (pagina === 'agenda') {
+  if (pagina === 'agenda' || pagina === 'inicio') {
     try { const r = await fetch('/data/locais.json', {cache:'no-cache'}); if (r.ok) { const d=await r.json(); if(Array.isArray(d.locais)) CADASTRO_LOCAIS_AGENDA=d.locais; } }
     catch(e) { console.warn('Cadastro público de locais indisponível; usando nomes da agenda.'); }
   }
