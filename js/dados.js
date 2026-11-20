@@ -261,7 +261,8 @@ const DADOS = {
       "data": "2026-11-20",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador (YouTube)"
+      "local": "Web Rádio Cristo Consolador (YouTube)",
+      "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
       "data": "2026-11-27",
@@ -281,7 +282,8 @@ const DADOS = {
       "data": "2026-11-27",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador (YouTube)"
+      "local": "Web Rádio Cristo Consolador (YouTube)",
+      "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
       "data": "2026-11-28",
@@ -296,7 +298,8 @@ const DADOS = {
       "data": "2026-12-04",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador (YouTube)"
+      "local": "Web Rádio Cristo Consolador (YouTube)",
+      "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
       "data": "2026-12-08",
@@ -320,7 +323,8 @@ const DADOS = {
       "data": "2026-12-11",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador (YouTube)"
+      "local": "Web Rádio Cristo Consolador (YouTube)",
+      "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
       "data": "2026-12-16",
@@ -335,7 +339,8 @@ const DADOS = {
       "data": "2026-12-18",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador (YouTube)"
+      "local": "Web Rádio Cristo Consolador (YouTube)",
+      "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
       "data": "2026-12-19",
