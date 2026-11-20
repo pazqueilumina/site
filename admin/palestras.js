@@ -1,6 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
-const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false};
+const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false};
 function msg(s,type=''){ $('mensagemP').textContent=s;$('mensagemP').className='mensagem'+(type?' '+type:''); }
 function idYoutube(url){
  if(!url.trim())return '';
@@ -12,10 +12,82 @@ function idYoutube(url){
 }
 function novoId(){const nums=state.dados.palestras.map(p=>Number((p.pid||'').replace(/^PAL-/,''))).filter(Number.isFinite);return 'PAL-'+String(Math.max(0,...nums)+1).padStart(4,'0');}
 function confirmarDescarte(){
+ if(state.r2Uploading){msg('Aguarde o término do envio do MP3 antes de mudar de palestra.','alerta');return false;}
  return !state.formDirty||confirm('Há alterações no formulário que ainda não foram salvas na lista. Deseja descartá-las?');
 }
+function limparSelecaoMp3(){
+ $('arquivoMp3R2').value='';$('progressoAudioR2').hidden=true;$('progressoAudioR2').value=0;
+ $('statusAudioR2').className='upload-r2-status';
+}
+function atualizarUploadR2(){
+ const existe=state.aba==='editar'&&!!state.selecionado;
+ const publicado=existe&&state.publicados.has(state.selecionado);
+ const pronto=state.r2Ativo&&publicado&&!state.r2Uploading;
+ $('arquivoMp3R2').disabled=!pronto;
+ $('enviarAudioR2').disabled=!pronto||!$('arquivoMp3R2').files.length;
+ if(state.r2Uploading)return;
+ if(!state.r2Ativo){$('statusAudioR2').textContent=state.r2Erro;return;}
+ if(!existe){$('statusAudioR2').textContent='Selecione uma palestra existente para enviar um MP3.';return;}
+ if(!publicado){$('statusAudioR2').textContent='Para uma palestra nova, primeiro salve na lista e publique o cadastro no GitHub.';return;}
+ if(!$('arquivoMp3R2').files.length&&$('statusAudioR2').className==='upload-r2-status')$('statusAudioR2').textContent='Selecione um arquivo MP3 e clique em Enviar. O link será preenchido após a conclusão.';
+}
+async function consultarR2(){
+ try{
+  const r=await fetch('/api/admin/audio-r2',{credentials:'same-origin',cache:'no-store'});
+  const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);
+  state.r2Ativo=!!o.ativo;
+  state.r2Erro=o.ativo?'':(o.aviso||'Vincule o bucket R2 ao ambiente de prévia do Cloudflare Pages.');
+ }catch(e){state.r2Ativo=false;state.r2Erro='Upload indisponível: '+e.message;}
+ atualizarUploadR2();
+}
+async function enviarJsonR2(payload){
+ const r=await fetch('/api/admin/audio-r2',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+ const o=await r.json().catch(()=>({}));if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);return o;
+}
+async function enviarMp3R2(){
+ if(state.r2Uploading||!state.r2Ativo||state.aba!=='editar'||!state.publicados.has(state.selecionado))return;
+ const arquivo=$('arquivoMp3R2').files[0],pid=state.selecionado;
+ if(!arquivo)return;
+ if(!/\.mp3$/i.test(arquivo.name)){msg('Selecione um arquivo com extensão .mp3.','erro');return;}
+ if(!arquivo.size||arquivo.size>300*1024*1024){msg('O MP3 precisa ter entre 1 byte e 300 MB.','erro');return;}
+ if($('audio').value.trim()&&!confirm('Esta palestra já possui um link de áudio. O novo arquivo não apagará o áudio antigo, mas o link será substituído quando você publicar o cadastro. Continuar?'))return;
+ state.r2Uploading=true;let uploadId='',completando=false;
+ const progresso=$('progressoAudioR2'),status=$('statusAudioR2');
+ progresso.hidden=false;progresso.value=0;status.className='upload-r2-status';
+ status.textContent='Preparando envio seguro…';render();
+ try{
+  const inicio=await enviarJsonR2({acao:'iniciar',pid,nome:arquivo.name,tamanho:arquivo.size});
+  uploadId=inicio.uploadId;
+  const tamanhoParte=inicio.tamanhoParte;
+  if(!uploadId||!Number.isInteger(tamanhoParte)||tamanhoParte<=0)throw new Error('Resposta de inicialização inválida.');
+  const partes=[];
+  for(let inicioByte=0,numero=1;inicioByte<arquivo.size;inicioByte+=tamanhoParte,numero++){
+   const fimByte=Math.min(inicioByte+tamanhoParte,arquivo.size);
+   status.textContent=`Enviando parte ${numero} de ${Math.ceil(arquivo.size/tamanhoParte)}…`;
+   const parametros=new URLSearchParams({pid,uploadId,parte:String(numero)});
+   const r=await fetch('/api/admin/audio-r2?'+parametros.toString(),{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/octet-stream'},body:arquivo.slice(inicioByte,fimByte)});
+   const o=await r.json().catch(()=>({}));if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);
+   if(o.numero!==numero||!o.etag)throw new Error('Resposta inesperada ao enviar uma parte.');
+   partes.push({partNumber:numero,etag:o.etag});
+   progresso.value=Math.round(100*fimByte/arquivo.size);
+  }
+  completando=true;status.textContent='Finalizando o arquivo no R2…';
+  const fim=await enviarJsonR2({acao:'concluir',pid,uploadId,tamanho:arquivo.size,partes});
+  if(!fim.url)throw new Error('O R2 não devolveu o endereço do arquivo.');
+  // O arquivo já está no R2, mas o cadastro ainda depende de Salvar na lista + Publicar alterações.
+  $('audio').value=fim.url;state.formDirty=true;
+  $('arquivoMp3R2').value='';
+  status.textContent=`MP3 enviado: ${pid}.mp3. Agora clique em “Salvar na lista” e depois em “Publicar alterações”.`;
+  status.className='upload-r2-status sucesso';
+  msg('MP3 no R2. O link foi preenchido, mas ainda precisa ser salvo na lista e publicado no GitHub.','sucesso');
+ }catch(e){
+  if(uploadId&&!completando){try{await enviarJsonR2({acao:'cancelar',pid,uploadId});}catch{ /* limpeza de melhor esforço */ }}
+  status.textContent='Falha no envio: '+e.message+(completando?' Verifique o bucket antes de tentar novamente.':'');
+  status.className='upload-r2-status erro';msg(status.textContent,'erro');
+ }finally{state.r2Uploading=false;render();}
+}
 function preencher(p){
- $('pid').value=p.pid;$('titulo').value=p.titulo;$('data').value=p.data||'';$('aproximada').value=p.dataAproximada?'sim':'nao';
+ limparSelecaoMp3();$('pid').value=p.pid;$('titulo').value=p.titulo;$('data').value=p.data||'';$('aproximada').value=p.dataAproximada?'sim':'nao';
  $('youtube').value=p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'';
  $('audio').value=p.audio||'';$('pdf').value=p.pdf||'';$('arquivo').value=p.apresentacaoOriginal||'';$('serie').value=p.serie||'temas';
  $('tituloP').textContent='Editar palestra';
@@ -34,7 +106,7 @@ function trocarAba(aba){
  if(!confirmarDescarte())return false;
  state.formDirty=false;
  if(aba==='nova'){
-  state.selecionado=null;$('formP').reset();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';
+  state.selecionado=null;$('formP').reset();limparSelecaoMp3();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';
  }else if(aba==='editar'&&state.selecionado){
   const p=state.dados.palestras.find(x=>x.pid===state.selecionado);
   if(p)preencher(p);
@@ -49,7 +121,7 @@ function selecionar(pid){
 }
 function limpar(force=false){
  if(!force&&!confirmarDescarte())return;
- state.selecionado=null;state.formDirty=false;$('formP').reset();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';
+ state.selecionado=null;state.formDirty=false;$('formP').reset();limparSelecaoMp3();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';
  state.aba='nova';atualizarAbas();render();
 }
 function descartarFormulario(){
@@ -60,7 +132,7 @@ function descartarFormulario(){
  }else{$('formP').reset();$('pid').value=novoId();}
  msg('Alterações não salvas do formulário descartadas.','alerta');
 }
-function salvar(){if(!$('formP').reportValidity())return false;
+function salvar(){if(state.r2Uploading){msg('Aguarde o envio do MP3 terminar.','alerta');return false;}if(!$('formP').reportValidity())return false;
  const id=idYoutube($('youtube').value);if(id===null){msg('URL do YouTube inválida.','erro');return false;}
  const duplicate=id&&state.dados.palestras.find(p=>p.youtubeId===id&&p.pid!==state.selecionado);
  if(duplicate){msg('Este vídeo já pertence a '+duplicate.pid+'. Abra o registro existente.','erro');return false;}
@@ -68,14 +140,14 @@ function salvar(){if(!$('formP').reportValidity())return false;
  if([audio,pdf].some(v=>v&&!/^(https:\/\/|\/)/.test(v))){msg('Links de áudio e PDF devem começar com https:// ou /.','erro');return false;}
  if(arquivo&&(/[\\/]/.test(arquivo)||!/\.(ppt|pptx|pdf)$/i.test(arquivo))){msg('Informe apenas o nome do arquivo .ppt, .pptx ou .pdf, sem caminhos.','erro');return false;}
  const pid=state.selecionado||novoId();const old=state.dados.palestras.find(p=>p.pid===pid)||{};
- const p={...old,pid,titulo:$('titulo').value.trim(),data:$('data').value,dataAproximada:$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,audio,pdf,apresentacaoOriginal:arquivo,
+ const p={...old,pid,titulo:$('titulo').value.trim(),data:$('data').value,dataAproximada:$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
   statusAudio:audio?'existente':id?'pendente':'sem-fonte',statusPdf:pdf?'existente':arquivo?'pendente':'sem-arquivo'};
  if(!p.titulo){msg('Título obrigatório.','erro');return false;}
  const i=state.dados.palestras.findIndex(x=>x.pid===pid);if(i>=0)state.dados.palestras[i]=p;else state.dados.palestras.push(p);
  state.selecionado=pid;state.dirty=true;state.formDirty=false;state.aba='editar';preencher(p);atualizarAbas();render();msg('Alteração preparada. Clique em “Publicar alterações” para enviá-la ao GitHub.','alerta');return true;
 }
-function render(){const rows=state.dados.palestras; $('totalP').textContent=rows.length;$('videosP').textContent=rows.filter(p=>p.youtubeId).length;$('audiosP').textContent=rows.filter(p=>p.audio).length;$('pdfsP').textContent=rows.filter(p=>p.pdf).length;
- $('publicarP').disabled=!state.sha||!state.dirty;
+function render(){atualizarUploadR2();const rows=state.dados.palestras; $('totalP').textContent=rows.length;$('videosP').textContent=rows.filter(p=>p.youtubeId).length;$('audiosP').textContent=rows.filter(p=>p.audio).length;$('pdfsP').textContent=rows.filter(p=>p.pdf).length;
+ $('publicarP').disabled=!state.sha||!state.dirty||state.r2Uploading;
  const term=$('buscaP').value.trim().toLocaleLowerCase('pt-BR');const filtro=$('filtroP').value;
  // A etiqueta ORDEM representa a posição cronológica no acervo completo, não a posição na lista filtrada/invertida.
  const ordemCronologica=[...rows].sort((a,b)=>(a.data||'9999').localeCompare(b.data||'9999')||a.pid.localeCompare(b.pid));
@@ -89,10 +161,10 @@ function render(){const rows=state.dados.palestras; $('totalP').textContent=rows
  const flags=document.createElement('small');flags.textContent=`Vídeo ${p.youtubeId?'✓':'—'}   MP3 ${p.audio?'✓':'—'}   PDF ${p.pdf?'✓':'—'}`;body.append(t,meta,flags);b.append(n,body);b.addEventListener('click',()=>selecionar(p.pid));list.append(b);});
 }
 async function carregar(){msg('Consultando cadastro no GitHub…');try{const r=await fetch('/api/admin/palestras',{credentials:'same-origin',cache:'no-store'});const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);
- if(!o.sha||!Array.isArray(o.dados?.palestras))throw new Error('Resposta incompleta.');state.dados=o.dados;state.sha=o.sha;state.dirty=false;limpar(true);msg('Cadastro carregado. Os registros existentes foram preservados.','sucesso');
+ if(!o.sha||!Array.isArray(o.dados?.palestras))throw new Error('Resposta incompleta.');state.dados=o.dados;state.sha=o.sha;state.publicados=new Set(o.dados.palestras.map(p=>p.pid));state.dirty=false;limpar(true);msg('Cadastro carregado. Os registros existentes foram preservados.','sucesso');
  }catch(e){msg('Não foi possível carregar: '+e.message,'erro');}}
-async function publicar(){if(state.dados.palestras.some(p=>p.titulo.startsWith('Palestra a revisar — '))){msg('Revise os títulos provisórios das URLs importadas antes de publicar.','erro');return;}if(state.formDirty&&!salvar())return;if(!state.dirty)return;if(!confirm('Enviar as alterações do cadastro ao GitHub?'))return;
- $('publicarP').disabled=true;msg('Enviando cadastro ao GitHub…');try{const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:state.sha,dados:state.dados})});const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);state.sha=o.sha;state.dirty=false;render();msg(o.aviso||'Enviado.','sucesso');}catch(e){render();msg('Publicação não concluída: '+e.message,'erro');}}
+async function publicar(){if(state.r2Uploading){msg('Aguarde o envio do MP3 terminar.','alerta');return;}if(state.dados.palestras.some(p=>p.titulo.startsWith('Palestra a revisar — '))){msg('Revise os títulos provisórios das URLs importadas antes de publicar.','erro');return;}if(state.formDirty&&!salvar())return;if(!state.dirty)return;if(!confirm('Enviar as alterações do cadastro ao GitHub?'))return;
+ $('publicarP').disabled=true;msg('Enviando cadastro ao GitHub…');try{const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:state.sha,dados:state.dados})});const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);state.sha=o.sha;state.dirty=false;state.publicados=new Set(state.dados.palestras.map(p=>p.pid));render();msg(o.aviso||'Enviado.','sucesso');}catch(e){render();msg('Publicação não concluída: '+e.message,'erro');}}
 function csvRows(text){const out=[];let row=[],val='',q=false;for(let i=0;i<text.length;i++){const c=text[i];if(q){if(c==='"'&&text[i+1]==='"'){val+='"';i++;}else if(c==='"')q=false;else val+=c;}else if(c==='"')q=true;else if(c===', '){val+=c;}else if(c===','||c===';' ){row.push(val);val='';}else if(c==='\n'){row.push(val.replace(/\r$/,''));out.push(row);row=[];val='';}else val+=c;}if(q)throw Error('Aspas não fechadas no CSV.');if(val||row.length){row.push(val);out.push(row);}return out;}
 function parseCSV(text){const lines=csvRows(text.replace(/^\uFEFF/,''));if(lines.length<2)throw Error('CSV sem registros.');const normalize=s=>s.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();const cols=lines.shift().map(normalize);const aliases={id:['id'],titulo:['titulo','title'],data:['data','date'],youtube:['youtube','url','url do youtube'],apresentacao:['apresentacao','arquivo','pdf','pptx']};
  const idx=Object.fromEntries(Object.entries(aliases).map(([k,a])=>[k,cols.findIndex(c=>a.includes(c))]));if(idx.titulo<0||idx.youtube<0&&idx.apresentacao<0)throw Error('Cabeçalho precisa de Titulo e YouTube ou Apresentacao.');
@@ -118,7 +190,7 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
 }
 function exportar(){const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];for(const p of state.dados.palestras)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
  const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='palestras-com-ids.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}
-$('formP').addEventListener('submit',e=>{e.preventDefault();salvar();});$('formP').addEventListener('input',()=>{state.formDirty=true;});$('formP').addEventListener('change',()=>{state.formDirty=true;});$('novoP').addEventListener('click',()=>state.aba==='nova'?limpar():trocarAba('nova'));$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',publicar);$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
+$('formP').addEventListener('submit',e=>{e.preventDefault();salvar();});$('formP').addEventListener('input',e=>{if(e.target.id!=='arquivoMp3R2')state.formDirty=true;});$('formP').addEventListener('change',e=>{if(e.target.id!=='arquivoMp3R2')state.formDirty=true;});$('arquivoMp3R2').addEventListener('change',atualizarUploadR2);$('enviarAudioR2').addEventListener('click',enviarMp3R2);$('novoP').addEventListener('click',()=>state.aba==='nova'?limpar():trocarAba('nova'));$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',publicar);$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
 $('ordenarP').addEventListener('click',()=>{
  state.ordemDesc=!state.ordemDesc;
  const botao=$('ordenarP');
@@ -134,4 +206,4 @@ $('aplicarUrlsP').addEventListener('click',()=>{const urls=$('urlsP').value.spli
  // URLs novas precisam de título; gerar rascunho a partir do identificador, para revisão manual obrigatória.
  for(const it of items){const id=idYoutube(it.youtube);it.titulo=id?'Palestra a revisar — '+id:'';}
  importar(items);});
-window.addEventListener('beforeunload',e=>{if(state.dirty||state.formDirty){e.preventDefault();e.returnValue='';}});carregar();
+window.addEventListener('beforeunload',e=>{if(state.dirty||state.formDirty||state.r2Uploading){e.preventDefault();e.returnValue='';}});carregar();consultarR2();

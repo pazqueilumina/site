@@ -55,6 +55,16 @@
             <div class="duas-colunas"><label>Data da palestra / publicação<input id="data" type="date"></label><label>Data aproximada<select id="aproximada"><option value="sim">Sim</option><option value="nao">Não</option></select></label></div>
             <label>URL do YouTube<input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=..."></label>
             <label>Link do MP3 existente<input id="audio" placeholder="https://... ou /audio/..." maxlength="1500"></label>
+            <div class="upload-r2" aria-labelledby="tituloUploadR2">
+              <strong id="tituloUploadR2">Enviar MP3 do computador para o R2</strong>
+              <p class="ajuda">O nome no armazenamento será o ID permanente da palestra (ex.: PAL-0080.mp3). O arquivo é enviado separadamente do cadastro.</p>
+              <label for="arquivoMp3R2">Arquivo MP3 (até 300 MB)
+                <input id="arquivoMp3R2" type="file" accept=".mp3,audio/mpeg" disabled>
+              </label>
+              <button id="enviarAudioR2" class="botao secundario" type="button" disabled>↑ Enviar MP3 ao R2</button>
+              <progress id="progressoAudioR2" max="100" value="0" hidden></progress>
+              <p id="statusAudioR2" class="upload-r2-status" role="status" aria-live="polite">Verificando integração com o R2…</p>
+            </div>
             <label>Link do PDF existente<input id="pdf" placeholder="https://... ou /pdf/..." maxlength="1500"></label>
             <label>Nome do arquivo PPTX/PDF para processamento posterior<input id="arquivo" placeholder="Apresentacao.pptx" maxlength="250"></label>
             <label>Série<select id="serie"><option value="temas">Reflexões</option><option value="doutrina">Doutrina e História</option><option value="evangelho">Histórias do Evangelho</option><option value="ministerio">O Ministério de Jesus</option><option value="parabolas">Parábolas</option><option value="ultimos-dias">Os Últimos Dias de Jesus</option></select></label>
@@ -73,7 +83,7 @@
         </div>
       </section>
     </div>
-    <p class="rodape">O processamento de MP3 e a conversão PPTX → PDF serão integrados em etapa posterior. Nenhum arquivo local é enviado por esta tela.</p>
+    <p class="rodape">O upload de MP3 utiliza o R2. A conversão PPTX → PDF permanece para uma etapa posterior. Salve e publique o cadastro após cada envio.</p>
   </main>
 </body>
 </html>
