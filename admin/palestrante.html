@@ -4,7 +4,7 @@
 <title>Dashboard do Palestrante | Paz que Ilumina</title>
 <link rel="stylesheet" href="/admin/dashboard.css?v=menuperiodoajuste20261121">
 <link rel="stylesheet" href="/admin/palestrante.css?v=deslocamentos20261121">
-<script defer src="/admin/palestrante.js?v=deslocamentos20261121"></script></head><body>
+<script defer src="/admin/palestrante.js?v=rotasautomaticas20261121"></script></head><body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-8h6v8"/></symbol>
  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"/></symbol>
@@ -108,8 +108,8 @@
   <div class="speaker-journey-metric"><span>Média</span><strong id="journeyAverage">— km</strong><small>Por viagem</small></div>
   <div class="speaker-journey-metric speaker-journey-record"><span>Maior viagem</span><strong id="journeyMax">— km</strong><small id="journeyMaxPlace">Destino</small></div>
  </div>
- <div class="speaker-journey-footer"><span>Ida e volta · Residência – Copacabana</span><details class="speaker-journey-details"><summary>Ver trajetos</summary><div id="journeyList" class="speaker-journey-list"></div><a href="/admin/locais.html" class="speaker-journey-edit">Cadastrar distâncias em Locais</a></details></div>
- <p id="journeyNote" class="speaker-journey-note"></p>
+ <div class="speaker-journey-footer"><span>Ida e volta · Residência – Copacabana</span><details class="speaker-journey-details"><summary>Ver trajetos</summary><div id="journeyList" class="speaker-journey-list"></div><span class="speaker-journey-edit">Dados de <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap</a> · <a href="https://project-osrm.org/" target="_blank" rel="noopener noreferrer">OSRM</a></span></details></div>
+ <p id="journeyNote" class="speaker-journey-note" role="status" aria-live="polite"></p>
 </div>
 <div class="speaker-annual-separator"></div>
 <div class="speaker-widget-heading"><div><h2><svg><use href="#i-calendar"/></svg>Um ano de palestras</h2><p class="widget-subtitle">A trajetória de Alexandre, ano a ano · visão geral</p></div></div><div id="anual" class="speaker-panel speaker-annual-list"></div>

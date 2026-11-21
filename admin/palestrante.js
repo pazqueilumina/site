@@ -409,37 +409,62 @@ function comparison(){
 }
 
 /* Viagens concluídas da Agenda. Distâncias são cadastradas por local, nunca inferidas de linha reta. */
+/* Viagens presenciais concluídas, com rotas calculadas em serviço protegido. */
 const journeyNorm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g,' ').trim();
+const journeyRouteKm=new Map(),journeyRouteFailures=new Map();
+let journeyRoutingBusy=false,journeyRoutingError='';
 function journeyIsOnline(e){
  return /\b(online|youtube|instagram|web radio|webradio|live)\b/.test(journeyNorm([e.local,e.endereco].join(' ')));
 }
 function journeyVenue(e){
- if(e.enderecoProprio==='sim')return null; // Endereço excepcional exige distância própria, não a do centro.
- if(e.localId&&placeDetails.has(e.localId))return placeDetails.get(e.localId);
- return [...placeDetails.values()].find(p=>journeyNorm(p.nome)===journeyNorm(e.local))||null;
+ if(e.enderecoProprio!=='sim'){
+  if(e.localId&&placeDetails.has(e.localId))return placeDetails.get(e.localId);
+  const known=[...placeDetails.values()].find(p=>journeyNorm(p.nome)===journeyNorm(e.local));
+  if(known)return known;
+ }
+ if(!e.endereco||e.endereco.length<4)return null;
+ const id='agenda-'+journeyNorm([e.endereco,e.bairro,e.local].join(' ')).replace(/ /g,'-').slice(0,105);
+ return {id,nome:e.local,endereco:e.endereco,bairro:e.bairro||'',cidade:'Rio de Janeiro',uf:'RJ'};
 }
 function journeyBrazilNow(){
  const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
  const part=type=>parts.find(p=>p.type===type)?.value||'00';
  return {date:part('year')+'-'+part('month')+'-'+part('day'),time:part('hour')+':'+part('minute')};
 }
+function journeyTrips(){
+ const [from,to]=boundaries(),now=journeyBrazilNow(),uniqueTrips=new Map();
+ let missing=0;
+ for(const e of agendaEvents){
+  const d=date(e.data);
+  if(!d||d<from||d>to||(e.data>now.date||(e.data===now.date&&e.horario>now.time))||journeyIsOnline(e))continue;
+  const venue=journeyVenue(e);
+  if(!venue){missing++;continue;}
+  const key=e.data+'|'+venue.id;
+  if(uniqueTrips.has(key))continue;
+  const manual=Number(String(venue.kmIdaVolta||'').replace(',','.'));
+  const automatic=journeyRouteKm.get(venue.id);
+  const km=automatic?.km>0?automatic.km:Number.isFinite(manual)&&manual>0?manual:null;
+  uniqueTrips.set(key,{data:e.data,venue,km,aproximado:automatic?.aproximado||false});
+ }
+ return {trips:[...uniqueTrips.values()].sort((a,b)=>b.data.localeCompare(a.data)||a.venue.nome.localeCompare(b.venue.nome,'pt-BR')),missing};
+}
+async function fetchJourneyRoutes(venues){
+ journeyRoutingBusy=true;
+ try{
+  const response=await fetch('/api/admin/rotas',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({locais:venues.map(v=>({id:v.id,endereco:v.endereco,bairro:v.bairro||'',cidade:v.cidade||'Rio de Janeiro',uf:v.uf||'RJ'}))})});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw Error(data.erro||'Não foi possível consultar o serviço de rotas.');
+  for(const route of data.rotas||[])if(route.id&&Number.isFinite(route.km)&&route.km>0)journeyRouteKm.set(route.id,{km:route.km,aproximado:!!route.aproximado});
+  for(const item of data.erros||[])if(item.id)journeyRouteFailures.set(item.id,item.erro||'Rota indisponível.');
+  const returned=new Set([...(data.rotas||[]).map(x=>x.id),...(data.erros||[]).map(x=>x.id)]);
+  for(const v of venues)if(!returned.has(v.id))journeyRouteFailures.set(v.id,'Não foi possível calcular a rota.');
+ }catch(e){journeyRoutingError=String(e.message||'Falha no cálculo automático.');}
+ finally{journeyRoutingBusy=false;renderJourneys();}
+}
 function renderJourneys(){
- const [from,to]=boundaries(),now=journeyBrazilNow();
  const period=range.kind==='month'?speakerMonths[applied.month]+' '+applied.year:range.kind==='year'?String(applied.year):range.kind==='all'?'Todo o período':'Período selecionado';
  set('journeyPeriod',period);
- const eligible=agendaEvents.filter(e=>{
-  const d=date(e.data);
-  return d&&d>=from&&d<=to&&(e.data<now.date||(e.data===now.date&&e.horario<=now.time))&&!journeyIsOnline(e);
- });
- const missed=eligible.filter(e=>!journeyVenue(e)).length,uniqueTrips=new Map();
- for(const e of eligible){
-  const venue=journeyVenue(e);if(!venue)continue;
-  const key=e.data+'|'+venue.id; // Duas palestras no mesmo local e dia são uma viagem.
-  if(uniqueTrips.has(key))continue;
-  const km=Number(String(venue.kmIdaVolta||'').replace(',','.'));
-  uniqueTrips.set(key,{data:e.data,venue,km:Number.isFinite(km)&&km>0?km:null});
- }
- const trips=[...uniqueTrips.values()].sort((a,b)=>b.data.localeCompare(a.data)||a.venue.nome.localeCompare(b.venue.nome,'pt-BR'));
+ const {trips,missing}=journeyTrips();
  const measured=trips.filter(t=>t.km!==null),totalKm=measured.reduce((sum,t)=>sum+t.km,0);
  const kmText=n=>n.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:1})+' km';
  const longest=[...measured].sort((a,b)=>b.km-a.km)[0];
@@ -454,14 +479,20 @@ function renderJourneys(){
  for(const t of trips){
   const row=el('div',null,'speaker-journey-line'),left=el('span');
   left.append(el('b',t.venue.nome),el('small',fmtDate(t.data)));
-  row.append(left,el('strong',t.km===null?'Não cadastrado':kmText(t.km)));list.append(row);
+  row.append(left,el('strong',t.km===null?(journeyRouteFailures.get(t.venue.id)||'Calculando…'):kmText(t.km)+(t.aproximado?' aprox.':'')));list.append(row);
  }
  const notes=[];
- if(trips.length&&!measured.length)notes.push('Informe os km de ida e volta no Cadastro de Locais para calcular os totais.');
- else if(measured.length<trips.length)notes.push('Total parcial: '+nf(trips.length-measured.length)+' viagem(ns) sem distância cadastrada.');
- if(missed)notes.push(nf(missed)+' evento(s) presenciais sem local vinculado ou com endereço próprio não contabilizado(s).');
- if(trips.length)notes.push('Estimativa baseada nos eventos passados da Agenda; cada viagem considera retorno à residência.');
+ if(journeyRoutingError)notes.push(journeyRoutingError);
+ else if(journeyRoutingBusy)notes.push('Calculando automaticamente as rotas rodoviárias…');
+ else if(trips.length&&!measured.length)notes.push('Não há distâncias calculadas para as viagens deste período.');
+ else if(measured.length<trips.length)notes.push('Total parcial: '+nf(trips.length-measured.length)+' viagem(ns) sem rota disponível.');
+ if(missing)notes.push(nf(missing)+' evento(s) presenciais sem endereço válido não contabilizado(s).');
+ if(measured.length)notes.push('Quilometragem estimada por rotas rodoviárias de ida e volta; não é medição do odômetro.');
  set('journeyNote',notes.join(' '));
+ if(!journeyRoutingBusy&&!journeyRoutingError){
+  const needed=[...new Map(trips.filter(t=>t.km===null&&!journeyRouteFailures.has(t.venue.id)).map(t=>[t.venue.id,t.venue])).values()];
+  if(needed.length)void fetchJourneyRoutes(needed.slice(0,20));
+ }
 }
 
 function annual(){
@@ -596,6 +627,7 @@ async function load(){
    if(match)used.add(match);
    return {...p,data:match?match.data:p.data,when:date(match?match.data:p.data),horario:match?match.horario:p.horario,centroId:match?.localId||p.centroId||'',localAgenda:match?match.local:null,seconds:duration(p.duracao),approx:match?false:!!p.dataAproximada,agendaLinked:!!match};
   });
+  journeyRoutingError='';journeyRouteFailures.clear();
   error=null;render();
   $('aviso').hidden=true;set('lastUpdate',shortDate(new Date())+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));set('refreshLabel','Atualizado');set('refreshFeedback','Dados atualizados.');
  }catch(e){error=e;setNotice('Não foi possível carregar as palestras: '+e.message);set('siteStatus','Falha na conexão');set('refreshLabel','Falha ao atualizar');set('refreshFeedback','Falha ao atualizar os dados.');}

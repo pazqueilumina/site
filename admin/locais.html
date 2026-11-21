@@ -24,7 +24,7 @@
           <label>Bairro<input id="bairroLocal" maxlength="180" placeholder="Opcional"></label>
           <div class="duas-colunas"><label>Cidade *<input id="cidadeLocal" maxlength="180" required></label><label>UF *<input id="ufLocal" maxlength="2" minlength="2" pattern="[A-Za-z]{2}" required placeholder="RJ" style="text-transform:uppercase"></label></div>
           <label>Link do Google Maps<input id="mapsLocal" type="url" maxlength="500" pattern="https://.*" placeholder="https://maps.google.com/…"><small>Opcional. Não é o link de transmissão da palestra.</small></label>
-          <label>Distância de ida e volta (km)<input id="kmIdaVoltaLocal" type="number" min="0.1" max="2000" step="0.1" placeholder="Ex.: 12.4"><small>Opcional. Informe a distância rodoviária total desde a residência em Copacabana. Esse valor alimenta o Dashboard do Palestrante.</small></label>
+          <details><summary>Correção manual de distância (opcional)</summary><label>Ida e volta (km)<input id="kmIdaVoltaLocal" type="number" min="0.1" max="2000" step="0.1" placeholder="Ex.: 12.4"><small>O Dashboard calcula as rotas automaticamente. Preencha somente se quiser substituir uma distância indisponível.</small></label></details>
           <div class="acoes"><button id="salvarLocal" type="submit" class="botao principal">Adicionar à lista</button><button id="limparLocal" type="button" class="botao discreto">Limpar</button><button id="excluirLocal" type="button" class="botao perigoso" hidden>Excluir local</button></div>
           <p class="ajuda">As alterações só serão enviadas ao GitHub ao clicar em <strong>Publicar alterações</strong>. A exclusão de um local não apaga eventos da Agenda.</p>
         </form>
