@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
+<title>Dashboard do Palestrante | Paz que Ilumina</title>
+<link rel="stylesheet" href="/admin/dashboard.css?v=palestrante1">
+<link rel="stylesheet" href="/admin/palestrante.css?v=1">
+<script defer src="/admin/palestrante.js?v=1"></script></head><body>
+<svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-8h6v8"/></symbol>
+ <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"/></symbol>
+ <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></symbol>
+ <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></symbol>
+ <symbol id="i-presentation" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="13" rx="1"/><path d="M12 16v5m-5 0 5-5 5 5m-9-10h8"/></symbol>
+ <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14v-2a9 9 0 0 1 18 0v2M3 14v5a2 2 0 0 0 2 2h2v-8H5a2 2 0 0 0-2 2Zm18 0v5a2 2 0 0 1-2 2h-2v-8h2a2 2 0 0 1 2 2Z"/></symbol>
+ <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Zm0 0v14"/></symbol>
+ <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></symbol>
+ <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+ <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10m5 10V4m5 16v-8m5 8V7M2 21h20"/></symbol>
+ <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 0v6h5M8 13h8m-8 4h8"/></symbol>
+ <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"/></symbol>
+ <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+ <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2Zm12-15a3 3 0 0 1 0 6m2 3a5 5 0 0 1 4 5v1h-4"/></symbol>
+ <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a16 16 0 0 1 0 20M12 2a16 16 0 0 0 0 20"/></symbol>
+ <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10 3a2 2 0 0 1 4 0l9 16a2 2 0 0 1-2 3H3a2 2 0 0 1-2-3zM12 9v5m0 4h.01"/></symbol>
+ <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+ <symbol id="i-bolt" viewBox="0 0 24 24"><path d="m13 2-9 11h7l-1 9 10-12h-7z"/></symbol>
+ <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 16v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
+ <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M5 9a8 8 0 0 1 14-2l1 5M4 12l1 5a8 8 0 0 0 14-2"/></symbol>
+ <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m7 12 3 3 7-7"/></symbol>
+ <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+ <symbol id="i-external" viewBox="0 0 24 24"><path d="M13 5h6v6m0-6-9 9M19 13v6H5V5h6"/></symbol>
+ <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+</svg>
+<div class="dash-shell"><aside class="dash-sidebar" aria-label="Menu administrativo">
+ <a href="/admin/dashboard.html" class="dash-brand" aria-label="Paz que Ilumina — Dashboard">
+  <svg class="dove" viewBox="0 0 88 56" fill="none" aria-hidden="true"><path d="M11 9c9 5 13 15 24 16C28 17 26 9 27 3c9 6 16 15 18 23 5-5 7-10 8-19 7 9 5 16 1 23 8-3 15-9 23-9-6 9-13 15-26 18-8 6-16 10-26 8 7-3 13-7 16-12-14 1-23-7-30-26Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M49 37c8 4 14 2 22-2M45 42c-2 5-5 8-9 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  <span>Paz que<br>Ilumina</span>
+ </a>
+ <nav class="dash-nav">
+  <a class="nav-link" href="/admin/dashboard.html"><svg><use href="#i-home"/></svg>Dashboard</a>
+  <button class="nav-link nav-expand" type="button" id="acervoToggle" aria-expanded="false" aria-controls="subAcervo"><svg><use href="#i-layers"/></svg>Acervo<svg class="chev"><use href="#i-chevron"/></svg></button>
+  <div class="nav-sub" id="subAcervo" hidden>
+   <a href="/videos.html"><svg><use href="#i-video"/></svg>Vídeos</a>
+   <a href="/admin/palestras.html"><svg><use href="#i-presentation"/></svg>Apresentações</a>
+   <a href="/audios.html"><svg><use href="#i-headphones"/></svg>Áudios</a>
+   <a href="/livro.html"><svg><use href="#i-book"/></svg>Livro</a>
+  </div>
+  <a class="nav-link selected" href="/admin/palestrante.html"><svg><use href="#i-chart"/></svg>Palestrante</a>
+  <a class="nav-link" href="/admin/agenda.html"><svg><use href="#i-calendar"/></svg>Agenda</a>
+  <a class="nav-link" href="/admin/locais.html"><svg><use href="#i-map-pin"/></svg>Locais</a>
+  <a class="nav-link" href="/admin/palestras.html"><svg><use href="#i-presentation"/></svg>Palestras</a>
+  <a class="nav-link" href="#estatisticas"><svg><use href="#i-chart"/></svg>Estatísticas</a>
+  <a class="nav-link" href="#relatorios"><svg><use href="#i-file"/></svg>Relatórios</a>
+  <a class="nav-link nav-return" href="/"><svg><use href="#i-external"/></svg>Voltar ao site</a>
+ </nav>
+ <div class="dash-sidebar-foot"><div class="online"><svg><use href="#i-check"/></svg><span id="siteStatus">Carregando acervo</span></div><p>Última atualização<br><span id="lastUpdate">—</span></p></div>
+</aside>
+<div class="dash-main">
+<header class="dash-banner"><div class="mountains" aria-hidden="true"></div><div class="sunlight" aria-hidden="true"></div>
+<div class="dash-welcome"><h1>Alexandre Alves</h1><p>Dashboard do Palestrante · Acervo publicado no site</p></div>
+<div class="dash-filter-row"><div class="dash-controls"><svg><use href="#i-calendar"/></svg><label for="periodo" class="sr-only">Período</label><select id="periodo">
+<option value="30" selected>Últimos 30 dias</option><option value="7">Últimos 7 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="month">Mês específico…</option><option value="year">Ano específico…</option><option value="custom">Personalizado…</option><option value="all">Todo o acervo</option></select></div></div></header>
+<main class="dash-content" id="dashMainContent">
+<section class="custom-range-panel" id="filterPanel" hidden><strong id="filterTitle">Selecionar período</strong>
+<div class="filter-extra" id="monthFields" hidden><label for="mes">Mês <select id="mes"></select></label><label for="anoMes">Ano <select id="anoMes"></select></label></div>
+<div class="filter-extra" id="yearFields" hidden><label for="ano">Ano <select id="ano"></select></label></div>
+<div class="filter-extra" id="customFields" hidden><label for="dataInicio">De <input id="dataInicio" type="date"></label><label for="dataFim">Até <input id="dataFim" type="date"></label></div>
+<button type="button" id="aplicarPeriodo">Aplicar</button><span id="periodoErro" class="custom-range-error" role="alert" hidden></span></section>
+<div class="data-caveat"><svg><use href="#i-alert"/></svg><span><strong>Critério:</strong> somente apresentações cadastradas no site. Datas aproximadas não comprovam o dia da palestra; a duração corresponde ao material gravado.</span></div>
+<section class="kpi-strip speaker-kpis" aria-label="Indicadores do palestrante">
+<article class="kpi kpi-blue"><div class="kpi-icon"><svg><use href="#i-presentation"/></svg></div><div class="kpi-info"><h2>Palestras</h2><strong id="kPalestras">—</strong><small>No período</small></div></article>
+<article class="kpi kpi-purple"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Tempo total</h2><strong id="kTempo">—</strong><small>Gravações cadastradas</small></div></article>
+<article class="kpi kpi-sky"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Duração média</h2><strong id="kMedia">—</strong><small>Por palestra</small></div></article>
+<article class="kpi kpi-green"><div class="kpi-icon"><svg><use href="#i-map-pin"/></svg></div><div class="kpi-info"><h2>Centros</h2><strong id="kCentros">—</strong><small>Identificados</small></div></article>
+<article class="kpi kpi-orange"><div class="kpi-icon"><svg><use href="#i-layers"/></svg></div><div class="kpi-info"><h2>Temas</h2><strong id="kTemas">—</strong><small>Etiquetas diferentes</small></div></article>
+<article class="kpi kpi-yellow"><div class="kpi-icon"><svg><use href="#i-calendar"/></svg></div><div class="kpi-info"><h2>Datas aproximadas</h2><strong id="kAprox">—</strong><small>Registros no período</small></div></article></section>
+<div id="aviso" class="status-banner" role="status" hidden><span id="avisoTexto"></span><button type="button" id="fecharAviso" aria-label="Fechar aviso">×</button></div>
+<section class="speaker-row two-col">
+<article class="widget"><h2><svg><use href="#i-chart"/></svg>Evolução mensal</h2><p class="widget-subtitle">Palestras cadastradas por mês · ano selecionado</p><div id="chartMensal" class="speaker-chart"></div></article>
+<article class="widget"><h2><svg><use href="#i-clock"/></svg>Horas por mês</h2><p class="widget-subtitle">Duração das gravações em horas</p><div id="chartHoras" class="speaker-chart"></div></article></section>
+<section class="speaker-row three-col">
+<article class="widget"><h2><svg><use href="#i-chart"/></svg>Comparação mensal</h2><div id="comparativo" class="speaker-panel"></div></article>
+<article class="widget"><h2><svg><use href="#i-map-pin"/></svg>Centros mais visitados</h2><div id="centros" class="speaker-panel"></div></article>
+<article class="widget"><h2><svg><use href="#i-layers"/></svg>Temas mais frequentes</h2><div id="temas" class="speaker-panel"></div></article></section>
+<section class="speaker-row two-col">
+<article class="widget"><h2><svg><use href="#i-calendar"/></svg>Consolidado anual</h2><p class="widget-subtitle">Comparação entre anos cadastrados</p><div id="anual" class="speaker-panel"></div></article>
+<article class="widget"><h2><svg><use href="#i-bolt"/></svg>Destaques do acervo</h2><div id="destaques" class="speaker-panel"></div></article></section>
+<section class="speaker-row one-col"><article class="widget"><h2><svg><use href="#i-presentation"/></svg>Histórico das apresentações</h2><p class="widget-subtitle">Registros do período selecionado · datas aproximadas sinalizadas</p><div class="speaker-table-wrap"><table class="speaker-table"><thead><tr><th>Data</th><th>Apresentação</th><th>Centro</th><th>Tema</th><th>Duração</th></tr></thead><tbody id="historico"></tbody></table></div></article></section>
+<footer class="dash-footer">Painel do palestrante · Dados do acervo · Sem estatísticas inventadas <span id="refreshFeedback" class="sr-only" role="status" aria-live="polite"></span><button type="button" id="atualizar"><svg id="refreshIcon"><use href="#i-refresh"/></svg><span id="refreshLabel">Atualizar</span></button></footer>
+</main></div></div></body></html>
