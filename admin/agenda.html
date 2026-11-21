@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="same-origin">
   <title>Administração da Agenda | Estudos e Reflexões Espíritas</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=indicadores-sobrios20261121">
-  <script defer src="/admin/admin.js?v=plataforma20261121"></script>
+  <link rel="stylesheet" href="/admin/admin.css?v=locais-centralizados20261121">
+  <script defer src="/admin/admin.js?v=locais-centralizados20261121"></script>
 </head>
 <body class="pagina-agenda">
   <header class="topo">
@@ -52,13 +52,17 @@
             <label>Horário *<input id="horario" type="time" required></label>
           </div>
           <label>Título da palestra ou atividade *<input id="titulo" type="text" maxlength="180" placeholder="Ex.: A Bênção da Dor" required></label>
-          <label>Local ou instituição *<input id="local" list="opcoesLocais" autocomplete="off" type="text" maxlength="180" placeholder="Ex.: Consolador - Comunidade Espírita Cristã" required></label>
+          <label>Centro ou local cadastrado *<input id="local" list="opcoesLocais" autocomplete="off" type="text" maxlength="180" placeholder="Selecione um local cadastrado" required></label>
           <datalist id="opcoesLocais"></datalist>
           <input id="idLocal" type="hidden">
-          <p id="avisoLocal" class="ajuda aviso-local">Digite ou selecione um Centro cadastrado. Se não existir, o local poderá ser informado manualmente.</p>
-          <label>Endereço físico ou identificação da plataforma<input id="endereco" type="text" maxlength="500" placeholder="Rua, número, bairro… ou You Tube"></label>
-          <label>Link da transmissão ou do evento<input id="link" type="url" maxlength="500" placeholder="https://www.youtube.com/…" pattern="https://.*"><small>Opcional. Use o endereço completo começando por https://.</small></label>
-          <label>Link do Google Maps<input id="mapa" type="url" maxlength="500" pattern="https://.*" placeholder="Preenchido pelo cadastro do local, quando disponível"><small>Opcional. Diferente do link da transmissão.</small></label>
+          <p id="avisoLocal" class="ajuda aviso-local">Selecione um Centro ou Local já cadastrado.</p>
+          <p class="ajuda"><a href="/admin/locais.html">Cadastrar ou corrigir um Centro / Local</a></p>
+          <div class="resumo-endereco-local" id="blocoEnderecoLocal" hidden>
+            <span>Endereço do local cadastrado</span>
+            <p id="enderecoLocalResumo"></p>
+            <a id="mapaLocalResumo" href="#" target="_blank" rel="noopener noreferrer" hidden>Ver no Google Maps</a>
+          </div>
+          <label>Link do evento (opcional)<input id="link" type="url" maxlength="500" placeholder="https://..." pattern="https://.*"><small>Se houver um link específico, informe-o aqui. O endereço e o mapa vêm do Cadastro de Locais.</small></label>
           <div class="acoes"><button class="botao principal" type="submit" id="salvar">Salvar na lista</button><button class="botao discreto" type="button" id="cancelar">Limpar</button><button class="botao perigoso" type="button" id="excluir" hidden>Excluir evento</button></div>
           <p class="ajuda">Salvar na lista prepara a mudança. <strong>Publicar alterações</strong> envia todas as mudanças ao GitHub.</p>
         </form>
@@ -80,12 +84,12 @@
         <div><h2 id="tituloImportacao">Importar eventos por CSV</h2><p id="arquivoCsvNome">Revise os registros antes de acrescentá-los à agenda.</p></div>
       </div>
       <div class="importacao-conteudo">
-        <p class="importacao-instrucao">Os eventos já cadastrados serão preservados. Registros inválidos serão rejeitados, e os válidos poderão ser importados. Duplicados serão ignorados. A coluna Bairro é opcional e pode ser preenchida automaticamente para locais cadastrados. Aceita datas DD/MM/AAAA ou AAAA-MM-DD e horários HH:MM. Nenhuma alteração será publicada sem clicar em <strong>Publicar alterações</strong>.</p>
+        <p class="importacao-instrucao">Os eventos já cadastrados serão preservados. Registros inválidos serão rejeitados, e os válidos poderão ser importados. Duplicados serão ignorados. Os Centros e Locais devem estar cadastrados. Endereços e mapas vêm do Cadastro de Locais; colunas antigas de endereço e bairro serão ignoradas. Aceita datas DD/MM/AAAA ou AAAA-MM-DD e horários HH:MM. Nenhuma alteração será publicada sem clicar em <strong>Publicar alterações</strong>.</p>
         <div id="resumoCsv" class="importacao-resumo" role="status" aria-live="polite"></div>
         <p id="avisoCsv" class="importacao-aviso" role="alert" hidden></p>
         <div class="importacao-tabela-rolagem">
           <table class="importacao-tabela">
-            <thead><tr><th>Linha</th><th>Data</th><th>Horário</th><th>Título</th><th>Local</th><th>Endereço</th><th>Bairro</th><th>Link</th><th>Status</th></tr></thead>
+            <thead><tr><th>Linha</th><th>Data</th><th>Horário</th><th>Título</th><th>Local</th><th>Link</th><th>Status</th></tr></thead>
             <tbody id="linhasCsv"></tbody>
           </table>
         </div>

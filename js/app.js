@@ -455,12 +455,14 @@ function cadastroDoEventoAgenda(evento) {
     || CADASTRO_LOCAIS_AGENDA.find(l => normalizarLocalAgenda(l.nome) === normalizarLocalAgenda(evento.local));
 }
 function eventoOnlineAgenda(evento) {
-  const endereco = String(evento.endereco || '').trim();
-  return /(you\s*tube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(endereco)
-    || (!endereco && /(you\s*tube|instagram|on-?line|web rádio|webrádio)/i.test(evento.local || ''));
+  const cadastro=cadastroDoEventoAgenda(evento);
+  const texto=[cadastro?.nome||'',cadastro?.endereco||'',evento.local||'',evento.endereco||''].join(' ');
+  return /(you\s*tube|instagram|on-?line|zoom|meet\.google|teams\.microsoft|web rádio|webrádio)/i.test(texto);
 }
 function cadastroEnderecoAgenda(evento) {
-  if (eventoOnlineAgenda(evento) || evento.enderecoProprio === 'sim') return null;
+  // Eventos antigos explicitamente on-line permanecem on-line; os demais
+  // sempre usam o endereço atualizado do Cadastro de Locais.
+  if(eventoOnlineAgenda(evento))return null;
   return cadastroDoEventoAgenda(evento);
 }
 function enderecoExibidoAgenda(evento) {
@@ -513,7 +515,8 @@ function nomePlataformaVisivel(texto) {
     .replace(/\b(You Tube|Instagram)\s*\(online\)/gi, '$1');
 }
 function plataformaEventoAgenda(evento) {
-  const identificacao = [evento.link || '', evento.endereco || '', evento.local || ''].join(' ');
+  const cadastro=cadastroDoEventoAgenda(evento);
+  const identificacao=[cadastro?.nome||'',cadastro?.endereco||'',evento.endereco||'',evento.local||''].join(' ');
   if (/(you\s*tube|youtu\.be)/i.test(identificacao)) return 'youtube';
   if (/instagram/i.test(identificacao)) return 'instagram';
   return '';
@@ -540,13 +543,13 @@ function itemAgenda(evento, compacto) {
   const plataforma = plataformaEventoAgenda(evento);
   const linkDireto = linkDiretoAgenda(evento);
   const enderecoExibido = enderecoExibidoAgenda(evento);
-  const linkPlataforma = linkDireto || (online && enderecoExibido ? mapaExibidoAgenda(evento, enderecoExibido) : null);
+  const linkPlataforma = linkDireto;
 
   if (compacto) {
     const tipo = online ? plataforma : '';
     const linkLocal = online ? (linkPlataforma || linkLocalAgenda(evento)) : linkLocalAgenda(evento);
     const iconeInicio = icone(tipo || 'pin');
-    const nomeLocal = escapar(nomePlataformaVisivel(evento.local));
+    const nomeLocal = escapar(nomePlataformaVisivel(cadastroDoEventoAgenda(evento)?.nome || evento.local));
     const classe = 'agenda-local-link' + (tipo ? ' agenda-plataforma agenda-plataforma--' + tipo : '');
     const local = linkLocal
       ? '<a class="' + classe + '" href="' + escapar(linkLocal) + '" target="_blank" rel="noopener noreferrer" title="' + (online ? 'Abrir transmissão' : 'Ver no Google Maps') + '">' +
@@ -576,7 +579,7 @@ function itemAgenda(evento, compacto) {
     '<article class="item-agenda' + classeHoje + '">' +
     '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + '</div></div>' +
     '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(nomePlataformaVisivel(evento.titulo)) + '</h3>' +
-    '<div class="agenda-linha"><span class="agenda-centro">' + escapar(nomePlataformaVisivel(evento.local)) + '</span></div>' +
+    '<div class="agenda-linha"><span class="agenda-centro">' + escapar(nomePlataformaVisivel(cadastroDoEventoAgenda(evento)?.nome || evento.local)) + '</span></div>' +
     linhaEndereco + linhaLink +
     '</div>' + icone('seta', 'agenda-seta') +
     '</article>'

@@ -141,3 +141,9 @@
 .pagina-locais .sugestao-coordenadas button{padding:7px 10px;border:1px solid #cbdbe7;border-radius:7px;background:#fff;color:var(--navy);font-size:12px;font-weight:600}
 .pagina-locais .sugestao-coordenadas button:hover{background:#e9f2f8}
 .pagina-locais .ajuda-coordenadas{font-size:12px;color:var(--muted);line-height:1.5;margin:9px 0 12px}
+
+/* Endereço da agenda: somente leitura, vindo do Cadastro de Locais. */
+.pagina-agenda .resumo-endereco-local{margin:0 0 16px;padding:13px 15px;border:1px solid #dce6ec;border-radius:9px;background:#f5f8fa}
+.pagina-agenda .resumo-endereco-local>span{display:block;color:var(--muted);font-size:12px;font-weight:700}
+.pagina-agenda .resumo-endereco-local p{margin:7px 0 0;font-size:13px;line-height:1.5;color:var(--navy)}
+.pagina-agenda .resumo-endereco-local a{display:inline-block;margin-top:7px;color:#245b8c;font-size:12px;font-weight:600}

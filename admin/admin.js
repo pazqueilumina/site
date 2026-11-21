@@ -1,7 +1,7 @@
 'use strict';
 const API = '/api/admin/agenda';
 const $ = id => document.getElementById(id);
-const campos = ['data', 'horario', 'titulo', 'local', 'endereco', 'link', 'mapa'];
+const campos = ['data', 'horario', 'titulo', 'local', 'link'];
 const estado = { agenda: [], sha: null, selecionado: null, alterado: false, formularioAlterado: false, sequencia: 0, ordemDesc: false, importacao: null, locais: [], relatorioCsv: null };
 const MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 function chave() { return 'e' + (++estado.sequencia); }
@@ -25,7 +25,7 @@ function renderizar() {
   const filtrados = estado.agenda.filter(e => {
     if (filtro === 'futuros' && e.data < hoje) return false;
     if (filtro === 'passados' && e.data >= hoje) return false;
-    return !busca || `${e.titulo} ${e.local} ${e.endereco || ''}`.toLocaleLowerCase('pt-BR').includes(busca);
+    return !busca || [e.titulo, localDoEvento(e)?.nome || e.local, localDoEvento(e)?.endereco || e.endereco || ''].join(' ').toLocaleLowerCase('pt-BR').includes(busca);
   });
   // Inverter apenas a apresentação, sem alterar os registros ou o estado de publicação.
   if (estado.ordemDesc) filtrados.reverse();
@@ -48,7 +48,7 @@ function renderizar() {
 }
 function formularioEmBranco() {
   estado.selecionado=null; estado.formularioAlterado=false;
-  $('formEvento').reset();$('idLocal').value='';$('data').value=hojeISO();atualizarAvisoLocal();
+  $('formEvento').reset();$('local').setCustomValidity('');$('idLocal').value='';$('data').value=hojeISO();atualizarAvisoLocal();
   $('tituloEditor').textContent='Novo evento';$('salvar').textContent='Adicionar à lista';$('excluir').hidden=true;
   renderizar();
 }
@@ -58,39 +58,41 @@ function selecionar(key) {
   const e=estado.agenda.find(x=>x._key===key);if(!e)return;
   estado.selecionado=key;estado.formularioAlterado=false;
   for(const campo of campos) $(campo).value=e[campo] || '';
-  $('idLocal').value=e.localId||'';
+  const cadastro=localDoEvento(e);
+  if(cadastro) $('local').value=cadastro.nome;
+  $('local').setCustomValidity('');
+  $('idLocal').value=cadastro?.id || '';
   atualizarAvisoLocal();
   $('tituloEditor').textContent='Editar compromisso';$('salvar').textContent='Salvar na lista';$('excluir').hidden=false;
   renderizar();
 }
 function lerFormulario() {
-  const obj={};for(const campo of campos){const val=$(campo).value.trim();if(val)obj[campo]=val;}
-  if($('idLocal').value && estado.locais.some(l=>l.id===$('idLocal').value&&normalizarCsv(l.nome)===normalizarCsv(obj.local))) obj.localId=$('idLocal').value;
-  if (!/^https:\/\/[^\s/]+/i.test(obj.link || 'https://exemplo.org')) { $('link').setCustomValidity('Use um endereço começando por https://');$('link').reportValidity();return null; }
+  const obj={};
+  for(const campo of campos){const val=$(campo).value.trim();if(val)obj[campo]=val;}
+  const cadastro=encontrarLocal(obj.local);
+  if(!cadastro){
+    $('local').setCustomValidity('Selecione um Centro ou Local cadastrado. Cadastre o local na aba Locais antes de salvar.');
+    $('local').reportValidity();
+    return null;
+  }
+  $('local').setCustomValidity('');
+  obj.local=cadastro.nome;
+  obj.localId=cadastro.id;
+  if (!/^https:\/\/[^\s/]+/i.test(obj.link || 'https://exemplo.org')) {
+    $('link').setCustomValidity('Use um endereço começando por https://');$('link').reportValidity();return null;
+  }
   $('link').setCustomValidity('');
-  if (obj.mapa && !/^https:\/\/[^\s/]+/i.test(obj.mapa)) { $('mapa').setCustomValidity('Use um endereço https:// válido.');$('mapa').reportValidity();return null; }
-  $('mapa').setCustomValidity('');
   if (!$('formEvento').reportValidity()) return null;
   return obj;
 }
 function salvarNaLista({ silencioso = false } = {}) {
   const obj=lerFormulario();if(!obj)return false;
-  const anterior = estado.selecionado ? estado.agenda.find(e=>e._key===estado.selecionado) : null;
-  // Endereços excepcionais são identificados quando um endereço diferente é informado
-  // explicitamente; apenas editar o título de um evento antigo não o transforma em exceção.
-  const localCadastro = estado.locais.find(l => l.id === obj.localId) || encontrarLocal(obj.local);
-  const enderecoMudou = !anterior || (anterior.endereco || '') !== (obj.endereco || '');
-  if (localCadastro && obj.endereco && !/(you\s*tube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(obj.endereco)
-      && enderecoForaDoCadastro(obj.endereco, localCadastro)
-      && (enderecoMudou || anterior?.enderecoProprio === 'sim')) obj.enderecoProprio = 'sim';
-  // O editor mantém o bairro do CSV quando os dados do local não mudam.
-  if (anterior && anterior.local === obj.local && (anterior.endereco || '') === (obj.endereco || '') && anterior.bairro) obj.bairro = anterior.bairro;
-  else {
-    const cadastrado = estado.locais.find(l => l.id === obj.localId);
-    if (cadastrado?.bairro && normalizarCsv(obj.endereco) === normalizarCsv(cadastrado.endereco)) obj.bairro = cadastrado.bairro;
+  if(estado.selecionado){
+    const i=estado.agenda.findIndex(e=>e._key===estado.selecionado);if(i<0)return false;
+    estado.agenda[i]={...obj,_key:estado.selecionado};
+  } else {
+    const id=chave();estado.agenda.push({...obj,_key:id});estado.selecionado=id;
   }
-  if(estado.selecionado){const i=estado.agenda.findIndex(e=>e._key===estado.selecionado);if(i<0)return false;estado.agenda[i]={...obj,_key:estado.selecionado};}
-  else {const id=chave();estado.agenda.push({...obj,_key:id});estado.selecionado=id;}
   estado.formularioAlterado=false;estado.alterado=true;
   $('tituloEditor').textContent='Editar compromisso';$('salvar').textContent='Salvar na lista';$('excluir').hidden=false;
   renderizar();if(!silencioso)mensagem('Evento salvo na lista. Clique em “Publicar alterações” para atualizar o site.','alerta');
@@ -132,12 +134,7 @@ const CABECALHOS_CSV = {
 function normalizarCsv(valor) {
   return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
 }
-function enderecoForaDoCadastro(endereco, cadastro) {
-  const informado = normalizarCsv(endereco);
-  const padrao = normalizarCsv(cadastro?.endereco);
-  return !!(informado && padrao && informado !== padrao
-    && !informado.startsWith(padrao + ',') && !informado.startsWith(padrao + ' ·'));
-}
+
 function colunaCsv(valor) {
   const cab = normalizarCsv(valor).replace(/[^a-z0-9]/g, '');
   return Object.keys(CABECALHOS_CSV).find(campo => CABECALHOS_CSV[campo].includes(cab)) || null;
@@ -187,7 +184,7 @@ function prepararCsv(texto) {
   const melhor = tentativas[0];
   if (melhor.pontuacao < 4) {
     const erro = tentativas.find(t => t.erro)?.erro;
-    throw new Error(erro?.message || 'Cabeçalho inválido. Use as colunas data;horario;titulo;local;endereco;bairro;link.');
+    throw new Error(erro?.message || 'Cabeçalho inválido. Use as colunas data;horario;titulo;local;link.');
   }
   if (new Set(melhor.cabecalhos.filter(Boolean)).size !== melhor.cabecalhos.filter(Boolean).length) {
     throw new Error('O arquivo CSV contém colunas repetidas no cabeçalho.');
@@ -221,31 +218,19 @@ function normalizarHorarioCsv(valor) {
 }
 function validarEventoCsv(item) {
   if (item.colunasExtras) return { erro: 'Há mais colunas preenchidas que no cabeçalho.' };
-  const e = { ...item.evento };
-  e.data = normalizarDataCsv(e.data);
-  e.horario = normalizarHorarioCsv(e.horario);
+  const e={...item.evento};
+  e.data=normalizarDataCsv(e.data);
+  e.horario=normalizarHorarioCsv(e.horario);
   if (!e.data) return { erro: item.evento.data ? 'Data inválida. Use DD/MM/AAAA ou AAAA-MM-DD.' : 'Data obrigatória não informada.' };
   if (!e.horario) return { erro: item.evento.horario ? 'Horário inválido. Use HH:MM.' : 'Horário obrigatório não informado.' };
   if (!e.titulo || !e.local) return { erro: [!e.titulo && 'Título', !e.local && 'Local'].filter(Boolean).join(' e ') + ' obrigatório(s) não informado(s).' };
-  for (const campo of [...campos, 'bairro']) {
-    const limite = ['endereco', 'link', 'mapa'].includes(campo) ? 500 : 180;
-    if (String(e[campo] || '').length > limite) return { erro: `O campo ${campo} excede ${limite} caracteres.` };
+  for (const campo of ['titulo','local','link']) {
+    if (String(e[campo] || '').length > (campo==='link'?500:180)) return { erro: 'O campo '+campo+' excede o limite permitido.' };
   }
   if (e.link && !/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/i.test(e.link)) return { erro: 'O link deve começar por https:// e ser válido.' };
-  const local = encontrarLocal(e.local);
-  if (local) {
-    const semEndereco = !e.endereco;
-    if (semEndereco) e.endereco=local.endereco;
-    if (!e.bairro && local.bairro && !/(you\s*tube|instagram|online|zoom|meet\.google|teams\.microsoft)/i.test(e.endereco || '')) e.bairro = local.bairro;
-    const online = /(you\s*tube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(e.endereco || '');
-    if (!online && enderecoForaDoCadastro(e.endereco, local)) e.enderecoProprio='sim';
-    e.localId=local.id;
-    if (!e.enderecoProprio && local.maps && !online) e.mapa=local.maps;
-    e.local=local.nome;
-  }
-  const evento = {};
-  for (const campo of [...campos, 'bairro', 'localId', 'enderecoProprio']) if (e[campo]) evento[campo] = e[campo];
-  return { evento };
+  const local=encontrarLocal(e.local);
+  if(!local) return { erro: 'Centro/Local não cadastrado. Cadastre-o na aba Locais antes de importar.' };
+  return { evento: { data:e.data, horario:e.horario, titulo:e.titulo, local:local.nome, localId:local.id, ...(e.link?{link:e.link}:{}) } };
 }
 function identidadeEventoCsv(e) {
   return [e.data, e.horario, normalizarCsv(e.titulo), normalizarCsv(e.local)].join('|');
@@ -287,7 +272,7 @@ function renderizarPreviaCsv() {
   for (const r of a.resultado) {
     const tr = document.createElement('tr'), e = r.evento;
     adicionarCelulaCsv(tr, String(r.linha));
-    for (const campo of ['data', 'horario', 'titulo', 'local', 'endereco', 'bairro', 'link']) adicionarCelulaCsv(tr, e[campo]);
+    for (const campo of ['data', 'horario', 'titulo', 'local', 'link']) adicionarCelulaCsv(tr, e[campo]);
     adicionarCelulaCsv(tr, r.status === 'Inválido' ? `Inválido: ${r.detalhe}` : r.status,
       r.status === 'Novo' ? 'status-novo' : r.status === 'Duplicado' ? 'status-duplicado' : 'status-invalido');
     tbody.append(tr);
@@ -339,37 +324,49 @@ function confirmarImportacaoCsv() {
   renderizar();renderizarRelatorioCsv();
   mensagem(`${a.novos} evento(s) acrescentado(s); ${a.invalidos} rejeitado(s); ${a.duplicados} duplicado(s) ignorado(s). Consulte o relatório abaixo. Clique em “Publicar alterações” para atualizar o site.`, 'alerta');
 }
-/* Cadastro de locais: sugestão sem bloquear locais informados manualmente. */
-function encontrarLocal(nome) { return estado.locais.find(l => normalizarCsv(l.nome) === normalizarCsv(nome)); }
+/* Cadastro de Locais é a única origem de endereços e mapas da agenda. */
+function encontrarLocal(nome) {
+  return estado.locais.find(l => normalizarCsv(l.nome) === normalizarCsv(nome));
+}
+function localDoEvento(evento) {
+  return estado.locais.find(l => l.id === evento.localId) || encontrarLocal(evento.local);
+}
 async function carregarLocais() {
-  try {
-    const r=await fetch('/api/admin/locais',{cache:'no-store',credentials:'same-origin'});
-    const d=await r.json(); if(!r.ok||!Array.isArray(d.locais))throw new Error(d.erro||'Cadastro indisponível');
-    estado.locais=d.locais;
-  } catch(e) { estado.locais=[]; console.warn('Cadastro de locais indisponível:',e.message); }
+  const r=await fetch('/api/admin/locais',{cache:'no-store',credentials:'same-origin'});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||!Array.isArray(d.locais))throw new Error(d.erro||'Cadastro de Centros e Locais indisponível. Recarregue a página.');
+  estado.locais=d.locais;
   const lista=$('opcoesLocais');lista.replaceChildren();
-  for(const local of estado.locais) { const opt=document.createElement('option');opt.value=local.nome;lista.append(opt); }
+  for(const local of estado.locais) {
+    const opt=document.createElement('option');opt.value=local.nome;lista.append(opt);
+  }
 }
 function atualizarAvisoLocal() {
   const l=encontrarLocal($('local').value);
   $('avisoLocal').textContent=l
-    ? 'Local cadastrado: ao selecionar, o endereço e o link do mapa serão preenchidos. O link da transmissão não será alterado.'
-    : 'Local não cadastrado: você pode preencher os dados manualmente ou cadastrá-lo em “Locais”.';
+    ? 'Endereço e mapa vinculados ao cadastro. Para corrigir, use a aba Locais.'
+    : 'Selecione um Centro ou Local cadastrado. Locais não cadastrados não podem ser salvos na agenda.';
+  const bloco=$('blocoEnderecoLocal');
+  bloco.hidden=!l;
+  if(!l)return;
+  $('enderecoLocalResumo').textContent=[l.endereco,l.bairro,[l.cidade,l.uf].filter(Boolean).join('/')].filter(Boolean).join(' · ');
+  const link=$('mapaLocalResumo');
+  link.hidden=!/^https:\/\/[^\s]+$/i.test(l.maps||'');
+  if(!link.hidden)link.href=l.maps;
 }
 function aplicarLocalDigitado() {
   const l=encontrarLocal($('local').value);
-  if (!l) { $('idLocal').value=''; atualizarAvisoLocal();return; }
-  $('local').value=l.nome;$('idLocal').value=l.id;
-  $('endereco').value=l.endereco;
-  $('mapa').value=l.maps||'';
+  $('idLocal').value=l?.id||'';
+  if(l)$('local').value=l.nome;
+  $('local').setCustomValidity('');
   estado.formularioAlterado=true;
   atualizarAvisoLocal();
 }
 function textoCsvCelula(v) { let s=String(v??''); if(/^[\s]*[=+@-]/.test(s))s="'"+s; return /[;"\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }
 function baixarRelatorioCsv(a) {
   if(!a)return;
-  const linhas=[['linha','data','horario','titulo','local','endereco','bairro','link','status','motivo']];
-  for(const r of a.resultado.filter(x=>x.status!=='Novo')) linhas.push([r.linha,r.evento.data||'',r.evento.horario||'',r.evento.titulo||'',r.evento.local||'',r.evento.endereco||'',r.evento.bairro||'',r.evento.link||'',r.status==='Inválido'?'Rejeitado':'Duplicado',r.detalhe]);
+  const linhas=[['linha','data','horario','titulo','local','link','status','motivo']];
+  for(const r of a.resultado.filter(x=>x.status!=='Novo')) linhas.push([r.linha,r.evento.data||'',r.evento.horario||'',r.evento.titulo||'',r.evento.local||'',r.evento.link||'',r.status==='Inválido'?'Rejeitado':'Duplicado',r.detalhe]);
   const csv='\uFEFF'+linhas.map(row=>row.map(textoCsvCelula).join(';')).join('\r\n')+'\r\n';
   const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
   const link=document.createElement('a');link.href=url;link.download='relatorio-importacao-agenda.csv';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -384,7 +381,7 @@ function renderizarRelatorioCsv() {
   for(const r of erros){const tr=document.createElement('tr');for(const v of [r.linha,r.evento.data,r.evento.horario,r.evento.titulo,r.evento.local,r.detalhe])adicionarCelulaCsv(tr,String(v||''));corpo.append(tr);}
   $('baixarErrosCsv').disabled=a.invalidos===0&&a.duplicados===0;
 }
-$('local').addEventListener('input',()=>{ $('idLocal').value=''; atualizarAvisoLocal(); });
+$('local').addEventListener('input',()=>{ $('idLocal').value=''; $('local').setCustomValidity(''); atualizarAvisoLocal(); });
 $('local').addEventListener('change',aplicarLocalDigitado);
 $('baixarErrosPrevia').addEventListener('click',()=>baixarRelatorioCsv(avaliarImportacaoCsv()));
 $('baixarErrosCsv').addEventListener('click',()=>baixarRelatorioCsv(estado.relatorioCsv));
@@ -396,7 +393,7 @@ $('confirmarCsv').addEventListener('click', confirmarImportacaoCsv);
 
 $('fecharMensagem').addEventListener('click',()=>{ $('mensagem').hidden = true; });
 $('formEvento').addEventListener('submit',e=>{e.preventDefault();salvarNaLista();});
-$('formEvento').addEventListener('input',()=>{estado.formularioAlterado=true;$('link').setCustomValidity('');$('mapa').setCustomValidity('');});
+$('formEvento').addEventListener('input',()=>{estado.formularioAlterado=true;$('link').setCustomValidity('');});
 $('novo').addEventListener('click',()=>{if(confirmarDescarte()){formularioEmBranco();$('titulo').focus();}});
 $('cancelar').addEventListener('click',()=>{if(confirmarDescarte())formularioEmBranco();});
 $('excluir').addEventListener('click',()=>{
