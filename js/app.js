@@ -521,8 +521,8 @@ function itemAgenda(evento, compacto) {
       : icone("pin") + '<span class="agenda-local-texto">' + escapar(evento.local) + '</span>';
     return (
       '<article class="item-agenda' + classeHoje + '">' +
-      '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div>" + etiquetaHoje + "</div>" +
-      '<div class="agenda-info"><h3>' + escapar(evento.titulo) + "</h3>" +
+      '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div>" + "</div>" +
+      '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(evento.titulo) + "</h3>" +
       '<div class="agenda-detalhes">' +
       '<span class="agenda-campo">' + local + "</span>" +
       "</div></div></article>"
@@ -549,8 +549,8 @@ function itemAgenda(evento, compacto) {
 
   return (
     '<article class="item-agenda' + classeHoje + '">' +
-    '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div>" + etiquetaHoje + "</div>" +
-    '<div class="agenda-info"><h3>' + escapar(evento.titulo) + "</h3>" +
+    '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div>" + "</div>" +
+    '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(evento.titulo) + "</h3>" +
     '<div class="agenda-linha"><span class="agenda-centro">' + escapar(evento.local) + "</span></div>" +
     linhaEndereco + linhaLink +
     "</div>" + icone("seta", "agenda-seta") +
@@ -757,8 +757,9 @@ function cartaoShort(s, i) {
   };
   const link = "https://www.youtube.com/shorts/" + s.id;
   return (
-    '<article class="cartao">' +
-    miniatura(item) +
+    '<article class="cartao cartao-short">' +
+    '<a class="short-miniatura-link" href="' + escapar(link) + '" target="_blank" rel="noopener" aria-label="Assistir ' + escapar(s.t) + '">' +
+    miniatura(item) + "</a>" +
     '<div class="cartao-corpo">' +
     "<h3>" + escapar(s.t) + "</h3>" +
     '<div class="cartao-rodape">' +

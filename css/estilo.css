@@ -674,25 +674,28 @@ h1, h2, h3, .serif {
 
 .item-agenda:hover { box-shadow: var(--sombra-hover); border-color: #ddd2bc; }
 
-/* Eventos de hoje: azul suave e sombra para destaque, sem alterar os demais cartões. */
+/* Evento de hoje: cartão branco, detalhe lilás e sombra discreta. */
 .item-agenda.item-agenda--hoje {
-  background: #f4efff;
-  border-color: #b6a0d8;
-  box-shadow: 0 9px 26px rgba(91, 61, 143, 0.22), 0 2px 7px rgba(91, 61, 143, 0.10);
+  background: var(--branco);
+  border-color: #e8e1ed;
+  border-left: 4px solid #9a7bc4;
+  box-shadow: 0 3px 10px rgba(44, 36, 62, 0.10), 0 8px 20px rgba(44, 36, 62, 0.07);
 }
 .item-agenda.item-agenda--hoje:hover {
-  border-color: #9676c3;
-  box-shadow: 0 12px 30px rgba(91, 61, 143, 0.26), 0 3px 9px rgba(91, 61, 143, 0.12);
+  border-color: #d7c9e5;
+  border-left-color: #9a7bc4;
+  box-shadow: 0 5px 13px rgba(44, 36, 62, 0.13), 0 11px 24px rgba(44, 36, 62, 0.08);
 }
 .agenda-etiqueta-hoje {
-  display: inline-block;
-  margin-top: 6px;
-  padding: 2px 6px;
+  display: table;
+  width: fit-content;
+  margin: 0 0 6px;
+  padding: 3px 8px;
   border-radius: 5px;
-  background: #e3d5f8;
-  color: #5c3c87;
-  font: 700 9px/1.4 var(--fonte-sans);
-  letter-spacing: .06em;
+  background: #eee5f7;
+  color: #75519d;
+  font: 600 10px/1.4 var(--fonte-sans);
+  letter-spacing: 0.1px;
 }
 .agenda-local-link {
   display: inline-flex;
@@ -1506,3 +1509,50 @@ body[data-page="inicio"] .hero-conteudo { display: none; }
 .contagem-agenda{margin:0 0 13px;font-size:12px;font-weight:600;color:var(--cinza)}
 @media(max-width:1180px){.filtro-agenda-publica{grid-template-columns:minmax(180px,1fr) minmax(140px,.6fr)}.filtro-agenda-botoes{flex-direction:row;align-self:end}}
 @media(max-width:650px){.filtro-agenda-publica{grid-template-columns:1fr;padding:14px}.filtro-agenda-botoes{justify-content:space-between;flex-wrap:wrap}.filtro-agenda-botoes button{flex:1}}
+
+/* ============ VÍDEOS: GALERIA VERTICAL DE SHORTS ============
+   As miniaturas do YouTube são 16:9, com o vídeo vertical centralizado.
+   O recorte 9:16 remove as laterais escuras sem alterar as imagens originais. */
+body[data-page="videos"] .grade-cartoes {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+body[data-page="videos"] .cartao-short .miniatura {
+  aspect-ratio: 9 / 16;
+  background: #172033;
+}
+body[data-page="videos"] .cartao-short .thumb-img {
+  object-fit: cover;
+  object-position: center;
+}
+body[data-page="videos"] .cartao-short .short-miniatura-link {
+  display: block;
+  overflow: hidden;
+}
+body[data-page="videos"] .cartao-short .cartao-corpo {
+  padding: 13px 14px 15px;
+  gap: 12px;
+}
+body[data-page="videos"] .cartao-short h3 {
+  font-size: 15px;
+  line-height: 1.4;
+}
+body[data-page="videos"] .cartao-short .cartao-rodape {
+  gap: 8px;
+}
+body[data-page="videos"] .cartao-short .etiqueta-short {
+  text-transform: none;
+  letter-spacing: .15px;
+}
+@media (max-width: 1180px) {
+  body[data-page="videos"] .grade-cartoes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  body[data-page="videos"] .grade-cartoes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+}
+@media (max-width: 430px) {
+  body[data-page="videos"] .cartao-short .cartao-corpo { padding: 10px; gap: 8px; }
+  body[data-page="videos"] .cartao-short h3 { font-size: 13px; }
+  body[data-page="videos"] .cartao-short .cartao-rodape { flex-wrap: wrap; row-gap: 6px; }
+}
+
