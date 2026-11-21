@@ -1503,7 +1503,7 @@ body[data-page="inicio"] .hero-conteudo { display: none; }
 .filtro-agenda-publica select,.filtro-agenda-publica input{width:100%;min-width:0;height:40px;padding:0 12px;border:1px solid #dacfc0;border-radius:10px;background:#fff;color:var(--navy);font:13px var(--fonte-sans)}
 .filtro-agenda-publica select:focus-visible,.filtro-agenda-publica input:focus-visible{outline:2px solid #afc6d5;outline-offset:1px}
 .filtro-agenda-botoes{display:flex;flex-direction:column;gap:5px;align-items:stretch}
-.filtro-agenda-botoes button{min-height:35px;border:1px solid #c8b8a2;border-radius:10px;background:#fff9f2;color:var(--navy);font-size:12px;font-weight:600;padding:6px 11px;cursor:pointer;white-space:nowrap}
+.filtro-agenda-botoes button{height:40px;min-height:40px;box-sizing:border-box;border:1px solid #c8b8a2;border-radius:10px;background:#fff9f2;color:var(--navy);font-size:12px;font-weight:600;padding:0 11px;cursor:pointer;white-space:nowrap}
 .filtro-agenda-botoes button:hover{background:#fff}
 .filtro-agenda-botoes button[hidden]{display:none}
 .contagem-agenda{margin:0 0 13px;font-size:12px;font-weight:600;color:var(--cinza)}
