@@ -185,13 +185,16 @@ async function carregarCentros(){
   if(!r.ok)throw new Error('HTTP '+r.status);
   const d=await r.json();
   const select=$('centroId');
-  for(const local of (Array.isArray(d.locais)?d.locais:[]).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))){
+  const selected=select.value;
+  for(const local of (Array.isArray(d.locais)?d.locais:[])){
    const opt=document.createElement('option');opt.value=local.id;opt.textContent=local.nome;select.append(opt);
   }
+  select.replaceChildren(...Array.from(select.options).sort((a,b)=>a.textContent.localeCompare(b.textContent,'pt-BR',{sensitivity:'base'})));
+  select.value=selected;
  }catch(e){console.warn('Cadastro de centros indisponível:',e);}
 }
 function preencher(p){
- limparSelecaoMp3();limparSelecaoPdf();$('pid').value=p.pid;$('titulo').value=tituloFraseAdmin(p.titulo);state.tituloEditado=false;$('data').value=p.data||'';$('aproximada').value=p.dataAproximada?'sim':'nao';
+ limparSelecaoMp3();limparSelecaoPdf();$('pid').value=p.pid;$('titulo').value=tituloFraseAdmin(p.titulo);state.tituloEditado=false;$('data').value=p.data||'';$('horario').value=p.horario||'';$('aproximada').value=p.dataAproximada?'sim':'nao';
  $('youtube').value=p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'';
  $('audio').value=p.audio||'';$('pdf').value=p.pdf||'';$('arquivo').value=p.apresentacaoOriginal||'';$('serie').value=p.serie||'temas';
  const centro=$('centroId');if(p.centroId&&!Array.from(centro.options).some(o=>o.value===p.centroId)){
@@ -248,7 +251,7 @@ function salvar(){if(state.r2Uploading||state.pdfUploading){msg('Aguarde o envio
  if(arquivo&&(/[\\/]/.test(arquivo)||!/\.(ppt|pptx|pdf)$/i.test(arquivo))){msg('Informe apenas o nome do arquivo .ppt, .pptx ou .pdf, sem caminhos.','erro');return false;}
  const pid=state.selecionado||novoId();const old=state.dados.palestras.find(p=>p.pid===pid)||{};
  const titulo=state.selecionado&&!state.tituloEditado&&old.titulo?old.titulo:tituloSemPontoFinal($('titulo').value);
- const p={...old,pid,titulo,data:$('data').value,dataAproximada:$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
+ const p={...old,pid,titulo,data:$('data').value,horario:$('horario').value,dataAproximada:$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
   statusAudio:audio?'existente':id?'pendente':'sem-fonte',statusPdf:pdf?'existente':arquivo?'pendente':'sem-arquivo'};
  if(!p.titulo){msg('Título obrigatório.','erro');return false;}
  const i=state.dados.palestras.findIndex(x=>x.pid===pid);if(i>=0)state.dados.palestras[i]=p;else state.dados.palestras.push(p);

@@ -3,8 +3,8 @@
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard do Palestrante | Paz que Ilumina</title>
 <link rel="stylesheet" href="/admin/dashboard.css?v=palestrante1">
-<link rel="stylesheet" href="/admin/palestrante.css?v=6">
-<script defer src="/admin/palestrante.js?v=8"></script></head><body>
+<link rel="stylesheet" href="/admin/palestrante.css?v=7">
+<script defer src="/admin/palestrante.js?v=9"></script></head><body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-8h6v8"/></symbol>
  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"/></symbol>
@@ -57,7 +57,7 @@
 </aside>
 <div class="dash-main">
 <header class="dash-banner"><div class="mountains" aria-hidden="true"></div><div class="sunlight" aria-hidden="true"></div>
-<div class="dash-welcome"><h1>Alexandre Alves</h1><p>Dashboard do Palestrante · Palestras, temas e centros visitados</p></div>
+<div class="dash-welcome"><h1>Alexandre Alves</h1><p>Dashboard do Palestrante · Palestras, temas e Centros Espíritas</p></div>
 <div class="dash-filter-row"><div class="dash-controls"><svg><use href="#i-calendar"/></svg><label for="periodo" class="sr-only">Período</label><select id="periodo">
 <option value="30" selected>Últimos 30 dias</option><option value="7">Últimos 7 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="month">Mês específico…</option><option value="year">Ano específico…</option><option value="custom">Personalizado…</option><option value="all">Todo o histórico</option></select></div></div></header>
 <main class="dash-content" id="dashMainContent">
@@ -70,7 +70,7 @@
 <article class="kpi kpi-blue"><div class="kpi-icon"><svg><use href="#i-presentation"/></svg></div><div class="kpi-info"><h2>Palestras</h2><strong id="kPalestras">—</strong><small>Apresentadas no período</small></div></article>
 <article class="kpi kpi-purple"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Tempo total</h2><strong id="kTempo">—</strong><small>Horas de palestras</small></div></article>
 <article class="kpi kpi-sky"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Duração média</h2><strong id="kMedia">—</strong><small>Por palestra</small></div></article>
-<article class="kpi kpi-green"><div class="kpi-icon"><svg><use href="#i-map-pin"/></svg></div><div class="kpi-info"><h2>Centros</h2><strong id="kCentros">—</strong><small>Visitados com local informado</small></div></article>
+<article class="kpi kpi-green"><div class="kpi-icon"><svg><use href="#i-map-pin"/></svg></div><div class="kpi-info"><h2>Centros Espíritas</h2><strong id="kCentros">—</strong><small>Centros Espíritas e YouTube identificados</small></div></article>
 <article class="kpi kpi-orange"><div class="kpi-icon"><svg><use href="#i-layers"/></svg></div><div class="kpi-info"><h2>Temas</h2><strong id="kTemas">—</strong><small>Assuntos abordados</small></div></article>
 <article class="kpi kpi-yellow"><div class="kpi-icon"><svg><use href="#i-calendar"/></svg></div><div class="kpi-info"><h2>Mês mais ativo</h2><strong id="kPeakMonth">—</strong><small id="kPeakCount">No período</small></div></article></section>
 <div id="aviso" class="status-banner" role="status" hidden><span id="avisoTexto"></span><button type="button" id="fecharAviso" aria-label="Fechar aviso">×</button></div>
@@ -88,18 +88,18 @@
 <div class="compare-summary"><svg><use href="#i-activity"/></svg><div><strong>Resultado do período</strong><p id="cmpSummary">Carregando dados…</p></div></div><p class="compare-caveat" id="cmpCaveat"></p>
 </article></section>
 <section class="speaker-row two-col">
-<article class="widget speaker-centres-widget"><h2><svg><use href="#i-map-pin"/></svg>Por onde Alexandre passou</h2><p class="widget-subtitle">Centros, número de palestras, tempo total e última data informada</p><div id="centros" class="speaker-panel speaker-centres"></div></article>
+<article class="widget speaker-centres-widget"><h2><svg><use href="#i-map-pin"/></svg>Por onde Alexandre passou</h2><p class="widget-subtitle">Centros Espíritas e YouTube, número de palestras, tempo total e última data informada</p><div id="centros" class="speaker-panel speaker-centres"></div></article>
 <article class="widget speaker-donut-widget"><h2><svg><use href="#i-layers"/></svg>Sobre o que Alexandre mais fala?</h2><p class="widget-subtitle">Participação dos temas nas palestras do período</p><div id="temas" class="speaker-donut-panel"></div></article></section>
 <section class="speaker-row two-col">
 <article class="widget speaker-annual-widget"><div class="speaker-widget-heading"><div><h2><svg><use href="#i-calendar"/></svg>Um ano de palestras</h2><p class="widget-subtitle">A trajetória de Alexandre, ano a ano · visão geral</p></div></div><div id="anual" class="speaker-panel speaker-annual-list"></div></article>
 <article class="widget speaker-highlights-widget"><div class="speaker-widget-heading"><div><h2><svg><use href="#i-bolt"/></svg>Alexandre em destaque</h2><p class="widget-subtitle">Temas, lugares e momentos que marcaram o período</p></div></div><div id="destaques" class="speaker-highlights-grid"></div><p class="speaker-highlights-note" id="highlightsNote"></p></article></section>
 <section class="speaker-row one-col">
 <article class="widget speaker-calendar-widget">
- <div class="speaker-calendar-header"><div><h2><svg><use href="#i-calendar"/></svg>Calendário de palestras</h2><p class="widget-subtitle">Dias com palestras no mês de referência</p></div><strong id="calendarMonth" class="speaker-calendar-month">—</strong></div>
+ <div class="speaker-calendar-header"><div><h2><svg><use href="#i-calendar"/></svg>Calendário de palestras</h2><p class="widget-subtitle">Horário e Centro Espírita das palestras no mês de referência</p></div><strong id="calendarMonth" class="speaker-calendar-month">—</strong></div>
  <div class="speaker-calendar-legend"><span class="speaker-calendar-swatch"></span> Dias com palestras <span id="calendarTotal" class="speaker-calendar-count"></span></div>
- <div class="speaker-calendar" id="calendar"></div>
+ <div class="speaker-calendar-scroll"><div class="speaker-calendar" id="calendar"></div></div>
  <p class="speaker-calendar-note" id="calendarNote"></p>
 </article></section>
-<section class="speaker-row one-col"><article class="widget"><h2><svg><use href="#i-presentation"/></svg>Histórico de palestras</h2><p class="widget-subtitle">Palestras no período · datas estimadas sinalizadas</p><div class="speaker-table-wrap"><table class="speaker-table"><thead><tr><th>Data</th><th>Apresentação</th><th>Centro</th><th>Tema</th><th>Duração</th></tr></thead><tbody id="historico"></tbody></table></div></article></section>
+<section class="speaker-row one-col"><article class="widget"><h2><svg><use href="#i-presentation"/></svg>Histórico de palestras</h2><p class="widget-subtitle">Palestras no período · datas estimadas sinalizadas</p><div class="speaker-table-wrap"><table class="speaker-table"><thead><tr><th>Data</th><th>Apresentação</th><th>Centro Espírita / YouTube</th><th>Tema</th><th>Duração</th></tr></thead><tbody id="historico"></tbody></table></div></article></section>
 <footer class="dash-footer">Indicadores baseados nas palestras disponíveis · Datas estimadas e locais não informados podem afetar os resultados <span id="refreshFeedback" class="sr-only" role="status" aria-live="polite"></span><button type="button" id="atualizar"><svg id="refreshIcon"><use href="#i-refresh"/></svg><span id="refreshLabel">Atualizar</span></button></footer>
 </main></div></div></body></html>
