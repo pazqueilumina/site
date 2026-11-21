@@ -760,7 +760,7 @@ function cartaoShort(s, i) {
     '<article class="cartao cartao-short">' +
     '<a class="short-miniatura-link" href="' + escapar(link) + '" target="_blank" rel="noopener" aria-label="Assistir ' + escapar(s.t) + '">' +
     '<div class="miniatura">' + camadaMidia(item) +
-    '<span class="short-etiqueta-sobreposta" aria-hidden="true">▶ Short</span></div></a>' +
+    "</div></a>" +
     '<div class="cartao-corpo">' +
     "<h3>" + escapar(s.t) + "</h3>" +
     '<div class="cartao-rodape">' +
