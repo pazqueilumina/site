@@ -436,7 +436,7 @@ async function load(){
   places=new Map(l.locais.map(x=>[x.id,x.nome]));
   agendaEvents=a.agenda.filter(x=>date(x.data)&&x.horario&&x.titulo&&x.local).sort((x,y)=>x.data.localeCompare(y.data)||x.horario.localeCompare(y.horario));
   const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g,' ').trim();
-  const presentations=p.dados.palestras;
+  const presentations=p.dados.palestras.filter(p=>p.ativo!==false);
   const used=new Set();
   records=presentations.map(p=>{
    // Apenas um título inequívoco e uma data próxima autorizam vincular o arquivo à Agenda.

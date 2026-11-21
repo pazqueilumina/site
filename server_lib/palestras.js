@@ -23,6 +23,7 @@ export function validarCadastro(dados) {
  for(const p of dados.palestras){
   if(!p||typeof p!=='object'||!/^PAL-\d{4,}$/.test(p.pid||'')||ids.has(p.pid))throw new Error('ID inválido ou repetido: '+(p?.pid||''));
   ids.add(p.pid);
+  if(p.ativo!==undefined&&typeof p.ativo!=='boolean')throw new Error('Status da palestra inválido em '+p.pid);
   if(typeof p.titulo!=='string'||!p.titulo.trim()||p.titulo.length>300)throw new Error('Título inválido em '+p.pid);
   if(p.youtubeId){if(!/^[a-zA-Z0-9_-]{11}$/.test(p.youtubeId)||videos.has(p.youtubeId))throw new Error('YouTube inválido ou repetido em '+p.pid);videos.add(p.youtubeId);}
   if(p.data&&!/^\d{4}-\d{2}-\d{2}$/.test(p.data))throw new Error('Data inválida em '+p.pid);

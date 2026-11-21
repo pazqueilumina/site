@@ -1,6 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
-const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false,pdfUploading:false,tituloEditado:false};
+const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false,pdfUploading:false,tituloEditado:false,autoSaving:false,statusSaving:false};
 function msg(s,type=''){ $('mensagemTexto').textContent=s;$('mensagemP').className='mensagem'+(type?' '+type:'');$('mensagemP').hidden=false; }
 // Remove pontuação terminal dos títulos, preservando abreviações como d.C.
 function tituloSemPontoFinal(titulo){
@@ -50,8 +50,9 @@ function idYoutube(url){
 }
 function novoId(){const nums=state.dados.palestras.map(p=>Number((p.pid||'').replace(/^PAL-/,''))).filter(Number.isFinite);return 'PAL-'+String(Math.max(0,...nums)+1).padStart(4,'0');}
 function confirmarDescarte(){
- if(state.r2Uploading||state.pdfUploading){msg('Aguarde o término do envio do arquivo antes de mudar de palestra.','alerta');return false;}
- return !state.formDirty||confirm('Há alterações no formulário que ainda não foram salvas na lista. Deseja descartá-las?');
+ if(state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving){msg('Aguarde a conclusão da operação antes de mudar de palestra.','alerta');return false;}
+ const arquivos=$('arquivoMp3R2').files.length||$('arquivoPdfGithub').files.length;
+ return (!state.formDirty&&!arquivos)||confirm('Há alterações ou arquivos selecionados que ainda não foram salvos. Deseja descartá-los?');
 }
 function limparSelecaoMp3(){
  $('arquivoMp3R2').value='';$('progressoAudioR2').hidden=true;$('progressoAudioR2').value=0;
@@ -65,28 +66,30 @@ function limparSelecaoPdf(){
 function atualizarUploadPdf(){
  const existe=state.aba==='editar'&&!!state.selecionado;
  const publicado=existe&&state.publicados.has(state.selecionado);
- const pronto=publicado&&!state.pdfUploading&&!state.r2Uploading;
- $('arquivoPdfGithub').disabled=!pronto;
- $('enviarPdfGithub').disabled=!pronto||!$('arquivoPdfGithub').files.length;
- if(state.pdfUploading)return;
+ const ocupado=state.pdfUploading||state.r2Uploading||state.autoSaving||state.statusSaving;
+ const podeSelecionar=(state.aba==='nova'||existe)&&!ocupado;
+ $('arquivoPdfGithub').disabled=!podeSelecionar;
+ $('enviarPdfGithub').disabled=!publicado||ocupado||!$('arquivoPdfGithub').files.length;
+ if(state.pdfUploading||state.autoSaving)return;
  const status=$('statusPdfGithub');
  if(status.className!=='upload-r2-status')return;
- if(!existe)status.textContent='Selecione uma palestra existente para enviar um PDF.';
- else if(!publicado)status.textContent='Para uma palestra nova, primeiro salve na lista e publique o cadastro no GitHub.';
- else if(!$('arquivoPdfGithub').files.length)status.textContent='Selecione um arquivo PDF e clique em Enviar. O link será preenchido após o envio.';
+ if(!publicado){
+  status.textContent=$('arquivoPdfGithub').files.length?'PDF selecionado. Clique em Salvar na lista para publicar e enviar automaticamente.':'Você já pode escolher um PDF. Ao salvar uma palestra nova, o envio será automático.';
+ }else if(!$('arquivoPdfGithub').files.length)status.textContent='Selecione um PDF e clique em Enviar para associá-lo à palestra.';
  else status.textContent='Arquivo selecionado. Clique em Enviar PDF ao GitHub.';
 }
 function atualizarUploadR2(){
  const existe=state.aba==='editar'&&!!state.selecionado;
  const publicado=existe&&state.publicados.has(state.selecionado);
- const pronto=state.r2Ativo&&publicado&&!state.r2Uploading&&!state.pdfUploading;
- $('arquivoMp3R2').disabled=!pronto;
- $('enviarAudioR2').disabled=!pronto||!$('arquivoMp3R2').files.length;
- if(state.r2Uploading)return;
+ const ocupado=state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving;
+ const podeSelecionar=(state.aba==='nova'||existe)&&!ocupado;
+ $('arquivoMp3R2').disabled=!podeSelecionar;
+ $('enviarAudioR2').disabled=!state.r2Ativo||!publicado||ocupado||!$('arquivoMp3R2').files.length;
+ if(state.r2Uploading||state.autoSaving)return;
  if(!state.r2Ativo){$('statusAudioR2').textContent=state.r2Erro;return;}
- if(!existe){$('statusAudioR2').textContent='Selecione uma palestra existente para enviar um MP3.';return;}
- if(!publicado){$('statusAudioR2').textContent='Para uma palestra nova, primeiro salve na lista e publique o cadastro no GitHub.';return;}
- if(!$('arquivoMp3R2').files.length&&$('statusAudioR2').className==='upload-r2-status')$('statusAudioR2').textContent='Selecione um arquivo MP3 e clique em Enviar. O link será preenchido após a conclusão.';
+ if(!publicado){
+  $('statusAudioR2').textContent=$('arquivoMp3R2').files.length?'MP3 selecionado. Clique em Salvar na lista para publicar e enviar automaticamente.':'Você já pode escolher um MP3. Ao salvar uma palestra nova, o envio será automático.';
+ }else if(!$('arquivoMp3R2').files.length&&$('statusAudioR2').className==='upload-r2-status')$('statusAudioR2').textContent='Selecione um MP3 e clique em Enviar para associá-lo à palestra.';
 }
 async function consultarR2(){
  try{
@@ -102,7 +105,7 @@ async function enviarJsonR2(payload){
  const o=await r.json().catch(()=>({}));if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);return o;
 }
 async function enviarMp3R2(){
- if(state.r2Uploading||state.pdfUploading||!state.r2Ativo||state.aba!=='editar'||!state.publicados.has(state.selecionado))return;
+ if(state.r2Uploading||state.pdfUploading||!state.r2Ativo||state.aba!=='editar'||!state.publicados.has(state.selecionado))return false;
  const arquivo=$('arquivoMp3R2').files[0],pid=state.selecionado;
  if(!arquivo)return;
  if(!/\.mp3$/i.test(arquivo.name)){msg('Selecione um arquivo com extensão .mp3.','erro');return;}
@@ -136,15 +139,16 @@ async function enviarMp3R2(){
   $('arquivoMp3R2').value='';
   status.textContent=`MP3 enviado: ${pid}.mp3. Agora clique em “Salvar na lista” e depois em “Publicar alterações”.`;
   status.className='upload-r2-status sucesso';
-  msg('MP3 no R2. O link foi preenchido, mas ainda precisa ser salvo na lista e publicado no GitHub.','sucesso');
+  if(!state.autoSaving)msg('MP3 no R2. O link foi preenchido, mas ainda precisa ser salvo na lista e publicado no GitHub.','sucesso');
+  return true;
  }catch(e){
   if(uploadId&&!completando){try{await enviarJsonR2({acao:'cancelar',pid,uploadId});}catch{ /* limpeza de melhor esforço */ }}
   status.textContent='Falha no envio: '+e.message+(completando?' Verifique o bucket antes de tentar novamente.':'');
-  status.className='upload-r2-status erro';msg(status.textContent,'erro');
+  status.className='upload-r2-status erro';msg(status.textContent,'erro');return false;
  }finally{state.r2Uploading=false;render();}
 }
 async function enviarPdfGithub(){
- if(state.pdfUploading||state.r2Uploading||state.aba!=='editar'||!state.publicados.has(state.selecionado))return;
+ if(state.pdfUploading||state.r2Uploading||state.aba!=='editar'||!state.publicados.has(state.selecionado))return false;
  const arquivo=$('arquivoPdfGithub').files[0],pid=state.selecionado;
  if(!arquivo)return;
  if(!/\.pdf$/i.test(arquivo.name)){msg('Selecione um arquivo com extensão .pdf.','erro');return;}
@@ -168,12 +172,13 @@ async function enviarPdfGithub(){
   $('avisoPdfGithub').hidden=false;
   status.textContent='PDF enviado para '+o.caminho+'. Aguarde o Cloudflare Pages; clique em “Salvar na lista” e depois em “Publicar alterações” para vincular o PDF à palestra.';
   status.className='upload-r2-status sucesso';
-  msg('PDF enviado ao GitHub. O link foi preenchido, mas ainda precisa ser salvo e publicado no cadastro.','sucesso');
+  if(!state.autoSaving)msg('PDF enviado ao GitHub. O link foi preenchido, mas ainda precisa ser salvo e publicado no cadastro.','sucesso');
+   return true;
  }catch(e){
   $('avisoPdfGithub').hidden=false;
   status.textContent='Falha no envio do PDF: '+e.message;
   status.className='upload-r2-status erro';
-  msg(status.textContent,'erro');
+  msg(status.textContent,'erro');return false;
  }finally{
   state.pdfUploading=false;render();
  }
@@ -242,7 +247,7 @@ function descartarFormulario(){
  }else{$('formP').reset();$('pid').value=novoId();}
  msg('Alterações não salvas do formulário descartadas.','alerta');
 }
-function salvar(){if(state.r2Uploading||state.pdfUploading){msg('Aguarde o envio do arquivo terminar.','alerta');return false;}if(!$('formP').reportValidity())return false;
+function salvar(preservarArquivos=false,interno=false){if(state.r2Uploading||state.pdfUploading||state.statusSaving||(state.autoSaving&&!interno)){msg('Aguarde o envio do arquivo terminar.','alerta');return false;}if(!$('formP').reportValidity())return false;
  const id=idYoutube($('youtube').value);if(id===null){msg('URL do You Tube inválida.','erro');return false;}
  const duplicate=id&&state.dados.palestras.find(p=>p.youtubeId===id&&p.pid!==state.selecionado);
  if(duplicate){msg('Este vídeo já pertence a '+duplicate.pid+'. Abra o registro existente.','erro');return false;}
@@ -251,31 +256,109 @@ function salvar(){if(state.r2Uploading||state.pdfUploading){msg('Aguarde o envio
  if(arquivo&&(/[\\/]/.test(arquivo)||!/\.(ppt|pptx|pdf)$/i.test(arquivo))){msg('Informe apenas o nome do arquivo .ppt, .pptx ou .pdf, sem caminhos.','erro');return false;}
  const pid=state.selecionado||novoId();const old=state.dados.palestras.find(p=>p.pid===pid)||{};
  const titulo=state.selecionado&&!state.tituloEditado&&old.titulo?old.titulo:tituloSemPontoFinal($('titulo').value);
- const p={...old,pid,titulo,data:$('data').value,horario:$('horario').value,dataAproximada:$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
+ const p={...old,pid,titulo,ativo:old.ativo!==false,data:$('data').value,horario:$('horario').value,dataAproximada:$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
   statusAudio:audio?'existente':id?'pendente':'sem-fonte',statusPdf:pdf?'existente':arquivo?'pendente':'sem-arquivo'};
  if(!p.titulo){msg('Título obrigatório.','erro');return false;}
  const i=state.dados.palestras.findIndex(x=>x.pid===pid);if(i>=0)state.dados.palestras[i]=p;else state.dados.palestras.push(p);
- state.selecionado=pid;state.dirty=true;state.formDirty=false;state.aba='editar';preencher(p);atualizarAbas();render();msg('Alteração preparada. Clique em “Publicar alterações” para enviá-la ao GitHub.','alerta');return true;
+ state.selecionado=pid;state.dirty=true;state.formDirty=false;state.aba='editar';if(preservarArquivos)$('pid').value=pid;else preencher(p);atualizarAbas();render();if(!state.autoSaving)msg('Alteração preparada. Clique em “Publicar alterações” para enviá-la ao GitHub.','alerta');return true;
 }
-function render(){atualizarUploadR2();atualizarUploadPdf();const rows=state.dados.palestras; $('totalP').textContent=rows.length;$('videosP').textContent=rows.filter(p=>p.youtubeId).length;$('audiosP').textContent=rows.filter(p=>p.audio).length;$('pdfsP').textContent=rows.filter(p=>p.pdf).length;
- $('publicarP').disabled=!state.sha||!state.dirty||state.r2Uploading||state.pdfUploading;
+function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled=state.autoSaving||state.statusSaving;const rows=state.dados.palestras; $('totalP').textContent=rows.length;$('videosP').textContent=rows.filter(p=>p.youtubeId).length;$('audiosP').textContent=rows.filter(p=>p.audio).length;$('pdfsP').textContent=rows.filter(p=>p.pdf).length;
+ $('publicarP').disabled=!state.sha||!state.dirty||state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving;
  const term=$('buscaP').value.trim().toLocaleLowerCase('pt-BR');const filtro=$('filtroP').value;
  // A etiqueta ORDEM representa a posição cronológica no acervo completo, não a posição na lista filtrada/invertida.
  const ordemCronologica=[...rows].sort((a,b)=>(a.data||'9999').localeCompare(b.data||'9999')||a.pid.localeCompare(b.pid));
  const numerosOrdem=new Map(ordemCronologica.map((p,i)=>[p.pid,i+1]));
- const filtered=rows.filter(p=>(!term||(p.pid+' '+p.titulo).toLocaleLowerCase('pt-BR').includes(term))&&(filtro==='todos'||(filtro==='semAudio'&&!p.audio)||(filtro==='semPdf'&&!p.pdf)))
+ const filtered=rows.filter(p=>(!term||(p.pid+' '+p.titulo).toLocaleLowerCase('pt-BR').includes(term))&&(filtro==='todos'||(filtro==='semAudio'&&!p.audio)||(filtro==='semPdf'&&!p.pdf)||(filtro==='ativas'&&p.ativo!==false)||(filtro==='inativas'&&p.ativo===false)))
  .sort((a,b)=>{const comparacao=(a.data||'9999').localeCompare(b.data||'9999')||a.pid.localeCompare(b.pid);return state.ordemDesc?-comparacao:comparacao;});
  const list=$('listaP');list.replaceChildren();if(!filtered.length){const e=document.createElement('p');e.className='vazio';e.textContent='Nenhuma palestra encontrada.';list.append(e);return;}
- filtered.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='evento'+(state.selecionado===p.pid?' ativo':'');
- const n=document.createElement('span');n.className='evento-data';const strong=document.createElement('strong');strong.textContent=String(numerosOrdem.get(p.pid)??(i+1)).padStart(3,'0');const small=document.createElement('span');small.textContent='ORDEM';n.append(strong,small);
- const body=document.createElement('span');body.className='evento-corpo';const t=document.createElement('strong');t.textContent=tituloFraseAdmin(p.titulo);const meta=document.createElement('span');meta.textContent=`${p.pid} · ${p.data||'Sem data'}${p.dataAproximada?' (aprox.)':''}`;
- const flags=document.createElement('small');flags.textContent=`Vídeo ${p.youtubeId?'✓':'—'}   MP3 ${p.audio?'✓':'—'}   PDF ${p.pdf?'✓':'—'}`;body.append(t,meta,flags);b.append(n,body);b.addEventListener('click',()=>selecionar(p.pid));list.append(b);});
+ filtered.forEach((p,i)=>{
+  const row=document.createElement('div');row.className='evento evento-registro'+(state.selecionado===p.pid?' ativo':'')+(p.ativo===false?' evento-registro--inativa':'');
+  const b=document.createElement('button');b.type='button';b.className='evento-selecionar';b.setAttribute('aria-label','Editar '+p.titulo);
+  const n=document.createElement('span');n.className='evento-data';const strong=document.createElement('strong');strong.textContent=String(numerosOrdem.get(p.pid)??(i+1)).padStart(3,'0');const small=document.createElement('span');small.textContent='ORDEM';n.append(strong,small);
+  const body=document.createElement('span');body.className='evento-corpo';const t=document.createElement('strong');t.textContent=tituloFraseAdmin(p.titulo);const meta=document.createElement('span');meta.textContent=`${p.pid} · ${p.data||'Sem data'}${p.dataAproximada?' (aprox.)':''}`;
+  const flags=document.createElement('small');flags.textContent=`Vídeo ${p.youtubeId?'✓':'—'}   MP3 ${p.audio?'✓':'—'}   PDF ${p.pdf?'✓':'—'}`;body.append(t,meta,flags);b.append(n,body);b.addEventListener('click',()=>selecionar(p.pid));
+  const status=document.createElement('button');status.type='button';status.className='status-palestra '+(p.ativo===false?'status-palestra--inativa':'status-palestra--ativa');
+  status.textContent=p.ativo===false?'● Inativa':'● Ativa';status.title=p.ativo===false?'Clique para reativar a palestra':'Clique para desativar a palestra e seus materiais';
+  status.setAttribute('aria-label',status.title+': '+p.titulo);status.disabled=state.autoSaving||state.statusSaving||state.r2Uploading||state.pdfUploading;
+  status.addEventListener('click',()=>alternarStatus(p.pid));row.append(b,status);list.append(row);
+ });
 }
 async function carregar(){msg('Consultando cadastro no GitHub…');try{const r=await fetch('/api/admin/palestras',{credentials:'same-origin',cache:'no-store'});const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);
  if(!o.sha||!Array.isArray(o.dados?.palestras))throw new Error('Resposta incompleta.');state.dados=o.dados;state.sha=o.sha;state.publicados=new Set(o.dados.palestras.map(p=>p.pid));state.dirty=false;limpar(true);msg('Cadastro carregado. Os registros existentes foram preservados.','sucesso');
  }catch(e){msg('Não foi possível carregar: '+e.message,'erro');}}
-async function publicar(){if(state.r2Uploading||state.pdfUploading){msg('Aguarde o envio do arquivo terminar.','alerta');return;}if(state.dados.palestras.some(p=>p.titulo.startsWith('Palestra a revisar — '))){msg('Revise os títulos provisórios das URLs importadas antes de publicar.','erro');return;}if(state.formDirty&&!salvar())return;if(!state.dirty)return;if(!confirm('Enviar as alterações do cadastro ao GitHub?'))return;
- $('publicarP').disabled=true;msg('Enviando cadastro ao GitHub…');try{const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:state.sha,dados:state.dados})});const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);state.sha=o.sha;state.dirty=false;state.publicados=new Set(state.dados.palestras.map(p=>p.pid));render();msg(o.aviso||'Enviado.','sucesso');}catch(e){render();msg('Publicação não concluída: '+e.message,'erro');}}
+async function publicar(semConfirmacao=false,interno=false){
+ if(!interno&&(state.aba==='nova'||(state.aba==='editar'&&state.selecionado&&!state.publicados.has(state.selecionado)))&&($('arquivoMp3R2').files.length||$('arquivoPdfGithub').files.length))return salvarEEnviar();
+ if(state.statusSaving||(state.autoSaving&&!interno)||state.r2Uploading||state.pdfUploading){if(!interno)msg('Aguarde o envio do arquivo terminar.','alerta');return false;}
+ if(!state.sha){msg('Cadastro ainda não carregado.','erro');return false;}
+ if(state.dados.palestras.some(p=>p.titulo.startsWith('Palestra a revisar — '))){msg('Revise os títulos provisórios das URLs importadas antes de publicar.','erro');return false;}
+ if(state.formDirty&&!salvar(false,interno))return false;
+ if(!state.dirty)return true;
+ if(!semConfirmacao&&!confirm('Enviar as alterações do cadastro ao GitHub?'))return false;
+ $('publicarP').disabled=true;msg('Enviando cadastro ao GitHub…');
+ try{
+  const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:state.sha,dados:state.dados})});
+  const o=await r.json().catch(()=>({}));if(!r.ok||!o.sha)throw new Error(o.erro||`HTTP ${r.status}`);
+  state.sha=o.sha;state.dirty=false;state.publicados=new Set(state.dados.palestras.map(p=>p.pid));render();
+  if(!state.autoSaving)msg(o.aviso||'Enviado.','sucesso');
+  return true;
+ }catch(e){render();msg('Publicação não concluída: '+e.message,'erro');return false;}
+}
+async function alternarStatus(pid){
+ if(state.statusSaving||state.autoSaving||state.r2Uploading||state.pdfUploading)return;
+ if(state.dirty||state.formDirty){msg('Há alterações pendentes. Salve e publique essas alterações antes de mudar o status de uma palestra.','alerta');return;}
+ if(!state.sha||!state.publicados.has(pid)){msg('Publique primeiro o cadastro desta palestra.','alerta');return;}
+ const original=state.dados.palestras.find(p=>p.pid===pid);if(!original)return;
+ const desativar=original.ativo!==false;
+ if(desativar&&!confirm('Desativar “'+original.titulo+'”? A palestra, seu vídeo, MP3 e PDF deixarão de aparecer no site público. Os arquivos não serão apagados.'))return;
+ const novo=structuredClone(state.dados),registro=novo.palestras.find(p=>p.pid===pid);
+ registro.ativo=!desativar;
+ state.statusSaving=true;render();msg((desativar?'Desativando':'Reativando')+' palestra no GitHub…');
+ try{
+  const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:state.sha,dados:novo})});
+  const o=await r.json().catch(()=>({}));if(!r.ok||!o.sha)throw new Error(o.erro||`HTTP ${r.status}`);
+  state.dados=novo;state.sha=o.sha;
+  msg((desativar?'Palestra desativada':'Palestra reativada')+'. Vídeo, MP3 e PDF serão '+(desativar?'ocultados':'exibidos')+' após a publicação do Cloudflare Pages.','sucesso');
+ }catch(e){msg('Não foi possível alterar o status: '+e.message,'erro');}
+ finally{state.statusSaving=false;render();}
+}
+async function salvarEEnviar(){
+ if(state.autoSaving||state.statusSaving||state.r2Uploading||state.pdfUploading)return;
+ const mp3=$('arquivoMp3R2').files[0],pdf=$('arquivoPdfGithub').files[0];
+ const novoNaoPublicado=state.aba==='nova'||(state.aba==='editar'&&state.selecionado&&!state.publicados.has(state.selecionado));
+ if(!novoNaoPublicado||(!mp3&&!pdf)){salvar();return;}
+ if(!state.sha){msg('Aguarde o carregamento do cadastro antes de salvar.','erro');return;}
+ if(mp3&&(!/\.mp3$/i.test(mp3.name)||!mp3.size||mp3.size>300*1024*1024)){msg('Selecione um MP3 válido de até 300 MB.','erro');return;}
+ if(pdf&&(!/\.pdf$/i.test(pdf.name)||pdf.size<5||pdf.size>20*1024*1024)){msg('Selecione um PDF válido de até 20 MiB.','erro');return;}
+ if(state.dirty&&!confirm('Há outras alterações preparadas no Acervo. Para enviar os arquivos, será necessário publicá-las junto com esta palestra. Continuar?'))return;
+ state.autoSaving=true;render();
+ try{
+  if(!salvar(true,true))return;
+  const registro=state.dados.palestras.find(p=>p.pid===state.selecionado);
+  // Primeiro publicar como inativa: evita exibir uma palestra incompleta durante os uploads.
+  registro.ativo=false;state.dirty=true;
+  msg('Etapa 1/3: publicando o cadastro e reservando o ID permanente…');
+  if(!await publicar(true,true))return;
+  let mp3Ok=!mp3,pdfOk=!pdf;
+  if(mp3){msg('Etapa 2/3: enviando MP3 ao R2…');mp3Ok=await enviarMp3R2();}
+  if(pdf){msg('Etapa 2/3: enviando PDF ao GitHub…');pdfOk=await enviarPdfGithub();}
+  const algumEnviado=(mp3&&mp3Ok)||(pdf&&pdfOk);
+  if(algumEnviado){
+   if(!salvar(true,true))throw new Error('Arquivos enviados, mas não foi possível preparar os links. Confira o cadastro.');
+  }
+  const completo=mp3Ok&&pdfOk;
+  if(completo){state.dados.palestras.find(p=>p.pid===state.selecionado).ativo=true;state.dirty=true;}
+  if(state.dirty){
+   msg('Etapa 3/3: vinculando arquivos ao cadastro…');
+   if(!await publicar(true,true))throw new Error('Os arquivos foram enviados, mas o vínculo ainda precisa ser publicado. Clique em “Publicar alterações” para concluir.');
+  }
+  if(completo){
+   msg('Palestra publicada com os arquivos selecionados. Aguarde o deploy do Cloudflare Pages.','sucesso');
+  }else{
+   msg('Palestra salva como Inativa: um ou mais envios falharam. Os arquivos concluídos foram vinculados. Confira os avisos, reenvie o que faltou e depois clique em “Inativa” para reativar.','alerta');
+  }
+ }catch(e){msg('Cadastro ou envio não concluído: '+e.message,'erro');}
+ finally{state.autoSaving=false;render();}
+}
 function csvRows(text){const out=[];let row=[],val='',q=false;for(let i=0;i<text.length;i++){const c=text[i];if(q){if(c==='"'&&text[i+1]==='"'){val+='"';i++;}else if(c==='"')q=false;else val+=c;}else if(c==='"')q=true;else if(c===', '){val+=c;}else if(c===','||c===';' ){row.push(val);val='';}else if(c==='\n'){row.push(val.replace(/\r$/,''));out.push(row);row=[];val='';}else val+=c;}if(q)throw Error('Aspas não fechadas no CSV.');if(val||row.length){row.push(val);out.push(row);}return out;}
 function parseCSV(text){const lines=csvRows(text.replace(/^\uFEFF/,''));if(lines.length<2)throw Error('CSV sem registros.');const normalize=s=>s.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();const cols=lines.shift().map(normalize);const aliases={id:['id'],titulo:['titulo','title'],data:['data','date'],youtube:['youtube','url','url do youtube'],apresentacao:['apresentacao','arquivo','pdf','pptx']};
  const idx=Object.fromEntries(Object.entries(aliases).map(([k,a])=>[k,cols.findIndex(c=>a.includes(c))]));if(idx.titulo<0||idx.youtube<0&&idx.apresentacao<0)throw Error('Cabeçalho precisa de Titulo e YouTube ou Apresentacao.');
@@ -289,7 +372,7 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
  if(p&&y&&p.youtubeId&&p.youtubeId!==y){problems.push(`Linha ${item.linha}: ID e YouTube diferentes`);continue;}
  if(y&&working.some(x=>x.youtubeId===y&&x!==p)){problems.push(`Linha ${item.linha}: YouTube duplicado`);continue;}
  if(!p&&!item.titulo){problems.push(`Linha ${item.linha}: título obrigatório para novo registro`);continue;}
- const isNew=!p;if(isNew){p={pid:'PAL-'+String(++next).padStart(4,'0'),titulo:tituloSemPontoFinal(item.titulo),serie:'temas',data:'',dataAproximada:true,youtubeId:'',audio:'',pdf:'',apresentacaoOriginal:'',statusAudio:'sem-fonte',statusPdf:'sem-arquivo'};working.push(p);}
+ const isNew=!p;if(isNew){p={pid:'PAL-'+String(++next).padStart(4,'0'),titulo:tituloSemPontoFinal(item.titulo),serie:'temas',data:'',dataAproximada:true,youtubeId:'',audio:'',pdf:'',apresentacaoOriginal:'',statusAudio:'sem-fonte',statusPdf:'sem-arquivo',ativo:true};working.push(p);}
  if(item.titulo)p.titulo=tituloSemPontoFinal(item.titulo);if(item.data)p.data=item.data;if(y){p.youtubeId=y;if(!p.audio)p.statusAudio='pendente';}
  if(item.arquivo){p.apresentacaoOriginal=item.arquivo;if(!p.pdf)p.statusPdf='pendente';}
  changes.push(`${isNew?'NOVA':'ATUALIZAR'} ${p.pid}: ${p.titulo}`);
@@ -302,13 +385,13 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
 function exportar(){const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];for(const p of state.dados.palestras)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
  const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='palestras-com-ids.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}
 $('fecharMensagemP').addEventListener('click',()=>{ $('mensagemP').hidden=true; });
-$('formP').addEventListener('submit',e=>{e.preventDefault();salvar();});$('formP').addEventListener('input',e=>{if(e.target.id==='titulo')state.tituloEditado=true;if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});$('formP').addEventListener('change',e=>{if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});
+$('formP').addEventListener('submit',e=>{e.preventDefault();salvarEEnviar();});$('formP').addEventListener('input',e=>{if(e.target.id==='titulo')state.tituloEditado=true;if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});$('formP').addEventListener('change',e=>{if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});
  $('fecharStatusAudioR2').addEventListener('click',()=>{$('avisoAudioR2').hidden=true;});
  $('fecharStatusPdfGithub').addEventListener('click',()=>{$('avisoPdfGithub').hidden=true;});
  $('arquivoMp3R2').addEventListener('change',()=>{$('avisoAudioR2').hidden=false;atualizarUploadR2();});
  $('enviarAudioR2').addEventListener('click',enviarMp3R2);
  $('arquivoPdfGithub').addEventListener('change',()=>{$('avisoPdfGithub').hidden=false;$('statusPdfGithub').className='upload-r2-status';atualizarUploadPdf();});
- $('enviarPdfGithub').addEventListener('click',enviarPdfGithub);$('novoP').addEventListener('click',()=>state.aba==='nova'?limpar():trocarAba('nova'));$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',publicar);$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
+ $('enviarPdfGithub').addEventListener('click',enviarPdfGithub);$('novoP').addEventListener('click',()=>state.aba==='nova'?limpar():trocarAba('nova'));$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',()=>publicar());$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
 $('ordenarP').addEventListener('click',()=>{
  state.ordemDesc=!state.ordemDesc;
  const botao=$('ordenarP');
@@ -324,4 +407,4 @@ $('aplicarUrlsP').addEventListener('click',()=>{const urls=$('urlsP').value.spli
  // URLs novas precisam de título; gerar rascunho a partir do identificador, para revisão manual obrigatória.
  for(const it of items){const id=idYoutube(it.youtube);it.titulo=id?'Palestra a revisar — '+id:'';}
  importar(items);});
-window.addEventListener('beforeunload',e=>{if(state.dirty||state.formDirty||state.r2Uploading||state.pdfUploading){e.preventDefault();e.returnValue='';}});carregarCentros().then(carregar);consultarR2();
+window.addEventListener('beforeunload',e=>{if(state.dirty||state.formDirty||state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving){e.preventDefault();e.returnValue='';}});carregarCentros().then(carregar);consultarR2();

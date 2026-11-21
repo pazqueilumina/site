@@ -1239,18 +1239,20 @@ function configurarAnalytics() {
 /* ---------------- INICIALIZAÇÃO ---------------- */
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Sem o catálogo atualizado não exibir dados legados que poderiam incluir palestras desativadas.
+  DADOS.videos = [];
   try {
     const res = await fetch("/data/palestras.json", {cache:"no-cache"});
     if (res.ok) {
       const catalogo = await res.json();
       if (Array.isArray(catalogo.palestras)) {
-        DADOS.videos = catalogo.palestras.filter(p => p.youtubeId).map(p => ({
+        DADOS.videos = catalogo.palestras.filter(p => p.ativo !== false && p.youtubeId).map(p => ({
           id:p.youtubeId, pid:p.pid, t:p.titulo, d:p.data, s:p.serie || "temas",
           dur:p.duracao || "", audio:p.audio || "", audioPlataforma:p.audioPlataforma || "", slides:p.pdf || "", centroId:p.centroId || ""
         }));
       }
     }
-  } catch(e) { console.warn("Cadastro externo indisponível; usando dados originais."); }
+  } catch(e) { console.warn("Cadastro público indisponível; acervo oculto até a atualização."); }
   renderizarSidebar();
   renderizarTopbar();
 

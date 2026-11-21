@@ -46,3 +46,16 @@
 .upload-aviso{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-top:10px}
 .upload-aviso .upload-r2-status{flex:1;min-width:0;margin:0}
 .upload-aviso .fechar-mensagem{width:24px;height:24px;margin:0;font-size:19px}
+
+/* Ação de ativar/desativar na lista, sem controles extras no formulário. */
+.lista-eventos .evento-registro{padding:0;gap:0;align-items:stretch}
+.evento-registro .evento-selecionar{display:flex;align-items:center;gap:14px;min-width:0;flex:1;border:0;background:transparent;text-align:left;padding:15px 8px 15px 22px;color:var(--ink);cursor:pointer}
+.evento-registro .evento-selecionar:focus-visible,.evento-registro .status-palestra:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}
+.evento-registro .evento-selecionar:hover{background:#f6f9fb}
+.evento-registro .evento-corpo{min-width:0;overflow-wrap:anywhere}
+.evento-registro .status-palestra{align-self:center;flex-shrink:0;margin:0 14px 0 4px;padding:5px 9px;border:1px solid transparent;border-radius:999px;font-size:11px;font-weight:750;line-height:1.2;white-space:nowrap;cursor:pointer}
+.evento-registro .status-palestra--ativa{background:#e6f6e9;color:#23723a;border-color:#d2ead6}
+.evento-registro .status-palestra--inativa{background:#ffeded;color:#a5242c;border-color:#f6d6d8}
+.evento-registro .status-palestra:hover:not(:disabled){filter:brightness(.96)}
+.evento-registro--inativa .evento-corpo>strong{opacity:.68}
+@media(max-width:590px){.evento-registro .evento-selecionar{padding:13px 4px 13px 12px;gap:8px}.evento-registro .status-palestra{margin:0 8px 0 2px;padding:5px 7px;font-size:10px}.evento-registro .evento-data{min-width:50px}}
