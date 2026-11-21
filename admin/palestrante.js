@@ -2,7 +2,9 @@
 const $=id=>document.getElementById(id),nf=n=>Number(n).toLocaleString('pt-BR'),pad=n=>String(n).padStart(2,'0');
 const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const date=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')?new Date(s+'T12:00:00'):null;
-const fmtDate=s=>{const d=date(s);return d?d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}):'Sem data';};
+const shortDate=d=>pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+String(d.getFullYear()).slice(-2);
+const fmtDate=s=>{const d=date(s);return d?shortDate(d):'Sem data';};
+const fmtMonthYear=(d,month='long')=>d.toLocaleDateString('pt-BR',{month,year:'numeric'}).replace(/\s+de\s+/gi,' ').replace(/\./g,'');
 const duration=s=>{const p=String(s||'').split(':').map(Number);if(!p.length||p.some(n=>!Number.isFinite(n)||n<0)||p.length<2||p.length>3)return null;return p.length===3?p[0]*3600+p[1]*60+p[2]:p[0]*60+p[1];};
 const hm=seconds=>{if(seconds==null)return '—';const m=Math.round(seconds/60),h=Math.floor(m/60);return h?nf(h)+'h'+pad(m%60)+'min':nf(m)+'min';};
 const el=(tag,text,cls)=>{const x=document.createElement(tag);if(text!=null)x.textContent=text;if(cls)x.className=cls;return x;};
@@ -10,6 +12,38 @@ const set=(id,value)=>$(id).textContent=value;
 const empty=(host,msg)=>host.append(el('p',msg,'speaker-empty'));
 const clear=id=>{$(id).replaceChildren();return $(id);};
 const topicNames={'doutrina':'Doutrina e História','temas':'Reflexões','ultimos-dias':'Últimos Dias de Jesus','evangelho':'Evangelho','parabolas':'Parábolas','ministerio':'Ministério de Jesus'};
+function tituloFraseApresentacao(titulo) {
+  const nomesProprios = [
+    ["doutrina espírita", "Doutrina Espírita"],
+    ["espírito santo", "Espírito Santo"],
+    ["chico xavier", "Chico Xavier"],
+    ["luiz gonzaga", "Luiz Gonzaga"],
+    ["pedro leopoldo", "Pedro Leopoldo"],
+    ["eurípides barsanulfo", "Eurípides Barsanulfo"],
+    ["setembro amarelo", "Setembro Amarelo"],
+    ["francisco de assis", "Francisco de Assis"],
+    ["jesus", "Jesus"], ["cristo", "Cristo"], ["deus", "Deus"],
+    ["consolador", "Consolador"], ["espiritismo", "Espiritismo"],
+    ["evangelho", "Evangelho"], ["kardec", "Kardec"],
+    ["allan", "Allan"], ["judas", "Judas"], ["lázaro", "Lázaro"],
+    ["pedro", "Pedro"], ["zaqueu", "Zaqueu"], ["jerusalém", "Jerusalém"],
+    ["getsêmani", "Getsêmani"], ["césar", "César"], ["miriam", "Miriam"],
+    ["saulo", "Saulo"], ["tarso", "Tarso"], ["maria", "Maria"],
+    ["nazaré", "Nazaré"], ["frança", "França"], ["brasil", "Brasil"],
+    ["uberaba", "Uberaba"], ["terra", "Terra"]
+  ];
+  let texto = String(titulo || "").toLocaleLowerCase("pt-BR");
+  texto = texto.replace(/\bd\.\s*c\./g, "d.C.").replace(/\ba\.\s*c\./g, "a.C.");
+  texto = texto.replace(/\braio x\b/g, "raio X");
+  texto = texto.replace(/\b(?:ii|iii|iv|vi|vii|viii|ix|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx)\b/g,
+    numeral => numeral.toUpperCase());
+  for (const [nome, grafia] of nomesProprios) {
+    texto = texto.replace(new RegExp("(^|[^\\p{L}])(" + nome + ")(?=$|[^\\p{L}])", "giu"),
+      (_, antes) => antes + grafia);
+  }
+  return texto.replace(/(^|[.!?]\s+)([\p{L}])/gu,
+    (_, inicio, letra) => inicio + letra.toLocaleUpperCase("pt-BR"));
+}
 let records=[],places=new Map(),error=null,range={kind:'30'},applied={month:new Date().getMonth(),year:new Date().getFullYear(),start:'',end:''};
 const today=()=>{const d=new Date();d.setHours(23,59,59,999);return d;};
 const midnight=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
@@ -103,9 +137,10 @@ function donut(items){
  entries.forEach(([label,n],i)=>{
   const line=el('div',null,'speaker-donut-legend-row'),dot=el('span',null,'speaker-donut-dot');
   dot.style.backgroundColor=colors[i%colors.length];
-  const name=el('span',label,'speaker-donut-topic');
-  const value=el('strong',nf(n)+' · '+(100*n/total).toFixed(1).replace('.',',')+'%');
-  line.append(dot,name,value);legend.append(line);
+  const name=el('span',null,'speaker-donut-topic');name.append(dot,document.createTextNode(label));
+  const count=el('strong',nf(n),'speaker-donut-count');
+  const percentage=el('span',(100*n/total).toFixed(1).replace('.',',')+'%','speaker-donut-percentage');
+  line.append(name,count,percentage);legend.append(line);
  });
  wrap.append(chart,legend);host.append(wrap);
  const top=entries[0];const summary=el('div',null,'speaker-donut-summary');
@@ -130,7 +165,7 @@ function chart(id,items,field){
   else next.setFullYear(next.getFullYear()+1);
   const subset=items.filter(p=>p.when&&p.when>=begin&&p.when<next);
   const label=unit==='day'?pad(begin.getDate())+'/'+pad(begin.getMonth()+1):unit==='month'?begin.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''):String(begin.getFullYear());
-  bins.push({label,year:begin.getFullYear(),fullLabel:unit==='day'?begin.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}):unit==='month'?begin.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}):label,count:subset.length,seconds:seconds(subset)});
+  bins.push({label,year:begin.getFullYear(),fullLabel:unit==='day'?shortDate(begin):unit==='month'?fmtMonthYear(begin):label,count:subset.length,seconds:seconds(subset)});
   cursor.setTime(next.getTime());
  }
  if(!bins.length){empty(host,'Não há datas para o período selecionado.');return;}
@@ -162,7 +197,7 @@ function chart(id,items,field){
   if(i%skip===0||i===bins.length-1)node('text',{x:x+bw*.37,y:h-15,'text-anchor':'middle'},bins[i].label);
  });
  host.append(svg);
- const fmt=d=>d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+ const fmt=d=>shortDate(d);
  host.append(el('p','Período: '+fmt(from)+' a '+fmt(to)+' · Datas estimadas podem alterar a distribuição.','widget-subtitle'));
 }
 function comparison(){
@@ -189,10 +224,10 @@ function comparison(){
  const n=current.length,p=previous.length,diff=n-p,pct=p?100*diff/p:null;
  const secs=seconds(current),prevSecs=seconds(previous),secDiff=secs-prevSecs;
  const timeComparable=p>0&&knownSeconds(previous).length>0&&(n===0||knownSeconds(current).length>0);
- const compactDate=d=>pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+String(d.getFullYear()).slice(-2);
- const monthDate=d=>d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+ const compactDate=d=>shortDate(d);
+ const monthDate=d=>fmtMonthYear(d);
  const periodLabel=(a,b)=>kind==='year'?String(a.getFullYear()):kind==='month'?monthDate(a):compactDate(a)+' a '+compactDate(b);
- const short=(a,b)=>kind==='year'?String(a.getFullYear()):kind==='month'?a.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}).replace(/\./g,''):compactDate(a)+' – '+compactDate(b);
+ const short=(a,b)=>kind==='year'?String(a.getFullYear()):kind==='month'?fmtMonthYear(a,'short'):compactDate(a)+' – '+compactDate(b);
  const currentLabel=periodLabel(first,last),previousLabel=periodLabel(prevFirst,prevLast);
  const signed=value=>value>0?'+':value<0?'−':'';
  const change=value=>signed(value)+nf(Math.abs(value));
@@ -264,12 +299,12 @@ function highlights(items){
  const longest=knownSeconds(items).sort((a,b)=>b.seconds-a.seconds)[0];
  const peak=countBy(items.filter(p=>p.when),p=>p.data.slice(0,7))[0];
  const peakDate=peak?new Date(peak[0]+'-01T12:00:00'):null;
- const peakLabel=peakDate?peakDate.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}):'Sem data informada';
+ const peakLabel=peakDate?fmtMonthYear(peakDate):'Sem data informada';
  const cards=[
   {icon:'i-layers',tone:'violet',label:'Tema mais abordado',value:topics.length?nf(topics[0][1]):'—',name:topics.length?topics[0][0]:'Nenhum tema informado',detail:'palestras sobre este assunto'},
   {icon:'i-map-pin',tone:'mint',label:'Centro Espírita mais visitado',value:centres.length?nf(centres[0][1]):'—',name:centres.length?centres[0][0]:'Nenhum Centro Espírita informado',detail:centres.length?'Entre as '+nf(knownCentres.length)+' palestras com Centro Espírita ou YouTube informado':'Cadastre o Centro Espírita ou YouTube'},
   {icon:'i-calendar',tone:'blue',label:'Mês mais ativo',value:peak?nf(peak[1]):'—',name:peakLabel,detail:'palestras neste mês'},
-  {icon:'i-clock',tone:'amber',label:'Palestra mais longa',value:longest?hm(longest.seconds):'—',name:longest?longest.titulo:'Duração não informada',detail:'maior duração entre as palestras'}
+  {icon:'i-clock',tone:'amber',label:'Palestra mais longa',value:longest?hm(longest.seconds):'—',name:longest?tituloFraseApresentacao(longest.titulo):'Duração não informada',detail:'maior duração entre as palestras'}
  ];
  for(const item of cards){
   const tile=el('article',null,'speaker-highlight-tile tone-'+item.tone);
@@ -292,7 +327,7 @@ function highlights(items){
  if(best&&best[1]>0){
   const date=new Date(best[0]+'-01T12:00:00');
   const record=el('div',null,'speaker-hours-record');
-  record.append(el('strong','Recorde de horas em um mês'),el('span',date.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})+' · '+hm(best[1])+' de palestras'));
+  record.append(el('strong','Recorde de horas em um mês'),el('span',fmtMonthYear(date)+' · '+hm(best[1])+' de palestras'));
   host.append(record);
  }
  note.textContent=notes.join(' ');
@@ -305,7 +340,7 @@ function calendar(items){
  else if(range.kind==='custom'){const d=date(applied.end);if(d)ref=d;}
  else if(range.kind==='all'){const last=[...items].sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];if(last?.when)ref=last.when;}
  const year=ref.getFullYear(),month=ref.getMonth(),first=new Date(year,month,1),lastDay=new Date(year,month+1,0).getDate();
- const label=first.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+ const label=fmtMonthYear(first);
  set('calendarMonth',label.charAt(0).toUpperCase()+label.slice(1));
  const byDay=new Map();
  for(const p of items.filter(x=>x.when&&x.when.getFullYear()===year&&x.when.getMonth()===month)){
@@ -325,10 +360,10 @@ function calendar(items){
     const talk=el('div',null,'speaker-calendar-talk');
     if(p.horario)talk.append(el('strong',p.horario.replace(':','h'),'speaker-calendar-talk-time'));
     talk.append(el('span',centreName(p),'speaker-calendar-talk-place'));
-    talk.title=(p.horario?p.horario+' · ':'')+centreName(p)+' · '+p.titulo+(p.approx?' (data estimada)':'');
+    talk.title=(p.horario?p.horario+' · ':'')+centreName(p)+' · '+tituloFraseApresentacao(p.titulo)+(p.approx?' (data estimada)':'');
     cell.append(talk);
    }
-   cell.title=nf(item.talks.length)+' palestra(s) com data informada em '+pad(day)+'/'+pad(month+1)+'/'+year+(item.approx?' ('+item.approx+' com data estimada)':'');
+   cell.title=nf(item.talks.length)+' palestra(s) com data informada em '+shortDate(new Date(year,month,day))+(item.approx?' ('+item.approx+' com data estimada)':'');
   }
   host.append(cell);
  }
@@ -339,14 +374,14 @@ function history(items){
  const host=clear('historico');if(!items.length){const tr=el('tr'),td=el('td','Nenhuma palestra encontrada neste período.');td.colSpan=5;tr.append(td);host.append(tr);return;}
  for(const p of [...items].sort((a,b)=>b.data.localeCompare(a.data)).slice(0,120)){
   const tr=el('tr'),td=el('td');td.append(document.createTextNode(fmtDate(p.data)));if(p.approx)td.append(el('div','Data aproximada','approx'));tr.append(td);
-  const title=el('td');if(p.youtubeId){const a=el('a',p.titulo);a.href='https://www.youtube.com/watch?v='+encodeURIComponent(p.youtubeId);a.target='_blank';a.rel='noopener noreferrer';title.append(a);}else title.textContent=p.titulo;
+  const title=el('td'),displayTitle=tituloFraseApresentacao(p.titulo);if(p.youtubeId){const a=el('a',displayTitle);a.href='https://www.youtube.com/watch?v='+encodeURIComponent(p.youtubeId);a.target='_blank';a.rel='noopener noreferrer';title.append(a);}else title.textContent=displayTitle;
   tr.append(title,el('td',centreName(p)),el('td',topicNames[p.serie]||p.serie||'Sem etiqueta'),el('td',p.seconds===null?'Não informada':hm(p.seconds)));host.append(tr);
  }
  if(items.length>120){const tr=el('tr'),td=el('td','Exibindo as 120 palestras mais recentes.');td.colSpan=5;tr.append(td);host.append(tr);}
 }
 function render(){
  if(error)return;
- const items=filtered();set('kPalestras',nf(items.length));set('kTempo',total(items));set('kMedia',knownSeconds(items).length?hm(seconds(items)/knownSeconds(items).length):'—');set('kCentros',nf(unique(items.filter(hasCentre),'centroId')));set('kTemas',nf(unique(items,'serie')));const peak=countBy(items.filter(p=>p.when),p=>p.data.slice(0,7))[0];set('kPeakMonth',peak?new Date(peak[0]+'-01T12:00:00').toLocaleDateString('pt-BR',{month:'short',year:'numeric'}).replace('.',''):'—');set('kPeakCount',peak?nf(peak[1])+' palestra'+(peak[1]===1?'':'s')+' neste mês':'Sem palestras no período');
+ const items=filtered();set('kPalestras',nf(items.length));set('kTempo',total(items));set('kMedia',knownSeconds(items).length?hm(seconds(items)/knownSeconds(items).length):'—');set('kCentros',nf(unique(items.filter(hasCentre),'centroId')));set('kTemas',nf(unique(items,'serie')));const peak=countBy(items.filter(p=>p.when),p=>p.data.slice(0,7))[0];set('kPeakMonth',peak?fmtMonthYear(new Date(peak[0]+'-01T12:00:00'),'short'):'—');set('kPeakCount',peak?nf(peak[1])+' palestra'+(peak[1]===1?'':'s')+' neste mês':'Sem palestras no período');
  chart('chartMensal',items,'count');chart('chartHoras',items,'hours');comparison();
  centreRanking(items);donut(items);
  annual();highlights(items);calendar(items);history(items);
@@ -359,7 +394,7 @@ async function load(){
   if(!Array.isArray(p?.dados?.palestras)||!Array.isArray(l?.locais))throw Error('Formato de dados inesperado');
   places=new Map(l.locais.map(x=>[x.id,x.nome]));
   records=p.dados.palestras.map(x=>({...x,when:date(x.data),seconds:duration(x.duracao),approx:!!x.dataAproximada}));error=null;render();
-  $('aviso').hidden=true;set('lastUpdate',new Date().toLocaleString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}));set('refreshLabel','Atualizado');set('refreshFeedback','Dados atualizados.');
+  $('aviso').hidden=true;set('lastUpdate',shortDate(new Date())+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));set('refreshLabel','Atualizado');set('refreshFeedback','Dados atualizados.');
  }catch(e){error=e;setNotice('Não foi possível carregar as palestras: '+e.message);set('siteStatus','Falha na conexão');set('refreshLabel','Falha ao atualizar');set('refreshFeedback','Falha ao atualizar os dados.');}
  finally{button.disabled=false;button.classList.remove('is-loading');setTimeout(()=>{if(!button.disabled)set('refreshLabel','Atualizar');},1800);}
 }
