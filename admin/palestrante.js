@@ -162,6 +162,63 @@ function donut(items){
  summary.append(el('strong',top[0]),document.createTextNode(' é o tema mais frequente, com '+(100*top[1]/total).toFixed(1).replace('.',',')+'% das palestras do período.'));
  host.append(summary);
 }
+
+function drawCumulativeChart(host,bins,unit,from,to){
+ const w=660,h=230,L=39,R=13,T=46,B=40,inner=w-L-R,plotBottom=h-B;
+ const total=bins.reduce((n,b)=>n+b.count,0),step=Math.max(1,Math.ceil(total/4)),max=step*4;
+ const x=i=>bins.length===1?L+inner/2:L+inner*i/(bins.length-1);
+ const y=n=>T+(plotBottom-T)*(1-n/max);
+ const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+ svg.setAttribute('viewBox','0 0 '+w+' '+h);
+ svg.setAttribute('role','img');
+ svg.setAttribute('aria-label','Evolução acumulada de '+nf(total)+' palestras no período selecionado');
+ const defs=document.createElementNS(ns,'defs'),gradient=document.createElementNS(ns,'linearGradient');
+ gradient.setAttribute('id','speakerCumulativeFill');
+ gradient.setAttribute('x1','0');gradient.setAttribute('y1','0');gradient.setAttribute('x2','0');gradient.setAttribute('y2','1');
+ for(const [offset,opacity] of [['0%','.43'],['100%','.025']]){
+  const stop=document.createElementNS(ns,'stop');
+  stop.setAttribute('offset',offset);stop.setAttribute('stop-color','#49a8ff');stop.setAttribute('stop-opacity',opacity);gradient.append(stop);
+ }
+ defs.append(gradient);svg.append(defs);
+ const node=(tag,attrs={},value)=>{const element=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))element.setAttribute(k,String(v));if(value!=null)element.textContent=value;svg.append(element);return element;};
+ if(unit==='year'){
+  node('text',{x:L+inner/2,y:18,'text-anchor':'middle',class:'year-label speaker-axis-year count'},bins[0].year===bins[bins.length-1].year?String(bins[0].year):bins[0].year+'–'+bins[bins.length-1].year);
+ }else{
+  let start=0;
+  while(start<bins.length){
+   let end=start+1;while(end<bins.length&&bins[end].year===bins[start].year)end++;
+   node('text',{x:x((start+end-1)/2),y:18,'text-anchor':'middle',class:'year-label speaker-axis-year count'},String(bins[start].year));
+   start=end;
+  }
+ }
+ for(let j=0;j<=4;j++){
+  const value=step*j,yy=y(value);
+  node('line',{x1:L,y1:yy,x2:w-R,y2:yy,class:'axis'});
+  node('text',{x:L-7,y:yy+4,'text-anchor':'end'},String(value));
+ }
+ let running=0;
+ const points=bins.map((b,i)=>{running+=b.count;return {x:x(i),y:y(running),value:running,bin:b};});
+ const line=points.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+ const area=line+' L'+points[points.length-1].x.toFixed(1)+' '+plotBottom+' L'+points[0].x.toFixed(1)+' '+plotBottom+' Z';
+ node('path',{d:area,class:'speaker-area'});
+ node('path',{d:line,class:'speaker-line'});
+ const dateSkip=Math.max(1,Math.ceil(bins.length/10)),valueSkip=Math.max(1,Math.ceil(bins.length/12));
+ points.forEach((p,i)=>{
+  const circle=node('circle',{cx:p.x,cy:p.y,r:3.5,class:'speaker-point'});
+  const tooltip=document.createElementNS(ns,'title');
+  tooltip.textContent=p.bin.fullLabel+': '+nf(p.value)+' palestras acumuladas';
+  circle.append(tooltip);
+  if(i%valueSkip===0||i===points.length-1){
+   node('text',{x:p.x,y:Math.max(T-8,p.y-10),'text-anchor':'middle',class:'speaker-point-value'},String(p.value));
+  }
+  if(i%dateSkip===0||i===points.length-1){
+   node('text',{x:p.x,y:h-15,'text-anchor':'middle',class:'speaker-axis-date count'},p.bin.label);
+  }
+ });
+ host.append(svg);
+ host.append(el('p','Período: '+shortDate(from)+' a '+shortDate(to)+' · Agenda prevalece quando há vínculo confirmado; algumas datas do acervo são aproximadas.','widget-subtitle'));
+}
+
 function chart(id,items,field){
  const host=clear(id);let [from,to]=boundaries();
  if(range.kind==='all'){
@@ -185,6 +242,7 @@ function chart(id,items,field){
  }
  if(unit==='day'){for(let i=bins.length-1;i>=0;i--)if(!bins[i].count)bins.splice(i,1);}
  if(!bins.length){empty(host,'Não há palestras nas datas do período selecionado.');return;}
+ if(field==='count'){drawCumulativeChart(host,bins,unit,from,to);return;}
  // Escala: contagens inteiras e durações em minutos (sem horas decimais).
  const vals=bins.map(b=>field==='count'?b.count:b.seconds/60);
  const peak=Math.max(0,...vals);
