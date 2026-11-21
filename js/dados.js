@@ -234,7 +234,7 @@ const DADOS = {
       "horario": "17:00",
       "titulo": "O Fenômeno da Morte",
       "local": "Lar Paulo de Tarso",
-      "endereco": "Rua Souza Lima, 423, Copacabana, Rio de Janeiro"
+      "endereco": "Rua Souza Lima, 433, Copacabana, Rio de Janeiro"
     },
     {
       "data": "2026-11-04",
