@@ -172,25 +172,36 @@ function chart(id,items,field){
  }
  if(unit==='day'){for(let i=bins.length-1;i>=0;i--)if(!bins[i].count)bins.splice(i,1);}
  if(!bins.length){empty(host,'Não há palestras nas datas do período selecionado.');return;}
- const vals=bins.map(b=>field==='count'?b.count:b.seconds/3600),max=Math.max(field==='count'?4:1,...vals);
+ // Escala: contagens inteiras e durações em minutos (sem horas decimais).
+ const vals=bins.map(b=>field==='count'?b.count:b.seconds/60);
+ const peak=Math.max(0,...vals);
+ const countStep=Math.max(1,Math.ceil(peak/4));
+ const timeSteps=[30,60,90,120,180,240,300,360,480,600,720,900,1200,1800,2400,3600];
+ const timeStep=timeSteps.find(step=>step*4>=peak)||Math.ceil(peak/240)*60;
+ const step=field==='count'?countStep:timeStep,max=step*4;
+ const timeTick=minutes=>{
+  if(minutes===0)return '0';
+  const hours=Math.floor(minutes/60),rest=minutes%60;
+  return (hours?hours+'h':'')+(rest?rest+'min':'');
+ };
  const w=660,h=230,L=39,R=13,T=38,B=40,inner=w-L-R,bw=inner/bins.length;
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.setAttribute('role','img');
  svg.setAttribute('aria-label',(field==='count'?'Quantidade de palestras':'Horas de palestras')+' por '+(unit==='day'?'dia':unit==='month'?'mês':'ano')+' no período selecionado');
  const node=(tag,attrs,txt)=>{const x=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs||{}))x.setAttribute(k,String(v));if(txt!=null)x.textContent=txt;svg.append(x);return x;};
  if(unit==='year'){
-  node('text',{x:L+inner/2,y:18,'text-anchor':'middle',class:'year-label'},bins[0].year===bins[bins.length-1].year?String(bins[0].year):bins[0].year+'–'+bins[bins.length-1].year);
+  node('text',{x:L+inner/2,y:18,'text-anchor':'middle',class:'year-label speaker-axis-year '+(field==='count'?'count':'hours')},bins[0].year===bins[bins.length-1].year?String(bins[0].year):bins[0].year+'–'+bins[bins.length-1].year);
  }else{
   let start=0;
   while(start<bins.length){
    let end=start+1;while(end<bins.length&&bins[end].year===bins[start].year)end++;
-   node('text',{x:L+(start+end)*bw/2,y:18,'text-anchor':'middle',class:'year-label'},String(bins[start].year));
+   node('text',{x:L+(start+end)*bw/2,y:18,'text-anchor':'middle',class:'year-label speaker-axis-year '+(field==='count'?'count':'hours')},String(bins[start].year));
    start=end;
   }
  }
  for(let j=0;j<=4;j++){
-  const v=max*j/4,y=T+(h-T-B)*(1-j/4);
+  const v=step*j,y=T+(h-T-B)*(1-j/4);
   node('line',{x1:L,y1:y,x2:w-R,y2:y,class:'axis'});
-  node('text',{x:L-7,y:y+4,'text-anchor':'end'},field==='count'?String(Math.round(v)):v.toFixed(1).replace('.',','));
+  node('text',{x:L-7,y:y+4,'text-anchor':'end'},field==='count'?String(v):timeTick(v));
  }
  const skip=unit==='day'?1:Math.max(1,Math.ceil(bins.length/12));
  vals.forEach((v,i)=>{
@@ -198,7 +209,7 @@ function chart(id,items,field){
   const rect=node('rect',{x,y,width:barWidth,height:Math.max(0,height),rx:Math.min(4,barWidth*.15),class:field==='count'?'bar':'bar-alt'});
   const title=document.createElementNS('http://www.w3.org/2000/svg','title');title.textContent=bins[i].fullLabel+': '+nf(bins[i].count)+' palestra(s) · '+(bins[i].known?hm(bins[i].seconds):'duração não registrada')+(bins[i].estimated?' · inclui data estimada':'');rect.append(title);
   if(v>0)node('text',{x:x+barWidth/2,y:Math.max(T-2,y-2),'text-anchor':'middle',class:'speaker-bar-value '+(field==='count'?'count':'hours')},field==='count'?String(bins[i].count):chartTime(bins[i].seconds));
-  if(i%skip===0||i===bins.length-1)node('text',{x:x+barWidth/2,y:h-15,'text-anchor':'middle'},bins[i].label+(bins[i].estimated?'*':''));
+  if(i%skip===0||i===bins.length-1)node('text',{x:x+barWidth/2,y:h-15,'text-anchor':'middle',class:'speaker-axis-date '+(field==='count'?'count':'hours')},bins[i].label+(bins[i].estimated?'*':''));
  });
  host.append(svg);
  const fmt=d=>shortDate(d);
@@ -372,7 +383,7 @@ function calendar(){
  for(let i=0;i<first.getDay();i++)host.append(el('div',null,'speaker-calendar-blank'));
  for(let day=1;day<=lastDay;day++){
   const events=byDay.get(day),dayIso=iso(new Date(year,month,day)),status=dayIso<todayIso?'past':dayIso===todayIso?'today':'future';
-  const cell=el('div',null,'speaker-calendar-day'+(events?' has-talks status-'+status:''));
+  const cell=el('div',null,'speaker-calendar-day'+(events?' has-talks':'')+(events||status==='today'?' status-'+status:''));
   cell.append(el('span',String(day),'speaker-calendar-day-number'));
   if(events){
    for(const p of [...events].sort((a,b)=>a.horario.localeCompare(b.horario)||a.titulo.localeCompare(b.titulo,'pt-BR'))){
@@ -386,7 +397,6 @@ function calendar(){
   }
   host.append(cell);
  }
- set('calendarNote','Datas, horários e locais provenientes da Agenda. Amarelo: passado · Lilás: hoje · Azul: futuro.');
 }
 function history(items){
  const host=clear('historico');if(!items.length){const tr=el('tr'),td=el('td','Nenhuma palestra encontrada neste período.');td.colSpan=5;tr.append(td);host.append(tr);return;}

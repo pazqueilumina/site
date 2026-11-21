@@ -177,3 +177,19 @@
 .compare-summary .compare-delta.negative,.compare-kpi-row small.compare-delta-count.negative{color:#c4383d;font-weight:800}
 .compare-summary .compare-delta.positive,.compare-kpi-row small.compare-delta-count.positive{color:#168057;font-weight:800}
 .compare-summary .compare-delta.neutral,.compare-kpi-row small.compare-delta-count.neutral{color:#416389;font-weight:800}
+
+/* Legenda superior e dia atual, mesmo sem eventos */
+.speaker-calendar-legend{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin:13px 0 15px}
+.speaker-calendar-legend-item{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-weight:650}
+.speaker-calendar-swatch{width:12px;height:12px;flex:none;border-radius:3px}
+.speaker-calendar-swatch.past{background:#e5b44e}
+.speaker-calendar-swatch.today{background:#a47bdd}
+.speaker-calendar-swatch.future{background:#548ce0}
+.speaker-calendar-day.status-today{background:#f0e6ff;border:1px solid #cbb3f0;border-left:5px solid #a47bdd}
+.speaker-calendar-day.status-today .speaker-calendar-day-number{color:#7048ab}
+.speaker-calendar-count{margin-left:auto}
+/* Ano e datas dos gráficos com as cores das barras */
+.speaker-chart svg text.speaker-axis-date{font-weight:700}
+.speaker-chart svg text.speaker-axis-year{font-weight:800}
+.speaker-chart svg text.speaker-axis-date.count,.speaker-chart svg text.speaker-axis-year.count{fill:#3679d2}
+.speaker-chart svg text.speaker-axis-date.hours,.speaker-chart svg text.speaker-axis-year.hours{fill:#8b6ad5}
