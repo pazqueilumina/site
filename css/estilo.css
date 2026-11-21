@@ -408,9 +408,9 @@ h1, h2, h3, .serif {
 .etiqueta {
   display: inline-block;
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  padding: 4px 11px;
+  font-weight: 600;
+  letter-spacing: 0.15px;
+  padding: 4px 9px;
   border-radius: 6px;
 }
 
@@ -676,21 +676,21 @@ h1, h2, h3, .serif {
 
 /* Eventos de hoje: azul suave e sombra para destaque, sem alterar os demais cartões. */
 .item-agenda.item-agenda--hoje {
-  background: #edf4fa;
-  border-color: #9bbad1;
-  box-shadow: 0 7px 22px rgba(25, 55, 83, 0.18), 0 1px 4px rgba(25, 55, 83, 0.06);
+  background: #f4efff;
+  border-color: #b6a0d8;
+  box-shadow: 0 9px 26px rgba(91, 61, 143, 0.22), 0 2px 7px rgba(91, 61, 143, 0.10);
 }
 .item-agenda.item-agenda--hoje:hover {
-  border-color: #729dbd;
-  box-shadow: 0 9px 25px rgba(25, 55, 83, 0.22);
+  border-color: #9676c3;
+  box-shadow: 0 12px 30px rgba(91, 61, 143, 0.26), 0 3px 9px rgba(91, 61, 143, 0.12);
 }
 .agenda-etiqueta-hoje {
   display: inline-block;
   margin-top: 6px;
   padding: 2px 6px;
   border-radius: 5px;
-  background: #d3e5f3;
-  color: #234866;
+  background: #e3d5f8;
+  color: #5c3c87;
   font: 700 9px/1.4 var(--fonte-sans);
   letter-spacing: .06em;
 }

@@ -1,12 +1,45 @@
 'use strict';
 const $ = id => document.getElementById(id);
-const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false,pdfUploading:false};
+const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false,pdfUploading:false,tituloEditado:false};
 function msg(s,type=''){ $('mensagemTexto').textContent=s;$('mensagemP').className='mensagem'+(type?' '+type:'');$('mensagemP').hidden=false; }
 // Remove pontuação terminal dos títulos, preservando abreviações como d.C.
 function tituloSemPontoFinal(titulo){
  const texto=String(titulo||'').trim();
  return /\b(?:d\.\s*C\.|a\.\s*C\.)$/i.test(texto)?texto:texto.replace(/\.+$/,'').trimEnd();
 }
+function tituloFraseAdmin(titulo) {
+  const nomesProprios = [
+    ["doutrina espírita", "Doutrina Espírita"],
+    ["espírito santo", "Espírito Santo"],
+    ["chico xavier", "Chico Xavier"],
+    ["luiz gonzaga", "Luiz Gonzaga"],
+    ["pedro leopoldo", "Pedro Leopoldo"],
+    ["eurípides barsanulfo", "Eurípides Barsanulfo"],
+    ["setembro amarelo", "Setembro Amarelo"],
+    ["francisco de assis", "Francisco de Assis"],
+    ["jesus", "Jesus"], ["cristo", "Cristo"], ["deus", "Deus"],
+    ["consolador", "Consolador"], ["espiritismo", "Espiritismo"],
+    ["evangelho", "Evangelho"], ["kardec", "Kardec"],
+    ["allan", "Allan"], ["judas", "Judas"], ["lázaro", "Lázaro"],
+    ["pedro", "Pedro"], ["zaqueu", "Zaqueu"], ["jerusalém", "Jerusalém"],
+    ["getsêmani", "Getsêmani"], ["césar", "César"], ["miriam", "Miriam"],
+    ["saulo", "Saulo"], ["tarso", "Tarso"], ["maria", "Maria"],
+    ["nazaré", "Nazaré"], ["frança", "França"], ["brasil", "Brasil"],
+    ["uberaba", "Uberaba"], ["terra", "Terra"]
+  ];
+  let texto = String(titulo || "").toLocaleLowerCase("pt-BR");
+  texto = texto.replace(/\bd\.\s*c\./g, "d.C.").replace(/\ba\.\s*c\./g, "a.C.");
+  texto = texto.replace(/\braio x\b/g, "raio X");
+  texto = texto.replace(/\b(?:ii|iii|iv|vi|vii|viii|ix|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx)\b/g,
+    numeral => numeral.toUpperCase());
+  for (const [nome, grafia] of nomesProprios) {
+    texto = texto.replace(new RegExp("(^|[^\\p{L}])(" + nome + ")(?=$|[^\\p{L}])", "giu"),
+      (_, antes) => antes + grafia);
+  }
+  return texto.replace(/(^|[.!?]\s+)([\p{L}])/gu,
+    (_, inicio, letra) => inicio + letra.toLocaleUpperCase("pt-BR"));
+}
+
 function idYoutube(url){
  if(!url.trim())return '';
  try{const u=new URL(url.trim());const host=u.hostname.toLowerCase().replace(/^www\./,'').replace(/^m\./,'');let id='';
@@ -158,7 +191,7 @@ async function carregarCentros(){
  }catch(e){console.warn('Cadastro de centros indisponível:',e);}
 }
 function preencher(p){
- limparSelecaoMp3();limparSelecaoPdf();$('pid').value=p.pid;$('titulo').value=p.titulo;$('data').value=p.data||'';$('aproximada').value=p.dataAproximada?'sim':'nao';
+ limparSelecaoMp3();limparSelecaoPdf();$('pid').value=p.pid;$('titulo').value=tituloFraseAdmin(p.titulo);state.tituloEditado=false;$('data').value=p.data||'';$('aproximada').value=p.dataAproximada?'sim':'nao';
  $('youtube').value=p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'';
  $('audio').value=p.audio||'';$('pdf').value=p.pdf||'';$('arquivo').value=p.apresentacaoOriginal||'';$('serie').value=p.serie||'temas';
  const centro=$('centroId');if(p.centroId&&!Array.from(centro.options).some(o=>o.value===p.centroId)){
@@ -178,7 +211,7 @@ function atualizarAbas(){
 function trocarAba(aba){
  if(state.aba===aba)return true;
  if(!confirmarDescarte())return false;
- state.formDirty=false;
+ state.formDirty=false;state.tituloEditado=false;
  if(aba==='nova'){
   state.selecionado=null;$('formP').reset();limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';
  }else if(aba==='editar'&&state.selecionado){
@@ -195,12 +228,12 @@ function selecionar(pid){
 }
 function limpar(force=false){
  if(!force&&!confirmarDescarte())return;
- state.selecionado=null;state.formDirty=false;$('formP').reset();limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';
+ state.selecionado=null;state.formDirty=false;state.tituloEditado=false;$('formP').reset();limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';
  state.aba='nova';atualizarAbas();render();
 }
 function descartarFormulario(){
  if(!confirmarDescarte())return;
- state.formDirty=false;
+ state.formDirty=false;state.tituloEditado=false;
  if(state.aba==='editar'&&state.selecionado){
   const p=state.dados.palestras.find(x=>x.pid===state.selecionado);if(p)preencher(p);
  }else{$('formP').reset();$('pid').value=novoId();}
@@ -214,7 +247,8 @@ function salvar(){if(state.r2Uploading||state.pdfUploading){msg('Aguarde o envio
  if([audio,pdf].some(v=>v&&!/^(https:\/\/|\/)/.test(v))){msg('Links de áudio e PDF devem começar com https:// ou /.','erro');return false;}
  if(arquivo&&(/[\\/]/.test(arquivo)||!/\.(ppt|pptx|pdf)$/i.test(arquivo))){msg('Informe apenas o nome do arquivo .ppt, .pptx ou .pdf, sem caminhos.','erro');return false;}
  const pid=state.selecionado||novoId();const old=state.dados.palestras.find(p=>p.pid===pid)||{};
- const p={...old,pid,titulo:tituloSemPontoFinal($('titulo').value),data:$('data').value,dataAproximada:$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
+ const titulo=state.selecionado&&!state.tituloEditado&&old.titulo?old.titulo:tituloSemPontoFinal($('titulo').value);
+ const p={...old,pid,titulo,data:$('data').value,dataAproximada:$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
   statusAudio:audio?'existente':id?'pendente':'sem-fonte',statusPdf:pdf?'existente':arquivo?'pendente':'sem-arquivo'};
  if(!p.titulo){msg('Título obrigatório.','erro');return false;}
  const i=state.dados.palestras.findIndex(x=>x.pid===pid);if(i>=0)state.dados.palestras[i]=p;else state.dados.palestras.push(p);
@@ -231,7 +265,7 @@ function render(){atualizarUploadR2();atualizarUploadPdf();const rows=state.dado
  const list=$('listaP');list.replaceChildren();if(!filtered.length){const e=document.createElement('p');e.className='vazio';e.textContent='Nenhuma palestra encontrada.';list.append(e);return;}
  filtered.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.className='evento'+(state.selecionado===p.pid?' ativo':'');
  const n=document.createElement('span');n.className='evento-data';const strong=document.createElement('strong');strong.textContent=String(numerosOrdem.get(p.pid)??(i+1)).padStart(3,'0');const small=document.createElement('span');small.textContent='ORDEM';n.append(strong,small);
- const body=document.createElement('span');body.className='evento-corpo';const t=document.createElement('strong');t.textContent=p.titulo;const meta=document.createElement('span');meta.textContent=`${p.pid} · ${p.data||'Sem data'}${p.dataAproximada?' (aprox.)':''}`;
+ const body=document.createElement('span');body.className='evento-corpo';const t=document.createElement('strong');t.textContent=tituloFraseAdmin(p.titulo);const meta=document.createElement('span');meta.textContent=`${p.pid} · ${p.data||'Sem data'}${p.dataAproximada?' (aprox.)':''}`;
  const flags=document.createElement('small');flags.textContent=`Vídeo ${p.youtubeId?'✓':'—'}   MP3 ${p.audio?'✓':'—'}   PDF ${p.pdf?'✓':'—'}`;body.append(t,meta,flags);b.append(n,body);b.addEventListener('click',()=>selecionar(p.pid));list.append(b);});
 }
 async function carregar(){msg('Consultando cadastro no GitHub…');try{const r=await fetch('/api/admin/palestras',{credentials:'same-origin',cache:'no-store'});const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);
@@ -265,7 +299,7 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
 function exportar(){const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];for(const p of state.dados.palestras)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
  const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='palestras-com-ids.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}
 $('fecharMensagemP').addEventListener('click',()=>{ $('mensagemP').hidden=true; });
-$('formP').addEventListener('submit',e=>{e.preventDefault();salvar();});$('formP').addEventListener('input',e=>{if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});$('formP').addEventListener('change',e=>{if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});
+$('formP').addEventListener('submit',e=>{e.preventDefault();salvar();});$('formP').addEventListener('input',e=>{if(e.target.id==='titulo')state.tituloEditado=true;if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});$('formP').addEventListener('change',e=>{if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});
  $('fecharStatusAudioR2').addEventListener('click',()=>{$('avisoAudioR2').hidden=true;});
  $('fecharStatusPdfGithub').addEventListener('click',()=>{$('avisoPdfGithub').hidden=true;});
  $('arquivoMp3R2').addEventListener('change',()=>{$('avisoAudioR2').hidden=false;atualizarUploadR2();});

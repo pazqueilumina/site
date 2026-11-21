@@ -168,12 +168,12 @@ function cena(chave) {
 /* ---------------- SÉRIES (aparência por série) ---------------- */
 
 const APARENCIA_SERIE = {
-  "ultimos-dias": { etiqueta: "ÚLTIMOS DIAS", classe: "etiqueta-ultimos-dias", icone: "cruz",    cor: "areia",     arte: "luz" },
-  "ministerio":   { etiqueta: "MINISTÉRIO",   classe: "etiqueta-ministerio",   icone: "pessoa",   cor: "azul",     arte: "montanha" },
-  "parabolas":    { etiqueta: "PARÁBOLAS",    classe: "etiqueta-parabolas",    icone: "folha",    cor: "verde",    arte: "semente" },
-  "evangelho":    { etiqueta: "EVANGELHO",    classe: "etiqueta-evangelho",    icone: "livro",    cor: "roxo",     arte: "evangelho" },
-  "doutrina":     { etiqueta: "DOUTRINA",     classe: "etiqueta-doutrina",     icone: "espirito", cor: "vermelho", arte: "amanhecer" },
-  "temas":        { etiqueta: "REFLEXÕES",         classe: "etiqueta-temas",        icone: "coracao",  cor: "areia",    arte: "maos" }
+  "ultimos-dias": { etiqueta: "Últimos dias", classe: "etiqueta-ultimos-dias", icone: "cruz",    cor: "areia",     arte: "luz" },
+  "ministerio":   { etiqueta: "Ministério",   classe: "etiqueta-ministerio",   icone: "pessoa",   cor: "azul",     arte: "montanha" },
+  "parabolas":    { etiqueta: "Parábolas",    classe: "etiqueta-parabolas",    icone: "folha",    cor: "verde",    arte: "semente" },
+  "evangelho":    { etiqueta: "Evangelho",    classe: "etiqueta-evangelho",    icone: "livro",    cor: "roxo",     arte: "evangelho" },
+  "doutrina":     { etiqueta: "Doutrina",     classe: "etiqueta-doutrina",     icone: "espirito", cor: "vermelho", arte: "amanhecer" },
+  "temas":        { etiqueta: "Reflexões",         classe: "etiqueta-temas",        icone: "coracao",  cor: "areia",    arte: "maos" }
 };
 
 /* ---------------- NORMALIZAÇÃO DOS DADOS ---------------- */
@@ -511,7 +511,7 @@ function itemAgenda(evento, compacto) {
   const hora = fmtHora(evento.horario);
   const hoje = evento.data === dataHojeAgenda();
   const classeHoje = hoje ? " item-agenda--hoje" : "";
-  const etiquetaHoje = hoje ? '<span class="agenda-etiqueta-hoje">HOJE</span>' : "";
+  const etiquetaHoje = hoje ? '<span class="agenda-etiqueta-hoje">Hoje</span>' : "";
 
   if (compacto) {
     const linkLocal = linkLocalAgenda(evento);
@@ -762,7 +762,7 @@ function cartaoShort(s, i) {
     '<div class="cartao-corpo">' +
     "<h3>" + escapar(s.t) + "</h3>" +
     '<div class="cartao-rodape">' +
-    '<span class="etiqueta etiqueta-short">SHORT</span>' +
+    '<span class="etiqueta etiqueta-short">Short</span>' +
     '<a class="link-icone" href="' + escapar(link) + '" target="_blank" rel="noopener">Assistir ' + icone("externo") + "</a>" +
     "</div></div></article>"
   );
@@ -786,7 +786,6 @@ function renderizarVideos() {
     "<h1 class=\"titulo-pagina\">Vídeos</h1>" +
     '<p class="subtitulo-pagina">Shorts e momentos especiais do canal ' + escapar(DADOS.site.canalNome) + '. As palestras completas estão na página Apresentações.</p>' +
     '<div class="pagina-barra"><div class="acoes" style="margin:0">' +
-    '<a class="botao-acao botao-acao--primario" href="apresentacoes.html">Ver apresentações</a>' +
     '<a class="botao-acao" href="' + escapar(DADOS.site.canalYoutube) + '" target="_blank" rel="noopener">' + icone("video") + " Ver canal no YouTube " + icone("externo") + "</a>" +
     "</div></div>" +
     '<div class="grade-cartoes" id="gradeVideos"></div>';
