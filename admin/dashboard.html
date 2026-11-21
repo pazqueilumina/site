@@ -18,6 +18,7 @@
  <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14v-2a9 9 0 0 1 18 0v2M3 14v5a2 2 0 0 0 2 2h2v-8H5a2 2 0 0 0-2 2Zm18 0v5a2 2 0 0 1-2 2h-2v-8h2a2 2 0 0 1 2 2Z"/></symbol>
  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Zm0 0v14"/></symbol>
  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></symbol>
+ <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10m5 10V4m5 16v-8m5 8V7M2 21h20"/></symbol>
  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 0v6h5M8 13h8m-8 4h8"/></symbol>
  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"/></symbol>
@@ -42,17 +43,18 @@
  </a>
  <nav class="dash-nav">
   <a class="nav-link selected" href="/admin/dashboard.html"><svg><use href="#i-home"/></svg>Dashboard</a>
-  <button class="nav-link nav-expand" type="button" id="acervoToggle" aria-expanded="true" aria-controls="subAcervo"><svg><use href="#i-layers"/></svg>Acervo<svg class="chev"><use href="#i-chevron"/></svg></button>
-  <div class="nav-sub" id="subAcervo">
+  <button class="nav-link nav-expand" type="button" id="acervoToggle" aria-expanded="false" aria-controls="subAcervo"><svg><use href="#i-layers"/></svg>Acervo<svg class="chev"><use href="#i-chevron"/></svg></button>
+  <div class="nav-sub" id="subAcervo" hidden>
    <a href="/videos.html"><svg><use href="#i-video"/></svg>Vídeos</a>
    <a href="/admin/palestras.html"><svg><use href="#i-presentation"/></svg>Apresentações</a>
    <a href="/audios.html"><svg><use href="#i-headphones"/></svg>Áudios</a>
    <a href="/livro.html"><svg><use href="#i-book"/></svg>Livro</a>
   </div>
-  <a class="nav-link" href="/admin/agenda.html"><svg><use href="#i-calendar"/></svg>Eventos</a>
+  <a class="nav-link" href="/admin/agenda.html"><svg><use href="#i-calendar"/></svg>Agenda</a>
+  <a class="nav-link" href="/admin/locais.html"><svg><use href="#i-map-pin"/></svg>Locais</a>
+  <a class="nav-link" href="/admin/palestras.html"><svg><use href="#i-presentation"/></svg>Palestras</a>
   <a class="nav-link" href="#estatisticas"><svg><use href="#i-chart"/></svg>Estatísticas</a>
   <a class="nav-link" href="#relatorios"><svg><use href="#i-file"/></svg>Relatórios</a>
-  <a class="nav-link" href="/admin/locais.html"><svg><use href="#i-settings"/></svg>Configurações</a>
   <a class="nav-link nav-return" href="/"><svg><use href="#i-external"/></svg>Voltar ao site</a>
  </nav>
  <div class="dash-sidebar-foot"><div class="online"><svg><use href="#i-check"/></svg><span id="siteStatus">Verificando dados</span></div><p>Última atualização<br><span id="lastUpdate">—</span></p></div>
