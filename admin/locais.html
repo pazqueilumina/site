@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
   <title>Cadastro de Locais | Estudos e Reflexões Espíritas</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=coordenadas20261121"><script defer src="/admin/locais.js?v=coordenadas20261121"></script>
+  <link rel="stylesheet" href="/admin/admin.css?v=mapas20261121"><script defer src="/admin/locais.js?v=mapas20261121"></script>
 </head>
 <body class="pagina-locais">
   <header class="topo"><div class="topo-conteudo">
@@ -33,10 +33,17 @@
           <label>Bairro<input id="bairroLocal" maxlength="180" placeholder="Opcional"></label>
           <div class="duas-colunas"><label>Cidade *<input id="cidadeLocal" maxlength="180" required></label><label>UF *<input id="ufLocal" maxlength="2" minlength="2" pattern="[A-Za-z]{2}" required placeholder="RJ" style="text-transform:uppercase"></label></div>
           <label>Link do Google Maps<input id="mapsLocal" type="url" maxlength="500" pattern="https://.*" placeholder="https://maps.google.com/…"><small>Opcional. Não é o link de transmissão da palestra.</small></label>
-          <details class="detalhes-coordenadas"><summary>Coordenadas geográficas (opcional)</summary>
+          <details class="detalhes-coordenadas" id="detalhesCoordenadas"><summary id="tituloCoordenadas">Coordenadas geográficas (opcional)</summary>
             <p class="ajuda-coordenadas">Se o mapa não encontrar o número exato, clique com o botão direito no imóvel no Google Maps e copie a latitude e a longitude. Elas serão usadas para calcular os trajetos, mas não comprovam o endereço.</p>
             <div class="duas-colunas"><label>Latitude<input id="latitudeLocal" type="text" inputmode="decimal" maxlength="18" placeholder="Ex.: -22.975123"></label><label>Longitude<input id="longitudeLocal" type="text" inputmode="decimal" maxlength="18" placeholder="Ex.: -43.190123"></label></div>
             <small>Preencha os dois campos juntos. Salve na lista e depois publique as alterações.</small>
+            <div class="sugestao-coordenadas" id="sugestaoCoordenadas" hidden>
+              <p id="textoSugestaoCoordenadas"></p>
+              <div class="acoes-sugestao">
+                <a id="abrirSugestaoMapa" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">Conferir no mapa</a>
+                <button type="button" id="aplicarCoordenadas">Usar coordenadas após conferir</button>
+              </div>
+            </div>
           </details>
           <details><summary>Correção manual de distância (opcional)</summary><label>Ida e volta (km)<input id="kmIdaVoltaLocal" type="number" min="0.1" max="2000" step="0.1" placeholder="Ex.: 12.4"><small>O Dashboard calcula as rotas automaticamente. Preencha somente se quiser substituir uma distância indisponível.</small></label></details>
           <div class="acoes"><button id="salvarLocal" type="submit" class="botao principal">Adicionar à lista</button><button id="limparLocal" type="button" class="botao discreto">Limpar</button><button id="excluirLocal" type="button" class="botao perigoso" hidden>Excluir local</button></div>

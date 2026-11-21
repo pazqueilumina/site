@@ -15,7 +15,7 @@ function atualizarResumo() {
   atualizarResumoVerificacao();
 }
 
-const assinaturaLocal=l=>[l.nome,l.endereco,l.bairro,l.cidade,l.uf,l.latitude,l.longitude].map(normalizar).join('|');
+const assinaturaLocal=l=>[l.nome,l.endereco,l.bairro,l.cidade,l.uf,l.maps,l.latitude,l.longitude].map(normalizar).join('|');
 function resultadoLocal(l){
  const r=estado.verificacao.get(l.id);
  return r&&r.assinatura===assinaturaLocal(l)?r:null;
@@ -26,12 +26,13 @@ function atualizarResumoVerificacao(){
  const erros=resultados.filter(r=>r?.status==='erro').length;
  const aproximados=resultados.filter(r=>r?.status==='aproximado').length;
  const manuais=resultados.filter(r=>r?.status==='manual').length;
+ const links=resultados.filter(r=>r?.status==='link').length;
  const pendentes=estado.locais.length-verificados;
  $('errosLocais').textContent=verificados?String(erros):(estado.locais.length===0?'0':'—');
  $('statusVerificacaoLocais').textContent=estado.verificando
   ?'Verificando… '+verificados+' de '+estado.locais.length
   :pendentes?verificados+' de '+estado.locais.length+' avaliados · '+pendentes+' pendente(s)'
-  :verificados+' de '+estado.locais.length+' avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+(manuais?' · '+manuais+' com coordenadas manuais':'');
+  :verificados+' de '+estado.locais.length+' avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+(manuais?' · '+manuais+' com coordenadas manuais':'')+(links?' · '+links+' com link do mapa':'');
  $('verificarLocais').disabled=estado.verificando||!estado.sha||!estado.locais.length;
  $('verificarLocais').textContent=estado.verificando?'Verificando…':'Verificar endereços';
  $('cartaoErrosLocais').classList.toggle('tem-erros',erros>0);
@@ -52,8 +53,8 @@ async function verificarEnderecos(){
    });
    const d=await r.json();
    if(!r.ok)throw Error(d.erro||'Falha na consulta.');
-   if(d.id!==l.id||!['ok','aproximado','manual','erro','pendente'].includes(d.status))throw Error('Resposta inesperada.');
-   estado.verificacao.set(l.id,{assinatura,status:d.status,motivo:d.motivo||''});
+   if(d.id!==l.id||!['ok','aproximado','manual','link','erro','pendente'].includes(d.status))throw Error('Resposta inesperada.');
+   estado.verificacao.set(l.id,{assinatura,status:d.status,motivo:d.motivo||'',fonte:d.fonte||'',latitude:d.latitude,longitude:d.longitude});
   }catch{
    estado.verificacao.set(l.id,{assinatura,status:'pendente',motivo:'Não foi possível verificar agora.'});
   }
@@ -65,8 +66,35 @@ async function verificarEnderecos(){
  renderizar();
 }
 
+
+function atualizarSugestaoCoordenadas(){
+ const host=$('sugestaoCoordenadas'),l=estado.locais.find(x=>x.id===estado.selecionado),r=l&&resultadoLocal(l);
+ // Somente pontos específicos do OpenStreetMap ou links do Google Maps podem ser sugeridos
+ // para persistência. ArcGIS é utilizado apenas para consulta, sem armazenamento automático.
+ const permitida=r&&['ok','link'].includes(r.status)&&['OpenStreetMap','Google Maps'].includes(r.fonte);
+ const disponivel=permitida&&Number.isFinite(r.latitude)&&Number.isFinite(r.longitude);
+ host.hidden=!disponivel;
+ $('tituloCoordenadas').textContent=disponivel?'Coordenadas geográficas · sugestão disponível':'Coordenadas geográficas (opcional)';
+ if(!disponivel)return;
+ const lat=Number(r.latitude),lon=Number(r.longitude);
+ $('textoSugestaoCoordenadas').textContent='Ponto encontrado em '+r.fonte+': '+lat.toFixed(6)+', '+lon.toFixed(6)+'. Confira se corresponde ao imóvel antes de salvar.';
+ $('abrirSugestaoMapa').href='https://www.google.com/maps?q='+lat.toFixed(7)+','+lon.toFixed(7);
+}
+function aplicarCoordenadasSugeridas(){
+ const l=estado.locais.find(x=>x.id===estado.selecionado),r=l&&resultadoLocal(l);
+ if(!r||!['ok','link'].includes(r.status)||!['OpenStreetMap','Google Maps'].includes(r.fonte)||
+  !Number.isFinite(r.latitude)||!Number.isFinite(r.longitude))return;
+ const fmt=n=>Number(n).toFixed(7).replace(/0+$/,'').replace(/\.$/,'');
+ $('latitudeLocal').value=fmt(r.latitude);
+ $('longitudeLocal').value=fmt(r.longitude);
+ $('detalhesCoordenadas').open=true;
+ estado.formularioAlterado=true;
+ mensagem('Coordenadas preenchidas no formulário. Confira no mapa, salve na lista e publique para armazená-las.','alerta');
+}
+
 function renderizar() {
   atualizarResumo();
+  atualizarSugestaoCoordenadas();
   const busca=normalizar($('buscaLocal').value);
   const lista=$('listaLocais'); lista.replaceChildren();
   const locais=estado.locais.filter(l=>(!estado.filtroErros||resultadoLocal(l)?.status==='erro')&&(!busca||normalizar([l.nome,l.endereco,l.bairro,l.cidade,l.uf].join(' ')).includes(busca)))
@@ -81,10 +109,10 @@ function renderizar() {
     const nome=document.createElement('strong');nome.textContent=l.nome;
     const info=document.createElement('span');info.textContent=[l.bairro,l.cidade,l.uf].filter(Boolean).join(' · ');
     corpo.append(nome,info);
-    if(resultado?.status==='erro'||resultado?.status==='aproximado'||resultado?.status==='manual'||resultado?.status==='pendente'){
+    if(resultado?.status==='erro'||resultado?.status==='aproximado'||resultado?.status==='manual'||resultado?.status==='link'||resultado?.status==='pendente'){
       const aviso=document.createElement('span');
       aviso.className='local-aviso '+resultado.status;
-      aviso.textContent=resultado.status==='erro'?'Endereço não localizado':resultado.status==='aproximado'?'Rua localizada; número não confirmado':resultado.status==='manual'?'Coordenadas manuais (endereço não verificado)':'Verificação pendente';
+      aviso.textContent=resultado.status==='erro'?'Endereço não localizado':resultado.status==='aproximado'?(resultado.motivo||'Localização aproximada'):resultado.status==='manual'?'Coordenadas manuais (endereço não verificado)':resultado.status==='link'?'Ponto do Google Maps (conferir)':'Verificação pendente';
       corpo.append(aviso);
     }
     b.append(corpo);b.addEventListener('click',()=>selecionar(l.id));lista.append(b);
@@ -136,6 +164,7 @@ $('fecharMensagemLocais').addEventListener('click',()=>{ $('mensagemLocais').hid
 $('publicarLocais').addEventListener('click',publicar);
 $('buscaLocal').addEventListener('input',renderizar);
 $('verificarLocais').addEventListener('click',verificarEnderecos);
+$('aplicarCoordenadas').addEventListener('click',aplicarCoordenadasSugeridas);
 $('filtrarErrosLocais').addEventListener('click',()=>{
  estado.filtroErros=!estado.filtroErros;
  renderizar();

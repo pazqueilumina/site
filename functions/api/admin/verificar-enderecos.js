@@ -28,9 +28,14 @@ export async function onRequestPost({request}){
  }
  try{
   const point=await geocodeDestination(local,provider,cache);
-  return json({id:local.id,status:point.manual?'manual':point.aproximado?'aproximado':'ok',
-   motivo:point.manual?'Coordenadas informadas manualmente; endereço não verificado.':
-    point.aproximado?'Rua localizada, mas número do imóvel não confirmado.':''});
+  const status=point.manual?'manual':point.link?'link':point.aproximado?'aproximado':'ok';
+  const motivo=point.manual?'Coordenadas informadas manualmente; endereço não verificado.':
+   point.link?'Coordenadas extraídas do link do Google Maps; confira o ponto no mapa.':
+   point.interpolado?'Número correspondente, mas posição estimada pelo ArcGIS.':
+   point.aproximado?'Rua localizada; número não confirmado.':
+   'Número correspondente localizado por '+(point.fonte||'serviço de mapas')+'.';
+  return json({id:local.id,status,motivo,fonte:point.fonte||'',
+   ...(Number.isFinite(point.lat)&&Number.isFinite(point.lon)?{latitude:point.lat,longitude:point.lon}:{})});
  }catch(e){
   const msg=String(e?.message||'Falha na consulta.');
   if(msg.startsWith('Endereço não localizado no mapa'))return json({id:local.id,status:'erro',motivo:'Endereço não localizado no mapa.'});

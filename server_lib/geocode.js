@@ -1,5 +1,6 @@
 /* Geocodificação comum ao Dashboard e à verificação de endereços. */
 const NOMINATIM='https://nominatim.openstreetmap.org/search';
+const ARCGIS='https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates';
 async function hash(value){
  const data=new TextEncoder().encode(value);
  const bytes=new Uint8Array(await crypto.subtle.digest('SHA-256',data));
@@ -46,6 +47,66 @@ function manualPoint(local){
   throw Error('Coordenadas manuais inválidas.');
  return {lat,lon,manual:true,aproximado:true};
 }
+/* Só coordenadas explícitas do ponto; @lat,lon indica o centro da tela e é ignorado. */
+function googleMapsPoint(local){
+ if(!local.maps)return null;
+ let url;
+ try{url=new URL(local.maps);}catch{return null;}
+ if(!['google.com','www.google.com','maps.google.com'].includes(url.hostname.toLowerCase()))return null;
+ let match=url.href.match(/!3d(-?\d{1,2}(?:\.\d{1,8})?)!4d(-?\d{1,3}(?:\.\d{1,8})?)/i);
+ if(!match){
+  const query=url.searchParams.get('query')||url.searchParams.get('q')||'';
+  match=/^\s*(-?\d{1,2}(?:\.\d{1,8})?)\s*,\s*(-?\d{1,3}(?:\.\d{1,8})?)\s*$/.exec(query);
+ }
+ if(!match)return null;
+ const lat=Number(match[1]),lon=Number(match[2]);
+ if(!Number.isFinite(lat)||!Number.isFinite(lon)||lat< -34||lat>6||lon< -75||lon> -33)return null;
+ return {lat,lon,aproximado:true,fonte:'Google Maps',link:true};
+}
+function arcgisCountry(value){
+ const s=normalize(value).replace(/\s/g,'');
+ return !s||['bra','br','brasil','brazil'].includes(s);
+}
+async function geocodeArcgis(local,provider){
+ const wanted=normalizeHouse(houseNumber(local.endereco));
+ if(!wanted)return null;
+ const street=streetName(local.endereco),alias=streetAlias(street);
+ let approximate=null;
+ for(const variant of [street,...(alias?[alias]:[])]){
+  const query=address({...local,endereco:local.endereco.replace(street,variant)});
+  const url=new URL(ARCGIS);
+  url.searchParams.set('SingleLine',query);
+  url.searchParams.set('f','json');
+  url.searchParams.set('outFields','Addr_type,AddNum,StAddr,City,Country');
+  url.searchParams.set('countryCode','BRA');
+  url.searchParams.set('maxLocations','5');
+  url.searchParams.set('forStorage','false');
+  let data;
+  try{data=await provider(url.toString());}catch{continue;}
+  if(!Array.isArray(data?.candidates))continue;
+  for(const candidate of data.candidates){
+   const a=candidate.attributes||{};
+   const score=Number(candidate.score),lat=Number(candidate.location?.y),lon=Number(candidate.location?.x);
+   if(!Number.isFinite(score)||score<88||!Number.isFinite(lat)||!Number.isFinite(lon)||
+      lat< -34||lat>6||lon< -75||lon> -33||!arcgisCountry(a.Country)||
+      !a.City||normalize(a.City)!==normalize(local.cidade)||
+      !a.StAddr||!sameStreet({address:{road:streetName(a.StAddr)}},street))continue;
+   const num=normalizeHouse(a.AddNum);
+   if(num&&num!==wanted)continue;
+   const tipo=String(a.Addr_type||'');
+   if(num===wanted&&score>=92){
+    const precise=['PointAddress','Subaddress'].includes(tipo);
+    const point={lat,lon,aproximado:!precise,interpolado:!precise,fonte:'ArcGIS'};
+    if(precise)return point;
+    approximate ||=point;
+   }else if(!num&&['StreetName','StreetAddress'].includes(tipo)){
+    approximate ||={lat,lon,aproximado:true,fonte:'ArcGIS'};
+   }
+  }
+  if(approximate?.interpolado)break;
+ }
+ return approximate;
+}
 function sameStreet(result,street){
  const a=result.address||{};
  const candidate=a.road||a.pedestrian||a.residential||a.footway||a.path||
@@ -83,7 +144,7 @@ function geocodeQueries(local){
 }
 async function geocode(q,criteria={},provider,cache){
   const mode=criteria.mode||'origin';
-  const key='geo-v4-'+await hash(mode+'|'+q.toLocaleLowerCase('pt-BR')+'|'+(criteria.houseNumber||''));
+  const key='geo-v5-'+await hash(mode+'|'+q.toLocaleLowerCase('pt-BR')+'|'+(criteria.houseNumber||''));
   const hit=await readCache(cache,key);
   if(hit?.lat!=null&&hit?.lon!=null)return hit;
   const url=new URL(NOMINATIM);
@@ -115,33 +176,42 @@ async function geocode(q,criteria={},provider,cache){
   if(!found)return null;
   const lat=Number(found.lat),lon=Number(found.lon);
   if(!Number.isFinite(lat)||!Number.isFinite(lon)||lat>6||lat< -34||lon< -75||lon> -33)return null;
-  const point={lat,lon,aproximado:!exact};
+  const point={lat,lon,aproximado:!exact,fonte:'OpenStreetMap'};
   await writeCache(cache,key,point,2592000);
   return point;
  }
- async function geocodeDestination(local,provider,cache){
-  const manual=manualPoint(local);
-  if(manual)return manual;
-  const queries=geocodeQueries(local),street=streetName(local.endereco),alias=streetAlias(street);
-  let approximate=null;
-  for(let i=0;i<queries.length;i++){
-   const query=queries[i];
-   let point;
-   try{
-    point=await geocode(query.q,{mode:query.mode,street,name:local.nome,city:local.cidade,
-     bairro:local.bairro,houseNumber:houseNumber(local.endereco),fallback:query.fallback},provider,cache);
-   }catch(e){
-    if(approximate)return approximate;
-    throw e;
-   }
-   if(!point)continue;
-   if(!point.aproximado)return point;
+async function geocodeDestination(local,provider,cache){
+ const manual=manualPoint(local);
+ if(manual)return {...manual,fonte:'Cadastro'};
+ const link=googleMapsPoint(local);
+ if(link)return link;
+ const queries=geocodeQueries(local),street=streetName(local.endereco);
+ let approximate=null,networkFailure=false;
+ const exactSearchCount=streetAlias(street)?2:1;
+ for(let i=0;i<exactSearchCount;i++){
+  const query=queries[i];
+  try{
+   const point=await geocode(query.q,{mode:query.mode,street,name:local.nome,
+    city:local.cidade,bairro:local.bairro,houseNumber:houseNumber(local.endereco)},provider,cache);
+   if(point&&!point.aproximado)return point;
    approximate ||=point;
-   // Rua localizada: tentar a grafia alternativa para confirmar o número antes de aceitar aproximação.
-   if(!alias||i>=1)return approximate;
-  }
-  if(approximate)return approximate;
-  throw Error('Endereço não localizado no mapa, mesmo após buscas alternativas.');
+  }catch{networkFailure=true;}
  }
+ try{
+  const alternative=await geocodeArcgis(local,provider);
+  if(alternative&&!alternative.aproximado)return alternative;
+  if(alternative?.interpolado||(!approximate&&alternative))approximate=alternative;
+ }catch{networkFailure=true;}
+ if(approximate)return approximate;
+ for(const query of queries.slice(exactSearchCount,exactSearchCount+2)){
+  try{
+   const point=await geocode(query.q,{mode:query.mode,street,name:local.nome,
+    city:local.cidade,bairro:local.bairro,houseNumber:houseNumber(local.endereco)},provider,cache);
+   if(point)return point;
+  }catch{networkFailure=true;}
+ }
+ if(networkFailure)throw Error('Consulta ao serviço de mapas indisponível.');
+ throw Error('Endereço não localizado no mapa, mesmo após buscas alternativas.');
+}
 async function geocodeOrigin(origin,provider,cache){return geocode(origin,{},provider,cache);}
 export {address,hash,readCache,writeCache,geocodeOrigin,geocodeDestination};

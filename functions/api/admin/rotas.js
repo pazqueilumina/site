@@ -15,6 +15,7 @@ function validLocal(x){
  return x&&typeof x==='object'&&!Array.isArray(x)&&/^[a-z0-9:_-]{1,120}$/.test(x.id||'')&&
   typeof x.endereco==='string'&&x.endereco.length>=4&&x.endereco.length<=500&&
   ['bairro','cidade','uf','nome'].every(k=>x[k]===undefined||(typeof x[k]==='string'&&x[k].length<=180))&&
+  (x.maps===undefined||(typeof x.maps==='string'&&x.maps.length<=500&&/^https:\/\/[^\s]+$/i.test(x.maps)))&&
   ((x.latitude===undefined&&x.longitude===undefined)||
    (typeof x.latitude==='string'&&typeof x.longitude==='string'&&
     /^-?\d{1,2}(?:\.\d{1,7})?$/.test(x.latitude)&&
@@ -47,7 +48,7 @@ export async function onRequestPost({request,env}){
  try{originPoint=await geocodeOrigin(origin,provider,cache);}catch{ return json({erro:'Não foi possível localizar a origem configurada. Verifique o endereço e tente novamente.',codigo:'ORIGEM_INVALIDA'},502);}
  if(!originPoint)return json({erro:'Origem não localizada no mapa. Confira a configuração privada.',codigo:'ORIGEM_INVALIDA'},502);
  for(const place of unique){
-  const destination=address(place),key='route-v4-'+await hash(origin+'|'+destination+'|'+(place.nome||'')+'|'+(place.latitude||'')+'|'+(place.longitude||''));
+  const destination=address(place),key='route-v5-'+await hash(origin+'|'+destination+'|'+(place.nome||'')+'|'+(place.latitude||'')+'|'+(place.longitude||'')+'|'+(place.maps||''));
   try{
    const hit=await readCache(cache,key);
    if(hit?.km>0){rotas.push({id:place.id,km:hit.km,aproximado:!!hit.aproximado});continue;}
@@ -64,5 +65,5 @@ export async function onRequestPost({request,env}){
    await writeCache(cache,key,result,2592000);
   }catch(e){erros.push({id:place.id,erro:String(e?.message||'Não foi possível calcular a rota.').slice(0,140)});}
  }
- return json({rotas,erros,fonte:'OpenStreetMap / OSRM'});
+ return json({rotas,erros,fonte:'OpenStreetMap / ArcGIS / Google Maps (coordenadas do link) / OSRM'});
 }
