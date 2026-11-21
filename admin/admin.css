@@ -128,4 +128,9 @@
 .pagina-locais .local-aviso.erro{color:#b94343}
 .pagina-locais .local-aviso.aproximado{color:#96671e}
 .pagina-locais .local-aviso.pendente{color:#6b7785}
+.pagina-locais .local-aviso.manual{color:#345b9b}
+.pagina-locais .detalhes-coordenadas{margin-bottom:15px}
+.pagina-locais .ajuda-coordenadas{font-size:12px;color:var(--muted);line-height:1.55;margin:9px 0 13px}
+.pagina-locais .detalhes-coordenadas .duas-colunas{margin-top:11px}
+.pagina-locais .detalhes-coordenadas>small{margin-bottom:12px}
 @media(max-width:590px){.pagina-locais .indicadores-locais{grid-template-columns:repeat(2,minmax(0,1fr))}.pagina-locais .indicadores-locais .indicador:last-child{grid-column:span 2}}

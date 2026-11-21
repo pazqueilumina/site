@@ -27,7 +27,24 @@ function streetAlias(value){
  const s=String(value||'');
  if(/\bsouza\b/i.test(s))return s.replace(/\bsouza\b/ig,'Sousa');
  if(/\bsousa\b/i.test(s))return s.replace(/\bsousa\b/ig,'Souza');
+ if(/\bcinco\b/i.test(s))return s.replace(/\bcinco\b/ig,'5');
+ if(/\b5\b/.test(s))return s.replace(/\b5\b/g,'Cinco');
  return null;
+}
+function houseNumber(value){
+ const match=String(value||'').match(/,\s*(?:n(?:[º°o.]|[uú]mero)?\s*)?(\d+[a-z]?)(?=\s|$|[–-])/i);
+ return match?match[1].toLowerCase():null;
+}
+function normalizeHouse(value){return String(value||'').toLowerCase().replace(/\s+/g,'').replace(/^0+(?=\d)/,'');}
+function manualPoint(local){
+ if(local.latitude===undefined&&local.longitude===undefined)return null;
+ const lat=Number(local.latitude),lon=Number(local.longitude);
+ if(typeof local.latitude!=='string'||typeof local.longitude!=='string'||
+  !/^-?\d{1,2}(?:\.\d{1,7})?$/.test(local.latitude)||
+  !/^-?\d{1,2}(?:\.\d{1,7})?$/.test(local.longitude)||
+  !Number.isFinite(lat)||!Number.isFinite(lon)||lat< -34||lat>6||lon< -75||lon> -33)
+  throw Error('Coordenadas manuais inválidas.');
+ return {lat,lon,manual:true,aproximado:true};
 }
 function sameStreet(result,street){
  const a=result.address||{};
@@ -35,7 +52,7 @@ function sameStreet(result,street){
   ((result.class==='highway'||result.addresstype==='road')?result.name:'')||'';
  const clean=s=>normalize(s)
   .replace(/^(?:rua|r|avenida|av|travessa|praca|estrada|alameda)\s+/,'')
-  .replace(/\bsouza\b/g,'sousa');
+  .replace(/\bsouza\b/g,'sousa').replace(/\b5\b/g,'cinco');
  const expected=clean(street),actual=clean(candidate);
  return !!(expected&&actual&&(expected===actual||
   (expected.includes(actual)&&actual.length>=8)||
@@ -66,7 +83,7 @@ function geocodeQueries(local){
 }
 async function geocode(q,criteria={},provider,cache){
   const mode=criteria.mode||'origin';
-  const key='geo-v3-'+await hash(mode+'|'+q.toLocaleLowerCase('pt-BR'));
+  const key='geo-v4-'+await hash(mode+'|'+q.toLocaleLowerCase('pt-BR')+'|'+(criteria.houseNumber||''));
   const hit=await readCache(cache,key);
   if(hit?.lat!=null&&hit?.lon!=null)return hit;
   const url=new URL(NOMINATIM);
@@ -77,30 +94,53 @@ async function geocode(q,criteria={},provider,cache){
   url.searchParams.set('limit','5');
   const data=await provider(url.toString());
   if(!Array.isArray(data)||!data.length)return null;
-  const found=data.find(x=>{
+  const candidates=data.filter(x=>{
    if(x.address?.country_code!=='br'||!sameCity(x,criteria.city))return false;
    if(mode==='name'){
     if(!sameName(x,criteria.name))return false;
-    // Não aceitar uma instituição homônima de outro bairro.
     if(criteria.bairro&&!normalize(x.display_name).includes(normalize(criteria.bairro)))return false;
+    if(criteria.houseNumber&&x.address?.house_number&&normalizeHouse(x.address.house_number)!==normalizeHouse(criteria.houseNumber))return false;
    }else if(mode==='street'){
     if(!sameStreet(x,criteria.street))return false;
    }else if(!(x.address?.road||x.address?.pedestrian||x.address?.residential||x.address?.footway||x.address?.house_number))return false;
    return true;
   });
+  const wanted=normalizeHouse(criteria.houseNumber);
+  const exact=mode==='street'&&wanted?candidates.find(x=>normalizeHouse(x.address?.house_number)===wanted):null;
+  // Não usar as coordenadas de outro número de imóvel.
+  const streetLevel=candidates.find(x=>!x.address?.house_number&&
+   (x.class==='highway'||x.addresstype==='road'||['residential','pedestrian','living_street','tertiary','secondary','primary','footway'].includes(x.type)));
+  const named=mode==='name'?candidates.find(x=>!x.address?.house_number||(wanted&&normalizeHouse(x.address.house_number)===wanted)):null;
+  const found=exact||streetLevel||named;
   if(!found)return null;
   const lat=Number(found.lat),lon=Number(found.lon);
   if(!Number.isFinite(lat)||!Number.isFinite(lon)||lat>6||lat< -34||lon< -75||lon> -33)return null;
-  const point={lat,lon,aproximado:!!criteria.fallback||!found.address?.house_number};
+  const point={lat,lon,aproximado:!exact};
   await writeCache(cache,key,point,2592000);
   return point;
  }
  async function geocodeDestination(local,provider,cache){
-  const queries=geocodeQueries(local);
-  for(const query of queries){
-   const point=await geocode(query.q,{mode:query.mode,street:streetName(local.endereco),name:local.nome,city:local.cidade,bairro:local.bairro,fallback:query.fallback},provider,cache);
-   if(point)return point;
+  const manual=manualPoint(local);
+  if(manual)return manual;
+  const queries=geocodeQueries(local),street=streetName(local.endereco),alias=streetAlias(street);
+  let approximate=null;
+  for(let i=0;i<queries.length;i++){
+   const query=queries[i];
+   let point;
+   try{
+    point=await geocode(query.q,{mode:query.mode,street,name:local.nome,city:local.cidade,
+     bairro:local.bairro,houseNumber:houseNumber(local.endereco),fallback:query.fallback},provider,cache);
+   }catch(e){
+    if(approximate)return approximate;
+    throw e;
+   }
+   if(!point)continue;
+   if(!point.aproximado)return point;
+   approximate ||=point;
+   // Rua localizada: tentar a grafia alternativa para confirmar o número antes de aceitar aproximação.
+   if(!alias||i>=1)return approximate;
   }
+  if(approximate)return approximate;
   throw Error('Endereço não localizado no mapa, mesmo após buscas alternativas.');
  }
 async function geocodeOrigin(origin,provider,cache){return geocode(origin,{},provider,cache);}

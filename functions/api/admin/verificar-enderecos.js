@@ -28,7 +28,9 @@ export async function onRequestPost({request}){
  }
  try{
   const point=await geocodeDestination(local,provider,cache);
-  return json({id:local.id,status:point.aproximado?'aproximado':'ok'});
+  return json({id:local.id,status:point.manual?'manual':point.aproximado?'aproximado':'ok',
+   motivo:point.manual?'Coordenadas informadas manualmente; endereço não verificado.':
+    point.aproximado?'Rua localizada, mas número do imóvel não confirmado.':''});
  }catch(e){
   const msg=String(e?.message||'Falha na consulta.');
   if(msg.startsWith('Endereço não localizado no mapa'))return json({id:local.id,status:'erro',motivo:'Endereço não localizado no mapa.'});

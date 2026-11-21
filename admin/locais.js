@@ -2,7 +2,7 @@
 const $ = id => document.getElementById(id);
 const API = '/api/admin/locais';
 const estado = { locais: [], sha: null, selecionado: null, alterado: false, formularioAlterado: false, verificacao: new Map(), verificando: false, filtroErros: false };
-const campos = { nome:'nomeLocal', endereco:'enderecoLocal', bairro:'bairroLocal', cidade:'cidadeLocal', uf:'ufLocal', maps:'mapsLocal', kmIdaVolta:'kmIdaVoltaLocal' };
+const campos = { nome:'nomeLocal', endereco:'enderecoLocal', bairro:'bairroLocal', cidade:'cidadeLocal', uf:'ufLocal', maps:'mapsLocal', latitude:'latitudeLocal', longitude:'longitudeLocal', kmIdaVolta:'kmIdaVoltaLocal' };
 const normalizar = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
 const slug = s => normalizar(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'local';
 function mensagem(t, classe='') { $('mensagemTexto').textContent=t; $('mensagemLocais').className='mensagem' + (classe?' '+classe:''); $('mensagemLocais').hidden=false; }
@@ -15,7 +15,7 @@ function atualizarResumo() {
   atualizarResumoVerificacao();
 }
 
-const assinaturaLocal=l=>[l.nome,l.endereco,l.bairro,l.cidade,l.uf].map(normalizar).join('|');
+const assinaturaLocal=l=>[l.nome,l.endereco,l.bairro,l.cidade,l.uf,l.latitude,l.longitude].map(normalizar).join('|');
 function resultadoLocal(l){
  const r=estado.verificacao.get(l.id);
  return r&&r.assinatura===assinaturaLocal(l)?r:null;
@@ -25,12 +25,13 @@ function atualizarResumoVerificacao(){
  const verificados=resultados.filter(r=>r&&r.status!=='pendente').length;
  const erros=resultados.filter(r=>r?.status==='erro').length;
  const aproximados=resultados.filter(r=>r?.status==='aproximado').length;
+ const manuais=resultados.filter(r=>r?.status==='manual').length;
  const pendentes=estado.locais.length-verificados;
  $('errosLocais').textContent=verificados?String(erros):(estado.locais.length===0?'0':'—');
  $('statusVerificacaoLocais').textContent=estado.verificando
   ?'Verificando… '+verificados+' de '+estado.locais.length
-  :pendentes?verificados+' de '+estado.locais.length+' verificados · '+pendentes+' pendente(s)'
-  :verificados+' de '+estado.locais.length+' verificados'+(aproximados?' · '+aproximados+' aproximado(s)':'');
+  :pendentes?verificados+' de '+estado.locais.length+' avaliados · '+pendentes+' pendente(s)'
+  :verificados+' de '+estado.locais.length+' avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+(manuais?' · '+manuais+' com coordenadas manuais':'');
  $('verificarLocais').disabled=estado.verificando||!estado.sha||!estado.locais.length;
  $('verificarLocais').textContent=estado.verificando?'Verificando…':'Verificar endereços';
  $('cartaoErrosLocais').classList.toggle('tem-erros',erros>0);
@@ -51,7 +52,7 @@ async function verificarEnderecos(){
    });
    const d=await r.json();
    if(!r.ok)throw Error(d.erro||'Falha na consulta.');
-   if(d.id!==l.id||!['ok','aproximado','erro','pendente'].includes(d.status))throw Error('Resposta inesperada.');
+   if(d.id!==l.id||!['ok','aproximado','manual','erro','pendente'].includes(d.status))throw Error('Resposta inesperada.');
    estado.verificacao.set(l.id,{assinatura,status:d.status,motivo:d.motivo||''});
   }catch{
    estado.verificacao.set(l.id,{assinatura,status:'pendente',motivo:'Não foi possível verificar agora.'});
@@ -80,10 +81,10 @@ function renderizar() {
     const nome=document.createElement('strong');nome.textContent=l.nome;
     const info=document.createElement('span');info.textContent=[l.bairro,l.cidade,l.uf].filter(Boolean).join(' · ');
     corpo.append(nome,info);
-    if(resultado?.status==='erro'||resultado?.status==='aproximado'||resultado?.status==='pendente'){
+    if(resultado?.status==='erro'||resultado?.status==='aproximado'||resultado?.status==='manual'||resultado?.status==='pendente'){
       const aviso=document.createElement('span');
       aviso.className='local-aviso '+resultado.status;
-      aviso.textContent=resultado.status==='erro'?'Endereço não localizado':resultado.status==='aproximado'?'Localização aproximada':'Verificação pendente';
+      aviso.textContent=resultado.status==='erro'?'Endereço não localizado':resultado.status==='aproximado'?'Rua localizada; número não confirmado':resultado.status==='manual'?'Coordenadas manuais (endereço não verificado)':'Verificação pendente';
       corpo.append(aviso);
     }
     b.append(corpo);b.addEventListener('click',()=>selecionar(l.id));lista.append(b);
@@ -94,7 +95,12 @@ function limpar(){estado.selecionado=null;estado.formularioAlterado=false;$('for
 function selecionar(id){if(!confirmarDescarte())return;const l=estado.locais.find(x=>x.id===id);if(!l)return;estado.selecionado=id;estado.formularioAlterado=false;for(const [campo,input] of Object.entries(campos))$(input).value=l[campo]||'';$('tituloEditorLocal').textContent='Editar local';$('salvarLocal').textContent='Salvar na lista';$('excluirLocal').hidden=false;renderizar();}
 function lerFormulario(){
   if(!$('formLocal').reportValidity())return null;
-  const obj={};for(const [campo,input] of Object.entries(campos)){const v=$(input).value.trim();if(v)obj[campo]=v;}
+  const obj={};for(const [campo,input] of Object.entries(campos)){const v=$(input).value.trim();if(v)obj[campo]=['latitude','longitude'].includes(campo)?v.replace(',','.'):v;}
+  if(Boolean(obj.latitude)!==Boolean(obj.longitude)){mensagem('Preencha latitude e longitude juntas, ou deixe ambas vazias.','erro');return null;}
+  if(obj.latitude){
+   const valid=(v,min,max)=>/^-?\d{1,2}(?:\.\d{1,7})?$/.test(v)&&Number(v)>=min&&Number(v)<=max;
+   if(!valid(obj.latitude,-34,6)||!valid(obj.longitude,-75,-33)){mensagem('Coordenadas inválidas. Informe latitude e longitude do Brasil, com até 7 casas decimais.','erro');return null;}
+  }
   obj.uf=obj.uf.toUpperCase();
   if(obj.maps&&!/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/i.test(obj.maps)){mensagem('O link do mapa deve começar por https://.','erro');return null;}
   const duplicado=estado.locais.some(l=>l.id!==estado.selecionado&&normalizar(l.nome)===normalizar(obj.nome));
