@@ -15,7 +15,8 @@
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
       "statusPdf": "existente",
-      "centroId": "youtube"
+      "centroId": "youtube",
+      "ativo": false
     },
     {
       "pid": "PAL-0078",
