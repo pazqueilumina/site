@@ -1,5 +1,5 @@
 /* Validação do cadastro de locais; os dados nunca são executados como JavaScript. */
-const campos = ['id', 'nome', 'endereco', 'bairro', 'cidade', 'uf', 'maps'];
+const campos = ['id', 'nome', 'endereco', 'bairro', 'cidade', 'uf', 'maps', 'kmIdaVolta'];
 const normalizar = valor => String(valor).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLocaleLowerCase('pt-BR').replace(/\s+/g, ' ');
 export function validarLocais(input) {
   if (!Array.isArray(input) || input.length > 500) throw new Error('O cadastro aceita até 500 locais.');
@@ -18,6 +18,11 @@ export function validarLocais(input) {
     obj.uf = obj.uf.toUpperCase();
     if (!/^[A-Z]{2}$/.test(obj.uf)) throw new Error(`UF inválida no local ${i + 1}.`);
     if (obj.maps && !/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/i.test(obj.maps)) throw new Error(`Link do mapa inválido no local ${i + 1}.`);
+    if (obj.kmIdaVolta) {
+      const km = Number(obj.kmIdaVolta);
+      if (!/^(?:[0-9]{1,4})(?:\.[0-9])?$/.test(obj.kmIdaVolta) || !Number.isFinite(km) || km <= 0 || km > 2000) throw new Error(`Distância de ida e volta inválida no local ${i + 1}.`);
+      obj.kmIdaVolta = String(km);
+    }
     const nome = normalizar(obj.nome);
     if (ids.has(obj.id) || nomes.has(nome)) throw new Error(`Local duplicado: ${obj.nome}.`);
     ids.add(obj.id); nomes.add(nome);

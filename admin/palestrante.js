@@ -46,7 +46,7 @@ function tituloFraseApresentacao(titulo) {
   return texto.replace(/(^|[.!?]\s+)([\p{L}])/gu,
     (_, inicio, letra) => inicio + letra.toLocaleUpperCase("pt-BR"));
 }
-let records=[],agendaEvents=[],places=new Map(),error=null,range={kind:'month'},applied={month:new Date().getMonth(),year:new Date().getFullYear(),start:'',end:''};
+let records=[],agendaEvents=[],places=new Map(),placeDetails=new Map(),error=null,range={kind:'month'},applied={month:new Date().getMonth(),year:new Date().getFullYear(),start:'',end:''};
 const today=()=>{const d=new Date();d.setHours(23,59,59,999);return d;};
 const midnight=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
 function boundaries(){
@@ -407,6 +407,63 @@ function comparison(){
  if(approx)caveats.push(nf(approx)+' palestra'+(approx===1?' tem':'s têm')+' data estimada; os resultados podem mudar após confirmação.');
  set('cmpCaveat',caveats.join(' '));
 }
+
+/* Viagens concluídas da Agenda. Distâncias são cadastradas por local, nunca inferidas de linha reta. */
+const journeyNorm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g,' ').trim();
+function journeyIsOnline(e){
+ return /\b(online|youtube|instagram|web radio|webradio|live)\b/.test(journeyNorm([e.local,e.endereco].join(' ')));
+}
+function journeyVenue(e){
+ if(e.enderecoProprio==='sim')return null; // Endereço excepcional exige distância própria, não a do centro.
+ if(e.localId&&placeDetails.has(e.localId))return placeDetails.get(e.localId);
+ return [...placeDetails.values()].find(p=>journeyNorm(p.nome)===journeyNorm(e.local))||null;
+}
+function journeyBrazilNow(){
+ const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+ const part=type=>parts.find(p=>p.type===type)?.value||'00';
+ return {date:part('year')+'-'+part('month')+'-'+part('day'),time:part('hour')+':'+part('minute')};
+}
+function renderJourneys(){
+ const [from,to]=boundaries(),now=journeyBrazilNow();
+ const period=range.kind==='month'?speakerMonths[applied.month]+' '+applied.year:range.kind==='year'?String(applied.year):range.kind==='all'?'Todo o período':'Período selecionado';
+ set('journeyPeriod',period);
+ const eligible=agendaEvents.filter(e=>{
+  const d=date(e.data);
+  return d&&d>=from&&d<=to&&(e.data<now.date||(e.data===now.date&&e.horario<=now.time))&&!journeyIsOnline(e);
+ });
+ const missed=eligible.filter(e=>!journeyVenue(e)).length,uniqueTrips=new Map();
+ for(const e of eligible){
+  const venue=journeyVenue(e);if(!venue)continue;
+  const key=e.data+'|'+venue.id; // Duas palestras no mesmo local e dia são uma viagem.
+  if(uniqueTrips.has(key))continue;
+  const km=Number(String(venue.kmIdaVolta||'').replace(',','.'));
+  uniqueTrips.set(key,{data:e.data,venue,km:Number.isFinite(km)&&km>0?km:null});
+ }
+ const trips=[...uniqueTrips.values()].sort((a,b)=>b.data.localeCompare(a.data)||a.venue.nome.localeCompare(b.venue.nome,'pt-BR'));
+ const measured=trips.filter(t=>t.km!==null),totalKm=measured.reduce((sum,t)=>sum+t.km,0);
+ const kmText=n=>n.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:1})+' km';
+ const longest=[...measured].sort((a,b)=>b.km-a.km)[0];
+ set('journeyTotal',measured.length?kmText(totalKm):'— km');
+ set('journeyCount',nf(trips.length));
+ set('journeyAverage',measured.length?kmText(totalKm/measured.length):'— km');
+ set('journeyMax',longest?kmText(longest.km):'— km');
+ set('journeyMaxPlace',longest?longest.venue.nome:'Destino');
+ $('journeyMaxPlace').title=longest?longest.venue.nome:'';
+ const list=clear('journeyList');
+ if(!trips.length)empty(list,'Nenhuma viagem presencial com local cadastrado neste período.');
+ for(const t of trips){
+  const row=el('div',null,'speaker-journey-line'),left=el('span');
+  left.append(el('b',t.venue.nome),el('small',fmtDate(t.data)));
+  row.append(left,el('strong',t.km===null?'Não cadastrado':kmText(t.km)));list.append(row);
+ }
+ const notes=[];
+ if(trips.length&&!measured.length)notes.push('Informe os km de ida e volta no Cadastro de Locais para calcular os totais.');
+ else if(measured.length<trips.length)notes.push('Total parcial: '+nf(trips.length-measured.length)+' viagem(ns) sem distância cadastrada.');
+ if(missed)notes.push(nf(missed)+' evento(s) presenciais sem local vinculado ou com endereço próprio não contabilizado(s).');
+ if(trips.length)notes.push('Estimativa baseada nos eventos passados da Agenda; cada viagem considera retorno à residência.');
+ set('journeyNote',notes.join(' '));
+}
+
 function annual(){
  const host=clear('anual'),years=[...new Set(records.filter(p=>p.when).map(p=>p.when.getFullYear()))].sort((a,b)=>b-a);
  if(!years.length){empty(host,'Ainda não há palestras com data informada.');return;}
@@ -518,7 +575,7 @@ function render(){
  const items=filtered();set('kPalestras',nf(items.length));set('kTempo',total(items));set('kMedia',knownSeconds(items).length?hm(seconds(items)/knownSeconds(items).length):'—');set('kCentros',nf(unique(items.filter(hasCentre),'centroId')));set('kTemas',nf(unique(items,'serie')));const peak=countBy(items.filter(p=>p.when),p=>p.data.slice(0,7))[0];set('kPeakMonth',peak?fmtMonthYear(new Date(peak[0]+'-01T12:00:00'),'short'):'—');set('kPeakCount',peak?nf(peak[1])+' palestra'+(peak[1]===1?'':'s')+' neste mês':'Sem palestras no período');
  chart('chartMensal',items,'count');chart('chartHoras',items,'hours');comparison();
  centreRanking(items);donut(items);
- annual();highlights(items);calendar();history(items);
+ renderJourneys();annual();highlights(items);calendar();history(items);
  set('siteStatus','Dados atualizados');
 }
 async function load(){
@@ -527,6 +584,7 @@ async function load(){
   const [p,l,a]=await Promise.all(['/api/admin/palestras','/api/admin/locais','/api/admin/agenda'].map(async url=>{const r=await fetch(url,{credentials:'same-origin',cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return r.json();}));
   if(!Array.isArray(p?.dados?.palestras)||!Array.isArray(l?.locais)||!Array.isArray(a?.agenda))throw Error('Formato de dados inesperado');
   places=new Map(l.locais.map(x=>[x.id,x.nome]));
+  placeDetails=new Map(l.locais.map(x=>[x.id,x]));
   agendaEvents=a.agenda.filter(x=>date(x.data)&&x.horario&&x.titulo&&x.local).sort((x,y)=>x.data.localeCompare(y.data)||x.horario.localeCompare(y.horario));
   const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g,' ').trim();
   const presentations=p.dados.palestras.filter(p=>p.ativo!==false);
