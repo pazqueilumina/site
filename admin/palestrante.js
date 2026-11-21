@@ -46,7 +46,7 @@ function tituloFraseApresentacao(titulo) {
   return texto.replace(/(^|[.!?]\s+)([\p{L}])/gu,
     (_, inicio, letra) => inicio + letra.toLocaleUpperCase("pt-BR"));
 }
-let records=[],agendaEvents=[],places=new Map(),error=null,range={kind:'30'},applied={month:new Date().getMonth(),year:new Date().getFullYear(),start:'',end:''};
+let records=[],agendaEvents=[],places=new Map(),error=null,range={kind:'month'},applied={month:new Date().getMonth(),year:new Date().getFullYear(),start:'',end:''};
 const today=()=>{const d=new Date();d.setHours(23,59,59,999);return d;};
 const midnight=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
 function boundaries(){
@@ -67,25 +67,60 @@ const displayPlatform=s=>String(s||'').replace(/you\s*tube/gi,'You Tube').replac
 const centreName=p=>displayPlatform(p.localAgenda||(!p.centroId?'Centro Espírita não informado':p.centroId==='youtube'?'You Tube':places.get(p.centroId)||p.centroId));
 function countBy(items,key){const m=new Map();for(const p of items){const k=typeof key==='function'?key(p):p[key];m.set(k,(m.get(k)||0)+1);}return [...m.entries()].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'pt-BR'));}
 function setNotice(msg){$('avisoTexto').textContent=msg;$('aviso').hidden=false;}
-function initFilters(){
- const months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
- months.forEach((m,i)=>{const o=new Option(m,String(i));$('mes').add(o);});
- const y=new Date().getFullYear();for(let n=y+1;n>=2015;n--){$('anoMes').add(new Option(String(n),String(n)));$('ano').add(new Option(String(n),String(n)));}
- $('mes').value=String(applied.month);$('anoMes').value=String(y);$('ano').value=String(y);
- const d=new Date();applied.end=iso(d);d.setDate(d.getDate()-29);applied.start=iso(d);
- $('dataInicio').value=applied.start;$('dataFim').value=applied.end;$('dataInicio').max=iso(new Date());$('dataFim').max=iso(new Date());
- $('periodo').addEventListener('change',()=>{range.kind=$('periodo').value;const k=range.kind;$('filterPanel').hidden=!['month','year','custom'].includes(k);$('monthFields').hidden=k!=='month';$('yearFields').hidden=k!=='year';$('customFields').hidden=k!=='custom';set('filterTitle',k==='month'?'Mês específico':k==='year'?'Ano específico':'Período personalizado');$('periodoErro').hidden=true;render();});
- $('aplicarPeriodo').addEventListener('click',()=>{
-  const k=range.kind;let err='';
-  if(k==='month'){applied.month=Number($('mes').value);applied.year=Number($('anoMes').value);}
-  if(k==='year')applied.year=Number($('ano').value);
-  if(k==='custom'){const a=$('dataInicio').value,b=$('dataFim').value;if(!a||!b)err='Informe as duas datas.';else if(a>b)err='A data inicial deve ser anterior à final.';else if(b>iso(new Date()))err='A data final não pode ser posterior a hoje.';else{applied.start=a;applied.end=b;}}
-  if(err){$('periodoErro').textContent=err;$('periodoErro').hidden=false;return;}
-  $('periodoErro').hidden=true;render();
+const speakerMonths=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+let speakerPickerYear=applied.year;
+function speakerPeriodUI(){
+ const yearly=range.kind==='year',now=new Date();
+ set('speakerPeriodLabel',yearly?'Ano de '+applied.year:speakerMonths[applied.month]+' de '+applied.year);
+ $('speakerModeMonth').classList.toggle('active',!yearly);
+ $('speakerModeYear').classList.toggle('active',yearly);
+ $('speakerModeMonth').setAttribute('aria-pressed',String(!yearly));
+ $('speakerModeYear').setAttribute('aria-pressed',String(yearly));
+ $('speakerNext').disabled=yearly?applied.year>=now.getFullYear():applied.year>now.getFullYear()||(applied.year===now.getFullYear()&&applied.month>=now.getMonth());
+ $('speakerPickerNext').disabled=speakerPickerYear>=now.getFullYear();
+ set('speakerPickerYear',speakerPickerYear);
+ const host=clear('speakerPickerMonths');
+ speakerMonths.forEach((month,i)=>{
+  const btn=el('button',month.slice(0,3),'speaker-picker-month');
+  btn.type='button';
+  btn.disabled=speakerPickerYear>now.getFullYear()||(speakerPickerYear===now.getFullYear()&&i>now.getMonth());
+  if(speakerPickerYear===applied.year&&i===applied.month&&!yearly)btn.classList.add('active');
+  btn.addEventListener('click',()=>{applied.year=speakerPickerYear;applied.month=i;range.kind='month';speakerClosePicker();speakerPeriodUI();render();});
+  host.append(btn);
  });
+}
+function speakerClosePicker(){
+ $('speakerPeriodPicker').hidden=true;
+ $('speakerPeriodLabel').setAttribute('aria-expanded','false');
+}
+function speakerChangePeriod(step){
+ if(range.kind==='year')applied.year+=step;
+ else{
+  const d=new Date(applied.year,applied.month+step,1);
+  applied.year=d.getFullYear();applied.month=d.getMonth();
+ }
+ speakerPickerYear=applied.year;speakerClosePicker();speakerPeriodUI();render();
+}
+function initFilters(){
+ $('speakerPrev').addEventListener('click',()=>speakerChangePeriod(-1));
+ $('speakerNext').addEventListener('click',()=>speakerChangePeriod(1));
+ $('speakerModeMonth').addEventListener('click',()=>{range.kind='month';speakerClosePicker();speakerPeriodUI();render();});
+ $('speakerModeYear').addEventListener('click',()=>{range.kind='year';speakerClosePicker();speakerPeriodUI();render();});
+ $('speakerPeriodLabel').addEventListener('click',()=>{
+  const show=$('speakerPeriodPicker').hidden;
+  speakerPickerYear=applied.year;
+  speakerPeriodUI();
+  $('speakerPeriodPicker').hidden=!show;
+  $('speakerPeriodLabel').setAttribute('aria-expanded',String(show));
+ });
+ $('speakerPickerPrev').addEventListener('click',()=>{speakerPickerYear--;speakerPeriodUI();});
+ $('speakerPickerNext').addEventListener('click',()=>{if(speakerPickerYear<new Date().getFullYear()){speakerPickerYear++;speakerPeriodUI();}});
+ document.addEventListener('click',e=>{if(!e.target.closest('.speaker-period-controls'))speakerClosePicker();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')speakerClosePicker();});
  $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
  $('acervoToggle').addEventListener('click',()=>{const btn=$('acervoToggle'),expanded=btn.getAttribute('aria-expanded')==='true';btn.setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});
  $('atualizar').addEventListener('click',load);
+ speakerPeriodUI();
 }
 const topicLabel=p=>topicNames[p.serie]||p.serie||'Sem tema informado';
 function centreRanking(items){

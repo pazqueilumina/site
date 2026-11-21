@@ -206,3 +206,24 @@
 .speaker-chart svg path.speaker-line{fill:none;stroke:#277df4;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
 .speaker-chart svg circle.speaker-point{fill:#277df4;stroke:#fff;stroke-width:1.3}
 .speaker-chart svg text.speaker-point-value{fill:#3679d2;font-weight:800}
+
+/* Navegação compacta mensal/anual: cabeçalho sem faixa adicional. */
+.speaker-period-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;position:relative;z-index:10}
+.speaker-period-navigation,.speaker-period-modes{display:flex;align-items:center;background:#fff;border:1px solid #d8e4f4;border-radius:9px;box-shadow:0 2px 6px #10294a14;overflow:hidden}
+.speaker-period-navigation button,.speaker-period-modes button{border:0;background:transparent;color:#173a6b;font:700 12px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer;min-height:36px;padding:7px 11px}
+.speaker-period-navigation button:first-child,.speaker-period-navigation button:last-child{font-size:23px;line-height:1;padding:4px 12px}
+.speaker-period-navigation #speakerPeriodLabel{min-width:148px;text-align:center}
+.speaker-period-navigation button:hover:not(:disabled),.speaker-period-modes button:hover:not(:disabled){background:#e9f1ff}
+.speaker-period-navigation button:disabled{opacity:.32;cursor:default}
+.speaker-period-modes button.active{background:#2865b5;color:#fff}
+.speaker-period-picker{position:absolute;top:calc(100% + 8px);right:0;width:265px;max-width:calc(100vw - 35px);padding:13px;background:#fff;border:1px solid #d5e2f3;border-radius:12px;box-shadow:0 12px 28px #112b4a35;color:#193a68}
+.speaker-period-picker[hidden]{display:none}
+.speaker-picker-year{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.speaker-picker-year button{background:#edf3fc;border:0;border-radius:7px;width:32px;height:30px;font-size:22px;color:#234f88;cursor:pointer}
+.speaker-picker-year button:disabled{opacity:.3;cursor:default}
+.speaker-picker-months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.speaker-picker-month{border:1px solid #dce6f4;background:#f7faff;border-radius:7px;padding:10px 5px;color:#2c527e;font:600 12px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer}
+.speaker-picker-month.active{background:#e4d8ff;border-color:#9167df;color:#6330ac}
+.speaker-picker-month:hover:not(:disabled){background:#e6f0ff}
+.speaker-picker-month:disabled{opacity:.3;cursor:default}
+@media(max-width:760px){.speaker-period-controls{justify-content:flex-start}.speaker-period-navigation #speakerPeriodLabel{min-width:125px}.speaker-period-navigation button,.speaker-period-modes button{font-size:11px;padding:6px 8px}}

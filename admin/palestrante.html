@@ -3,8 +3,8 @@
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard do Palestrante | Paz que Ilumina</title>
 <link rel="stylesheet" href="/admin/dashboard.css?v=palestrante1">
-<link rel="stylesheet" href="/admin/palestrante.css?v=14">
-<script defer src="/admin/palestrante.js?v=acumulado20261121"></script></head><body>
+<link rel="stylesheet" href="/admin/palestrante.css?v=mesano20261121">
+<script defer src="/admin/palestrante.js?v=mesano20261121"></script></head><body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-8h6v8"/></symbol>
  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"/></symbol>
@@ -58,14 +58,22 @@
 <div class="dash-main">
 <header class="dash-banner"><div class="mountains" aria-hidden="true"></div><div class="sunlight" aria-hidden="true"></div>
 <div class="dash-welcome"><h1>Alexandre Alves</h1><p>Dashboard do Palestrante · Palestras, temas e Centros Espíritas</p></div>
-<div class="dash-filter-row"><div class="dash-controls"><svg><use href="#i-calendar"/></svg><label for="periodo" class="sr-only">Período</label><select id="periodo">
-<option value="30" selected>Últimos 30 dias</option><option value="7">Últimos 7 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="month">Mês específico…</option><option value="year">Ano específico…</option><option value="custom">Personalizado…</option><option value="all">Todo o histórico</option></select></div></div></header>
+<div class="speaker-period-controls" aria-label="Navegação do período">
+ <div class="speaker-period-navigation">
+  <button type="button" id="speakerPrev" aria-label="Período anterior" title="Período anterior">‹</button>
+  <button type="button" id="speakerPeriodLabel" aria-label="Escolher mês ou ano" aria-expanded="false" aria-controls="speakerPeriodPicker">Novembro de 2026</button>
+  <button type="button" id="speakerNext" aria-label="Próximo período" title="Próximo período">›</button>
+ </div>
+ <div class="speaker-period-modes" role="group" aria-label="Visualização">
+  <button type="button" id="speakerModeMonth" class="active" aria-pressed="true">Mensal</button>
+  <button type="button" id="speakerModeYear" aria-pressed="false">Ano inteiro</button>
+ </div>
+ <div id="speakerPeriodPicker" class="speaker-period-picker" hidden>
+  <div class="speaker-picker-year"><button type="button" id="speakerPickerPrev" aria-label="Ano anterior">‹</button><strong id="speakerPickerYear">2026</strong><button type="button" id="speakerPickerNext" aria-label="Ano seguinte">›</button></div>
+  <div id="speakerPickerMonths" class="speaker-picker-months"></div>
+ </div>
+</div></header>
 <main class="dash-content" id="dashMainContent">
-<section class="custom-range-panel" id="filterPanel" hidden><strong id="filterTitle">Selecionar período</strong>
-<div class="filter-extra" id="monthFields" hidden><label for="mes">Mês <select id="mes"></select></label><label for="anoMes">Ano <select id="anoMes"></select></label></div>
-<div class="filter-extra" id="yearFields" hidden><label for="ano">Ano <select id="ano"></select></label></div>
-<div class="filter-extra" id="customFields" hidden><label for="dataInicio">De <input id="dataInicio" type="date"></label><label for="dataFim">Até <input id="dataFim" type="date"></label></div>
-<button type="button" id="aplicarPeriodo">Aplicar</button><span id="periodoErro" class="custom-range-error" role="alert" hidden></span></section>
 <section class="kpi-strip speaker-kpis" aria-label="Indicadores do palestrante">
 <article class="kpi kpi-blue"><div class="kpi-icon"><svg><use href="#i-presentation"/></svg></div><div class="kpi-info"><h2>Palestras</h2><strong id="kPalestras">—</strong><small>Apresentadas no período</small></div></article>
 <article class="kpi kpi-purple"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Tempo total</h2><strong id="kTempo">—</strong><small>Horas de palestras</small></div></article>
