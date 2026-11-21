@@ -451,7 +451,7 @@ function journeyTrips(){
 async function fetchJourneyRoutes(venues){
  journeyRoutingBusy=true;
  try{
-  const response=await fetch('/api/admin/rotas',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({locais:venues.map(v=>({id:v.id,endereco:v.endereco,bairro:v.bairro||'',cidade:v.cidade||'Rio de Janeiro',uf:v.uf||'RJ'}))})});
+  const response=await fetch('/api/admin/rotas',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({locais:venues.map(v=>({id:v.id,nome:v.nome||'',endereco:v.endereco,bairro:v.bairro||'',cidade:v.cidade||'Rio de Janeiro',uf:v.uf||'RJ'}))})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw Error(data.erro||'Não foi possível consultar o serviço de rotas.');
   for(const route of data.rotas||[])if(route.id&&Number.isFinite(route.km)&&route.km>0)journeyRouteKm.set(route.id,{km:route.km,aproximado:!!route.aproximado});
