@@ -165,10 +165,11 @@ function chart(id,items,field){
   else next.setFullYear(next.getFullYear()+1);
   const subset=items.filter(p=>p.when&&p.when>=begin&&p.when<next);
   const label=unit==='day'?pad(begin.getDate())+'/'+pad(begin.getMonth()+1):unit==='month'?begin.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''):String(begin.getFullYear());
-  bins.push({label,year:begin.getFullYear(),fullLabel:unit==='day'?shortDate(begin):unit==='month'?fmtMonthYear(begin):label,count:subset.length,seconds:seconds(subset)});
+  bins.push({label,year:begin.getFullYear(),fullLabel:unit==='day'?shortDate(begin):unit==='month'?fmtMonthYear(begin):label,count:subset.length,seconds:seconds(subset),estimated:subset.some(p=>p.approx),known:knownSeconds(subset).length});
   cursor.setTime(next.getTime());
  }
- if(unit==='day'){for(let i=bins.length-1;i>=0;i--)if(!bins[i].count)bins.splice(i,1);}\n if(!bins.length){empty(host,'Não há palestras nas datas do período selecionado.');return;}
+ if(unit==='day'){for(let i=bins.length-1;i>=0;i--)if(!bins[i].count)bins.splice(i,1);}
+ if(!bins.length){empty(host,'Não há palestras nas datas do período selecionado.');return;}
  const vals=bins.map(b=>field==='count'?b.count:b.seconds/3600),max=Math.max(field==='count'?4:1,...vals);
  const w=660,h=230,L=39,R=13,T=38,B=40,inner=w-L-R,bw=inner/bins.length;
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.setAttribute('role','img');
@@ -191,15 +192,15 @@ function chart(id,items,field){
  }
  const skip=unit==='day'?1:Math.max(1,Math.ceil(bins.length/12));
  vals.forEach((v,i)=>{
-  const height=v/max*(h-T-B),x=L+i*bw+bw*.13,y=h-B-height;
-  const rect=node('rect',{x,y,width:bw*.74,height:Math.max(0,height),rx:Math.min(4,bw*.15),class:field==='count'?'bar':'bar-alt'});
-  const title=document.createElementNS('http://www.w3.org/2000/svg','title');title.textContent=bins[i].fullLabel+': '+(field==='count'?nf(bins[i].count)+' palestras':hm(bins[i].seconds));rect.append(title);
-  if(v>0)node('text',{x:x+bw*.37,y:Math.max(31,y-5),'text-anchor':'middle',class:'speaker-bar-value'},field==='count'?String(bins[i].count):hm(bins[i].seconds));
-  if(i%skip===0||i===bins.length-1)node('text',{x:x+bw*.37,y:h-15,'text-anchor':'middle'},bins[i].label);
+  const height=v/max*(h-T-B),barWidth=Math.min(42,bw*.64),x=L+i*bw+(bw-barWidth)/2,y=h-B-height;
+  const rect=node('rect',{x,y,width:barWidth,height:Math.max(0,height),rx:Math.min(4,barWidth*.15),class:field==='count'?'bar':'bar-alt'});
+  const title=document.createElementNS('http://www.w3.org/2000/svg','title');title.textContent=bins[i].fullLabel+': '+nf(bins[i].count)+' palestra(s) · '+(bins[i].known?hm(bins[i].seconds):'duração não registrada')+(bins[i].estimated?' · inclui data estimada':'');rect.append(title);
+  if(v>0)node('text',{x:x+barWidth/2,y:Math.max(31,y-5),'text-anchor':'middle',class:'speaker-bar-value'},field==='count'?String(bins[i].count):hm(bins[i].seconds));
+  if(i%skip===0||i===bins.length-1)node('text',{x:x+barWidth/2,y:h-15,'text-anchor':'middle'},bins[i].label+(bins[i].estimated?'*':''));
  });
  host.append(svg);
  const fmt=d=>shortDate(d);
- host.append(el('p','Período: '+fmt(from)+' a '+fmt(to)+' · Datas oficiais da Agenda.','widget-subtitle'));
+ host.append(el('p','Período: '+fmt(from)+' a '+fmt(to)+' · Agenda prevalece quando há vínculo confirmado; * indica data estimada do acervo.','widget-subtitle'));
 }
 function comparison(){
  const k=range.kind,now=today();
@@ -339,7 +340,6 @@ function calendar(){
  if(range.kind==='month')ref=new Date(applied.year,applied.month,1);
  else if(range.kind==='year')ref=new Date(applied.year,applied.year===now.getFullYear()?now.getMonth():11,1);
  else if(range.kind==='custom'){const d=date(applied.end);if(d)ref=d;}
- else if(range.kind==='all'&&agendaEvents.length){const latest=agendaEvents[agendaEvents.length-1];ref=date(latest.data)||now;}
  const year=ref.getFullYear(),month=ref.getMonth(),first=new Date(year,month,1),lastDay=new Date(year,month+1,0).getDate(),todayIso=iso(now);
  const label=fmtMonthYear(first);set('calendarMonth',label.charAt(0).toUpperCase()+label.slice(1));
  const byDay=new Map();
@@ -394,12 +394,12 @@ async function load(){
   const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g,' ').trim();
   const presentations=p.dados.palestras;
   const used=new Set();
-  records=agendaEvents.filter(x=>date(x.data)<=today()).map(event=>{
-   const matches=presentations.map((p,i)=>({p,i})).filter(({p,i})=>!used.has(i)&&norm(p.titulo)===norm(event.titulo));
-   const match=matches.length===1?matches[0]:null;
-   if(match)used.add(match.i);
-   const p=match?.p||{};
-   return {...p,data:event.data,when:date(event.data),horario:event.horario,titulo:event.titulo,centroId:event.localId||p.centroId||'',localAgenda:event.local,seconds:match?duration(p.duracao):null,approx:false,agendaOnly:!match};
+  records=presentations.map(p=>{
+   // Apenas um título inequívoco e uma data próxima autorizam vincular o arquivo à Agenda.
+   const candidates=agendaEvents.filter(e=>!used.has(e)&&norm(e.titulo)===norm(p.titulo)&&date(p.data)&&Math.abs((date(e.data)-date(p.data))/86400000)<=7&&(!e.localId||!p.centroId||e.localId===p.centroId));
+   const match=candidates.length===1?candidates[0]:null;
+   if(match)used.add(match);
+   return {...p,data:match?match.data:p.data,when:date(match?match.data:p.data),horario:match?match.horario:p.horario,centroId:match?.localId||p.centroId||'',localAgenda:match?match.local:null,seconds:duration(p.duracao),approx:match?false:!!p.dataAproximada,agendaLinked:!!match};
   });
   error=null;render();
   $('aviso').hidden=true;set('lastUpdate',shortDate(new Date())+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));set('refreshLabel','Atualizado');set('refreshFeedback','Dados atualizados.');
