@@ -68,3 +68,20 @@
 .country-fill{display:block;height:100%;background:linear-gradient(90deg,#2b82f4,#70b9ff);border-radius:8px}
 .country-foot{font-size:9px;color:#70819a;margin:3px 0 0}
 .countries-message{font-size:11px;line-height:1.55;color:#5e6f8a;text-align:center;margin:0;padding:15px 8px}
+
+/* Origem das visitas: destaque quando há apenas um país e barras comparativas com vários países. */
+.country-single{display:grid;gap:10px;padding:7px 3px 2px;min-width:0}
+.country-single-top{display:flex;align-items:center;gap:10px}
+.country-single-flag{font-size:29px;line-height:1;flex:none}
+.country-single-identity{display:grid;gap:1px;min-width:0}
+.country-single-identity strong{font-size:14px;color:#163663}
+.country-single-identity span{font-size:10px;color:#73839b}
+.country-single-metrics{display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.country-single-count{font-size:26px;color:#183c72;line-height:1.1;font-variant-numeric:tabular-nums}
+.country-single-count small{font-size:10px;font-weight:500;color:#6d7f99}
+.country-single-percent{font-size:13px;color:#216cd0;font-variant-numeric:tabular-nums}
+.country-single .country-track{height:8px}
+.country-row .country-head{gap:5px}
+.country-row .country-flag{font-size:16px;line-height:1;flex:none}
+.country-row .country-name{flex:1;min-width:0}
+.country-row .country-number{font-variant-numeric:tabular-nums}

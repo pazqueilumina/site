@@ -45,6 +45,15 @@ function countryName(value){
  }
  return String(value);
 }
+function countryFlag(value){
+ const raw=String(value||'').trim().toUpperCase();
+ const aliases={'BRAZIL':'BR','BRASIL':'BR','UNITED STATES':'US','ESTADOS UNIDOS':'US','PORTUGAL':'PT','GERMANY':'DE','ALEMANHA':'DE'};
+ const code=aliases[raw]||raw;
+ if(!/^[A-Z]{2}$/.test(code))return '🌐';
+ return String.fromCodePoint(...[...code].map(letter=>127397+letter.charCodeAt(0)));
+}
+const pctLabel=value=>Number(value).toLocaleString('pt-BR',{maximumFractionDigits:1,minimumFractionDigits:value%1?1:0})+'%';
+
 function renderAudience(){
  const data=current.audience||{status:'carregando'},host=clear('origemVisitas');
  if(data.status==='ok'){
@@ -56,14 +65,33 @@ function renderAudience(){
    host.append(txt('p','Nenhuma visita registrada nesse período. Se já houve acessos, verifique se o Web Analytics está habilitado.','countries-message'));return;
   }
   if(!countries.length){host.append(txt('p','Origem geográfica ainda não disponível.','countries-message'));return;}
-  const max=Math.max(1,...countries.map(c=>c.visitas));
-  countries.slice(0,6).forEach(c=>{
-   const row=txt('div','','country-row'),head=txt('div','','country-head');
-   head.append(txt('span',countryName(c.pais),'country-name'),txt('strong',nf(c.visitas),'country-number'));
+  const countryTotal=countries.reduce((sum,c)=>sum+Number(c.visitas||0),0);
+  const base=Math.max(1,Number(data.visitas)||0,countryTotal);
+  const percent=c=>Math.min(100,Math.max(0,100*Number(c.visitas||0)/base));
+  const progress=c=>{
    const track=txt('div','','country-track'),fill=txt('span','','country-fill');
-   fill.style.width=Math.min(100,100*c.visitas/max).toFixed(1)+'%';
-   track.append(fill);row.append(head,track);host.append(row);
-  });
+   fill.style.width=percent(c).toFixed(1)+'%';
+   track.append(fill);return track;
+  };
+  if(countries.length===1){
+   const c=countries[0],card=txt('div','','country-single');
+   const top=txt('div','','country-single-top');
+   top.append(txt('span',countryFlag(c.pais),'country-single-flag'));
+   const identity=txt('div','','country-single-identity');
+   identity.append(txt('strong',countryName(c.pais)),txt('span','País identificado'));
+   top.append(identity);
+   const metrics=txt('div','','country-single-metrics');
+   const count=txt('strong',nf(c.visitas),'country-single-count');
+   count.append(txt('small',' visitas'));
+   metrics.append(count,txt('strong',pctLabel(percent(c)),'country-single-percent'));
+   card.append(top,metrics,progress(c));host.append(card);
+  }else{
+   countries.slice(0,6).forEach(c=>{
+    const row=txt('div','','country-row'),head=txt('div','','country-head');
+    head.append(txt('span',countryFlag(c.pais),'country-flag'),txt('span',countryName(c.pais),'country-name'),txt('strong',nf(c.visitas)+' · '+pctLabel(percent(c)),'country-number'));
+    row.append(head,progress(c));host.append(row);
+   });
+  }
   host.append(txt('p','Visitas por país · dados do Cloudflare Web Analytics','country-foot'));
   return;
  }
