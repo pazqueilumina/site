@@ -16,7 +16,7 @@
       "statusAudio": "existente",
       "statusPdf": "existente",
       "centroId": "youtube",
-      "ativo": true
+      "ativo": false
     },
     {
       "pid": "PAL-0078",
