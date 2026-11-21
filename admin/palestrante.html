@@ -3,8 +3,8 @@
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard do Palestrante | Paz que Ilumina</title>
 <link rel="stylesheet" href="/admin/dashboard.css?v=palestrante1">
-<link rel="stylesheet" href="/admin/palestrante.css?v=1">
-<script defer src="/admin/palestrante.js?v=1"></script></head><body>
+<link rel="stylesheet" href="/admin/palestrante.css?v=5">
+<script defer src="/admin/palestrante.js?v=7"></script></head><body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-8h6v8"/></symbol>
  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"/></symbol>
@@ -38,6 +38,7 @@
  </a>
  <nav class="dash-nav">
   <a class="nav-link" href="/admin/dashboard.html"><svg><use href="#i-home"/></svg>Dashboard</a>
+  <a class="nav-link selected" href="/admin/palestrante.html"><svg><use href="#i-chart"/></svg>Palestrante</a>
   <button class="nav-link nav-expand" type="button" id="acervoToggle" aria-expanded="false" aria-controls="subAcervo"><svg><use href="#i-layers"/></svg>Acervo<svg class="chev"><use href="#i-chevron"/></svg></button>
   <div class="nav-sub" id="subAcervo" hidden>
    <a href="/videos.html"><svg><use href="#i-video"/></svg>Vídeos</a>
@@ -45,7 +46,6 @@
    <a href="/audios.html"><svg><use href="#i-headphones"/></svg>Áudios</a>
    <a href="/livro.html"><svg><use href="#i-book"/></svg>Livro</a>
   </div>
-  <a class="nav-link selected" href="/admin/palestrante.html"><svg><use href="#i-chart"/></svg>Palestrante</a>
   <a class="nav-link" href="/admin/agenda.html"><svg><use href="#i-calendar"/></svg>Agenda</a>
   <a class="nav-link" href="/admin/locais.html"><svg><use href="#i-map-pin"/></svg>Locais</a>
   <a class="nav-link" href="/admin/palestras.html"><svg><use href="#i-presentation"/></svg>Palestras</a>
@@ -53,38 +53,53 @@
   <a class="nav-link" href="#relatorios"><svg><use href="#i-file"/></svg>Relatórios</a>
   <a class="nav-link nav-return" href="/"><svg><use href="#i-external"/></svg>Voltar ao site</a>
  </nav>
- <div class="dash-sidebar-foot"><div class="online"><svg><use href="#i-check"/></svg><span id="siteStatus">Carregando acervo</span></div><p>Última atualização<br><span id="lastUpdate">—</span></p></div>
+ <div class="dash-sidebar-foot"><div class="online"><svg><use href="#i-check"/></svg><span id="siteStatus">Carregando palestras</span></div><p>Última atualização<br><span id="lastUpdate">—</span></p></div>
 </aside>
 <div class="dash-main">
 <header class="dash-banner"><div class="mountains" aria-hidden="true"></div><div class="sunlight" aria-hidden="true"></div>
-<div class="dash-welcome"><h1>Alexandre Alves</h1><p>Dashboard do Palestrante · Acervo publicado no site</p></div>
+<div class="dash-welcome"><h1>Alexandre Alves</h1><p>Dashboard do Palestrante · Palestras, temas e centros visitados</p></div>
 <div class="dash-filter-row"><div class="dash-controls"><svg><use href="#i-calendar"/></svg><label for="periodo" class="sr-only">Período</label><select id="periodo">
-<option value="30" selected>Últimos 30 dias</option><option value="7">Últimos 7 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="month">Mês específico…</option><option value="year">Ano específico…</option><option value="custom">Personalizado…</option><option value="all">Todo o acervo</option></select></div></div></header>
+<option value="30" selected>Últimos 30 dias</option><option value="7">Últimos 7 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="month">Mês específico…</option><option value="year">Ano específico…</option><option value="custom">Personalizado…</option><option value="all">Todo o histórico</option></select></div></div></header>
 <main class="dash-content" id="dashMainContent">
 <section class="custom-range-panel" id="filterPanel" hidden><strong id="filterTitle">Selecionar período</strong>
 <div class="filter-extra" id="monthFields" hidden><label for="mes">Mês <select id="mes"></select></label><label for="anoMes">Ano <select id="anoMes"></select></label></div>
 <div class="filter-extra" id="yearFields" hidden><label for="ano">Ano <select id="ano"></select></label></div>
 <div class="filter-extra" id="customFields" hidden><label for="dataInicio">De <input id="dataInicio" type="date"></label><label for="dataFim">Até <input id="dataFim" type="date"></label></div>
 <button type="button" id="aplicarPeriodo">Aplicar</button><span id="periodoErro" class="custom-range-error" role="alert" hidden></span></section>
-<div class="data-caveat"><svg><use href="#i-alert"/></svg><span><strong>Critério:</strong> somente apresentações cadastradas no site. Datas aproximadas não comprovam o dia da palestra; a duração corresponde ao material gravado.</span></div>
 <section class="kpi-strip speaker-kpis" aria-label="Indicadores do palestrante">
-<article class="kpi kpi-blue"><div class="kpi-icon"><svg><use href="#i-presentation"/></svg></div><div class="kpi-info"><h2>Palestras</h2><strong id="kPalestras">—</strong><small>No período</small></div></article>
-<article class="kpi kpi-purple"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Tempo total</h2><strong id="kTempo">—</strong><small>Gravações cadastradas</small></div></article>
+<article class="kpi kpi-blue"><div class="kpi-icon"><svg><use href="#i-presentation"/></svg></div><div class="kpi-info"><h2>Palestras</h2><strong id="kPalestras">—</strong><small>Apresentadas no período</small></div></article>
+<article class="kpi kpi-purple"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Tempo total</h2><strong id="kTempo">—</strong><small>Horas de palestras</small></div></article>
 <article class="kpi kpi-sky"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Duração média</h2><strong id="kMedia">—</strong><small>Por palestra</small></div></article>
-<article class="kpi kpi-green"><div class="kpi-icon"><svg><use href="#i-map-pin"/></svg></div><div class="kpi-info"><h2>Centros</h2><strong id="kCentros">—</strong><small>Identificados</small></div></article>
-<article class="kpi kpi-orange"><div class="kpi-icon"><svg><use href="#i-layers"/></svg></div><div class="kpi-info"><h2>Temas</h2><strong id="kTemas">—</strong><small>Etiquetas diferentes</small></div></article>
-<article class="kpi kpi-yellow"><div class="kpi-icon"><svg><use href="#i-calendar"/></svg></div><div class="kpi-info"><h2>Datas aproximadas</h2><strong id="kAprox">—</strong><small>Registros no período</small></div></article></section>
+<article class="kpi kpi-green"><div class="kpi-icon"><svg><use href="#i-map-pin"/></svg></div><div class="kpi-info"><h2>Centros</h2><strong id="kCentros">—</strong><small>Visitados com local informado</small></div></article>
+<article class="kpi kpi-orange"><div class="kpi-icon"><svg><use href="#i-layers"/></svg></div><div class="kpi-info"><h2>Temas</h2><strong id="kTemas">—</strong><small>Assuntos abordados</small></div></article>
+<article class="kpi kpi-yellow"><div class="kpi-icon"><svg><use href="#i-calendar"/></svg></div><div class="kpi-info"><h2>Mês mais ativo</h2><strong id="kPeakMonth">—</strong><small id="kPeakCount">No período</small></div></article></section>
 <div id="aviso" class="status-banner" role="status" hidden><span id="avisoTexto"></span><button type="button" id="fecharAviso" aria-label="Fechar aviso">×</button></div>
 <section class="speaker-row two-col">
-<article class="widget"><h2><svg><use href="#i-chart"/></svg>Evolução mensal</h2><p class="widget-subtitle">Palestras cadastradas por mês · ano selecionado</p><div id="chartMensal" class="speaker-chart"></div></article>
-<article class="widget"><h2><svg><use href="#i-clock"/></svg>Horas por mês</h2><p class="widget-subtitle">Duração das gravações em horas</p><div id="chartHoras" class="speaker-chart"></div></article></section>
-<section class="speaker-row three-col">
-<article class="widget"><h2><svg><use href="#i-chart"/></svg>Comparação mensal</h2><div id="comparativo" class="speaker-panel"></div></article>
-<article class="widget"><h2><svg><use href="#i-map-pin"/></svg>Centros mais visitados</h2><div id="centros" class="speaker-panel"></div></article>
-<article class="widget"><h2><svg><use href="#i-layers"/></svg>Temas mais frequentes</h2><div id="temas" class="speaker-panel"></div></article></section>
+<article class="widget"><h2><svg><use href="#i-chart"/></svg>Evolução das palestras</h2><p class="widget-subtitle">Quantidade de palestras ao longo do período</p><div id="chartMensal" class="speaker-chart"></div></article>
+<article class="widget"><h2><svg><use href="#i-clock"/></svg>Tempo de palestras</h2><p class="widget-subtitle">Horas apresentadas ao longo do período</p><div id="chartHoras" class="speaker-chart"></div></article></section>
+<section class="speaker-row one-col"><article class="widget compare-widget">
+<div class="compare-heading"><div><h2><svg><use href="#i-chart"/></svg>Comparação mensal</h2><p class="widget-subtitle">Desempenho de Alexandre no mês de referência e no anterior</p></div><div class="compare-period"><svg><use href="#i-calendar"/></svg><span id="cmpPeriod">—</span></div></div>
+<div class="compare-kpis">
+<div class="compare-kpi"><div class="compare-kpi-title"><svg><use href="#i-presentation"/></svg>Variação de palestras</div><div class="compare-kpi-row"><div><strong class="compare-change" id="cmpPercent">—</strong><small id="cmpDeltaCount">—</small></div><div class="compare-totals"><b id="cmpCountNow">—</b><small>no mês analisado</small><hr><b id="cmpCountPrev">—</b><small>no mês anterior</small></div></div></div>
+<div class="compare-kpi"><div class="compare-kpi-title"><svg><use href="#i-clock"/></svg>Variação no tempo total</div><div class="compare-kpi-row"><div><strong class="compare-change" id="cmpTimeDelta">—</strong><small>Em relação ao mês anterior</small></div><div class="compare-totals"><b id="cmpTimeNow">—</b><small>no mês analisado</small><hr><b id="cmpTimePrev">—</b><small>no mês anterior</small></div></div></div></div>
+<div class="compare-charts">
+<div class="compare-chart"><h3><svg><use href="#i-chart"/></svg>Palestras por mês</h3><p>Quantidade de palestras apresentadas</p><div class="compare-plot" id="cmpCountPlot" role="img"><div class="compare-bar-group"><strong id="cmpCountValPrev">—</strong><div class="compare-bar prev" id="cmpCountFillPrev"></div><span id="cmpCountMonthPrev">Anterior</span></div><div class="compare-bar-group"><strong id="cmpCountValNow">—</strong><div class="compare-bar now" id="cmpCountFillNow"></div><span id="cmpCountMonthNow">Atual</span></div></div></div>
+<div class="compare-chart"><h3><svg><use href="#i-clock"/></svg>Tempo total de palestras</h3><p>Horas e minutos de palestras por mês</p><div class="compare-plot" id="cmpTimePlot" role="img"><div class="compare-bar-group"><strong id="cmpTimeValPrev">—</strong><div class="compare-bar prev" id="cmpTimeFillPrev"></div><span id="cmpTimeMonthPrev">Anterior</span></div><div class="compare-bar-group"><strong id="cmpTimeValNow">—</strong><div class="compare-bar now" id="cmpTimeFillNow"></div><span id="cmpTimeMonthNow">Atual</span></div></div></div></div>
+<div class="compare-summary"><svg><use href="#i-activity"/></svg><div><strong>Resultado do período</strong><p id="cmpSummary">Carregando dados…</p></div></div><p class="compare-caveat" id="cmpCaveat"></p>
+</article></section>
 <section class="speaker-row two-col">
-<article class="widget"><h2><svg><use href="#i-calendar"/></svg>Consolidado anual</h2><p class="widget-subtitle">Comparação entre anos cadastrados</p><div id="anual" class="speaker-panel"></div></article>
-<article class="widget"><h2><svg><use href="#i-bolt"/></svg>Destaques do acervo</h2><div id="destaques" class="speaker-panel"></div></article></section>
-<section class="speaker-row one-col"><article class="widget"><h2><svg><use href="#i-presentation"/></svg>Histórico das apresentações</h2><p class="widget-subtitle">Registros do período selecionado · datas aproximadas sinalizadas</p><div class="speaker-table-wrap"><table class="speaker-table"><thead><tr><th>Data</th><th>Apresentação</th><th>Centro</th><th>Tema</th><th>Duração</th></tr></thead><tbody id="historico"></tbody></table></div></article></section>
-<footer class="dash-footer">Painel do palestrante · Dados do acervo · Sem estatísticas inventadas <span id="refreshFeedback" class="sr-only" role="status" aria-live="polite"></span><button type="button" id="atualizar"><svg id="refreshIcon"><use href="#i-refresh"/></svg><span id="refreshLabel">Atualizar</span></button></footer>
+<article class="widget speaker-centres-widget"><h2><svg><use href="#i-map-pin"/></svg>Onde Alexandre mais palestrou</h2><p class="widget-subtitle">Centros, número de palestras, tempo total e última data informada</p><div id="centros" class="speaker-panel speaker-centres"></div></article>
+<article class="widget speaker-donut-widget"><h2><svg><use href="#i-layers"/></svg>Sobre o que Alexandre mais fala?</h2><p class="widget-subtitle">Participação dos temas nas palestras do período</p><div id="temas" class="speaker-donut-panel"></div></article></section>
+<section class="speaker-row two-col">
+<article class="widget speaker-annual-widget"><div class="speaker-widget-heading"><div><h2><svg><use href="#i-calendar"/></svg>Um ano de palestras</h2><p class="widget-subtitle">A trajetória de Alexandre, ano a ano · visão geral</p></div></div><div id="anual" class="speaker-panel speaker-annual-list"></div></article>
+<article class="widget speaker-highlights-widget"><div class="speaker-widget-heading"><div><h2><svg><use href="#i-bolt"/></svg>Alexandre em destaque</h2><p class="widget-subtitle">Temas, lugares e momentos que marcaram o período</p></div></div><div id="destaques" class="speaker-highlights-grid"></div><p class="speaker-highlights-note" id="highlightsNote"></p></article></section>
+<section class="speaker-row one-col">
+<article class="widget speaker-calendar-widget">
+ <div class="speaker-calendar-header"><div><h2><svg><use href="#i-calendar"/></svg>Calendário de palestras</h2><p class="widget-subtitle">Dias com palestras no mês de referência</p></div><strong id="calendarMonth" class="speaker-calendar-month">—</strong></div>
+ <div class="speaker-calendar-legend"><span class="speaker-calendar-swatch"></span> Dias com palestras <span id="calendarTotal" class="speaker-calendar-count"></span></div>
+ <div class="speaker-calendar" id="calendar"></div>
+ <p class="speaker-calendar-note" id="calendarNote"></p>
+</article></section>
+<section class="speaker-row one-col"><article class="widget"><h2><svg><use href="#i-presentation"/></svg>Histórico de palestras</h2><p class="widget-subtitle">Palestras no período · datas estimadas sinalizadas</p><div class="speaker-table-wrap"><table class="speaker-table"><thead><tr><th>Data</th><th>Apresentação</th><th>Centro</th><th>Tema</th><th>Duração</th></tr></thead><tbody id="historico"></tbody></table></div></article></section>
+<footer class="dash-footer">Indicadores baseados nas palestras disponíveis · Datas estimadas e locais não informados podem afetar os resultados <span id="refreshFeedback" class="sr-only" role="status" aria-live="polite"></span><button type="button" id="atualizar"><svg id="refreshIcon"><use href="#i-refresh"/></svg><span id="refreshLabel">Atualizar</span></button></footer>
 </main></div></div></body></html>

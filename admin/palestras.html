@@ -52,8 +52,8 @@
           <form id="formP">
             <label>ID permanente<input id="pid" readonly placeholder="Gerado automaticamente"></label>
             <label>Título *<input id="titulo" maxlength="300" required></label>
-            <label>Centro Espírita (opcional)<select id="centroId"><option value="">Não informado</option></select></label>
-            <p class="ajuda">Selecione o centro onde ocorreu a palestra. Para adicionar outro, utilize <a href="/admin/locais.html">Locais</a>.</p>
+            <label>Centro espírita ou YouTube (opcional)<select id="centroId"><option value="">Não informado</option><option value="youtube">YouTube (online)</option></select></label>
+            <p class="ajuda">Selecione o centro onde ocorreu a palestra ou YouTube (online) para apresentações exclusivamente virtuais. Para cadastrar um novo centro, utilize <a href="/admin/locais.html">Locais</a>.</p>
             <div class="duas-colunas"><label>Data da palestra / publicação<input id="data" type="date"></label><label>Data aproximada<select id="aproximada"><option value="sim">Sim</option><option value="nao">Não</option></select></label></div>
             <label>URL do YouTube<input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=..."></label>
             <label>Link do MP3 existente<input id="audio" placeholder="https://... ou /audio/..." maxlength="1500"></label>
