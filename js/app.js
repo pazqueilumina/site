@@ -752,14 +752,15 @@ const ARTES_SHORT = ["luz", "semente", "evangelho", "montanha", "maos", "familia
 function cartaoShort(s, i) {
   const item = {
     arte: ARTES_SHORT[i % ARTES_SHORT.length],
-    thumb: "https://i.ytimg.com/vi/" + s.id + "/mqdefault.jpg",
-    duracao: ""
+    // Usar a miniatura HD real do YouTube; o carregador já recua para hqdefault se necessário.
+    thumb: "https://i.ytimg.com/vi/" + s.id + "/hq720.jpg"
   };
   const link = "https://www.youtube.com/shorts/" + s.id;
   return (
     '<article class="cartao cartao-short">' +
     '<a class="short-miniatura-link" href="' + escapar(link) + '" target="_blank" rel="noopener" aria-label="Assistir ' + escapar(s.t) + '">' +
-    miniatura(item) + "</a>" +
+    '<div class="miniatura">' + camadaMidia(item) +
+    '<span class="short-etiqueta-sobreposta" aria-hidden="true">▶ Short</span></div></a>' +
     '<div class="cartao-corpo">' +
     "<h3>" + escapar(s.t) + "</h3>" +
     '<div class="cartao-rodape">' +
