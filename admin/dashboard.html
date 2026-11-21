@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin"><title>Dashboard | Administração — Paz que Ilumina</title>
+<link rel="stylesheet" href="/admin/admin.css?v=bairro1"><link rel="stylesheet" href="/admin/dashboard.css?v=1"><script defer src="/admin/dashboard.js?v=1"></script></head>
+<body><header class="topo"><div class="topo-conteudo"><div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Administração · Dashboard</span></div></div>
+<nav class="navegacao" aria-label="Navegação administrativa"><a href="/admin/dashboard.html" aria-current="page">Dashboard</a><a href="/admin/agenda.html">Agenda</a><a href="/admin/locais.html">Locais</a><a href="/admin/palestras.html">Palestras</a><a href="/">Voltar ao site</a></nav></div></header>
+<main class="container dash"><div class="dash-hero"><div><p class="sobretitulo">PAINEL ADMINISTRATIVO</p><h1>Visão geral do Paz que Ilumina</h1><p>Acervo, agenda e pendências com dados reais dos cadastros.</p></div><button type="button" id="atualizar" class="botao secundario">↻ Atualizar dados</button></div>
+<div id="aviso" class="dash-aviso" role="status" aria-live="polite">Carregando dados do acervo…</div>
+<section class="dash-kpis" aria-label="Indicadores do acervo">
+<div class="dash-kpi"><span>Apresentações cadastradas</span><strong id="kPalestras">—</strong><small>Cadastro de palestras</small></div>
+<div class="dash-kpi"><span>Com vídeo</span><strong id="kVideos">—</strong><small>YouTube vinculado</small></div>
+<div class="dash-kpi"><span>Com áudio</span><strong id="kAudios">—</strong><small>MP3 vinculado</small></div>
+<div class="dash-kpi"><span>Com PDF</span><strong id="kPdfs">—</strong><small>Slides disponíveis</small></div>
+<div class="dash-kpi"><span>Eventos futuros</span><strong id="kEventos">—</strong><small>Inclui eventos de hoje</small></div>
+<div class="dash-kpi"><span>Centros e locais</span><strong id="kLocais">—</strong><small>Cadastro de locais</small></div>
+</section>
+<div class="dash-grid">
+<section class="dash-panel dash-wide"><div class="dash-head"><div><h2>Integridade do acervo</h2><p>Campos ausentes no cadastro. Não representam links quebrados verificados.</p></div><a href="/admin/palestras.html">Gerenciar palestras →</a></div><div id="integridade" class="dash-barras"><p class="dash-muted">Carregando…</p></div></section>
+<section class="dash-panel"><div class="dash-head"><div><h2>Pendências</h2><p>Itens que merecem revisão</p></div></div><div id="pendencias" class="dash-lista"><p class="dash-muted">Carregando…</p></div></section>
+<section class="dash-panel"><div class="dash-head"><div><h2>Próximos eventos</h2><p>Agenda cadastrada</p></div><a href="/admin/agenda.html">Ver agenda →</a></div><div id="eventos" class="dash-lista"><p class="dash-muted">Carregando…</p></div></section>
+<section class="dash-panel"><div class="dash-head"><div><h2>Últimas apresentações</h2><p>Ordenadas pela data cadastrada</p></div><a href="/admin/palestras.html">Abrir acervo →</a></div><div id="recentes" class="dash-lista"><p class="dash-muted">Carregando…</p></div></section>
+<section class="dash-panel dash-wide"><div class="dash-head"><div><h2>Audiência do site</h2><p>Visitantes, visualizações, países e conteúdos populares</p></div></div><div class="dash-indisponivel"><strong>Integração de métricas ainda não configurada</strong><p>Para exibir estatísticas reais, será necessário conectar o Cloudflare Web Analytics ou outra fonte de audiência. O painel não estima acessos nem confunde visualizações do YouTube com visitas ao site.</p></div></section>
+<section class="dash-panel"><div class="dash-head"><div><h2>Atividades recentes</h2><p>Histórico de alterações administrativas</p></div></div><div class="dash-indisponivel"><strong>Histórico ainda não disponível</strong><p>Os cadastros atuais não registram quem alterou cada item e quando. Podemos adicionar um registro de auditoria em uma próxima etapa.</p></div></section>
+<section class="dash-panel"><div class="dash-head"><div><h2>Ações rápidas</h2><p>Acesse os editores existentes</p></div></div><div class="dash-acoes"><a href="/admin/palestras.html">＋ Gerenciar apresentações</a><a href="/admin/agenda.html">＋ Gerenciar eventos</a><a href="/admin/locais.html">＋ Gerenciar centros</a><a href="/">↗ Visualizar o site</a></div></section>
+</div><p class="rodape">Dashboard somente leitura. Nenhum cadastro é modificado por esta página. Acesso administrativo protegido pelo Cloudflare Access.</p></main></body></html>

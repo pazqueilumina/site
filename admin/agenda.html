@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="same-origin">
+  <title>Administração da Agenda | Estudos e Reflexões Espíritas</title>
+  <link rel="stylesheet" href="/admin/admin.css?v=bairro1">
+  <script defer src="/admin/admin.js?v=bairro1"></script>
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-conteudo">
+      <div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Área administrativa · Agenda</span></div></div>
+      <nav class="navegacao" aria-label="Navegação administrativa"><a href="/admin/dashboard.html">Dashboard</a>
+        <a href="/admin/agenda.html" aria-current="page">Agenda</a>
+        <a href="/admin/locais.html">Locais</a>
+        <a href="/admin/palestras.html">Palestras</a>
+        <a href="/">Voltar ao site</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <div class="intro">
+      <div><p class="sobretitulo">PAINEL DE CONTROLE</p><h1>Agenda de apresentações</h1><p>Cadastre, atualize ou exclua eventos. As mudanças só ficam públicas depois de clicar em <strong>Publicar alterações</strong>.</p></div>
+      <button id="publicar" type="button" class="botao principal" disabled>Publicar alterações</button>
+    </div>
+    <div id="mensagem" class="mensagem" role="status" aria-live="polite"><span id="mensagemTexto">Conectando à agenda…</span><button id="fecharMensagem" type="button" class="fechar-mensagem" aria-label="Fechar mensagem" title="Fechar mensagem">×</button></div>
+    <div class="indicadores" aria-label="Resumo da agenda">
+      <div class="indicador"><span>Total de eventos</span><strong id="total">—</strong></div>
+      <div class="indicador"><span>Próximos</span><strong id="futuros">—</strong></div>
+      <div class="indicador"><span>Realizados</span><strong id="passados">—</strong></div>
+      <div class="indicador"><span>Situação</span><strong id="situacao" class="situacao">Carregando</strong></div>
+    </div>
+    <div class="painel">
+      <section class="cartao lista" aria-labelledby="tituloLista">
+        <div class="cartao-cabecalho"><div><h2 id="tituloLista">Compromissos</h2><p>Selecione um evento para editar.</p></div><div class="acoes-cabecalho"><button type="button" id="novo" class="botao secundario">+ Novo evento</button></div></div>
+        <div class="filtros filtros-com-ordenacao">
+          <label class="campo-busca"><span class="sr-only">Buscar eventos</span><input id="busca" type="search" placeholder="Buscar por título ou local…"></label>
+          <select id="filtro" aria-label="Filtrar eventos"><option value="todos">Todos</option><option value="futuros">Próximos</option><option value="passados">Realizados</option></select>
+          <button id="ordenarAgenda" class="botao-ordenacao" type="button" aria-pressed="false" aria-label="Mais antigos primeiro. Clique para mostrar os mais recentes primeiro." title="Mais antigos primeiro. Clique para mostrar os mais recentes primeiro.">↑↓</button>
+        </div>
+        <div id="listaEventos" class="lista-eventos"><p class="vazio">Carregando…</p></div>
+      </section>
+      <div class="coluna-editor">
+      <section class="cartao editor" aria-labelledby="tituloEditor">
+        <div class="cartao-cabecalho"><div><h2 id="tituloEditor">Novo evento</h2><p>Os campos marcados com * são obrigatórios.</p></div></div>
+        <form id="formEvento">
+          <div class="duas-colunas">
+            <label>Data *<input id="data" type="date" required></label>
+            <label>Horário *<input id="horario" type="time" required></label>
+          </div>
+          <label>Título da palestra ou atividade *<input id="titulo" type="text" maxlength="180" placeholder="Ex.: A Bênção da Dor" required></label>
+          <label>Local ou instituição *<input id="local" list="opcoesLocais" autocomplete="off" type="text" maxlength="180" placeholder="Ex.: Consolador - Comunidade Espírita Cristã" required></label>
+          <datalist id="opcoesLocais"></datalist>
+          <input id="idLocal" type="hidden">
+          <p id="avisoLocal" class="ajuda aviso-local">Digite ou selecione um Centro cadastrado. Se não existir, o local poderá ser informado manualmente.</p>
+          <label>Endereço físico ou identificação da plataforma<input id="endereco" type="text" maxlength="500" placeholder="Rua, número, bairro… ou YouTube (online)"></label>
+          <label>Link da transmissão ou do evento<input id="link" type="url" maxlength="500" placeholder="https://www.youtube.com/…" pattern="https://.*"><small>Opcional. Use o endereço completo começando por https://.</small></label>
+          <label>Link do Google Maps<input id="mapa" type="url" maxlength="500" pattern="https://.*" placeholder="Preenchido pelo cadastro do local, quando disponível"><small>Opcional. Diferente do link da transmissão.</small></label>
+          <div class="acoes"><button class="botao principal" type="submit" id="salvar">Salvar na lista</button><button class="botao discreto" type="button" id="cancelar">Limpar</button><button class="botao perigoso" type="button" id="excluir" hidden>Excluir evento</button></div>
+          <p class="ajuda">Salvar na lista prepara a mudança. <strong>Publicar alterações</strong> envia todas as mudanças ao GitHub.</p>
+        </form>
+      </section>
+      <section class="cartao caixa-importar-csv" aria-labelledby="tituloCaixaCsv">
+        <div class="cartao-cabecalho">
+          <div><h2 id="tituloCaixaCsv">Importar eventos (CSV)</h2><p>Adicione vários eventos de uma vez, usando um arquivo CSV.</p></div>
+          <a class="botao discreto" href="/admin/modelo-agenda.csv" download="modelo-agenda.csv">Baixar modelo CSV</a>
+        </div>
+        <div class="caixa-importar-acoes">
+          <button type="button" id="selecionarCsv" class="botao discreto">Selecionar arquivo CSV</button>
+          <span id="arquivoCsvSelecionado" role="status" aria-live="polite">Nenhum arquivo selecionado</span>
+          <button type="button" id="importarCsv" class="botao principal" disabled>Importar</button>
+        </div>
+        <input id="arquivoCsv" class="sr-only" type="file" accept=".csv,text/csv" tabindex="-1" aria-label="Selecionar arquivo CSV da agenda">
+      </section>
+    <section id="painelCsv" class="cartao importacao-csv" aria-labelledby="tituloImportacao" hidden>
+      <div class="cartao-cabecalho">
+        <div><h2 id="tituloImportacao">Importar eventos por CSV</h2><p id="arquivoCsvNome">Revise os registros antes de acrescentá-los à agenda.</p></div>
+      </div>
+      <div class="importacao-conteudo">
+        <p class="importacao-instrucao">Os eventos já cadastrados serão preservados. Registros inválidos serão rejeitados, e os válidos poderão ser importados. Duplicados serão ignorados. A coluna Bairro é opcional e pode ser preenchida automaticamente para locais cadastrados. Aceita datas DD/MM/AAAA ou AAAA-MM-DD e horários HH:MM. Nenhuma alteração será publicada sem clicar em <strong>Publicar alterações</strong>.</p>
+        <div id="resumoCsv" class="importacao-resumo" role="status" aria-live="polite"></div>
+        <p id="avisoCsv" class="importacao-aviso" role="alert" hidden></p>
+        <div class="importacao-tabela-rolagem">
+          <table class="importacao-tabela">
+            <thead><tr><th>Linha</th><th>Data</th><th>Horário</th><th>Título</th><th>Local</th><th>Endereço</th><th>Bairro</th><th>Link</th><th>Status</th></tr></thead>
+            <tbody id="linhasCsv"></tbody>
+          </table>
+        </div>
+        <div class="importacao-acoes">
+          <button type="button" id="confirmarCsv" class="botao principal" disabled>Acrescentar eventos à lista</button>
+          <button type="button" id="cancelarCsv" class="botao discreto">Cancelar</button>
+          <button type="button" id="baixarErrosPrevia" class="botao discreto" hidden>Baixar erros CSV</button>
+        </div>
+      </div>
+    </section>
+    <section id="relatorioCsv" class="cartao importacao-csv" aria-labelledby="tituloRelatorio" hidden>
+      <div class="cartao-cabecalho"><div><h2 id="tituloRelatorio">Resultado da importação CSV</h2><p id="resumoRelatorioCsv"></p></div><button type="button" id="baixarErrosCsv" class="botao discreto">Baixar relatório CSV</button></div>
+      <div class="importacao-conteudo"><p class="importacao-instrucao">Os eventos rejeitados não foram adicionados. Corrija as linhas indicadas e importe novamente. Eventos duplicados são apenas ignorados.</p>
+        <div class="importacao-tabela-rolagem"><table class="importacao-tabela"><thead><tr><th>Linha</th><th>Data</th><th>Horário</th><th>Título</th><th>Local</th><th>Motivo da rejeição</th></tr></thead><tbody id="linhasErrosCsv"></tbody></table></div>
+      </div>
+    </section>
+      </div>
+    </div>
+    <p class="rodape">Acesso protegido pelo Cloudflare Access. Os arquivos do site permanecem no GitHub.</p>
+  </main>
+</body>
+</html>
