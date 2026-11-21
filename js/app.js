@@ -201,7 +201,7 @@ function prepararApresentacoes() {
       autor: DADOS.site.autor || "",
       local: DADOS.site.canalNome || "YouTube",
       centroId: v.centroId || "",
-      centroNome: (CADASTRO_LOCAIS_AGENDA.find(l => l.id === v.centroId) || {}).nome || "",
+      centroNome: v.centroId === "youtube" ? "YouTube (online)" : ((CADASTRO_LOCAIS_AGENDA.find(l => l.id === v.centroId) || {}).nome || ""),
       descricao: v.descricao || "",
       arte: aparencia.arte === "maos" && i % 2 ? "familia" : aparencia.arte
     };
