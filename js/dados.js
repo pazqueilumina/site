@@ -191,6 +191,12 @@ const DADOS = {
      ============================================================ */
   agenda: [
     {
+      "data": "2026-10-07",
+      "horario": "18:00",
+      "titulo": "Escândalo",
+      "local": "Lar de Frei Luiz"
+    },
+    {
       "data": "2026-10-09",
       "horario": "20:00",
       "titulo": "Jesus no Lar (6º Capítulo)",
