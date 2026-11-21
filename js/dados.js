@@ -193,7 +193,7 @@ const DADOS = {
     {
       "data": "2026-10-07",
       "horario": "18:00",
-      "titulo": "Escândalo",
+      "titulo": "O Escândalo É Necessário, Mas Ai Daquele por Quem o Escândalo Vem",
       "local": "Lar de Frei Luiz"
     },
     {
