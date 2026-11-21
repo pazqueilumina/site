@@ -1013,7 +1013,7 @@
     {
       "pid": "PAL-0005",
       "youtubeId": "9OjNbJN3XjQ",
-      "titulo": "A História do Zé",
+      "titulo": "A história do Zé",
       "data": "2026-05-07",
       "dataAproximada": true,
       "serie": "temas",
@@ -1023,7 +1023,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "pendente",
-      "statusPdf": "pendente"
+      "statusPdf": "sem-arquivo",
+      "ativo": true,
+      "horario": "",
+      "centroId": "youtube"
     },
     {
       "pid": "PAL-0006",
