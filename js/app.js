@@ -786,7 +786,7 @@ function renderizarVideos() {
 
   principal.innerHTML =
     "<h1 class=\"titulo-pagina\">Vídeos</h1>" +
-    '<p class="subtitulo-pagina">Shorts e momentos especiais do canal ' + escapar(DADOS.site.canalNome) + '. As palestras completas estão na página Apresentações.</p>' +
+    '<p class="subtitulo-pagina">Shorts e momentos especiais do canal ' + escapar(DADOS.site.canalNome) + '.</p>' +
     '<div class="pagina-barra"><div class="acoes" style="margin:0">' +
     '<a class="botao-acao" href="' + escapar(DADOS.site.canalYoutube) + '" target="_blank" rel="noopener">' + icone("video") + " Ver canal no YouTube " + icone("externo") + "</a>" +
     "</div></div>" +
