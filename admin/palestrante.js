@@ -51,32 +51,43 @@ function initFilters(){
 }
 const topicLabel=p=>topicNames[p.serie]||p.serie||'Sem tema informado';
 function centreRanking(items){
- const host=clear('centros'),groups=new Map();
- for(const p of items.filter(isPhysicalCentre)){
-  const id=p.centroId;if(!groups.has(id))groups.set(id,{id,name:places.get(id)||id,n:0,seconds:0,last:null,approx:false});
-  const g=groups.get(id);g.n++;g.seconds+=p.seconds||0;
+ const host=clear('centros'),known=items.filter(isPhysicalCentre),groups=new Map();
+ for(const p of known){
+  const id=p.centroId;
+  if(!groups.has(id))groups.set(id,{id,name:places.get(id)||id,n:0,seconds:0,knownTime:0,last:null,approx:false});
+  const g=groups.get(id);g.n++;g.seconds+=p.seconds||0;if(p.seconds!==null)g.knownTime++;
   if(p.when&&(!g.last||p.when>g.last)){g.last=p.when;g.approx=p.approx;}
  }
  const ranking=[...groups.values()].sort((a,b)=>b.n-a.n||a.name.localeCompare(b.name,'pt-BR'));
- if(!ranking.length){empty(host,'Ainda não há centros informados para este período.');}
+ const details=g=>{
+  const meta=el('div',null,'speaker-centre-meta');
+  meta.append(el('span',g.knownTime?hm(g.seconds)+' de palestras':'Tempo não informado'));
+  if(ranking.length>1)meta.append(el('span',(100*g.n/known.length).toFixed(1).replace('.',',')+'% das palestras com centro identificado'));
+  if(g.last)meta.append(el('span','Última data: '+fmtDate(iso(g.last))+(g.approx?' (estimada)':'')));
+  return meta;
+ };
+ if(!ranking.length)empty(host,'Ainda não há centros físicos identificados para o período selecionado.');
  else{
-  const max=ranking[0].n;
-  for(const g of ranking.slice(0,7)){
-   const card=el('div',null,'speaker-centre-entry');
-   const heading=el('div',null,'speaker-centre-heading');
-   heading.append(el('strong',g.name),el('span',nf(g.n)+' palestra'+(g.n===1?'':'s')));
-   const bar=el('div',null,'speaker-meter'),fill=el('span');fill.style.width=(100*g.n/max)+'%';bar.append(fill);
-   const meta=el('div',null,'speaker-centre-meta');
-   const share=items.length?((g.n/items.length)*100).toFixed(1).replace('.',',')+'% do período':'—';
-   meta.append(el('span',hm(g.seconds)+' de palestras'),el('span',share));
-   if(g.last)meta.append(el('span','Última data: '+fmtDate(iso(g.last))+(g.approx?' (estimada)':'')));
-   card.append(heading,bar,meta);host.append(card);
+  const top=ranking[0],feature=el('div',null,'speaker-centre-feature');
+  feature.append(el('span',ranking.length===1?'Centro identificado no período':'Centro mais visitado','speaker-centre-feature-label'));
+  feature.append(el('h3',top.name,'speaker-centre-feature-name'));
+  feature.append(el('strong',nf(top.n)+' palestra'+(top.n===1?'':'s'),'speaker-centre-feature-count'));
+  feature.append(details(top));host.append(feature);
+  if(ranking.length>1){
+   host.append(el('h3','Outros centros visitados','speaker-centre-rank-title'));
+   for(const g of ranking.slice(1,7)){
+    const card=el('div',null,'speaker-centre-entry'),heading=el('div',null,'speaker-centre-heading');
+    heading.append(el('strong',g.name),el('span',nf(g.n)+' palestra'+(g.n===1?'':'s')));
+    const bar=el('div',null,'speaker-meter'),fill=el('span');
+    fill.style.width=(100*g.n/top.n)+'%';bar.append(fill);
+    card.append(heading,bar,details(g));host.append(card);
+   }
   }
  }
  const missing=items.filter(p=>!p.centroId).length;
  const online=items.filter(p=>p.centroId==='youtube').length;
- if(missing)host.append(el('p',nf(missing)+' palestra'+(missing===1?'':'s')+' sem centro informado. O ranking considera apenas os locais identificados.','speaker-centre-note'));
- if(online)host.append(el('p',nf(online)+' palestra'+(online===1?'':'s')+' marcada'+(online===1?'':'s')+' como YouTube (online), fora do ranking de centros físicos.','speaker-centre-note'));
+ if(missing)host.append(el('p',nf(missing)+' palestra'+(missing===1?'':'s')+' sem centro informado. A análise considera apenas os centros identificados.','speaker-centre-note'));
+ if(online)host.append(el('p',nf(online)+' palestra'+(online===1?'':'s')+' marcada'+(online===1?'':'s')+' como YouTube (online), fora da análise de centros físicos.','speaker-centre-note'));
 }
 function donut(items){
  const host=clear('temas'),entries=countBy(items,topicLabel);
@@ -146,44 +157,70 @@ function chart(id,items,field){
  host.append(el('p','Período: '+fmt(from)+' a '+fmt(to)+' · Datas estimadas podem alterar a distribuição.','widget-subtitle'));
 }
 function comparison(){
- const now=new Date(),k=range.kind;
- let year=now.getFullYear(),month=now.getMonth();
- if(k==='month'){year=applied.year;month=applied.month;}
- else if(k==='year'){year=applied.year;month=year===now.getFullYear()?now.getMonth():11;}
- else if(k==='custom'){const d=date(applied.end);if(d){year=d.getFullYear();month=d.getMonth();}}
- const first=new Date(year,month,1),next=new Date(year,month+1,1),prev=new Date(year,month-1,1);
- const current=records.filter(p=>p.when&&p.when>=first&&p.when<next),previous=records.filter(p=>p.when&&p.when>=prev&&p.when<first);
+ const k=range.kind,now=today();
+ let first,last,prevFirst,prevLast,kind;
+ if(k==='month'||k==='all'){
+  let year=applied.year,month=applied.month;
+  if(k==='all'){
+   const latest=records.filter(p=>p.when&&p.when<=now).sort((a,b)=>b.when-a.when)[0];
+   const ref=latest?latest.when:now;year=ref.getFullYear();month=ref.getMonth();
+  }
+  first=new Date(year,month,1);last=new Date(year,month+1,0,23,59,59,999);
+  prevFirst=new Date(year,month-1,1);prevLast=new Date(year,month,0,23,59,59,999);kind='month';
+ }else if(k==='year'){
+  first=new Date(applied.year,0,1);last=new Date(applied.year,11,31,23,59,59,999);
+  prevFirst=new Date(applied.year-1,0,1);prevLast=new Date(applied.year-1,11,31,23,59,59,999);kind='year';
+ }else{
+  [first,last]=boundaries();
+  const days=Math.round((midnight(last)-midnight(first))/86400000)+1;
+  prevLast=new Date(first.getTime()-1);prevFirst=midnight(first);prevFirst.setDate(prevFirst.getDate()-days);kind='days';
+ }
+ const current=records.filter(p=>p.when&&p.when>=first&&p.when<=last);
+ const previous=records.filter(p=>p.when&&p.when>=prevFirst&&p.when<=prevLast);
  const n=current.length,p=previous.length,diff=n-p,pct=p?100*diff/p:null;
  const secs=seconds(current),prevSecs=seconds(previous),secDiff=secs-prevSecs;
- const label=d=>d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
- const short=d=>d.toLocaleDateString('pt-BR',{month:'short',year:'numeric'}).replace('.','');
- const signed=(n)=>n>0?'+':n<0?'−':'';
- set('cmpPeriod',label(first)+' × '+label(prev));
+ const timeComparable=p>0&&knownSeconds(previous).length>0&&(n===0||knownSeconds(current).length>0);
+ const longDate=d=>d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}).replace(/\./g,'');
+ const monthDate=d=>d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+ const periodLabel=(a,b)=>kind==='year'?String(a.getFullYear()):kind==='month'?monthDate(a):longDate(a)+' a '+longDate(b);
+ const short=(a,b)=>kind==='year'?String(a.getFullYear()):kind==='month'?a.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}).replace(/\./g,''):pad(a.getDate())+'/'+pad(a.getMonth()+1)+'–'+pad(b.getDate())+'/'+pad(b.getMonth()+1);
+ const currentLabel=periodLabel(first,last),previousLabel=periodLabel(prevFirst,prevLast);
+ const signed=value=>value>0?'+':value<0?'−':'';
+ const change=value=>signed(value)+nf(Math.abs(value));
+ const durationLabel=items=>items.length===0?'0min':total(items);
+ set('cmpPeriod',currentLabel+' × '+previousLabel);
  set('cmpPercent',pct===null?'—':signed(pct)+Math.abs(pct).toFixed(1).replace('.',',')+'%');
- set('cmpDeltaCount',signed(diff)+nf(Math.abs(diff))+' palestra'+(Math.abs(diff)===1?'':'s'));
+ set('cmpDeltaCount',p?change(diff)+' palestra'+(Math.abs(diff)===1?'':'s'):'Sem base anterior');
  set('cmpCountNow',nf(n));set('cmpCountPrev',nf(p));
- set('cmpTimeDelta',signed(secDiff)+hm(Math.abs(secDiff)));set('cmpTimeNow',hm(secs));set('cmpTimePrev',hm(prevSecs));
- $('cmpPercent').className='compare-change '+(diff<0?'negative':diff>0?'positive':'neutral');
- $('cmpTimeDelta').className='compare-change '+(secDiff<0?'negative':secDiff>0?'positive':'neutral');
+ set('cmpTimeDelta',timeComparable?signed(secDiff)+hm(Math.abs(secDiff)):'—');
+ set('cmpTimeNow',durationLabel(current));set('cmpTimePrev',durationLabel(previous));
+ $('cmpPercent').className='compare-change '+(pct===null?'neutral':diff<0?'negative':diff>0?'positive':'neutral');
+ $('cmpTimeDelta').className='compare-change '+(!timeComparable?'neutral':secDiff<0?'negative':secDiff>0?'positive':'neutral');
  const bars=(prefix,oldValue,newValue,formatter)=>{
   const max=Math.max(oldValue,newValue,1);
   set('cmp'+prefix+'ValPrev',formatter(oldValue));set('cmp'+prefix+'ValNow',formatter(newValue));
-  set('cmp'+prefix+'MonthPrev',short(prev));set('cmp'+prefix+'MonthNow',short(first));
+  set('cmp'+prefix+'MonthPrev',short(prevFirst,prevLast));set('cmp'+prefix+'MonthNow',short(first,last));
   $('cmp'+prefix+'FillPrev').style.height=(oldValue?Math.max(7,oldValue/max*100):0)+'%';
   $('cmp'+prefix+'FillNow').style.height=(newValue?Math.max(7,newValue/max*100):0)+'%';
-  $('cmp'+prefix+'Plot').setAttribute('aria-label',label(prev)+': '+formatter(oldValue)+'; '+label(first)+': '+formatter(newValue));
+  $('cmp'+prefix+'Plot').setAttribute('aria-label',previousLabel+': '+formatter(oldValue)+'; '+currentLabel+': '+formatter(newValue));
  };
- bars('Count',p,n,v=>nf(v));bars('Time',prevSecs,secs,v=>hm(v));
- const countText=diff===0?'a mesma quantidade':diff>0?nf(diff)+' a mais':nf(-diff)+' a menos';
- const timeText=secDiff===0?'sem alteração no tempo total':secDiff>0?'um aumento de '+hm(secDiff):'uma redução de '+hm(-secDiff);
- const pctText=pct===null?'':', variação de '+signed(pct)+Math.abs(pct).toFixed(1).replace('.',',')+'%';
- set('cmpSummary',label(first)+' reúne '+nf(n)+' palestra'+(n===1?'':'s')+' de Alexandre — '+countText+' que em '+label(prev)+pctText+'. Foram '+hm(secs)+' de palestras, '+timeText+' em relação ao mês anterior.');
+ bars('Count',p,n,nf);bars('Time',prevSecs,secs,hm);
+ const countText=p?(diff===0?'a mesma quantidade de palestras':diff>0?nf(diff)+' palestra'+(diff===1?'':'s')+' a mais':nf(-diff)+' palestra'+(-diff===1?'':'s')+' a menos'):'não há palestras anteriores para calcular crescimento';
+ const pctText=p?', variação de '+signed(pct)+Math.abs(pct).toFixed(1).replace('.',',')+'%':'';
+ const timeText=timeComparable?(secDiff===0?'sem alteração na duração total':secDiff>0?'aumento de '+hm(secDiff)+' na duração total':'redução de '+hm(-secDiff)+' na duração total'):'sem base suficiente para comparar a duração';
+ const summary=currentLabel+': '+nf(n)+' palestra'+(n===1?'':'s')+' e '+durationLabel(current)+' de duração registrada. '+previousLabel+': '+nf(p)+' palestra'+(p===1?'':'s')+'. Resultado: '+countText+pctText+'; '+timeText+'.';
+ set('cmpSummary',summary);
  const caveats=[];
- if(first<=now&&now<next)caveats.push('Mês em andamento: comparação parcial com o mês anterior completo.');
- if(first>now)caveats.push('O mês selecionado ainda não começou.');
- const approx=current.filter(x=>x.approx).length+previous.filter(x=>x.approx).length;
+ if(k==='all')caveats.push('No histórico completo, a comparação utiliza o último mês com palestras e o mês anterior.');
+ if(k==='month'&&first<=now&&now<=last)caveats.push('Mês em andamento: comparação parcial com o mês anterior completo.');
+ if(k==='year'&&first<=now&&now<=last)caveats.push('Ano em andamento: comparação parcial com o ano anterior completo.');
+ if(first>now)caveats.push('O período selecionado ainda não começou.');
+ if(!p)caveats.push('Não há palestras no período anterior; a variação percentual não é calculável.');
+ if(p&&!timeComparable)caveats.push('Durações insuficientes para comparar o tempo total.');
+ const missingDuration=[...current,...previous].filter(x=>x.seconds===null).length;
+ if(missingDuration)caveats.push(nf(missingDuration)+' palestra'+(missingDuration===1?' não tem':'s não têm')+' duração informada; o tempo exibido pode ser parcial.');
+ const approx=[...current,...previous].filter(x=>x.approx).length;
  if(approx)caveats.push(nf(approx)+' palestra'+(approx===1?' tem':'s têm')+' data estimada; os resultados podem mudar após confirmação.');
- if(!p)caveats.push('Sem base para variação percentual: não há palestras no mês anterior.');
  set('cmpCaveat',caveats.join(' '));
 }
 function annual(){

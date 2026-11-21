@@ -92,6 +92,15 @@
 @media(max-width:850px){.speaker-highlight-tile{min-height:140px}}
 @media(max-width:500px){.speaker-highlights-grid{grid-template-columns:1fr}.speaker-highlight-tile{min-height:115px}.speaker-year-metrics{gap:5px}.speaker-year-metric strong{font-size:15px}.speaker-year-metric{padding:9px 6px}}
 
+/* Destaque de centros: um centro sem gráfico; vários com destaque e ranking */
+.speaker-centre-feature{background:linear-gradient(125deg,#eef5ff,#f6f9ff);border:1px solid #dce8f8;border-radius:15px;padding:17px 18px;margin:5px 0 12px}
+.speaker-centre-feature-label{display:block;color:#4675ad;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.055em}
+.speaker-centre-feature-name{color:#1b3d68;font-size:17px;line-height:1.35;margin:9px 0 8px}
+.speaker-centre-feature-count{display:block;font-size:25px;line-height:1.2;color:#245da3;margin-bottom:12px}
+.speaker-centre-feature .speaker-centre-meta{border-top:1px solid #d6e4f5;padding-top:10px}
+.speaker-centre-rank-title{font-size:12px;font-weight:800;color:#45617f;margin:19px 0 3px}
+@media(max-width:500px){.speaker-centre-feature{padding:14px}.speaker-centre-feature-name{font-size:15px}.speaker-centre-feature-count{font-size:22px}}
+
 /* Ranking de centros e gráfico de rosca */
 .speaker-centres{padding-top:6px}
 .speaker-centre-entry{padding:11px 0 13px;border-bottom:1px solid #e7edf6}
