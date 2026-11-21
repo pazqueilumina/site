@@ -29,6 +29,7 @@ export function validarCadastro(dados) {
   if(p.data&&!/^\d{4}-\d{2}-\d{2}$/.test(p.data))throw new Error('Data inválida em '+p.pid);
   if(p.horario!==undefined&&p.horario!==''&&(typeof p.horario!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(p.horario)))throw new Error('Horário inválido em '+p.pid);
   if(p.centroId&&(typeof p.centroId!=='string'||p.centroId.length>120||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.centroId)))throw new Error('Centro inválido em '+p.pid);
+   if(p.eventoId!==undefined&&p.eventoId!==''&&(typeof p.eventoId!=='string'||!/^evt-[a-z0-9-]{4,50}$/.test(p.eventoId)))throw new Error('Vínculo de agenda inválido em '+p.pid);
   for(const key of ['audio','pdf'])if(p[key]&&(typeof p[key]!=='string'||p[key].length>1500||!(/^(https:\/\/|\/)/.test(p[key]))))throw new Error('Link inválido em '+p.pid);
   if(p.apresentacaoOriginal&&(typeof p.apresentacaoOriginal!=='string'||p.apresentacaoOriginal.length>250||/[\/\\]/.test(p.apresentacaoOriginal)))throw new Error('Nome de arquivo inválido em '+p.pid);
  }

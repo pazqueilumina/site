@@ -227,8 +227,8 @@ function salvar(){
   renderizar();mensagem('Local salvo na lista. Clique em “Publicar alterações” para atualizar o cadastro.','alerta');
 }
 async function carregar(){
-  $('publicarLocais').disabled=true;mensagem('Carregando cadastro do GitHub…');
-  try{const r=await fetch(API,{cache:'no-store',credentials:'same-origin'});const d=await r.json();if(!r.ok)throw new Error(d.erro||`HTTP ${r.status}`);if(!Array.isArray(d.locais)||!d.sha)throw new Error('Resposta incompleta.');estado.locais=d.locais;estado.sha=d.sha;estado.alterado=false;restaurarHistoricoVerificacao();estado.pendentesNovos.clear();estado.filtroErros=false;limpar();mensagem('Cadastro carregado. A verificação de endereços é manual.','sucesso');}
+  $('publicarLocais').disabled=true;$('mensagemLocais').hidden=true;
+  try{const r=await fetch(API,{cache:'no-store',credentials:'same-origin'});const d=await r.json();if(!r.ok)throw new Error(d.erro||`HTTP ${r.status}`);if(!Array.isArray(d.locais)||!d.sha)throw new Error('Resposta incompleta.');estado.locais=d.locais;estado.sha=d.sha;estado.alterado=false;restaurarHistoricoVerificacao();estado.pendentesNovos.clear();estado.filtroErros=false;limpar();}
   catch(e){mensagem('Não foi possível carregar os locais: '+e.message,'erro');$('listaLocais').textContent='Confira o acesso e o arquivo data/locais.json no GitHub.';}
 }
 async function publicar(){

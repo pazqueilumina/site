@@ -202,7 +202,7 @@ function prepararApresentacoes() {
       autor: DADOS.site.autor || "",
       local: DADOS.site.canalNome || "You Tube",
       centroId: v.centroId || "",
-      centroNome: v.centroId === "youtube" ? "You Tube" : ((CADASTRO_LOCAIS_AGENDA.find(l => l.id === v.centroId) || {}).nome || ""),
+      centroNome: v.centroNomeAgenda || (v.centroId === "youtube" ? "You Tube" : ((CADASTRO_LOCAIS_AGENDA.find(l => l.id === v.centroId) || {}).nome || "")),
       descricao: v.descricao || "",
       arte: aparencia.arte === "maos" && i % 2 ? "familia" : aparencia.arte
     };
@@ -1249,10 +1249,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (res.ok) {
       const catalogo = await res.json();
       if (Array.isArray(catalogo.palestras)) {
-        DADOS.videos = catalogo.palestras.filter(p => p.ativo !== false && p.youtubeId).map(p => ({
-          id:p.youtubeId, pid:p.pid, t:p.titulo, d:p.data, s:p.serie || "temas",
-          dur:p.duracao || "", audio:p.audio || "", audioPlataforma:p.audioPlataforma || "", slides:p.pdf || "", centroId:p.centroId || ""
-        }));
+        DADOS.videos = catalogo.palestras.filter(p => p.ativo !== false && p.youtubeId).map(p => {
+          const evento = p.eventoId ? (DADOS.agenda || []).find(e => e.id === p.eventoId) : null;
+          return {
+            id:p.youtubeId, pid:p.pid, t:p.titulo, d:evento?.data || p.data, s:p.serie || "temas",
+            dur:p.duracao || "", audio:p.audio || "", audioPlataforma:p.audioPlataforma || "",
+            slides:p.pdf || "", centroId:evento?.localId || p.centroId || "", centroNomeAgenda:evento?.local || ""
+          };
+        });
       }
     }
   } catch(e) { console.warn("Cadastro público indisponível; acervo oculto até a atualização."); }

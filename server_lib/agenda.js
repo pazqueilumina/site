@@ -64,7 +64,8 @@ function dataValida(value) {
 
 export function validarAgenda(input) {
   if (!Array.isArray(input) || input.length > 500) throw new Error('A agenda deve ter no máximo 500 eventos.');
-  const keys = ['data', 'horario', 'titulo', 'local', 'endereco', 'bairro', 'link', 'mapa', 'localId', 'enderecoProprio'];
+  const keys = ['id', 'data', 'horario', 'titulo', 'local', 'endereco', 'bairro', 'link', 'mapa', 'localId', 'enderecoProprio'];
+  const ids = new Set();
   const output = input.map((item, index) => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) throw new Error(`Evento ${index + 1} inválido.`);
     const obj = {};
@@ -74,6 +75,8 @@ export function validarAgenda(input) {
       if (val.length > (['endereco', 'link', 'mapa'].includes(key) ? 500 : 180)) throw new Error(`Campo ${key} muito longo no evento ${index + 1}.`);
       if (val) obj[key] = val;
     }
+    if (obj.id && (!/^evt-[a-z0-9-]{4,50}$/.test(obj.id) || ids.has(obj.id))) throw new Error(`Identificador de evento inválido ou repetido no evento ${index + 1}.`);
+    if (obj.id) ids.add(obj.id);
     if (!dataValida(obj.data || '')) throw new Error(`Data inválida no evento ${index + 1}.`);
     if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(obj.horario || '')) throw new Error(`Horário inválido no evento ${index + 1}.`);
     if (!obj.titulo || !obj.local) throw new Error(`Preencha título e local do evento ${index + 1}.`);

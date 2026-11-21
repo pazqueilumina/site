@@ -5,6 +5,7 @@ const campos = ['data', 'horario', 'titulo', 'local', 'link'];
 const estado = { agenda: [], sha: null, selecionado: null, alterado: false, formularioAlterado: false, sequencia: 0, ordemDesc: false, importacao: null, locais: [], relatorioCsv: null };
 const MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 function chave() { return 'e' + (++estado.sequencia); }
+function novoEventoId() { return 'evt-' + crypto.randomUUID(); }
 function hojeISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function mensagem(texto, tipo = '') { $('mensagemTexto').textContent = texto; $('mensagem').className = 'mensagem' + (tipo ? ' ' + tipo : ''); $('mensagem').hidden = false; }
 function atualizarResumo() {
@@ -89,9 +90,9 @@ function salvarNaLista({ silencioso = false } = {}) {
   const obj=lerFormulario();if(!obj)return false;
   if(estado.selecionado){
     const i=estado.agenda.findIndex(e=>e._key===estado.selecionado);if(i<0)return false;
-    estado.agenda[i]={...obj,_key:estado.selecionado};
+    estado.agenda[i]={...obj,id:estado.agenda[i].id || novoEventoId(),_key:estado.selecionado};
   } else {
-    const id=chave();estado.agenda.push({...obj,_key:id});estado.selecionado=id;
+    const id=chave();estado.agenda.push({...obj,id:novoEventoId(),_key:id});estado.selecionado=id;
   }
   estado.formularioAlterado=false;estado.alterado=true;
   $('tituloEditor').textContent='Editar compromisso';$('salvar').textContent='Salvar na lista';$('excluir').hidden=false;
@@ -99,7 +100,7 @@ function salvarNaLista({ silencioso = false } = {}) {
   return true;
 }
 async function carregar() {
-  $('publicar').disabled=true;$('importarCsv').disabled=true;mensagem('Carregando os eventos do GitHub…');
+  $('publicar').disabled=true;$('importarCsv').disabled=true;$('mensagem').hidden=true;
   try {
     const r=await fetch(API,{cache:'no-store',credentials:'same-origin'});
     const data=await r.json().catch(()=>({erro:'Não foi possível interpretar a resposta do servidor.'}));
@@ -107,7 +108,7 @@ async function carregar() {
     if(!Array.isArray(data.agenda)||!data.sha)throw new Error('A resposta da agenda está incompleta.');
     estado.agenda=data.agenda.map(e=>({...e,_key:chave()}));estado.sha=data.sha;estado.alterado=false;estado.formularioAlterado=false;cancelarImportacaoCsv();
     await carregarLocais();
-    formularioEmBranco();mensagem('Agenda carregada. Você já pode cadastrar ou editar compromissos.','sucesso');
+    formularioEmBranco();
   }catch(e){mensagem('Não foi possível abrir a agenda: '+e.message,'erro');$('listaEventos').textContent='Verifique a configuração do Cloudflare Access e do token do GitHub.';}
 }
 async function publicar() {
@@ -317,7 +318,7 @@ function confirmarImportacaoCsv() {
   const a = avaliarImportacaoCsv();
   if (!a.novos || a.erroGeral) { renderizarPreviaCsv(); return; }
   if (!confirm(`Acrescentar ${a.novos} evento(s) à agenda? ${a.invalidos} inválido(s) serão rejeitados e ${a.duplicados} duplicado(s) ignorados. Os eventos atuais serão mantidos. Depois será necessário clicar em “Publicar alterações”.`)) return;
-  for (const r of a.resultado) if (r.status === 'Novo') estado.agenda.push({ ...r.evento, _key: chave() });
+  for (const r of a.resultado) if (r.status === 'Novo') estado.agenda.push({ ...r.evento, id:novoEventoId(), _key: chave() });
   estado.alterado = true;
   estado.relatorioCsv={ nome: estado.importacao.nome, ...a };
   cancelarImportacaoCsv();

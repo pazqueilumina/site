@@ -191,12 +191,14 @@ const DADOS = {
      ============================================================ */
   agenda: [
     {
+      "id": "evt-0001",
       "data": "2026-10-07",
       "horario": "18:00",
       "titulo": "O Escândalo É Necessário, Mas Ai Daquele por Quem o Escândalo Vem",
       "local": "Lar de Frei Luiz"
     },
     {
+      "id": "evt-0002",
       "data": "2026-10-09",
       "horario": "20:00",
       "titulo": "Jesus no Lar (6º Capítulo)",
@@ -204,6 +206,7 @@ const DADOS = {
       "endereco": "Instagram (online)"
     },
     {
+      "id": "evt-0003",
       "data": "2026-10-16",
       "horario": "19:00",
       "titulo": "O Terceiro Ano do Ministério de Jesus (Parte 13)",
@@ -211,6 +214,7 @@ const DADOS = {
       "endereco": "YouTube (online)"
     },
     {
+      "id": "evt-0004",
       "data": "2026-10-19",
       "horario": "19:00",
       "titulo": "Espíritos Que Vieram no Séc. XVI na França e Reencarnaram no Brasil",
@@ -220,6 +224,7 @@ const DADOS = {
       "localId": "grupo-espirita-fabiano"
     },
     {
+      "id": "evt-0005",
       "data": "2026-10-23",
       "horario": "19:00",
       "titulo": "O Terceiro Ano do Ministério de Jesus (Parte 14)",
@@ -227,6 +232,7 @@ const DADOS = {
       "endereco": "YouTube (online)"
     },
     {
+      "id": "evt-0006",
       "data": "2026-11-03",
       "horario": "20:00",
       "titulo": "A Parábola do Bom Samaritano",
@@ -236,6 +242,7 @@ const DADOS = {
       "localId": "alianca-do-divino-pastor"
     },
     {
+      "id": "evt-0007",
       "data": "2026-11-04",
       "horario": "17:00",
       "titulo": "O Fenômeno da Morte",
@@ -243,6 +250,7 @@ const DADOS = {
       "endereco": "Rua Souza Lima, 433, Copacabana, Rio de Janeiro"
     },
     {
+      "id": "evt-0008",
       "data": "2026-11-04",
       "horario": "20:00",
       "titulo": "Do Outro Lado da Vida",
@@ -250,6 +258,7 @@ const DADOS = {
       "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro"
     },
     {
+      "id": "evt-0009",
       "data": "2026-11-09",
       "horario": "20:00",
       "titulo": "Fixação Mental",
@@ -257,6 +266,7 @@ const DADOS = {
       "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro"
     },
     {
+      "id": "evt-0010",
       "data": "2026-11-13",
       "horario": "19:00",
       "titulo": "O Quinto Dos Últimos Dias de Jesus (Parte 1)",
@@ -264,6 +274,7 @@ const DADOS = {
       "endereco": "YouTube (online)"
     },
     {
+      "id": "evt-0011",
       "data": "2026-11-20",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
@@ -271,6 +282,7 @@ const DADOS = {
       "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
+      "id": "evt-0012",
       "data": "2026-11-27",
       "horario": "19:00",
       "titulo": "O Quinto Dos Últimos Dias de Jesus (Parte 2)",
@@ -278,6 +290,7 @@ const DADOS = {
       "endereco": "YouTube (online)"
     },
     {
+      "id": "evt-0013",
       "data": "2026-11-27",
       "horario": "20:00",
       "titulo": "Live no Instagram",
@@ -285,6 +298,7 @@ const DADOS = {
       "endereco": "Instagram (online)"
     },
     {
+      "id": "evt-0014",
       "data": "2026-11-27",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
@@ -292,6 +306,7 @@ const DADOS = {
       "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
+      "id": "evt-0015",
       "data": "2026-11-28",
       "horario": "18:00",
       "titulo": "A Bênção da Dor",
@@ -301,6 +316,7 @@ const DADOS = {
       "localId": "grupo-espirita-saint-germain"
     },
     {
+      "id": "evt-0016",
       "data": "2026-12-04",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
@@ -308,6 +324,7 @@ const DADOS = {
       "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
+      "id": "evt-0017",
       "data": "2026-12-08",
       "horario": "19:30",
       "titulo": "A Fixação Mental",
@@ -317,6 +334,7 @@ const DADOS = {
       "localId": "cruzada-dos-militares-espiritas"
     },
     {
+      "id": "evt-0018",
       "data": "2026-12-09",
       "horario": "20:00",
       "titulo": "Vá e Não Peques Mais",
@@ -326,6 +344,7 @@ const DADOS = {
       "localId": "consolador-comunidade-espirita-crista"
     },
     {
+      "id": "evt-0019",
       "data": "2026-12-11",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
@@ -333,6 +352,7 @@ const DADOS = {
       "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
+      "id": "evt-0020",
       "data": "2026-12-16",
       "horario": "19:30",
       "titulo": "O Caminho da Vida",
@@ -342,6 +362,7 @@ const DADOS = {
       "localId": "associacao-espirita-uniao-fraterna"
     },
     {
+      "id": "evt-0021",
       "data": "2026-12-18",
       "horario": "20:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
@@ -349,6 +370,7 @@ const DADOS = {
       "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
+      "id": "evt-0022",
       "data": "2026-12-19",
       "horario": "20:00",
       "titulo": "A Vinda de Jesus",
@@ -358,6 +380,7 @@ const DADOS = {
       "localId": "centro-espirita-cristofilos"
     },
     {
+      "id": "evt-0023",
       "data": "2026-12-23",
       "horario": "20:00",
       "titulo": "Homenagem a Yvonne do Amaral Pereira",
@@ -367,6 +390,7 @@ const DADOS = {
       "localId": "consolador-comunidade-espirita-crista"
     },
     {
+      "id": "evt-0024",
       "data": "2026-12-25",
       "horario": "20:00",
       "titulo": "Live de Natal",
@@ -374,6 +398,7 @@ const DADOS = {
       "endereco": "Instagram (online)"
     },
     {
+      "id": "evt-0025",
       "data": "2026-12-28",
       "horario": "20:00",
       "titulo": "Ano Novo, vida nova: o que precisamos transformar em nós?",

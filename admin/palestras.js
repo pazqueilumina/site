@@ -1,6 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
-const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false,pdfUploading:false,tituloEditado:false,autoSaving:false,statusSaving:false};
+const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false,pdfUploading:false,tituloEditado:false,autoSaving:false,statusSaving:false,agenda:[],agendaDisponivel:false};
 function msg(s,type=''){ $('mensagemTexto').textContent=s;$('mensagemP').className='mensagem'+(type?' '+type:'');$('mensagemP').hidden=false; }
 // Remove pontuação terminal dos títulos, preservando abreviações como d.C.
 function tituloSemPontoFinal(titulo){
@@ -198,8 +198,59 @@ async function carregarCentros(){
   select.value=selected;
  }catch(e){console.warn('Cadastro de centros indisponível:',e);}
 }
+
+/* Vínculo explícito pelo ID estável da Agenda; nunca inferir só pelo título. */
+function eventoDaAgenda(eventoId) { return state.agenda.find(e=>e.id===eventoId) || null; }
+function dataEfetivaPalestra(p) { return eventoDaAgenda(p.eventoId)?.data || p.data || ''; }
+function fmtDataAgenda(iso) {
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso||''))return 'Data não informada';
+ const [a,m,d]=iso.split('-');return d+'/'+m+'/'+a;
+}
+function preencherOpcoesAgenda(){
+ const select=$('eventoId'), atual=select.value;select.replaceChildren();
+ const sem=document.createElement('option');sem.value='';sem.textContent='Sem vínculo com a Agenda';select.append(sem);
+ for(const e of [...state.agenda].sort((a,b)=>b.data.localeCompare(a.data)||b.horario.localeCompare(a.horario))){
+  if(!e.id)continue;
+  const opt=document.createElement('option');opt.value=e.id;
+  opt.textContent=fmtDataAgenda(e.data)+' · '+e.horario+' · '+e.titulo+' — '+e.local;
+  select.append(opt);
+ }
+ if(atual&&eventoDaAgenda(atual))select.value=atual;
+}
+function atualizarVinculoAgenda(){
+ const id=$('eventoId').value,evento=eventoDaAgenda(id);
+ $('dadosSemAgenda').hidden=!!id;
+ $('resumoEvento').hidden=!id;
+ if(!id)return;
+ const texto=$('dadosEvento'),aviso=$('avisoEvento');
+ if(!evento){
+  texto.textContent='Este evento não está mais disponível na Agenda.';
+  aviso.textContent='Desvincule a palestra ou recarregue a Agenda antes de salvar.';
+  aviso.classList.add('vinculo-invalido');
+  return;
+ }
+ texto.textContent=fmtDataAgenda(evento.data)+' às '+evento.horario+' · '+evento.local+' · '+evento.titulo;
+ aviso.textContent='Para alterar data, horário ou local, edite o evento na Agenda.';
+ aviso.classList.remove('vinculo-invalido');
+}
+async function carregarAgenda(){
+ try{
+  const r=await fetch('/api/admin/agenda',{credentials:'same-origin',cache:'no-store'});
+  const o=await r.json().catch(()=>({}));
+  if(!r.ok||!Array.isArray(o.agenda))throw new Error(o.erro||'Não foi possível consultar a Agenda.');
+  state.agenda=o.agenda;state.agendaDisponivel=true;preencherOpcoesAgenda();return true;
+ }catch(e){
+  state.agenda=[];state.agendaDisponivel=false;preencherOpcoesAgenda();
+  msg('O acervo foi carregado, mas a Agenda não está disponível para vincular eventos: '+e.message,'alerta');
+  return false;
+ }
+}
 function preencher(p){
- limparSelecaoMp3();limparSelecaoPdf();$('pid').value=p.pid;$('titulo').value=tituloFraseAdmin(p.titulo);state.tituloEditado=false;$('data').value=p.data||'';$('horario').value=p.horario||'';$('aproximada').value=p.dataAproximada?'sim':'nao';
+ limparSelecaoMp3();limparSelecaoPdf();$('pid').value=p.pid;$('titulo').value=tituloFraseAdmin(p.titulo);state.tituloEditado=false;$('data').value=p.data||'';$('aproximada').value=p.dataAproximada?'sim':'nao';
+  if(p.eventoId&&!eventoDaAgenda(p.eventoId)&&!Array.from($('eventoId').options).some(o=>o.value===p.eventoId)){
+   const opt=document.createElement('option');opt.value=p.eventoId;opt.textContent='Evento não encontrado: '+p.eventoId;$('eventoId').append(opt);
+  }
+  $('eventoId').value=p.eventoId||'';atualizarVinculoAgenda();
  $('youtube').value=p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'';
  $('audio').value=p.audio||'';$('pdf').value=p.pdf||'';$('arquivo').value=p.apresentacaoOriginal||'';$('serie').value=p.serie||'temas';
  const centro=$('centroId');if(p.centroId&&!Array.from(centro.options).some(o=>o.value===p.centroId)){
@@ -221,7 +272,7 @@ function trocarAba(aba){
  if(!confirmarDescarte())return false;
  state.formDirty=false;state.tituloEditado=false;
  if(aba==='nova'){
-  state.selecionado=null;$('formP').reset();limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';
+  state.selecionado=null;$('formP').reset();limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
  }else if(aba==='editar'&&state.selecionado){
   const p=state.dados.palestras.find(x=>x.pid===state.selecionado);
   if(p)preencher(p);
@@ -236,7 +287,7 @@ function selecionar(pid){
 }
 function limpar(force=false){
  if(!force&&!confirmarDescarte())return;
- state.selecionado=null;state.formDirty=false;state.tituloEditado=false;$('formP').reset();limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';
+ state.selecionado=null;state.formDirty=false;state.tituloEditado=false;$('formP').reset();limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
  state.aba='nova';atualizarAbas();render();
 }
 function descartarFormulario(){
@@ -244,7 +295,7 @@ function descartarFormulario(){
  state.formDirty=false;state.tituloEditado=false;
  if(state.aba==='editar'&&state.selecionado){
   const p=state.dados.palestras.find(x=>x.pid===state.selecionado);if(p)preencher(p);
- }else{$('formP').reset();$('pid').value=novoId();}
+ }else{$('formP').reset();$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();}
  msg('Alterações não salvas do formulário descartadas.','alerta');
 }
 function salvar(preservarArquivos=false,interno=false){if(state.r2Uploading||state.pdfUploading||state.statusSaving||(state.autoSaving&&!interno)){msg('Aguarde o envio do arquivo terminar.','alerta');return false;}if(!$('formP').reportValidity())return false;
@@ -254,11 +305,14 @@ function salvar(preservarArquivos=false,interno=false){if(state.r2Uploading||sta
  const audio=$('audio').value.trim(),pdf=$('pdf').value.trim(),arquivo=$('arquivo').value.trim();
  if([audio,pdf].some(v=>v&&!/^(https:\/\/|\/)/.test(v))){msg('Links de áudio e PDF devem começar com https:// ou /.','erro');return false;}
  if(arquivo&&(/[\\/]/.test(arquivo)||!/\.(ppt|pptx|pdf)$/i.test(arquivo))){msg('Informe apenas o nome do arquivo .ppt, .pptx ou .pdf, sem caminhos.','erro');return false;}
- const pid=state.selecionado||novoId();const old=state.dados.palestras.find(p=>p.pid===pid)||{};
+ const eventoId=$('eventoId').value,evento=eventoDaAgenda(eventoId);
+  if(eventoId&&!evento){msg('O evento vinculado não foi encontrado na Agenda. Selecione outro ou remova o vínculo.','erro');return false;}
+  const pid=state.selecionado||novoId();const old=state.dados.palestras.find(p=>p.pid===pid)||{};
  const titulo=state.selecionado&&!state.tituloEditado&&old.titulo?old.titulo:tituloSemPontoFinal($('titulo').value);
- const p={...old,pid,titulo,ativo:old.ativo!==false,data:$('data').value,horario:$('horario').value,dataAproximada:$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
+ const p={...old,pid,titulo,ativo:old.ativo!==false,eventoId:eventoId||'',data:evento?(old.data||''):$('data').value,dataAproximada:evento?(old.dataAproximada??true):$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:evento?(evento.localId||old.centroId||''):$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
   statusAudio:audio?'existente':id?'pendente':'sem-fonte',statusPdf:pdf?'existente':arquivo?'pendente':'sem-arquivo'};
- if(!p.titulo){msg('Título obrigatório.','erro');return false;}
+ delete p.horario;
+  if(!p.titulo){msg('Título obrigatório.','erro');return false;}
  const i=state.dados.palestras.findIndex(x=>x.pid===pid);if(i>=0)state.dados.palestras[i]=p;else state.dados.palestras.push(p);
  state.selecionado=pid;state.dirty=true;state.formDirty=false;state.aba='editar';if(preservarArquivos)$('pid').value=pid;else preencher(p);atualizarAbas();render();if(!state.autoSaving)msg('Alteração preparada. Clique em “Publicar alterações” para enviá-la ao GitHub.','alerta');return true;
 }
@@ -266,16 +320,16 @@ function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled
  $('publicarP').disabled=!state.sha||!state.dirty||state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving;
  const term=$('buscaP').value.trim().toLocaleLowerCase('pt-BR');const filtro=$('filtroP').value;
  // A etiqueta ORDEM representa a posição cronológica no acervo completo, não a posição na lista filtrada/invertida.
- const ordemCronologica=[...rows].sort((a,b)=>(a.data||'9999').localeCompare(b.data||'9999')||a.pid.localeCompare(b.pid));
+ const ordemCronologica=[...rows].sort((a,b)=>(dataEfetivaPalestra(a)||'9999').localeCompare(dataEfetivaPalestra(b)||'9999')||a.pid.localeCompare(b.pid));
  const numerosOrdem=new Map(ordemCronologica.map((p,i)=>[p.pid,i+1]));
  const filtered=rows.filter(p=>(!term||(p.pid+' '+p.titulo).toLocaleLowerCase('pt-BR').includes(term))&&(filtro==='todos'||(filtro==='semAudio'&&!p.audio)||(filtro==='semPdf'&&!p.pdf)||(filtro==='ativas'&&p.ativo!==false)||(filtro==='inativas'&&p.ativo===false)))
- .sort((a,b)=>{const comparacao=(a.data||'9999').localeCompare(b.data||'9999')||a.pid.localeCompare(b.pid);return state.ordemDesc?-comparacao:comparacao;});
+ .sort((a,b)=>{const comparacao=(dataEfetivaPalestra(a)||'9999').localeCompare(dataEfetivaPalestra(b)||'9999')||a.pid.localeCompare(b.pid);return state.ordemDesc?-comparacao:comparacao;});
  const list=$('listaP');list.replaceChildren();if(!filtered.length){const e=document.createElement('p');e.className='vazio';e.textContent='Nenhuma palestra encontrada.';list.append(e);return;}
  filtered.forEach((p,i)=>{
   const row=document.createElement('div');row.className='evento evento-registro'+(state.selecionado===p.pid?' ativo':'')+(p.ativo===false?' evento-registro--inativa':'');
   const b=document.createElement('button');b.type='button';b.className='evento-selecionar';b.setAttribute('aria-label','Editar '+p.titulo);
   const n=document.createElement('span');n.className='evento-data';const strong=document.createElement('strong');strong.textContent=String(numerosOrdem.get(p.pid)??(i+1)).padStart(3,'0');const small=document.createElement('span');small.textContent='ORDEM';n.append(strong,small);
-  const body=document.createElement('span');body.className='evento-corpo';const t=document.createElement('strong');t.textContent=tituloFraseAdmin(p.titulo);const meta=document.createElement('span');meta.textContent=`${p.pid} · ${p.data||'Sem data'}${p.dataAproximada?' (aprox.)':''}`;
+  const body=document.createElement('span');body.className='evento-corpo';const t=document.createElement('strong');t.textContent=tituloFraseAdmin(p.titulo);const meta=document.createElement('span');meta.textContent=`${p.pid} · ${dataEfetivaPalestra(p)||'Sem data'}${p.eventoId?' (Agenda)':p.dataAproximada?' (aprox.)':''}`;
   const flags=document.createElement('small');flags.textContent=`Vídeo ${p.youtubeId?'✓':'—'}   MP3 ${p.audio?'✓':'—'}   PDF ${p.pdf?'✓':'—'}`;body.append(t,meta,flags);b.append(n,body);b.addEventListener('click',()=>selecionar(p.pid));
   const status=document.createElement('button');status.type='button';status.className='status-palestra '+(p.ativo===false?'status-palestra--inativa':'status-palestra--ativa');
   status.textContent=p.ativo===false?'● Inativa':'● Ativa';status.title=p.ativo===false?'Clique para reativar a palestra':'Clique para desativar a palestra e seus materiais';
@@ -283,8 +337,8 @@ function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled
   status.addEventListener('click',()=>alternarStatus(p.pid));row.append(b,status);list.append(row);
  });
 }
-async function carregar(){msg('Consultando cadastro no GitHub…');try{const r=await fetch('/api/admin/palestras',{credentials:'same-origin',cache:'no-store'});const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);
- if(!o.sha||!Array.isArray(o.dados?.palestras))throw new Error('Resposta incompleta.');state.dados=o.dados;state.sha=o.sha;state.publicados=new Set(o.dados.palestras.map(p=>p.pid));state.dirty=false;limpar(true);msg('Cadastro carregado. Os registros existentes foram preservados.','sucesso');
+async function carregar(){$('mensagemP').hidden=true;try{const r=await fetch('/api/admin/palestras',{credentials:'same-origin',cache:'no-store'});const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);
+ if(!o.sha||!Array.isArray(o.dados?.palestras))throw new Error('Resposta incompleta.');state.dados=o.dados;state.sha=o.sha;state.publicados=new Set(o.dados.palestras.map(p=>p.pid));state.dirty=false;const agendaOk=await carregarAgenda();limpar(true);if(agendaOk)$('mensagemP').hidden=true;
  }catch(e){msg('Não foi possível carregar: '+e.message,'erro');}}
 async function publicar(semConfirmacao=false,interno=false){
  if(!interno&&(state.aba==='nova'||(state.aba==='editar'&&state.selecionado&&!state.publicados.has(state.selecionado)))&&($('arquivoMp3R2').files.length||$('arquivoPdfGithub').files.length))return salvarEEnviar();
@@ -380,11 +434,12 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
  if(problems.length){alert('Importação não aplicada. Corrija os problemas:\n'+problems.slice(0,25).join('\n'));return;}
  if(!changes.length){msg('Nenhuma linha válida encontrada.','alerta');return;}
  if(!confirm(`Prévia da importação (${changes.length} linhas):\n\n${changes.slice(0,18).join('\n')}${changes.length>18?'\n…':''}\n\nAplicar à lista? A publicação no GitHub será separada.`))return;
- state.dados.palestras=working;state.dirty=true;state.formDirty=false;state.selecionado=null;state.aba='importar';$('formP').reset();$('pid').value=novoId();atualizarAbas();render();msg(`${changes.length} linhas preparadas. Confira e publique quando estiver pronto.`, 'alerta');
+ state.dados.palestras=working;state.dirty=true;state.formDirty=false;state.selecionado=null;state.aba='importar';$('formP').reset();$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();atualizarAbas();render();msg(`${changes.length} linhas preparadas. Confira e publique quando estiver pronto.`, 'alerta');
 }
 function exportar(){const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];for(const p of state.dados.palestras)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
  const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='palestras-com-ids.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}
 $('fecharMensagemP').addEventListener('click',()=>{ $('mensagemP').hidden=true; });
+$('eventoId').addEventListener('change',atualizarVinculoAgenda);
 $('formP').addEventListener('submit',e=>{e.preventDefault();salvarEEnviar();});$('formP').addEventListener('input',e=>{if(e.target.id==='titulo')state.tituloEditado=true;if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});$('formP').addEventListener('change',e=>{if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});
  $('fecharStatusAudioR2').addEventListener('click',()=>{$('avisoAudioR2').hidden=true;});
  $('fecharStatusPdfGithub').addEventListener('click',()=>{$('avisoPdfGithub').hidden=true;});

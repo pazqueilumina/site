@@ -7,8 +7,8 @@
   <meta name="referrer" content="same-origin">
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
-  <link rel="stylesheet" href="/admin/palestras.css?v=status-upload20261121">
-  <script defer src="/admin/palestras.js?v=status-mensagem20261121"></script>
+  <link rel="stylesheet" href="/admin/palestras.css?v=vinculo-agenda20261121">
+  <script defer src="/admin/palestras.js?v=vinculo-agenda20261121"></script>
 </head>
 <body>
   <header class="topo">
@@ -22,7 +22,7 @@
       <div><p class="sobretitulo">ACERVO DE PALESTRAS</p><h1>Gerenciar palestras</h1><p>Cadastre vídeos, associe MP3 e PDFs existentes, envie novos PDFs ao GitHub e prepare importações. Os IDs são permanentes e não aparecem no site público.</p></div>
       <button id="publicarP" class="botao principal" type="button" disabled>Publicar alterações</button>
     </div>
-    <div id="mensagemP" class="mensagem" role="status" aria-live="polite"><span id="mensagemTexto">Carregando cadastro…</span><button id="fecharMensagemP" type="button" class="fechar-mensagem" aria-label="Fechar mensagem" title="Fechar mensagem">×</button></div>
+    <div id="mensagemP" class="mensagem" hidden role="status" aria-live="polite"><span id="mensagemTexto">Carregando cadastro…</span><button id="fecharMensagemP" type="button" class="fechar-mensagem" aria-label="Fechar mensagem" title="Fechar mensagem">×</button></div>
     <div class="indicadores">
       <div class="indicador"><span>Palestras</span><strong id="totalP">—</strong></div>
       <div class="indicador"><span>Com vídeo</span><strong id="videosP">—</strong></div>
@@ -52,10 +52,21 @@
           <form id="formP">
             <label>ID permanente<input id="pid" readonly placeholder="Gerado automaticamente"></label>
             <label>Título *<input id="titulo" maxlength="300" required></label>
-            <label>Centro Espírita ou You Tube (opcional)<select id="centroId"><option value="">Não informado</option><option value="youtube">You Tube</option></select></label>
-            <p class="ajuda">Selecione o centro onde ocorreu a palestra ou You Tube para apresentações exclusivamente virtuais. Para cadastrar um novo centro, utilize <a href="/admin/locais.html">Locais</a>.</p>
-            <div class="duas-colunas"><label>Data da palestra / publicação<input id="data" type="date"></label><label>Data aproximada<select id="aproximada"><option value="sim">Sim</option><option value="nao">Não</option></select></label></div>
-             <label>Horário da palestra (opcional)<input id="horario" type="time" step="60"></label>
+            <label>Vincular a um evento da Agenda (opcional)
+              <select id="eventoId"><option value="">Sem vínculo com a Agenda</option></select>
+            </label>
+            <p class="ajuda ajuda-vinculo">Escolha o evento específico onde a palestra foi apresentada. A data, o horário e o local serão utilizados diretamente da <a href="/admin/agenda.html">Agenda</a>, sem duplicação.</p>
+            <div id="resumoEvento" class="resumo-evento" hidden>
+              <strong>Informações do evento na Agenda</strong>
+              <p id="dadosEvento"></p>
+              <small id="avisoEvento">Para alterar a data, o horário ou o local, edite o evento na Agenda.</small>
+            </div>
+            <div id="dadosSemAgenda">
+              <label>Centro Espírita ou You Tube (opcional)<select id="centroId"><option value="">Não informado</option><option value="youtube">You Tube</option></select></label>
+              <p class="ajuda">Para palestras antigas sem evento na Agenda, informe o centro onde ocorreram. Para cadastrar um novo centro, utilize <a href="/admin/locais.html">Locais</a>.</p>
+              <div class="duas-colunas"><label>Data de referência (sem Agenda)<input id="data" type="date"></label><label>Data aproximada<select id="aproximada"><option value="sim">Sim</option><option value="nao">Não</option></select></label></div>
+              <p class="ajuda ajuda-historica">Use apenas para palestras antigas sem evento na Agenda. Se a única data conhecida for a publicação no YouTube, marque como aproximada; não a trate como data exata da apresentação.</p>
+            </div>
             <label>URL do You Tube<input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=..."></label>
             <label>Link do MP3 existente<input id="audio" placeholder="https://... ou /audio/..." maxlength="1500"></label>
             <div class="upload-r2" aria-labelledby="tituloUploadR2">
