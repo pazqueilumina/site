@@ -1522,23 +1522,42 @@ body[data-page="videos"] .grade-cartoes {
 }
 body[data-page="videos"] .cartao-short .short-miniatura-link {
   display: block;
-  overflow: hidden;
+  overflow: visible;
 }
 body[data-page="videos"] .cartao-short .miniatura {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
+  width: calc(100% - 12px);
   height: auto;
   max-height: none;
+  margin: 8px auto 0;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  overflow: hidden;
   background: #192437;
+  box-shadow: 0 3px 9px rgba(21, 35, 58, .17);
 }
 body[data-page="videos"] .cartao-short .thumb-img {
   object-fit: cover;
   object-position: center;
-  transform: scale(1.45);
+  transform: scale(1.72);
   transform-origin: center center;
   transition: transform .2s ease;
 }
 body[data-page="videos"] .cartao-short .short-miniatura-link:hover .thumb-img {
-  transform: scale(1.49);
+  transform: scale(1.78);
+}
+body[data-page="videos"] .cartao-short {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+body[data-page="videos"] .cartao-short:hover {
+  transform: none;
+  box-shadow: none;
+}
+body[data-page="videos"] .cartao-short .short-miniatura-link:hover .miniatura {
+  box-shadow: 0 5px 15px rgba(21, 35, 58, .24);
 }
 body[data-page="videos"] .short-etiqueta-sobreposta {
   position: absolute;
