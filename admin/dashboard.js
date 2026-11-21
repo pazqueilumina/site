@@ -8,13 +8,14 @@ const txt=(tag,value,cls)=>{const e=document.createElement(tag);e.textContent=va
 const svg=(name)=>{const s=document.createElementNS('http://www.w3.org/2000/svg','svg'),u=document.createElementNS('http://www.w3.org/2000/svg','use');u.setAttribute('href','#i-'+name);s.append(u);return s;};
 const clear=(id)=>{$(id).replaceChildren();return $(id);};
 const set=(id,value)=>{$(id).textContent=value;};
-let appliedMonth=new Date().getMonth(),appliedYear=new Date().getFullYear();
+let appliedMonth=new Date().getMonth(),appliedYear=new Date().getFullYear(),periodMode='month';
 let appliedCustomStart='',appliedCustomEnd='';
-const isMonth=()=>$('periodo').value==='month';
-const isCustom=()=>$('periodo').value==='custom';
-const days=()=>Number($('periodo').value)||30;
-const rangeStart=()=>{if(isCustom())return new Date(appliedCustomStart+'T00:00:00');if(isMonth())return new Date(appliedYear,appliedMonth,1);const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(days()-1));return d;};
-const rangeEnd=()=>{const end=new Date();end.setHours(23,59,59,999);if(isCustom())return new Date(appliedCustomEnd+'T23:59:59.999');if(!isMonth())return end;const monthEnd=new Date(appliedYear,appliedMonth+1,0,23,59,59,999);return monthEnd<end?monthEnd:end;};
+const isMonth=()=>periodMode==='month';
+const isYear=()=>periodMode==='year';
+const isCustom=()=>periodMode==='custom';
+const days=()=>Number(periodMode)||30;
+const rangeStart=()=>{if(isCustom())return new Date(appliedCustomStart+'T00:00:00');if(isMonth())return new Date(appliedYear,appliedMonth,1);if(isYear())return new Date(appliedYear,0,1);const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(days()-1));return d;};
+const rangeEnd=()=>{const end=new Date();end.setHours(23,59,59,999);if(isCustom())return new Date(appliedCustomEnd+'T23:59:59.999');if(isYear()){const last=new Date(appliedYear,11,31,23,59,59,999);return last<end?last:end;}if(!isMonth())return end;const monthEnd=new Date(appliedYear,appliedMonth+1,0,23,59,59,999);return monthEnd<end?monthEnd:end;};
 const rangeDays=()=>{const start=rangeStart(),end=rangeEnd();if(end<start)return 0;const utc=d=>Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());return Math.round((utc(end)-utc(start))/86400000)+1;};
 const inRange=s=>{const d=isoToDate(s);return !!d&&d>=rangeStart()&&d<=rangeEnd();};
 let current={p:null,a:null,l:null,activities:null,audience:null,visitsTrend:null};
@@ -22,9 +23,9 @@ let audienceSerial=0,trendSerial=0;
 function notice(msg){$('avisoTexto').textContent=msg;$('aviso').hidden=false;}
 async function read(url){const r=await fetch(url,{credentials:'same-origin',cache:'no-store'});const data=await r.json().catch(()=>({}));if(!r.ok)throw Error(data.erro||'HTTP '+r.status);return data;}
 function drawChart(palestras){const host=clear('chartAcervo');if(!palestras){host.append(txt('p','Dados do acervo indisponíveis.','empty-text'));return;}
- const period=rangeDays(),start=rangeStart(),series=[];const buckets=Math.min(Math.max(period,2),14);const total=palestras.length;
+ const period=rangeDays(),start=rangeStart(),series=[];const buckets=isYear()?12:Math.min(Math.max(period,2),14);const total=palestras.length;
  if(!period){host.append(txt("p","O período selecionado ainda não começou.","empty-text"));return;}
- for(let i=0;i<buckets;i++){const date=new Date(start);date.setDate(start.getDate()+Math.round((period-1)*i/(buckets-1)));date.setHours(23,59,59,999);const n=palestras.filter(p=>{const d=isoToDate(p.data);return d&&d<=date;}).length;series.push({date,n});}
+ for(let i=0;i<buckets;i++){const date=isYear()?new Date(appliedYear,i+1,0):new Date(start);if(!isYear())date.setDate(start.getDate()+Math.round((period-1)*i/(buckets-1)));date.setHours(23,59,59,999);const n=palestras.filter(p=>{const d=isoToDate(p.data);return d&&d<=date;}).length;series.push({date,n});}
  if(!series.length){host.append(txt('p','Não há datas para exibir.','empty-text'));return;}
  const width=Math.max(360,Math.round(host.getBoundingClientRect().width||600)),height=Math.max(170,Math.round(host.getBoundingClientRect().height||178)),L=58,R=16,T=18,B=38;let min=Math.min(...series.map(x=>x.n)),max=Math.max(...series.map(x=>x.n));min=Math.max(0,min-1);max=Math.max(max,min+4);const x=i=>L+(width-L-R)*i/(series.length-1),y=n=>T+(height-T-B)*(max-n)/(max-min);
  const points=series.map((v,i)=>[x(i),y(v.n)]),path=points.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
@@ -33,7 +34,7 @@ function drawChart(palestras){const host=clear('chartAcervo');if(!palestras){hos
  const add=(tag,attrs,cls,value)=>{const e=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,String(v)));if(cls)e.setAttribute('class',cls);if(value!==undefined)e.textContent=value;root.append(e);return e;};
  for(let i=0;i<4;i++){const v=min+(max-min)*i/3,yy=y(v);add('line',{x1:L,x2:width-R,y1:yy,y2:yy},'chart-grid');add('text',{x:L-13,y:yy+4,'text-anchor':'end'},'chart-label',nf(Math.round(v)));}
  const area=path+` L${x(series.length-1).toFixed(1)} ${height-B} L${L} ${height-B} Z`;add('path',{d:area},'chart-area');add('path',{d:path},'chart-line');points.forEach((p,i)=>{if(i===0||i===points.length-1||i%3===0){const circle=add('circle',{cx:p[0],cy:p[1],r:3},'chart-point');const title=document.createElementNS(ns,'title');title.textContent=series[i].date.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+': '+nf(series[i].n)+' apresentações';circle.append(title);}});
- [0,Math.floor((buckets-1)/2),buckets-1].forEach(i=>add('text',{x:x(i),y:height-10,'text-anchor':i===0?'start':i===buckets-1?'end':'middle'},'chart-label',series[i].date.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})));
+ (isYear()?[0,2,4,6,8,11]:[0,Math.floor((buckets-1)/2),buckets-1]).forEach(i=>add('text',{x:x(i),y:height-10,'text-anchor':i===0?'start':i===buckets-1?'end':'middle'},'chart-label',series[i].date.toLocaleDateString('pt-BR',isYear()?{month:'short'}:{day:'2-digit',month:'short'})));
  host.append(root);
 }
 
@@ -105,7 +106,7 @@ function renderAudience(){
     row.append(head,progress(c));host.append(row);
    });
   }
-  host.append(txt('p','Visitas por país · dados do Cloudflare Web Analytics','country-foot'));
+  host.append(txt('p','Visitas por país','country-foot'));
   return;
  }
  const pending=data.status==='pendente',loading=data.status==='carregando',limited=data.status==='limite_periodo';
@@ -160,7 +161,7 @@ function renderVisitsTrend(){
   b.label=mode==='month'?b.from.slice(5,7)+'/'+b.from.slice(2,4):mode==='week'?labelDate(b.from):labelDate(b.from);
   b.fullLabel=mode==='day'?labelDate(b.from):labelDate(b.from)+'–'+labelDate(b.to);
  });
- set('visitsTrendSubtitle','Visitas '+(mode==='month'?'por mês':mode==='week'?'por semana':'por dia')+' no período selecionado · Cloudflare Web Analytics');
+ set('visitsTrendSubtitle','Visitas '+(mode==='month'?'por mês':mode==='week'?'por semana':'por dia')+' no período selecionado');
  const total=buckets.reduce((n,b)=>n+b.visitas,0);
  if(!total){host.append(txt('p','Nenhuma visita registrada no período selecionado.','visits-chart-message'));return;}
  const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
@@ -220,7 +221,7 @@ function renderPending(palestras,agenda){const host=clear('pendencias');if(!pale
  rows.slice(0,4).forEach(([label,type,url])=>{const link=txt('a','','alert-row '+type);link.href=url;const icon=txt('span','','alert-icon');icon.append(svg('alert'));const wrap=txt('span','','row-text');wrap.append(txt('strong',label));link.append(icon,wrap,txt('span','›','arrow'));host.append(link);});}
 function renderEvents(agenda){const host=clear('eventos');if(!agenda){host.append(txt('p','Agenda indisponível.','empty-text'));return;}const upcoming=agenda.filter(e=>e.data>=todayISO()).sort((a,b)=>a.data.localeCompare(b.data)||(a.horario||'').localeCompare(b.horario||'')).slice(0,2);if(!upcoming.length){host.append(txt('p','Nenhum evento futuro cadastrado.','empty-text'));return;}upcoming.forEach(e=>{const row=txt('div','','event-row'),date=txt('span','','event-date');date.append(txt('strong',e.data.slice(8,10)),txt('span',new Date(e.data+'T12:00:00').toLocaleDateString('pt-BR',{month:'short'}).replace('.','').toUpperCase()));const info=txt('span','','event-text');info.append(txt('strong',e.titulo),txt('small',e.local||'Local não informado'));row.append(date,info,txt('span',e.horario||'—','event-time'));host.append(row);});}
 function renderSummary(palestras){const host=clear('resumo');if(!palestras){const row=txt('tr','');const td=txt('td','Dados indisponíveis');td.colSpan=3;row.append(td);host.append(row);return;}const shorts=(typeof DADOS!=='undefined'&&Array.isArray(DADOS.shorts))?DADOS.shorts.length:0;const types=[['Vídeos (Shorts)',shorts,null,'#2f8bff'],['Apresentações',palestras.length,palestras.filter(p=>inRange(p.data)).length,'#35c95d'],['Áudios',palestras.filter(p=>p.audio).length,null,'#9550e7'],['Slides (PDF)',palestras.filter(p=>p.pdf).length,null,'#ffad30']];types.forEach(([name,count,newCount,color])=>{const tr=txt('tr',''),td=txt('td',''),dot=txt('span','','type-dot');dot.style.background=color;td.append(dot,document.createTextNode(name));tr.append(td,txt('td',nf(count)),txt('td',newCount===null?'—':(newCount?'+'+nf(newCount):'0'),newCount?'delta':''));host.append(tr);});}
-function render(){set('chartRangeText',isCustom()?'Apresentações acumuladas de '+fmtDate(appliedCustomStart)+' até '+fmtDate(appliedCustomEnd):isMonth()?'Apresentações acumuladas em '+new Date(appliedYear,appliedMonth,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}):'Apresentações acumuladas no período selecionado');const palestras=Array.isArray(current.p?.dados?.palestras)?current.p.dados.palestras.filter(p=>p.ativo!==false):null,agenda=Array.isArray(current.a?.agenda)?current.a.agenda:null,locais=Array.isArray(current.l?.locais)?current.l.locais:null,shorts=(typeof DADOS!=='undefined'&&Array.isArray(DADOS.shorts))?DADOS.shorts.length:null;
+function render(){set('chartRangeText',isCustom()?'Apresentações acumuladas de '+fmtDate(appliedCustomStart)+' até '+fmtDate(appliedCustomEnd):isMonth()?'Apresentações acumuladas em '+new Date(appliedYear,appliedMonth,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}):isYear()?'Apresentações acumuladas em '+appliedYear:'Apresentações acumuladas no período selecionado');const palestras=Array.isArray(current.p?.dados?.palestras)?current.p.dados.palestras.filter(p=>p.ativo!==false):null,agenda=Array.isArray(current.a?.agenda)?current.a.agenda:null,locais=Array.isArray(current.l?.locais)?current.l.locais:null,shorts=(typeof DADOS!=='undefined'&&Array.isArray(DADOS.shorts))?DADOS.shorts.length:null;
  set('kVideos',shorts===null?'—':nf(shorts));set('sVideos','Vídeos curtos cadastrados');set('kPalestras',palestras?nf(palestras.length):'—');set('kAudios',palestras?nf(palestras.filter(p=>p.audio).length):'—');set('kPdfs',palestras?nf(palestras.filter(p=>p.pdf).length):'—');set('sPalestras',palestras?'+'+nf(palestras.filter(p=>inRange(p.data)).length)+' no período':'Cadastro indisponível');
  drawChart(palestras);renderAudience();renderVisitsTrend();renderDonut(palestras);renderRecent(palestras);renderActivities(current.activities?.commits);renderPending(palestras,agenda);renderEvents(agenda);renderSummary(palestras);
  set('siteStatus',palestras&&agenda?'Dados conectados':'Verificar conexão');
@@ -261,12 +262,47 @@ async function update(){
   refreshTimer=setTimeout(()=>{refreshState('idle');$('dashMainContent').classList.remove('is-fresh');refreshTimer=null;},2400);
  }
 }
-function initMonthFilter(){
- const now=new Date(),mes=$('mesEspecifico'),ano=$('anoEspecifico');
- const nomes=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
- nomes.forEach((nome,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=nome;mes.append(o);});
- for(let y=now.getFullYear()+1;y>=2015;y--){const o=document.createElement('option');o.value=String(y);o.textContent=String(y);ano.append(o);}
- mes.value=String(now.getMonth());ano.value=String(now.getFullYear());
+const adminMonths=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+let adminPickerYear=appliedYear;
+function adminPeriodUI(){
+ const monthly=isMonth(),yearly=isYear(),regular=monthly||yearly,now=new Date();
+ const labels={'7':'Últimos 7 dias','30':'Últimos 30 dias','90':'Últimos 90 dias','365':'Últimos 12 meses','custom':'Personalizado'};
+ set('adminPeriodLabel',yearly?String(appliedYear):monthly?adminMonths[appliedMonth]+' de '+appliedYear:labels[periodMode]||'Escolher período');
+ for(const [id,active] of [['adminModeMonth',monthly],['adminModeYear',yearly]]){$(id).classList.toggle('active',active);$(id).setAttribute('aria-pressed',String(active));}
+ $('adminPrev').disabled=!regular;
+ $('adminNext').disabled=!regular||(yearly?appliedYear>=now.getFullYear():appliedYear>now.getFullYear()||(appliedYear===now.getFullYear()&&appliedMonth>=now.getMonth()));
+ $('adminPickerNext').disabled=adminPickerYear>=now.getFullYear();
+ set('adminPickerYear',adminPickerYear);
+ const host=clear('adminPickerMonths');
+ adminMonths.forEach((month,i)=>{
+  const btn=txt('button',month.slice(0,3),'admin-picker-month');btn.type='button';
+  btn.disabled=adminPickerYear>now.getFullYear()||(adminPickerYear===now.getFullYear()&&i>now.getMonth());
+  if(adminPickerYear===appliedYear&&i===appliedMonth&&monthly)btn.classList.add('active');
+  btn.addEventListener('click',()=>{appliedYear=adminPickerYear;appliedMonth=i;adminSelectMode('month');});host.append(btn);
+ });
+ $('periodo').value=regular?'':periodMode;
+ $('customRangePanel').hidden=!isCustom();
+}
+function adminClosePicker(){$('adminPeriodPicker').hidden=true;$('adminPeriodLabel').setAttribute('aria-expanded','false');}
+function adminRefreshPeriod(){render();loadAudience();loadVisitsTrend();}
+function adminSelectMode(mode){periodMode=mode;adminPickerYear=appliedYear;adminClosePicker();$('periodoErro').hidden=true;adminPeriodUI();adminRefreshPeriod();}
+function adminChangePeriod(step){
+ if(isYear())appliedYear+=step;
+ else if(isMonth()){const d=new Date(appliedYear,appliedMonth+step,1);appliedYear=d.getFullYear();appliedMonth=d.getMonth();}
+ adminSelectMode(periodMode);
+}
+function initPeriodControls(){
+ $('adminPrev').addEventListener('click',()=>adminChangePeriod(-1));
+ $('adminNext').addEventListener('click',()=>adminChangePeriod(1));
+ $('adminModeMonth').addEventListener('click',()=>adminSelectMode('month'));
+ $('adminModeYear').addEventListener('click',()=>adminSelectMode('year'));
+ $('adminPeriodLabel').addEventListener('click',()=>{const show=$('adminPeriodPicker').hidden;adminPickerYear=appliedYear;adminPeriodUI();$('adminPeriodPicker').hidden=!show;$('adminPeriodLabel').setAttribute('aria-expanded',String(show));});
+ $('adminPickerPrev').addEventListener('click',()=>{adminPickerYear--;adminPeriodUI();});
+ $('adminPickerNext').addEventListener('click',()=>{if(adminPickerYear<new Date().getFullYear()){adminPickerYear++;adminPeriodUI();}});
+ $('periodo').addEventListener('change',()=>{if(!$('periodo').value)return;periodMode=$('periodo').value;adminClosePicker();adminPeriodUI();adminRefreshPeriod();});
+ document.addEventListener('click',e=>{if(!e.target.closest('.admin-period-controls'))adminClosePicker();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')adminClosePicker();});
+ adminPeriodUI();
 }
 function initCustomFilter(){
  const now=new Date(),start=new Date(now);
@@ -275,14 +311,6 @@ function initCustomFilter(){
  appliedCustomStart=iso(start);appliedCustomEnd=iso(now);
  $('dataInicio').value=appliedCustomStart;$('dataFim').value=appliedCustomEnd;
  $('dataInicio').max=todayISO();$('dataFim').max=todayISO();
-}
-function periodChanged(){
- const month=isMonth(),custom=isCustom();
- $('monthControls').hidden=!month;
- $('customRangePanel').hidden=!custom;
- $('periodoErro').hidden=true;
- if(month){appliedMonth=Number($('mesEspecifico').value);appliedYear=Number($('anoEspecifico').value);}
- render();loadAudience();loadVisitsTrend();
 }
 function applyCustomPeriod(){
  const start=$('dataInicio').value,end=$('dataFim').value,error=$('periodoErro');
@@ -296,9 +324,7 @@ function applyCustomPeriod(){
  render();loadAudience();loadVisitsTrend();
 }
 $('acervoToggle').addEventListener('click',()=>{const expanded=$('acervoToggle').getAttribute('aria-expanded')==='true';$('acervoToggle').setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});
-$('periodo').addEventListener('change',periodChanged);
-$('aplicarMes').addEventListener('click',()=>{appliedMonth=Number($('mesEspecifico').value);appliedYear=Number($('anoEspecifico').value);render();loadAudience();loadVisitsTrend();});
 $('aplicarPeriodo').addEventListener('click',applyCustomPeriod);
 $('atualizar').addEventListener('click',update);
 $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
-initMonthFilter();initCustomFilter();update();
+initCustomFilter();initPeriodControls();update();

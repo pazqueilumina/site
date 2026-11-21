@@ -4,9 +4,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard | Paz que Ilumina</title>
-<link rel="stylesheet" href="/admin/dashboard.css?v=visitasroxo20261121">
+<link rel="stylesheet" href="/admin/dashboard.css?v=menuperiodo20261121">
 <script defer src="/js/dados.js?v=dashboardvisual2"></script>
-<script defer src="/admin/dashboard.js?v=visitasroxo20261121"></script>
+<script defer src="/admin/dashboard.js?v=menuperiodo20261121"></script>
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -42,8 +42,7 @@
   <span>Paz que<br>Ilumina</span>
  </a>
  <nav class="dash-nav">
-  <a class="nav-link selected" href="/admin/dashboard.html"><svg><use href="#i-home"/></svg>Dashboard</a>
-  <a class="nav-link" href="/admin/palestrante.html"><svg><use href="#i-chart"/></svg>Palestrante</a>
+  <div class="nav-dashboard-group" aria-label="Dashboard"><div class="nav-dashboard-heading"><svg><use href="#i-home"/></svg><span>Dashboard</span><svg class="chev"><use href="#i-chevron"/></svg></div><div class="nav-sub nav-dashboard-sub"><a class="nav-link selected" href="/admin/dashboard.html" aria-current="page"><svg><use href="#i-chart"/></svg>Administrativo</a><a class="nav-link" href="/admin/palestrante.html"><svg><use href="#i-presentation"/></svg>Palestrante</a></div></div>
   <button class="nav-link nav-expand" type="button" id="acervoToggle" aria-expanded="false" aria-controls="subAcervo"><svg><use href="#i-layers"/></svg>Acervo<svg class="chev"><use href="#i-chevron"/></svg></button>
   <div class="nav-sub" id="subAcervo" hidden>
    <a href="/videos.html"><svg><use href="#i-video"/></svg>Vídeos</a>
@@ -64,7 +63,11 @@
  <header class="dash-banner">
   <div class="mountains" aria-hidden="true"></div><div class="sunlight" aria-hidden="true"></div>
   <div class="dash-welcome"><h1>Olá, André!</h1><p>Visão geral do site Paz que Ilumina</p></div>
-  <div class="dash-filter-row"><div class="dash-controls"><label class="sr-only" for="periodo">Período dos indicadores</label><svg><use href="#i-calendar"/></svg><select id="periodo"><option value="7">Últimos 7 dias</option><option value="30" selected>Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="month">Mês específico…</option><option value="custom">Personalizado…</option></select></div><div class="month-controls" id="monthControls" hidden><label class="sr-only" for="mesEspecifico">Mês</label><select id="mesEspecifico" aria-label="Mês específico"></select><label class="sr-only" for="anoEspecifico">Ano</label><select id="anoEspecifico" aria-label="Ano específico"></select><button type="button" id="aplicarMes">Aplicar</button></div></div>
+  <div class="admin-period-controls" aria-label="Navegação do período">
+<div class="admin-period-navigation"><button type="button" id="adminPrev" aria-label="Período anterior">‹</button><button type="button" id="adminPeriodLabel" aria-label="Escolher mês ou ano" aria-expanded="false" aria-controls="adminPeriodPicker">Novembro de 2026</button><button type="button" id="adminNext" aria-label="Próximo período">›</button></div>
+<div class="admin-period-modes" role="group" aria-label="Visualização"><button type="button" id="adminModeMonth" class="active" aria-pressed="true">Mensal</button><button type="button" id="adminModeYear" aria-pressed="false">Ano inteiro</button></div>
+<div class="admin-period-extra"><label class="sr-only" for="periodo">Outros períodos</label><select id="periodo" aria-label="Outros períodos"><option value="" selected>Outros períodos…</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="custom">Personalizado…</option></select></div>
+<div id="adminPeriodPicker" class="admin-period-picker" hidden><div class="admin-picker-year"><button type="button" id="adminPickerPrev" aria-label="Ano anterior">‹</button><strong id="adminPickerYear">2026</strong><button type="button" id="adminPickerNext" aria-label="Ano seguinte">›</button></div><div id="adminPickerMonths" class="admin-picker-months"></div></div></div>
  </header>
  <main class="dash-content" id="dashMainContent">
   <section class="custom-range-panel" id="customRangePanel" aria-label="Período personalizado" hidden>

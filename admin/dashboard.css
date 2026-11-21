@@ -100,3 +100,34 @@
 /* Bandeira em SVG: não depende de fontes/emoji do Windows. */
 .country-single-flag.country-flag-image{display:block;width:32px;height:22px;object-fit:cover;border-radius:2px;box-shadow:0 0 0 1px #182d521c;flex:none}
 .country-row .country-flag.country-flag-image{display:block;width:21px;height:15px;object-fit:cover;border-radius:2px;box-shadow:0 0 0 1px #182d521c;flex:none}
+
+/* Submenu Dashboard permanente e compartilhado pelos dois painéis. */
+.dash-nav .nav-dashboard-group{display:grid;gap:2px}
+.dash-nav .nav-dashboard-heading{display:flex;align-items:center;gap:12px;min-height:37px;padding:8px 11px;color:#f2f6fd;font-size:13px;font-weight:700}
+.dash-nav .nav-dashboard-heading svg{width:19px;height:19px;flex:none}
+.dash-nav .nav-dashboard-heading .chev{width:15px;height:15px;margin-left:auto}
+.dash-nav .nav-dashboard-sub{display:grid;padding-left:18px;gap:2px}
+.dash-nav .nav-dashboard-sub .nav-link{display:flex;align-items:center;gap:10px;min-height:33px;padding:6px 10px;font-size:12px}
+.dash-nav .nav-dashboard-sub .nav-link svg{width:16px;height:16px;flex:none}
+/* Navegação mensal e anual sem faixa extra. */
+.admin-period-controls{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap;position:relative;z-index:10;max-width:75%}
+.admin-period-navigation,.admin-period-modes,.admin-period-extra{display:flex;align-items:center;background:#fff;border:1px solid #d8e4f4;border-radius:9px;box-shadow:0 2px 6px #10294a14;overflow:hidden}
+.admin-period-navigation button,.admin-period-modes button{border:0;background:transparent;color:#173a6b;font:700 12px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer;min-height:36px;padding:7px 10px}
+.admin-period-navigation button:first-child,.admin-period-navigation button:last-child{font-size:23px;line-height:1;padding:4px 10px}
+.admin-period-navigation #adminPeriodLabel{min-width:125px;text-align:center}
+.admin-period-navigation button:hover:not(:disabled),.admin-period-modes button:hover:not(:disabled){background:#e9f1ff}
+.admin-period-navigation button:disabled{opacity:.32;cursor:default}
+.admin-period-modes button.active{background:#2865b5;color:#fff}
+.admin-period-extra select{border:0;background:#fff;color:#173a6b;font:700 11px Inter,"Segoe UI",Arial,sans-serif;padding:0 7px;height:36px;max-width:136px;cursor:pointer}
+.admin-period-picker{position:absolute;top:calc(100% + 8px);right:0;width:265px;max-width:calc(100vw - 35px);padding:13px;background:#fff;border:1px solid #d5e2f3;border-radius:12px;box-shadow:0 12px 28px #112b4a35;color:#193a68}
+.admin-period-picker[hidden]{display:none}
+.admin-picker-year{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.admin-picker-year button{background:#edf3fc;border:0;border-radius:7px;width:32px;height:30px;font-size:22px;color:#234f88;cursor:pointer}
+.admin-picker-year button:disabled{opacity:.3;cursor:default}
+.admin-picker-months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.admin-picker-month{border:1px solid #dce6f4;background:#f7faff;border-radius:7px;padding:10px 5px;color:#2c527e;font:600 12px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer}
+.admin-picker-month.active{background:#e4d8ff;border-color:#9167df;color:#6330ac}
+.admin-picker-month:hover:not(:disabled){background:#e6f0ff}
+.admin-picker-month:disabled{opacity:.3;cursor:default}
+@media(max-width:1120px){.admin-period-controls{max-width:80%}.admin-period-extra select{max-width:110px}.admin-period-navigation #adminPeriodLabel{min-width:110px}}
+@media(max-width:800px){.admin-period-controls{max-width:100%;justify-content:flex-start}.dash-banner{height:auto;min-height:106px;flex-wrap:wrap;padding-bottom:10px;gap:8px}}

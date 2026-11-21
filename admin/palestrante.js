@@ -71,7 +71,7 @@ const speakerMonths=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julh
 let speakerPickerYear=applied.year;
 function speakerPeriodUI(){
  const yearly=range.kind==='year',now=new Date();
- set('speakerPeriodLabel',yearly?'Ano de '+applied.year:speakerMonths[applied.month]+' de '+applied.year);
+ set('speakerPeriodLabel',yearly?String(applied.year):speakerMonths[applied.month]+' de '+applied.year);
  $('speakerModeMonth').classList.toggle('active',!yearly);
  $('speakerModeYear').classList.toggle('active',yearly);
  $('speakerModeMonth').setAttribute('aria-pressed',String(!yearly));
