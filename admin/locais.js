@@ -1,7 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const API = '/api/admin/locais';
-const estado = { locais: [], sha: null, selecionado: null, alterado: false, formularioAlterado: false };
+const estado = { locais: [], sha: null, selecionado: null, alterado: false, formularioAlterado: false, verificacao: new Map(), verificando: false, filtroErros: false };
 const campos = { nome:'nomeLocal', endereco:'enderecoLocal', bairro:'bairroLocal', cidade:'cidadeLocal', uf:'ufLocal', maps:'mapsLocal', kmIdaVolta:'kmIdaVoltaLocal' };
 const normalizar = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
 const slug = s => normalizar(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'local';
@@ -11,20 +11,82 @@ function atualizarResumo() {
   $('situacaoLocais').textContent=estado.alterado?'Não publicado':'Atualizado';
   $('situacaoLocais').style.color=estado.alterado?'#94691f':'#3a795e';
   $('publicarLocais').disabled=!estado.sha||!estado.alterado;
+  $('cartaoSituacaoLocais').classList.toggle('pendente',estado.alterado);
+  atualizarResumoVerificacao();
 }
+
+const assinaturaLocal=l=>[l.nome,l.endereco,l.bairro,l.cidade,l.uf].map(normalizar).join('|');
+function resultadoLocal(l){
+ const r=estado.verificacao.get(l.id);
+ return r&&r.assinatura===assinaturaLocal(l)?r:null;
+}
+function atualizarResumoVerificacao(){
+ const resultados=estado.locais.map(resultadoLocal);
+ const verificados=resultados.filter(r=>r&&r.status!=='pendente').length;
+ const erros=resultados.filter(r=>r?.status==='erro').length;
+ const aproximados=resultados.filter(r=>r?.status==='aproximado').length;
+ const pendentes=estado.locais.length-verificados;
+ $('errosLocais').textContent=verificados?String(erros):(estado.locais.length===0?'0':'—');
+ $('statusVerificacaoLocais').textContent=estado.verificando
+  ?'Verificando… '+verificados+' de '+estado.locais.length
+  :pendentes?verificados+' de '+estado.locais.length+' verificados · '+pendentes+' pendente(s)'
+  :verificados+' de '+estado.locais.length+' verificados'+(aproximados?' · '+aproximados+' aproximado(s)':'');
+ $('verificarLocais').disabled=estado.verificando||!estado.sha||!estado.locais.length;
+ $('verificarLocais').textContent=estado.verificando?'Verificando…':'Verificar endereços';
+ $('cartaoErrosLocais').classList.toggle('tem-erros',erros>0);
+ $('filtrarErrosLocais').setAttribute('aria-pressed',String(estado.filtroErros));
+ $('filtrarErrosLocais').title=estado.filtroErros?'Mostrar todos os locais':'Mostrar somente os endereços com erro';
+}
+async function verificarEnderecos(){
+ if(estado.verificando||!estado.sha)return;
+ estado.verificando=true;
+ const locais=estado.locais.map(l=>({...l}));
+ renderizar();
+ for(let i=0;i<locais.length;i++){
+  const l=locais[i],assinatura=assinaturaLocal(l);
+  try{
+   const r=await fetch('/api/admin/verificar-enderecos',{
+    method:'POST',credentials:'same-origin',cache:'no-store',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({local:l})
+   });
+   const d=await r.json();
+   if(!r.ok)throw Error(d.erro||'Falha na consulta.');
+   if(d.id!==l.id||!['ok','aproximado','erro','pendente'].includes(d.status))throw Error('Resposta inesperada.');
+   estado.verificacao.set(l.id,{assinatura,status:d.status,motivo:d.motivo||''});
+  }catch{
+   estado.verificacao.set(l.id,{assinatura,status:'pendente',motivo:'Não foi possível verificar agora.'});
+  }
+  renderizar();
+  // Evita consultas simultâneas ao Nominatim entre locais diferentes.
+  if(i<locais.length-1)await new Promise(resolve=>setTimeout(resolve,1200));
+ }
+ estado.verificando=false;
+ renderizar();
+}
+
 function renderizar() {
   atualizarResumo();
   const busca=normalizar($('buscaLocal').value);
   const lista=$('listaLocais'); lista.replaceChildren();
-  const locais=estado.locais.filter(l=>!busca||normalizar([l.nome,l.endereco,l.bairro,l.cidade,l.uf].join(' ')).includes(busca))
+  const locais=estado.locais.filter(l=>(!estado.filtroErros||resultadoLocal(l)?.status==='erro')&&(!busca||normalizar([l.nome,l.endereco,l.bairro,l.cidade,l.uf].join(' ')).includes(busca)))
     .sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
-  if (!locais.length) { const p=document.createElement('p');p.className='vazio';p.textContent='Nenhum local encontrado.';lista.append(p);return; }
+  if (!locais.length) { const p=document.createElement('p');p.className='vazio';p.textContent=estado.filtroErros?'Nenhum endereço com erro identificado.':'Nenhum local encontrado.';lista.append(p);return; }
   for(const l of locais){
     const b=document.createElement('button');b.type='button';b.className='evento'+(l.id===estado.selecionado?' ativo':'');
+    const resultado=resultadoLocal(l);
+    if(resultado?.status==='erro')b.classList.add('local-com-erro');
+    if(resultado?.status==='aproximado')b.classList.add('local-aproximado');
     const corpo=document.createElement('span');corpo.className='evento-corpo';
     const nome=document.createElement('strong');nome.textContent=l.nome;
     const info=document.createElement('span');info.textContent=[l.bairro,l.cidade,l.uf].filter(Boolean).join(' · ');
-    corpo.append(nome,info);b.append(corpo);b.addEventListener('click',()=>selecionar(l.id));lista.append(b);
+    corpo.append(nome,info);
+    if(resultado?.status==='erro'||resultado?.status==='aproximado'||resultado?.status==='pendente'){
+      const aviso=document.createElement('span');
+      aviso.className='local-aviso '+resultado.status;
+      aviso.textContent=resultado.status==='erro'?'Endereço não localizado':resultado.status==='aproximado'?'Localização aproximada':'Verificação pendente';
+      corpo.append(aviso);
+    }
+    b.append(corpo);b.addEventListener('click',()=>selecionar(l.id));lista.append(b);
   }
 }
 function confirmarDescarte(){return !estado.formularioAlterado||confirm('Descartar alterações não salvas do formulário?');}
@@ -49,7 +111,7 @@ function salvar(){
 }
 async function carregar(){
   $('publicarLocais').disabled=true;mensagem('Carregando cadastro do GitHub…');
-  try{const r=await fetch(API,{cache:'no-store',credentials:'same-origin'});const d=await r.json();if(!r.ok)throw new Error(d.erro||`HTTP ${r.status}`);if(!Array.isArray(d.locais)||!d.sha)throw new Error('Resposta incompleta.');estado.locais=d.locais;estado.sha=d.sha;estado.alterado=false;limpar();mensagem('Cadastro carregado.','sucesso');}
+  try{const r=await fetch(API,{cache:'no-store',credentials:'same-origin'});const d=await r.json();if(!r.ok)throw new Error(d.erro||`HTTP ${r.status}`);if(!Array.isArray(d.locais)||!d.sha)throw new Error('Resposta incompleta.');estado.locais=d.locais;estado.sha=d.sha;estado.alterado=false;estado.verificacao.clear();estado.filtroErros=false;limpar();mensagem('Cadastro carregado.','sucesso');void verificarEnderecos();}
   catch(e){mensagem('Não foi possível carregar os locais: '+e.message,'erro');$('listaLocais').textContent='Confira o acesso e o arquivo data/locais.json no GitHub.';}
 }
 async function publicar(){
@@ -67,5 +129,10 @@ $('excluirLocal').addEventListener('click',()=>{const l=estado.locais.find(x=>x.
 $('fecharMensagemLocais').addEventListener('click',()=>{ $('mensagemLocais').hidden=true; });
 $('publicarLocais').addEventListener('click',publicar);
 $('buscaLocal').addEventListener('input',renderizar);
+$('verificarLocais').addEventListener('click',verificarEnderecos);
+$('filtrarErrosLocais').addEventListener('click',()=>{
+ estado.filtroErros=!estado.filtroErros;
+ renderizar();
+});
 window.addEventListener('beforeunload',e=>{if(estado.alterado||estado.formularioAlterado){e.preventDefault();e.returnValue='';}});
 carregar();

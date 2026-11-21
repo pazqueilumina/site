@@ -100,3 +100,32 @@
 #painelCsv .importacao-tabela th:nth-child(7),#painelCsv .importacao-tabela td:nth-child(7){width:120px}
 #painelCsv .importacao-tabela th:nth-child(8),#painelCsv .importacao-tabela td:nth-child(8){width:170px}
 #painelCsv .importacao-tabela th:nth-child(9),#painelCsv .importacao-tabela td:nth-child(9){width:95px;white-space:nowrap}
+
+
+/* Indicadores da Agenda com as cores dos KPIs do Dashboard. */
+.pagina-agenda .indicadores .indicador:nth-child(1){background:linear-gradient(120deg,#aed4ff,#e6f2ff);border-color:#bed9f8}
+.pagina-agenda .indicadores .indicador:nth-child(2){background:linear-gradient(120deg,#c4a8f6,#e8dcff);border-color:#d4c0f5}
+.pagina-agenda .indicadores .indicador:nth-child(3){background:linear-gradient(120deg,#ffd1a8,#ffebd9);border-color:#f7d5b6}
+.pagina-agenda .indicadores .indicador:nth-child(4){background:linear-gradient(120deg,#b5e9c6,#e2f9e9);border-color:#c1e7ce}
+.pagina-agenda .indicadores .indicador:nth-child(2) strong{color:#6b32b4}
+.pagina-agenda .indicadores .indicador:nth-child(3) strong{color:#a15c1f}
+.pagina-agenda .indicadores .indicador.pendente{background:linear-gradient(120deg,#ffe0a0,#fff2cb);border-color:#ead69d}
+.pagina-locais .indicadores-locais{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pagina-locais .indicador-verificacao{display:flex;flex-direction:column;align-items:flex-start}
+.pagina-locais .numero-erros{display:inline-flex;align-items:center;justify-content:flex-start;border:0;border-radius:6px;background:transparent;color:var(--navy);padding:0;min-height:31px;cursor:pointer}
+.pagina-locais .numero-erros:hover strong{text-decoration:underline}
+.pagina-locais .numero-erros:focus-visible,.pagina-locais .botao-verificar:focus-visible{outline:2px solid var(--navy2);outline-offset:3px}
+.pagina-locais .indicador-verificacao.tem-erros .numero-erros strong{color:#b94343}
+.pagina-locais .indicador-verificacao small{display:block;min-height:15px;color:var(--muted);font-size:11px;line-height:1.4;margin-top:3px}
+.pagina-locais .botao-verificar{margin-top:9px;padding:6px 10px;border:1px solid #c6d8e8;border-radius:7px;background:#edf3fa;color:var(--navy);font-size:11px;font-weight:700;cursor:pointer}
+.pagina-locais .botao-verificar:hover:not(:disabled){background:#dfeaf5}
+.pagina-locais .botao-verificar:disabled{opacity:.6;cursor:wait}
+.pagina-locais .indicador.pendente{background:#fff8e9;border-color:#eedcaa}
+.pagina-locais .evento.local-com-erro{box-shadow:inset 4px 0 #c94b4b;background:#fff9f8}
+.pagina-locais .evento.local-aproximado{box-shadow:inset 4px 0 #d29a37;background:#fffdf7}
+.pagina-locais .evento.local-com-erro.ativo,.pagina-locais .evento.local-aproximado.ativo{background:#eef4f7}
+.pagina-locais .local-aviso{font-size:11px;font-weight:700;margin-top:4px}
+.pagina-locais .local-aviso.erro{color:#b94343}
+.pagina-locais .local-aviso.aproximado{color:#96671e}
+.pagina-locais .local-aviso.pendente{color:#6b7785}
+@media(max-width:590px){.pagina-locais .indicadores-locais{grid-template-columns:repeat(2,minmax(0,1fr))}.pagina-locais .indicadores-locais .indicador:last-child{grid-column:span 2}}

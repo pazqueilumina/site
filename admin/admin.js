@@ -13,7 +13,8 @@ function atualizarResumo() {
   $('futuros').textContent = estado.agenda.filter(e => e.data >= hoje).length;
   $('passados').textContent = estado.agenda.filter(e => e.data < hoje).length;
   $('situacao').textContent = estado.alterado ? 'Não publicado' : 'Atualizada';
-  $('situacao').style.color = estado.alterado ? '#94691f' : '#3a795e';
+  $('situacao').style.color = estado.alterado ? '#94691f' : '#256b49';
+  $('cartaoSituacaoAgenda').classList.toggle('pendente',estado.alterado);
   $('publicar').disabled = !estado.sha || !estado.alterado;
   $('importarCsv').disabled = !estado.sha || !$('arquivoCsv').files?.length;
 }

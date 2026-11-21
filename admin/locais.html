@@ -4,9 +4,9 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
   <title>Cadastro de Locais | Estudos e Reflexões Espíritas</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=locais1"><script defer src="/admin/locais.js?v=deslocamentos20261121"></script>
+  <link rel="stylesheet" href="/admin/admin.css?v=indicadores20261121"><script defer src="/admin/locais.js?v=verificacao20261121"></script>
 </head>
-<body>
+<body class="pagina-locais">
   <header class="topo"><div class="topo-conteudo">
     <div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Área administrativa · Cadastro de Locais</span></div></div>
     <nav class="navegacao" aria-label="Navegação administrativa"><a href="/admin/dashboard.html">Dashboard</a><a href="/admin/agenda.html">Agenda</a><a href="/admin/locais.html" aria-current="page">Locais</a><a href="/admin/palestras.html">Palestras</a><a href="/">Voltar ao site</a></nav>
@@ -14,7 +14,16 @@
   <main class="container">
     <div class="intro"><div><p class="sobretitulo">PAINEL DE CONTROLE</p><h1>Cadastro de Centros e Locais</h1><p>Cadastre instituições e endereços. Depois de publicar, os eventos presenciais vinculados passam a exibir automaticamente o endereço atualizado. Eventos on-line e endereços específicos de eventos são preservados.</p></div><button type="button" id="publicarLocais" class="botao principal" disabled>Publicar alterações</button></div>
     <div id="mensagemLocais" class="mensagem" role="status" aria-live="polite"><span id="mensagemTexto">Carregando locais…</span><button id="fecharMensagemLocais" type="button" class="fechar-mensagem" aria-label="Fechar mensagem" title="Fechar mensagem">×</button></div>
-    <div class="indicadores"><div class="indicador"><span>Locais cadastrados</span><strong id="totalLocais">—</strong></div><div class="indicador"><span>Situação</span><strong id="situacaoLocais" class="situacao">Carregando</strong></div></div>
+    <div class="indicadores indicadores-locais" aria-label="Resumo dos locais">
+      <div class="indicador"><span>Locais cadastrados</span><strong id="totalLocais">—</strong></div>
+      <div class="indicador indicador-verificacao" id="cartaoErrosLocais">
+        <span>Endereços com erro</span>
+        <button type="button" id="filtrarErrosLocais" class="numero-erros" aria-pressed="false" title="Mostrar somente os endereços com erro"><strong id="errosLocais">—</strong></button>
+        <small id="statusVerificacaoLocais" aria-live="polite">Aguardando verificação</small>
+        <button type="button" id="verificarLocais" class="botao-verificar" disabled>Verificar endereços</button>
+      </div>
+      <div class="indicador" id="cartaoSituacaoLocais"><span>Situação</span><strong id="situacaoLocais" class="situacao">Carregando</strong></div>
+    </div>
     <div class="painel">
       <section class="cartao lista"><div class="cartao-cabecalho"><div><h2>Centros e locais</h2><p>Selecione um local para editar.</p></div><button type="button" id="novoLocal" class="botao secundario">+ Novo local</button></div><div class="filtros"><label class="campo-busca"><span class="sr-only">Buscar locais</span><input id="buscaLocal" type="search" placeholder="Buscar por nome, bairro ou cidade…"></label></div><div id="listaLocais" class="lista-eventos"><p class="vazio">Carregando…</p></div></section>
       <section class="cartao editor"><div class="cartao-cabecalho"><div><h2 id="tituloEditorLocal">Novo local</h2><p>Campos com * são obrigatórios.</p></div></div>
