@@ -1,24 +1,100 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin"><title>Dashboard | Administração — Paz que Ilumina</title>
-<link rel="stylesheet" href="/admin/admin.css?v=bairro1"><link rel="stylesheet" href="/admin/dashboard.css?v=1"><script defer src="/admin/dashboard.js?v=1"></script></head>
-<body><header class="topo"><div class="topo-conteudo"><div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Administração · Dashboard</span></div></div>
-<nav class="navegacao" aria-label="Navegação administrativa"><a href="/admin/dashboard.html" aria-current="page">Dashboard</a><a href="/admin/agenda.html">Agenda</a><a href="/admin/locais.html">Locais</a><a href="/admin/palestras.html">Palestras</a><a href="/">Voltar ao site</a></nav></div></header>
-<main class="container dash"><div class="dash-hero"><div><p class="sobretitulo">PAINEL ADMINISTRATIVO</p><h1>Visão geral do Paz que Ilumina</h1><p>Acervo, agenda e pendências com dados reais dos cadastros.</p></div><button type="button" id="atualizar" class="botao secundario">↻ Atualizar dados</button></div>
-<div id="aviso" class="dash-aviso" role="status" aria-live="polite">Carregando dados do acervo…</div>
-<section class="dash-kpis" aria-label="Indicadores do acervo">
-<div class="dash-kpi"><span>Apresentações cadastradas</span><strong id="kPalestras">—</strong><small>Cadastro de palestras</small></div>
-<div class="dash-kpi"><span>Com vídeo</span><strong id="kVideos">—</strong><small>YouTube vinculado</small></div>
-<div class="dash-kpi"><span>Com áudio</span><strong id="kAudios">—</strong><small>MP3 vinculado</small></div>
-<div class="dash-kpi"><span>Com PDF</span><strong id="kPdfs">—</strong><small>Slides disponíveis</small></div>
-<div class="dash-kpi"><span>Eventos futuros</span><strong id="kEventos">—</strong><small>Inclui eventos de hoje</small></div>
-<div class="dash-kpi"><span>Centros e locais</span><strong id="kLocais">—</strong><small>Cadastro de locais</small></div>
-</section>
-<div class="dash-grid">
-<section class="dash-panel dash-wide"><div class="dash-head"><div><h2>Integridade do acervo</h2><p>Campos ausentes no cadastro. Não representam links quebrados verificados.</p></div><a href="/admin/palestras.html">Gerenciar palestras →</a></div><div id="integridade" class="dash-barras"><p class="dash-muted">Carregando…</p></div></section>
-<section class="dash-panel"><div class="dash-head"><div><h2>Pendências</h2><p>Itens que merecem revisão</p></div></div><div id="pendencias" class="dash-lista"><p class="dash-muted">Carregando…</p></div></section>
-<section class="dash-panel"><div class="dash-head"><div><h2>Próximos eventos</h2><p>Agenda cadastrada</p></div><a href="/admin/agenda.html">Ver agenda →</a></div><div id="eventos" class="dash-lista"><p class="dash-muted">Carregando…</p></div></section>
-<section class="dash-panel"><div class="dash-head"><div><h2>Últimas apresentações</h2><p>Ordenadas pela data cadastrada</p></div><a href="/admin/palestras.html">Abrir acervo →</a></div><div id="recentes" class="dash-lista"><p class="dash-muted">Carregando…</p></div></section>
-<section class="dash-panel dash-wide"><div class="dash-head"><div><h2>Audiência do site</h2><p>Visitantes, visualizações, países e conteúdos populares</p></div></div><div class="dash-indisponivel"><strong>Integração de métricas ainda não configurada</strong><p>Para exibir estatísticas reais, será necessário conectar o Cloudflare Web Analytics ou outra fonte de audiência. O painel não estima acessos nem confunde visualizações do YouTube com visitas ao site.</p></div></section>
-<section class="dash-panel"><div class="dash-head"><div><h2>Atividades recentes</h2><p>Histórico de alterações administrativas</p></div></div><div class="dash-indisponivel"><strong>Histórico ainda não disponível</strong><p>Os cadastros atuais não registram quem alterou cada item e quando. Podemos adicionar um registro de auditoria em uma próxima etapa.</p></div></section>
-<section class="dash-panel"><div class="dash-head"><div><h2>Ações rápidas</h2><p>Acesse os editores existentes</p></div></div><div class="dash-acoes"><a href="/admin/palestras.html">＋ Gerenciar apresentações</a><a href="/admin/agenda.html">＋ Gerenciar eventos</a><a href="/admin/locais.html">＋ Gerenciar centros</a><a href="/">↗ Visualizar o site</a></div></section>
-</div><p class="rodape">Dashboard somente leitura. Nenhum cadastro é modificado por esta página. Acesso administrativo protegido pelo Cloudflare Access.</p></main></body></html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
+<title>Dashboard | Paz que Ilumina</title>
+<link rel="stylesheet" href="/admin/dashboard.css?v=visual2">
+<script defer src="/js/dados.js?v=dashboardvisual2"></script>
+<script defer src="/admin/dashboard.js?v=visual2"></script>
+</head>
+<body>
+<svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-8h6v8"/></symbol>
+ <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"/></symbol>
+ <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></symbol>
+ <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></symbol>
+ <symbol id="i-presentation" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="13" rx="1"/><path d="M12 16v5m-5 0 5-5 5 5m-9-10h8"/></symbol>
+ <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14v-2a9 9 0 0 1 18 0v2M3 14v5a2 2 0 0 0 2 2h2v-8H5a2 2 0 0 0-2 2Zm18 0v5a2 2 0 0 1-2 2h-2v-8h2a2 2 0 0 1 2 2Z"/></symbol>
+ <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Zm0 0v14"/></symbol>
+ <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></symbol>
+ <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10m5 10V4m5 16v-8m5 8V7M2 21h20"/></symbol>
+ <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 0v6h5M8 13h8m-8 4h8"/></symbol>
+ <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"/></symbol>
+ <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+ <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2Zm12-15a3 3 0 0 1 0 6m2 3a5 5 0 0 1 4 5v1h-4"/></symbol>
+ <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a16 16 0 0 1 0 20M12 2a16 16 0 0 0 0 20"/></symbol>
+ <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10 3a2 2 0 0 1 4 0l9 16a2 2 0 0 1-2 3H3a2 2 0 0 1-2-3zM12 9v5m0 4h.01"/></symbol>
+ <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+ <symbol id="i-bolt" viewBox="0 0 24 24"><path d="m13 2-9 11h7l-1 9 10-12h-7z"/></symbol>
+ <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 16v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
+ <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M5 9a8 8 0 0 1 14-2l1 5M4 12l1 5a8 8 0 0 0 14-2"/></symbol>
+ <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m7 12 3 3 7-7"/></symbol>
+ <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+ <symbol id="i-external" viewBox="0 0 24 24"><path d="M13 5h6v6m0-6-9 9M19 13v6H5V5h6"/></symbol>
+ <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+</svg>
+<div class="dash-shell">
+<aside class="dash-sidebar" aria-label="Menu administrativo">
+ <a href="/admin/dashboard.html" class="dash-brand" aria-label="Paz que Ilumina — Dashboard">
+  <svg class="dove" viewBox="0 0 88 56" fill="none" aria-hidden="true"><path d="M11 9c9 5 13 15 24 16C28 17 26 9 27 3c9 6 16 15 18 23 5-5 7-10 8-19 7 9 5 16 1 23 8-3 15-9 23-9-6 9-13 15-26 18-8 6-16 10-26 8 7-3 13-7 16-12-14 1-23-7-30-26Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M49 37c8 4 14 2 22-2M45 42c-2 5-5 8-9 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  <span>Paz que<br>Ilumina</span>
+ </a>
+ <nav class="dash-nav">
+  <a class="nav-link selected" href="/admin/dashboard.html"><svg><use href="#i-home"/></svg>Dashboard</a>
+  <button class="nav-link nav-expand" type="button" id="acervoToggle" aria-expanded="true" aria-controls="subAcervo"><svg><use href="#i-layers"/></svg>Acervo<svg class="chev"><use href="#i-chevron"/></svg></button>
+  <div class="nav-sub" id="subAcervo">
+   <a href="/videos.html"><svg><use href="#i-video"/></svg>Vídeos</a>
+   <a href="/admin/palestras.html"><svg><use href="#i-presentation"/></svg>Apresentações</a>
+   <a href="/audios.html"><svg><use href="#i-headphones"/></svg>Áudios</a>
+   <a href="/livro.html"><svg><use href="#i-book"/></svg>Livro</a>
+  </div>
+  <a class="nav-link" href="/admin/agenda.html"><svg><use href="#i-calendar"/></svg>Eventos</a>
+  <a class="nav-link" href="#estatisticas"><svg><use href="#i-chart"/></svg>Estatísticas</a>
+  <a class="nav-link" href="#relatorios"><svg><use href="#i-file"/></svg>Relatórios</a>
+  <a class="nav-link" href="/admin/locais.html"><svg><use href="#i-settings"/></svg>Configurações</a>
+  <a class="nav-link nav-return" href="/"><svg><use href="#i-external"/></svg>Voltar ao site</a>
+ </nav>
+ <div class="dash-sidebar-foot"><div class="online"><svg><use href="#i-check"/></svg><span id="siteStatus">Verificando dados</span></div><p>Última atualização<br><span id="lastUpdate">—</span></p></div>
+</aside>
+<div class="dash-main">
+ <header class="dash-banner">
+  <div class="mountains" aria-hidden="true"></div><div class="sunlight" aria-hidden="true"></div>
+  <div class="dash-welcome"><h1>Olá, André!</h1><p>Visão geral do site Paz que Ilumina</p></div>
+  <div class="dash-controls"><label class="sr-only" for="periodo">Período dos indicadores</label><svg><use href="#i-calendar"/></svg><select id="periodo"><option value="7">Últimos 7 dias</option><option value="30" selected>Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option></select></div>
+ </header>
+ <main class="dash-content">
+  <section class="kpi-strip" aria-label="Indicadores principais">
+   <article class="kpi kpi-blue"><div class="kpi-icon"><svg><use href="#i-users"/></svg></div><div class="kpi-info"><h2>Visitantes</h2><strong id="kVisitantes">—</strong><small id="sVisitantes">Integração pendente</small></div></article>
+   <article class="kpi kpi-sky"><div class="kpi-icon"><svg><use href="#i-eye"/></svg></div><div class="kpi-info"><h2>Acessos</h2><strong id="kAcessos">—</strong><small id="sAcessos">Integração pendente</small></div></article>
+   <article class="kpi kpi-purple"><div class="kpi-icon"><svg><use href="#i-play"/></svg></div><div class="kpi-info"><h2>Vídeos (Shorts)</h2><strong id="kVideos">—</strong><small id="sVideos">No canal</small></div></article>
+   <article class="kpi kpi-green"><div class="kpi-icon"><svg><use href="#i-presentation"/></svg></div><div class="kpi-info"><h2>Apresentações</h2><strong id="kPalestras">—</strong><small id="sPalestras">No acervo</small></div></article>
+   <article class="kpi kpi-orange"><div class="kpi-icon"><svg><use href="#i-headphones"/></svg></div><div class="kpi-info"><h2>Áudios</h2><strong id="kAudios">—</strong><small id="sAudios">MP3 vinculados</small></div></article>
+   <article class="kpi kpi-yellow"><div class="kpi-icon"><svg><use href="#i-book"/></svg></div><div class="kpi-info"><h2>Slides (PDF)</h2><strong id="kPdfs">—</strong><small id="sPdfs">PDFs vinculados</small></div></article>
+  </section>
+  <div id="aviso" class="status-banner" role="status" aria-live="polite" hidden><span id="avisoTexto"></span><button type="button" id="fecharAviso" aria-label="Fechar aviso">×</button></div>
+  <section class="dashboard-grid top-grid" id="estatisticas" aria-label="Estatísticas e acervo">
+   <article class="widget widget-chart"><h2><svg><use href="#i-chart"/></svg>Evolução do acervo</h2><p class="widget-subtitle">Apresentações acumuladas no período selecionado</p><div id="chartAcervo" class="chart-container"><span class="loading-text">Carregando…</span></div></article>
+   <article class="widget widget-donut"><h2><svg><use href="#i-layers"/></svg>Acervo por tipo de conteúdo</h2><div class="donut-layout"><div class="donut" id="donut" role="img" aria-label="Distribuição dos materiais cadastrados"><div class="donut-hole"><strong id="donutTotal">—</strong><span>Itens</span></div></div><div class="donut-legend" id="donutLegend"><span class="loading-text">Carregando…</span></div></div></article>
+   <article class="widget widget-countries"><h2><svg><use href="#i-globe"/></svg>Visitantes</h2><div class="countries-empty"><svg><use href="#i-globe"/></svg><strong>Origem dos visitantes</strong><p>Dados por país disponíveis após integrar as estatísticas de audiência.</p></div></article>
+  </section>
+  <section class="dashboard-grid middle-grid" aria-label="Conteúdo e acompanhamento">
+   <article class="widget"><h2><svg><use href="#i-video"/></svg>Conteúdos recentes</h2><div id="recentes" class="content-list"><span class="loading-text">Carregando…</span></div><a class="widget-bottom-link" href="/admin/palestras.html">Ver todo o acervo →</a></article>
+   <article class="widget"><h2><svg><use href="#i-clock"/></svg>Atividades recentes</h2><div id="atividades" class="activity-list"><span class="loading-text">Carregando…</span></div></article>
+   <article class="widget widget-alerts"><h2><svg><use href="#i-alert"/></svg>Pendências</h2><div id="pendencias" class="alerts-list"><span class="loading-text">Carregando…</span></div></article>
+  </section>
+  <section class="dashboard-grid bottom-grid" id="relatorios" aria-label="Agenda, relatórios e ações">
+   <article class="widget"><h2><svg><use href="#i-calendar"/></svg>Próximos eventos</h2><div id="eventos" class="event-list"><span class="loading-text">Carregando…</span></div><a class="widget-bottom-link" href="/admin/agenda.html">Ver agenda completa →</a></article>
+   <article class="widget"><h2><svg><use href="#i-layers"/></svg>Resumo do acervo</h2><div class="table-scroll"><table class="summary-table"><thead><tr><th>Tipo</th><th>Total</th><th>Novos*</th></tr></thead><tbody id="resumo"><tr><td colspan="3">Carregando…</td></tr></tbody></table></div><p class="summary-foot">* No período, quando há data cadastrada.</p></article>
+   <article class="widget widget-actions"><h2><svg><use href="#i-bolt"/></svg>Ações rápidas</h2><div class="quick-actions">
+    <a href="/admin/palestras.html"><svg class="blue"><use href="#i-upload"/></svg><span>Adicionar<br>vídeo</span></a>
+    <a href="/admin/palestras.html"><svg class="green"><use href="#i-presentation"/></svg><span>Adicionar<br>apresentação</span></a>
+    <a href="/admin/palestras.html"><svg class="purple"><use href="#i-headphones"/></svg><span>Vincular<br>áudio</span></a>
+    <a href="/livro.html"><svg class="orange"><use href="#i-book"/></svg><span>Ver<br>livro</span></a>
+    <a href="/admin/agenda.html"><svg class="blue"><use href="#i-calendar"/></svg><span>Novo<br>evento</span></a>
+   </div></article>
+  </section>
+  <footer class="dash-footer">Painel administrativo · Dados do acervo em tempo real · Métricas de audiência aguardam integração <button type="button" id="atualizar" title="Atualizar dados"><svg><use href="#i-refresh"/></svg> Atualizar</button></footer>
+ </main>
+</div></div>
+</body></html>
