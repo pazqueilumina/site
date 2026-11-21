@@ -4,9 +4,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard | Paz que Ilumina</title>
-<link rel="stylesheet" href="/admin/dashboard.css?v=visual2">
+<link rel="stylesheet" href="/admin/dashboard.css?v=periodo-refresh4">
 <script defer src="/js/dados.js?v=dashboardvisual2"></script>
-<script defer src="/admin/dashboard.js?v=visual2"></script>
+<script defer src="/admin/dashboard.js?v=periodo-refresh4"></script>
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -61,9 +61,9 @@
  <header class="dash-banner">
   <div class="mountains" aria-hidden="true"></div><div class="sunlight" aria-hidden="true"></div>
   <div class="dash-welcome"><h1>Olá, André!</h1><p>Visão geral do site Paz que Ilumina</p></div>
-  <div class="dash-controls"><label class="sr-only" for="periodo">Período dos indicadores</label><svg><use href="#i-calendar"/></svg><select id="periodo"><option value="7">Últimos 7 dias</option><option value="30" selected>Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option></select></div>
+  <div class="dash-filter-row"><div class="dash-controls"><label class="sr-only" for="periodo">Período dos indicadores</label><svg><use href="#i-calendar"/></svg><select id="periodo"><option value="7">Últimos 7 dias</option><option value="30" selected>Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="month">Mês específico…</option></select></div><div class="month-controls" id="monthControls" hidden><label class="sr-only" for="mesEspecifico">Mês</label><select id="mesEspecifico" aria-label="Mês específico"></select><label class="sr-only" for="anoEspecifico">Ano</label><select id="anoEspecifico" aria-label="Ano específico"></select><button type="button" id="aplicarMes">Aplicar</button></div></div>
  </header>
- <main class="dash-content">
+ <main class="dash-content" id="dashMainContent">
   <section class="kpi-strip" aria-label="Indicadores principais">
    <article class="kpi kpi-blue"><div class="kpi-icon"><svg><use href="#i-users"/></svg></div><div class="kpi-info"><h2>Visitantes</h2><strong id="kVisitantes">—</strong><small id="sVisitantes">Integração pendente</small></div></article>
    <article class="kpi kpi-sky"><div class="kpi-icon"><svg><use href="#i-eye"/></svg></div><div class="kpi-info"><h2>Acessos</h2><strong id="kAcessos">—</strong><small id="sAcessos">Integração pendente</small></div></article>
@@ -74,7 +74,7 @@
   </section>
   <div id="aviso" class="status-banner" role="status" aria-live="polite" hidden><span id="avisoTexto"></span><button type="button" id="fecharAviso" aria-label="Fechar aviso">×</button></div>
   <section class="dashboard-grid top-grid" id="estatisticas" aria-label="Estatísticas e acervo">
-   <article class="widget widget-chart"><h2><svg><use href="#i-chart"/></svg>Evolução do acervo</h2><p class="widget-subtitle">Apresentações acumuladas no período selecionado</p><div id="chartAcervo" class="chart-container"><span class="loading-text">Carregando…</span></div></article>
+   <article class="widget widget-chart"><h2><svg><use href="#i-chart"/></svg>Evolução do acervo</h2><p class="widget-subtitle" id="chartRangeText">Apresentações acumuladas no período selecionado</p><div id="chartAcervo" class="chart-container"><span class="loading-text">Carregando…</span></div></article>
    <article class="widget widget-donut"><h2><svg><use href="#i-layers"/></svg>Acervo por tipo de conteúdo</h2><div class="donut-layout"><div class="donut" id="donut" role="img" aria-label="Distribuição dos materiais cadastrados"><div class="donut-hole"><strong id="donutTotal">—</strong><span>Itens</span></div></div><div class="donut-legend" id="donutLegend"><span class="loading-text">Carregando…</span></div></div></article>
    <article class="widget widget-countries"><h2><svg><use href="#i-globe"/></svg>Visitantes</h2><div class="countries-empty"><svg><use href="#i-globe"/></svg><strong>Origem dos visitantes</strong><p>Dados por país disponíveis após integrar as estatísticas de audiência.</p></div></article>
   </section>
@@ -94,7 +94,7 @@
     <a href="/admin/agenda.html"><svg class="blue"><use href="#i-calendar"/></svg><span>Novo<br>evento</span></a>
    </div></article>
   </section>
-  <footer class="dash-footer">Painel administrativo · Dados do acervo em tempo real · Métricas de audiência aguardam integração <button type="button" id="atualizar" title="Atualizar dados"><svg><use href="#i-refresh"/></svg> Atualizar</button></footer>
+  <footer class="dash-footer">Painel administrativo · Dados do acervo em tempo real · Métricas de audiência aguardam integração <span id="refreshFeedback" class="sr-only" role="status" aria-live="polite"></span><button type="button" id="atualizar" title="Atualizar dados"><svg id="refreshIcon"><use href="#i-refresh"/></svg><span id="refreshLabel">Atualizar</span></button></footer>
  </main>
 </div></div>
 </body></html>
