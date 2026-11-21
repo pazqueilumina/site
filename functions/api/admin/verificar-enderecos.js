@@ -32,9 +32,11 @@ export async function onRequestPost({request}){
   const motivo=point.manual?'Coordenadas informadas manualmente; endereço não verificado.':
    point.link?'Coordenadas extraídas do link do Google Maps; confira o ponto no mapa.':
    point.interpolado?'Número correspondente, mas posição estimada pelo ArcGIS.':
+   point.nomeLocalizado&&point.aproximado?'Instituição localizada pelo nome; número do imóvel não confirmado.':
    point.aproximado?'Rua localizada; número não confirmado.':
+   point.nomeLocalizado?'Instituição e número localizados no OpenStreetMap.':
    'Número correspondente localizado por '+(point.fonte||'serviço de mapas')+'.';
-  return json({id:local.id,status,motivo,fonte:point.fonte||'',
+  return json({id:local.id,status,motivo,fonte:point.fonte||'',nomeLocalizado:!!point.nomeLocalizado,
    ...(Number.isFinite(point.lat)&&Number.isFinite(point.lon)?{latitude:point.lat,longitude:point.lon}:{})});
  }catch(e){
   const msg=String(e?.message||'Falha na consulta.');
