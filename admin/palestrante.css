@@ -166,4 +166,14 @@
 .speaker-calendar-day.status-today .speaker-calendar-day-number,.speaker-calendar-day.status-today .speaker-calendar-talk-time{color:#7048ab}
 .speaker-calendar-day.status-future .speaker-calendar-day-number,.speaker-calendar-day.status-future .speaker-calendar-talk-time{color:#285fa5}
 .speaker-calendar-talk{background:rgba(255,255,255,.55)}
-.speaker-bar-value{font-size:10px;font-weight:700;fill:#304c70}
+.speaker-chart svg text.speaker-bar-value{font-size:11px;font-weight:800}
+.speaker-chart svg text.speaker-bar-value.count{fill:#3679d2}
+.speaker-chart svg text.speaker-bar-value.hours{fill:#8b6ad5}
+.compare-summary-lines{display:flex;flex-direction:column;gap:4px;margin-top:7px}
+.compare-summary .compare-summary-line{margin:0;font-size:12px;line-height:1.6;color:#345477}
+.compare-summary .compare-summary-label{font-weight:700;color:#1a3a68}
+.compare-summary .compare-summary-value{font-size:12px;font-weight:800;color:#1a3a68}
+.compare-summary .compare-delta{font-size:12px;font-weight:800}
+.compare-summary .compare-delta.negative,.compare-kpi-row small.compare-delta-count.negative{color:#c4383d;font-weight:800}
+.compare-summary .compare-delta.positive,.compare-kpi-row small.compare-delta-count.positive{color:#168057;font-weight:800}
+.compare-summary .compare-delta.neutral,.compare-kpi-row small.compare-delta-count.neutral{color:#416389;font-weight:800}

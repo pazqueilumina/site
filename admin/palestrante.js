@@ -7,6 +7,8 @@ const fmtDate=s=>{const d=date(s);return d?shortDate(d):'Sem data';};
 const fmtMonthYear=(d,month='long')=>d.toLocaleDateString('pt-BR',{month,year:'numeric'}).replace(/\s+de\s+/gi,' ').replace(/\./g,'');
 const duration=s=>{const p=String(s||'').split(':').map(Number);if(!p.length||p.some(n=>!Number.isFinite(n)||n<0)||p.length<2||p.length>3)return null;return p.length===3?p[0]*3600+p[1]*60+p[2]:p[0]*60+p[1];};
 const hm=seconds=>{if(seconds==null)return '—';const m=Math.round(seconds/60),h=Math.floor(m/60);return h?nf(h)+'h'+pad(m%60)+'min':nf(m)+'min';};
+const chartTime=seconds=>{const m=Math.round(seconds/60),h=Math.floor(m/60);return h?nf(h)+'h'+(m%60?pad(m%60):''):nf(m)+'min';};
+const agendaTime=hour=>{const m=/^(\d{2}):(\d{2})$/.exec(hour||'');return m?Number(m[1])+'h'+(m[2]==='00'?'':m[2]+'min'):hour;};
 const el=(tag,text,cls)=>{const x=document.createElement(tag);if(text!=null)x.textContent=text;if(cls)x.className=cls;return x;};
 const set=(id,value)=>$(id).textContent=value;
 const empty=(host,msg)=>host.append(el('p',msg,'speaker-empty'));
@@ -195,7 +197,7 @@ function chart(id,items,field){
   const height=v/max*(h-T-B),barWidth=Math.min(42,bw*.64),x=L+i*bw+(bw-barWidth)/2,y=h-B-height;
   const rect=node('rect',{x,y,width:barWidth,height:Math.max(0,height),rx:Math.min(4,barWidth*.15),class:field==='count'?'bar':'bar-alt'});
   const title=document.createElementNS('http://www.w3.org/2000/svg','title');title.textContent=bins[i].fullLabel+': '+nf(bins[i].count)+' palestra(s) · '+(bins[i].known?hm(bins[i].seconds):'duração não registrada')+(bins[i].estimated?' · inclui data estimada':'');rect.append(title);
-  if(v>0)node('text',{x:x+barWidth/2,y:Math.max(31,y-5),'text-anchor':'middle',class:'speaker-bar-value'},field==='count'?String(bins[i].count):hm(bins[i].seconds));
+  if(v>0)node('text',{x:x+barWidth/2,y:Math.max(T-2,y-2),'text-anchor':'middle',class:'speaker-bar-value '+(field==='count'?'count':'hours')},field==='count'?String(bins[i].count):chartTime(bins[i].seconds));
   if(i%skip===0||i===bins.length-1)node('text',{x:x+barWidth/2,y:h-15,'text-anchor':'middle'},bins[i].label+(bins[i].estimated?'*':''));
  });
  host.append(svg);
@@ -237,6 +239,7 @@ function comparison(){
  set('cmpPeriod',currentLabel+' × '+previousLabel);
  set('cmpPercent',pct===null?'—':signed(pct)+Math.abs(pct).toFixed(1).replace('.',',')+'%');
  set('cmpDeltaCount',p?change(diff)+' palestra'+(Math.abs(diff)===1?'':'s'):'Sem base anterior');
+ $('cmpDeltaCount').className='compare-delta-count '+(!p?'neutral':diff<0?'negative':diff>0?'positive':'neutral');
  set('cmpCountNow',nf(n));set('cmpCountPrev',nf(p));
  set('cmpTimeDelta',timeComparable?signed(secDiff)+hm(Math.abs(secDiff)):'—');
  set('cmpTimeNow',durationLabel(current));set('cmpTimePrev',durationLabel(previous));
@@ -251,11 +254,29 @@ function comparison(){
   $('cmp'+prefix+'Plot').setAttribute('aria-label',previousLabel+': '+formatter(oldValue)+'; '+currentLabel+': '+formatter(newValue));
  };
  bars('Count',p,n,nf);bars('Time',prevSecs,secs,hm);
- const countText=p?(diff===0?'a mesma quantidade de palestras':diff>0?nf(diff)+' palestra'+(diff===1?'':'s')+' a mais':nf(-diff)+' palestra'+(-diff===1?'':'s')+' a menos'):'não há palestras anteriores para calcular crescimento';
- const pctText=p?', variação de '+signed(pct)+Math.abs(pct).toFixed(1).replace('.',',')+'%':'';
- const timeText=timeComparable?(secDiff===0?'sem alteração na duração total':secDiff>0?'aumento de '+hm(secDiff)+' na duração total':'redução de '+hm(-secDiff)+' na duração total'):'sem base suficiente para comparar a duração';
- const summary=currentLabel+': '+nf(n)+' palestra'+(n===1?'':'s')+' e '+durationLabel(current)+' de duração registrada. '+previousLabel+': '+nf(p)+' palestra'+(p===1?'':'s')+'. Resultado: '+countText+pctText+'; '+timeText+'.';
- set('cmpSummary',summary);
+ const tone=value=>value<0?'negative':value>0?'positive':'neutral';
+ const summaryHost=clear('cmpSummary');
+ const summaryLine=(label,period,value)=>{
+  const row=el('p',null,'compare-summary-line');
+  row.append(el('span',label,'compare-summary-label'),document.createTextNode(' '+period+' — '),el('strong',value,'compare-summary-value'));
+  return row;
+ };
+ summaryHost.append(summaryLine('Período atual:',currentLabel,nf(n)+' palestra'+(n===1?'':'s')+' · '+durationLabel(current)));
+ summaryHost.append(summaryLine('Período anterior:',previousLabel,nf(p)+' palestra'+(p===1?'':'s')));
+ const variation=el('p',null,'compare-summary-line');
+ variation.append(el('span','Variação:','compare-summary-label'),document.createTextNode(' '));
+ if(p){
+  variation.append(el('strong',change(diff)+' palestra'+(Math.abs(diff)===1?'':'s'),'compare-delta '+tone(diff)));
+  variation.append(document.createTextNode(' ('));
+  variation.append(el('strong',signed(pct)+Math.abs(pct).toFixed(1).replace('.',',')+'%','compare-delta '+tone(pct)));
+  variation.append(document.createTextNode(')'));
+ }else variation.append(el('strong','Sem base anterior','compare-delta neutral'));
+ variation.append(document.createTextNode(' · '));
+ if(timeComparable){
+  variation.append(el('strong',signed(secDiff)+hm(Math.abs(secDiff)),'compare-delta '+tone(secDiff)));
+  variation.append(document.createTextNode(' de duração'));
+ }else variation.append(el('span','Duração sem base de comparação','compare-delta neutral'));
+ summaryHost.append(variation);
  const caveats=[];
  if(k==='all')caveats.push('No histórico completo, a comparação utiliza o último mês com palestras e o mês anterior.');
  if(k==='month'&&first<=now&&now<=last)caveats.push('Mês em andamento: comparação parcial com o mês anterior completo.');
@@ -356,9 +377,9 @@ function calendar(){
   if(events){
    for(const p of [...events].sort((a,b)=>a.horario.localeCompare(b.horario)||a.titulo.localeCompare(b.titulo,'pt-BR'))){
     const talk=el('div',null,'speaker-calendar-talk');
-    talk.append(el('strong',p.horario.replace(':','h'),'speaker-calendar-talk-time'));
+    talk.append(el('strong',agendaTime(p.horario),'speaker-calendar-talk-time'));
     talk.append(el('span',p.local,'speaker-calendar-talk-place'));
-    talk.title=p.horario+' · '+p.local+' · '+tituloFraseApresentacao(p.titulo);
+    talk.title=agendaTime(p.horario)+' · '+p.local+' · '+tituloFraseApresentacao(p.titulo);
     cell.append(talk);
    }
    cell.title=events.length+' evento(s) em '+fmtDate(dayIso);
