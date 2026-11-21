@@ -63,7 +63,8 @@ const knownSeconds=items=>items.filter(p=>p.seconds!==null);
 const total=items=>knownSeconds(items).length?hm(seconds(items)):'—';
 const unique=(items,key)=>new Set(items.map(p=>p[key]).filter(Boolean)).size;
 const hasCentre=p=>!!p.centroId;
-const centreName=p=>p.localAgenda||(!p.centroId?'Centro Espírita não informado':p.centroId==='youtube'?'YouTube (online)':places.get(p.centroId)||p.centroId);
+const displayPlatform=s=>String(s||'').replace(/you\s*tube/gi,'You Tube').replace(/\b(You Tube|Instagram)\s*\(online\)/gi,'$1');
+const centreName=p=>displayPlatform(p.localAgenda||(!p.centroId?'Centro Espírita não informado':p.centroId==='youtube'?'You Tube':places.get(p.centroId)||p.centroId));
 function countBy(items,key){const m=new Map();for(const p of items){const k=typeof key==='function'?key(p):p[key];m.set(k,(m.get(k)||0)+1);}return [...m.entries()].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'pt-BR'));}
 function setNotice(msg){$('avisoTexto').textContent=msg;$('aviso').hidden=false;}
 function initFilters(){
@@ -91,7 +92,7 @@ function centreRanking(items){
  const host=clear('centros'),known=items.filter(hasCentre),groups=new Map();
  for(const p of known){
   const id=p.centroId;
-  if(!groups.has(id))groups.set(id,{id,name:id==='youtube'?'YouTube (online)':places.get(id)||id,n:0,seconds:0,knownTime:0,last:null,approx:false});
+  if(!groups.has(id))groups.set(id,{id,name:id==='youtube'?'You Tube':places.get(id)||id,n:0,seconds:0,knownTime:0,last:null,approx:false});
   const g=groups.get(id);g.n++;g.seconds+=p.seconds||0;if(p.seconds!==null)g.knownTime++;
   if(p.when&&(!g.last||p.when>g.last)){g.last=p.when;g.approx=p.approx;}
  }
@@ -99,11 +100,11 @@ function centreRanking(items){
  const details=g=>{
   const meta=el('div',null,'speaker-centre-meta');
   meta.append(el('span',g.knownTime?hm(g.seconds)+' de palestras':'Tempo não informado'));
-  if(ranking.length>1)meta.append(el('span',(100*g.n/known.length).toFixed(1).replace('.',',')+'% das palestras com Centro Espírita ou YouTube identificado'));
+  if(ranking.length>1)meta.append(el('span',(100*g.n/known.length).toFixed(1).replace('.',',')+'% das palestras com Centro Espírita ou You Tube identificado'));
   if(g.last)meta.append(el('span','Última data: '+fmtDate(iso(g.last))+(g.approx?' (estimada)':'')));
   return meta;
  };
- if(!ranking.length)empty(host,'Ainda não há Centros Espíritas ou YouTube identificados neste período.');
+ if(!ranking.length)empty(host,'Ainda não há Centros Espíritas ou You Tube identificados neste período.');
  else{
   const top=ranking[0],feature=el('div',null,'speaker-centre-feature');
   feature.append(el('span',ranking.length===1?'Centro Espírita identificado no período':'Centro Espírita mais visitado','speaker-centre-feature-label'));
@@ -111,7 +112,7 @@ function centreRanking(items){
   feature.append(el('strong',nf(top.n)+' palestra'+(top.n===1?'':'s'),'speaker-centre-feature-count'));
   feature.append(details(top));host.append(feature);
   if(ranking.length>1){
-   host.append(el('h3','Outros Centros Espíritas e YouTube','speaker-centre-rank-title'));
+   host.append(el('h3','Outros Centros Espíritas e You Tube','speaker-centre-rank-title'));
    for(const g of ranking.slice(1,7)){
     const card=el('div',null,'speaker-centre-entry'),heading=el('div',null,'speaker-centre-heading');
     heading.append(el('strong',g.name),el('span',nf(g.n)+' palestra'+(g.n===1?'':'s')));
@@ -122,7 +123,7 @@ function centreRanking(items){
   }
  }
  const missing=items.filter(p=>!p.centroId).length;
- if(missing)host.append(el('p',nf(missing)+' palestra'+(missing===1?'':'s')+' sem Centro Espírita informado. A análise considera os Centros Espíritas e o YouTube identificados.','speaker-centre-note'));
+ if(missing)host.append(el('p',nf(missing)+' palestra'+(missing===1?'':'s')+' sem Centro Espírita informado. A análise considera os Centros Espíritas e o You Tube identificados.','speaker-centre-note'));
 }
 function donut(items){
  const host=clear('temas'),entries=countBy(items,topicLabel);
@@ -348,7 +349,7 @@ function highlights(items){
  const peakLabel=peakDate?fmtMonthYear(peakDate):'Sem data informada';
  const cards=[
   {icon:'i-layers',tone:'violet',label:'Tema mais abordado',value:topics.length?nf(topics[0][1]):'—',name:topics.length?topics[0][0]:'Nenhum tema informado',detail:'palestras sobre este assunto'},
-  {icon:'i-map-pin',tone:'mint',label:'Centro Espírita mais visitado',value:centres.length?nf(centres[0][1]):'—',name:centres.length?centres[0][0]:'Nenhum Centro Espírita informado',detail:centres.length?'Entre as '+nf(knownCentres.length)+' palestras com Centro Espírita ou YouTube informado':'Cadastre o Centro Espírita ou YouTube'},
+  {icon:'i-map-pin',tone:'mint',label:'Centro Espírita mais visitado',value:centres.length?nf(centres[0][1]):'—',name:centres.length?centres[0][0]:'Nenhum Centro Espírita informado',detail:centres.length?'Entre as '+nf(knownCentres.length)+' palestras com Centro Espírita ou You Tube informado':'Cadastre o Centro Espírita ou You Tube'},
   {icon:'i-calendar',tone:'blue',label:'Mês mais ativo',value:peak?nf(peak[1]):'—',name:peakLabel,detail:'palestras neste mês'},
   {icon:'i-clock',tone:'amber',label:'Palestra mais longa',value:longest?hm(longest.seconds):'—',name:longest?tituloFraseApresentacao(longest.titulo):'Duração não informada',detail:'maior duração entre as palestras'}
  ];
@@ -401,8 +402,8 @@ function calendar(){
    for(const p of [...events].sort((a,b)=>a.horario.localeCompare(b.horario)||a.titulo.localeCompare(b.titulo,'pt-BR'))){
     const talk=el('div',null,'speaker-calendar-talk');
     talk.append(el('strong',agendaTime(p.horario),'speaker-calendar-talk-time'));
-    talk.append(el('span',p.local,'speaker-calendar-talk-place'));
-    talk.title=agendaTime(p.horario)+' · '+p.local+' · '+tituloFraseApresentacao(p.titulo);
+    talk.append(el('span',displayPlatform(p.local),'speaker-calendar-talk-place'));
+    talk.title=agendaTime(p.horario)+' · '+displayPlatform(p.local)+' · '+tituloFraseApresentacao(p.titulo);
     cell.append(talk);
    }
    cell.title=events.length+' evento(s) em '+fmtDate(dayIso);

@@ -38,7 +38,7 @@ function renderizar() {
     data.append(dia,mes);
     const corpo=document.createElement('span');corpo.className='evento-corpo';
     const titulo=document.createElement('strong');titulo.textContent=e.titulo;
-    const info=document.createElement('span');info.textContent=`${e.horario.replace(':00','h').replace(':','h')} · ${e.local}`;
+    const info=document.createElement('span');info.textContent=`${e.horario.replace(':00','h').replace(':','h')} · ${String(e.local||'').replace(/you\s*tube/gi,'You Tube')}`;
     corpo.append(titulo,info);
     const seta=document.createElement('span');seta.className='evento-seta';seta.textContent='›';
     b.append(data,corpo,seta);b.addEventListener('click',()=>selecionar(e._key));lista.append(b);
@@ -79,7 +79,7 @@ function salvarNaLista({ silencioso = false } = {}) {
   // explicitamente; apenas editar o título de um evento antigo não o transforma em exceção.
   const localCadastro = estado.locais.find(l => l.id === obj.localId) || encontrarLocal(obj.local);
   const enderecoMudou = !anterior || (anterior.endereco || '') !== (obj.endereco || '');
-  if (localCadastro && obj.endereco && !/(youtube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(obj.endereco)
+  if (localCadastro && obj.endereco && !/(you\s*tube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(obj.endereco)
       && enderecoForaDoCadastro(obj.endereco, localCadastro)
       && (enderecoMudou || anterior?.enderecoProprio === 'sim')) obj.enderecoProprio = 'sim';
   // O editor mantém o bairro do CSV quando os dados do local não mudam.
@@ -235,8 +235,8 @@ function validarEventoCsv(item) {
   if (local) {
     const semEndereco = !e.endereco;
     if (semEndereco) e.endereco=local.endereco;
-    if (!e.bairro && local.bairro && !/(youtube|instagram|online|zoom|meet\.google|teams\.microsoft)/i.test(e.endereco || '')) e.bairro = local.bairro;
-    const online = /(youtube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(e.endereco || '');
+    if (!e.bairro && local.bairro && !/(you\s*tube|instagram|online|zoom|meet\.google|teams\.microsoft)/i.test(e.endereco || '')) e.bairro = local.bairro;
+    const online = /(you\s*tube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(e.endereco || '');
     if (!online && enderecoForaDoCadastro(e.endereco, local)) e.enderecoProprio='sim';
     e.localId=local.id;
     if (!e.enderecoProprio && local.maps && !online) e.mapa=local.maps;

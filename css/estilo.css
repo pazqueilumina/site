@@ -1603,3 +1603,14 @@ body[data-page="videos"] .cartao-short .etiqueta-short {
   body[data-page="videos"] .cartao-short .thumb-img { transition: none; }
   body[data-page="videos"] .cartao-short { transition: none; }
 }
+
+/* Agenda: ícone da plataforma à esquerda e reprodução à direita. */
+.agenda-plataforma { display:inline-flex;align-items:center;gap:7px; }
+.agenda-linha .agenda-plataforma .icone,
+.agenda-local-link.agenda-plataforma .icone { width:15px;height:15px;flex-shrink:0; }
+.agenda-linha .agenda-plataforma--youtube .icone:first-child,
+.agenda-local-link.agenda-plataforma--youtube .icone:first-child { color:#e62117; }
+.agenda-linha .agenda-plataforma--instagram .icone:first-child,
+.agenda-local-link.agenda-plataforma--instagram .icone:first-child { color:#c13584; }
+.agenda-linha a.agenda-plataforma .icone:last-child,
+.agenda-local-link.agenda-plataforma .icone:last-child { color:var(--link); }

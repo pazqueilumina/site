@@ -243,7 +243,7 @@ function descartarFormulario(){
  msg('Alterações não salvas do formulário descartadas.','alerta');
 }
 function salvar(){if(state.r2Uploading||state.pdfUploading){msg('Aguarde o envio do arquivo terminar.','alerta');return false;}if(!$('formP').reportValidity())return false;
- const id=idYoutube($('youtube').value);if(id===null){msg('URL do YouTube inválida.','erro');return false;}
+ const id=idYoutube($('youtube').value);if(id===null){msg('URL do You Tube inválida.','erro');return false;}
  const duplicate=id&&state.dados.palestras.find(p=>p.youtubeId===id&&p.pid!==state.selecionado);
  if(duplicate){msg('Este vídeo já pertence a '+duplicate.pid+'. Abra o registro existente.','erro');return false;}
  const audio=$('audio').value.trim(),pdf=$('pdf').value.trim(),arquivo=$('arquivo').value.trim();

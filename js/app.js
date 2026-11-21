@@ -23,6 +23,7 @@ function icone(nome, extra) {
     info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
     email: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
     instagram: '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>',
+    youtube: '<rect x="2" y="5" width="20" height="14" rx="4" fill="currentColor" stroke="none"/><path d="m10 9 6 3-6 3z" fill="#fff" stroke="none"/>',
     busca: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
     seta: '<polyline points="9 18 15 12 9 6"/>',
     relogio: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
@@ -199,9 +200,9 @@ function prepararApresentacoes() {
       audioPlataforma: v.audioPlataforma || null,
       slides: v.slides || null,
       autor: DADOS.site.autor || "",
-      local: DADOS.site.canalNome || "YouTube",
+      local: DADOS.site.canalNome || "You Tube",
       centroId: v.centroId || "",
-      centroNome: v.centroId === "youtube" ? "YouTube (online)" : ((CADASTRO_LOCAIS_AGENDA.find(l => l.id === v.centroId) || {}).nome || ""),
+      centroNome: v.centroId === "youtube" ? "You Tube" : ((CADASTRO_LOCAIS_AGENDA.find(l => l.id === v.centroId) || {}).nome || ""),
       descricao: v.descricao || "",
       arte: aparencia.arte === "maos" && i % 2 ? "familia" : aparencia.arte
     };
@@ -293,7 +294,7 @@ function fmtHora(h) {
 function linkMaps(endereco) {
   if (!endereco) return null;
   const e = endereco.toLowerCase();
-  if (e.includes("youtube")) return DADOS.site.canalYoutube;
+  if (/you\s*tube/i.test(e)) return DADOS.site.canalYoutube;
   if (e.includes("instagram")) return DADOS.site.instagram || "https://www.instagram.com/consolador.cec/";
   return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(endereco);
 }
@@ -455,8 +456,8 @@ function cadastroDoEventoAgenda(evento) {
 }
 function eventoOnlineAgenda(evento) {
   const endereco = String(evento.endereco || '').trim();
-  return /(youtube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(endereco)
-    || (!endereco && /(youtube|on-?line|web rádio|webrádio)/i.test(evento.local || ''));
+  return /(you\s*tube|instagram|on-?line|zoom|meet\.google|teams\.microsoft)/i.test(endereco)
+    || (!endereco && /(you\s*tube|instagram|on-?line|web rádio|webrádio)/i.test(evento.local || ''));
 }
 function cadastroEnderecoAgenda(evento) {
   if (eventoOnlineAgenda(evento) || evento.enderecoProprio === 'sim') return null;
@@ -506,55 +507,79 @@ function linkLocalAgenda(evento) {
   return endereco ? mapaExibidoAgenda(evento, endereco) : null;
 }
 
+/* Nomes padronizados na interface, sem modificar os registros da Agenda. */
+function nomePlataformaVisivel(texto) {
+  return String(texto || '').replace(/you\s*tube/gi, 'You Tube')
+    .replace(/\b(You Tube|Instagram)\s*\(online\)/gi, '$1');
+}
+function plataformaEventoAgenda(evento) {
+  const identificacao = [evento.link || '', evento.endereco || '', evento.local || ''].join(' ');
+  if (/(you\s*tube|youtu\.be)/i.test(identificacao)) return 'youtube';
+  if (/instagram/i.test(identificacao)) return 'instagram';
+  return '';
+}
+function linkDiretoAgenda(evento) {
+  return typeof evento.link === 'string' && /^https:\/\/[^\s]+$/i.test(evento.link) ? evento.link : null;
+}
+function linhaPlataformaAgenda(plataforma, url) {
+  const nome = plataforma === 'youtube' ? 'You Tube' : 'Instagram';
+  const conteudo = icone(plataforma) + '<span>' + nome + '</span>' + (url ? icone('video') : '');
+  const classe = 'agenda-endereco agenda-plataforma agenda-plataforma--' + plataforma;
+  return '<div class="agenda-linha">' +
+    (url ? '<a class="' + classe + '" href="' + escapar(url) + '" target="_blank" rel="noopener noreferrer" title="Abrir ' + nome + '">' + conteudo + '</a>'
+         : '<span class="' + classe + '">' + conteudo + '</span>') +
+    '</div>';
+}
 function itemAgenda(evento, compacto) {
   const bloco = fmtAgendaBloco(evento.data);
   const hora = fmtHora(evento.horario);
   const hoje = evento.data === dataHojeAgenda();
-  const classeHoje = hoje ? " item-agenda--hoje" : "";
-  const etiquetaHoje = hoje ? '<span class="agenda-etiqueta-hoje">Hoje</span>' : "";
+  const classeHoje = hoje ? ' item-agenda--hoje' : '';
+  const etiquetaHoje = hoje ? '<span class="agenda-etiqueta-hoje">Hoje</span>' : '';
+  const online = eventoOnlineAgenda(evento);
+  const plataforma = plataformaEventoAgenda(evento);
+  const linkDireto = linkDiretoAgenda(evento);
+  const enderecoExibido = enderecoExibidoAgenda(evento);
+  const linkPlataforma = linkDireto || (online && enderecoExibido ? mapaExibidoAgenda(evento, enderecoExibido) : null);
 
   if (compacto) {
-    const linkLocal = linkLocalAgenda(evento);
+    const tipo = online ? plataforma : '';
+    const linkLocal = online ? (linkPlataforma || linkLocalAgenda(evento)) : linkLocalAgenda(evento);
+    const iconeInicio = icone(tipo || 'pin');
+    const nomeLocal = escapar(nomePlataformaVisivel(evento.local));
+    const classe = 'agenda-local-link' + (tipo ? ' agenda-plataforma agenda-plataforma--' + tipo : '');
     const local = linkLocal
-      ? '<a class="agenda-local-link" href="' + escapar(linkLocal) + '" target="_blank" rel="noopener noreferrer" title="' + (eventoOnlineAgenda(evento) ? "Abrir transmissão" : "Ver no Google Maps") + '">' +
-        icone("pin") + '<span class="agenda-local-texto">' + escapar(evento.local) + '</span>' + icone("externo") + '</a>'
-      : icone("pin") + '<span class="agenda-local-texto">' + escapar(evento.local) + '</span>';
+      ? '<a class="' + classe + '" href="' + escapar(linkLocal) + '" target="_blank" rel="noopener noreferrer" title="' + (online ? 'Abrir transmissão' : 'Ver no Google Maps') + '">' +
+        iconeInicio + '<span class="agenda-local-texto">' + nomeLocal + '</span>' + icone(tipo ? 'video' : 'externo') + '</a>'
+      : iconeInicio + '<span class="agenda-local-texto">' + nomeLocal + '</span>';
     return (
       '<article class="item-agenda' + classeHoje + '">' +
-      '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div>" + "</div>" +
-      '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(evento.titulo) + "</h3>" +
-      '<div class="agenda-detalhes">' +
-      '<span class="agenda-campo">' + local + "</span>" +
-      "</div></div></article>"
+      '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + '</div></div>' +
+      '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(nomePlataformaVisivel(evento.titulo)) + '</h3>' +
+      '<div class="agenda-detalhes"><span class="agenda-campo">' + local + '</span></div></div></article>'
     );
   }
-
-  const enderecoExibido = enderecoExibidoAgenda(evento);
-  const maps = mapaExibidoAgenda(evento, enderecoExibido);
-  const tituloLink = !maps ? ""
-    : maps.indexOf("google.com/maps") > -1 ? "Ver no Google Maps"
-    : maps.indexOf("youtube") > -1 ? "Abrir no YouTube"
-    : maps.indexOf("instagram") > -1 ? "Abrir no Instagram" : "Ver no Google Maps";
-  const linhaEndereco = enderecoExibido
+  const maps = !online && enderecoExibido ? mapaExibidoAgenda(evento, enderecoExibido) : null;
+  const linhaEndereco = !online && enderecoExibido
     ? (maps
-        ? '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(maps) + '" target="_blank" rel="noopener" title="' + tituloLink + '">' + icone("pin") + escapar(enderecoExibido) + icone("externo") + "</a></div>"
-        : '<div class="agenda-linha"><span class="agenda-endereco">' + icone("pin") + escapar(enderecoExibido) + "</span></div>")
-    : "";
-  // Link direto opcional, definido pelo painel administrativo.
-  const linkEvento = typeof evento.link === "string" && /^https:\/\/[^\s]+$/i.test(evento.link)
-    ? evento.link : null;
-  const linhaLink = linkEvento
-    ? '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(linkEvento) + '" target="_blank" rel="noopener noreferrer" title="Abrir link do evento">' + icone("externo") + ' Acessar evento / transmissão</a></div>'
-    : "";
-
+      ? '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(maps) + '" target="_blank" rel="noopener noreferrer" title="Ver no Google Maps">' + icone('pin') + escapar(nomePlataformaVisivel(enderecoExibido)) + icone('externo') + '</a></div>'
+      : '<div class="agenda-linha"><span class="agenda-endereco">' + icone('pin') + escapar(nomePlataformaVisivel(enderecoExibido)) + '</span></div>')
+    : online && !plataforma && enderecoExibido
+      ? '<div class="agenda-linha"><span class="agenda-endereco">' + icone('video') + escapar(nomePlataformaVisivel(enderecoExibido)) + '</span></div>'
+      : '';
+  const linhaLink = plataforma
+    ? linhaPlataformaAgenda(plataforma, linkPlataforma)
+    : linkDireto
+      ? '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(linkDireto) + '" target="_blank" rel="noopener noreferrer" title="Abrir evento">' + icone('video') + (online ? 'Assistir transmissão' : 'Abrir evento') + icone('externo') + '</a></div>'
+      : '';
   return (
     '<article class="item-agenda' + classeHoje + '">' +
-    '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + "</div>" + "</div>" +
-    '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(evento.titulo) + "</h3>" +
-    '<div class="agenda-linha"><span class="agenda-centro">' + escapar(evento.local) + "</span></div>" +
+    '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + '</div></div>' +
+    '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(nomePlataformaVisivel(evento.titulo)) + '</h3>' +
+    '<div class="agenda-linha"><span class="agenda-centro">' + escapar(nomePlataformaVisivel(evento.local)) + '</span></div>' +
     linhaEndereco + linhaLink +
-    "</div>" + icone("seta", "agenda-seta") +
-    "</article>"
+    '</div>' + icone('seta', 'agenda-seta') +
+    '</article>'
   );
 }
 
@@ -788,7 +813,7 @@ function renderizarVideos() {
     "<h1 class=\"titulo-pagina\">Vídeos</h1>" +
     '<p class="subtitulo-pagina">Shorts e momentos especiais do canal ' + escapar(DADOS.site.canalNome) + '.</p>' +
     '<div class="pagina-barra"><div class="acoes" style="margin:0">' +
-    '<a class="botao-acao" href="' + escapar(DADOS.site.canalYoutube) + '" target="_blank" rel="noopener">' + icone("video") + " Ver canal no YouTube " + icone("externo") + "</a>" +
+    '<a class="botao-acao" href="' + escapar(DADOS.site.canalYoutube) + '" target="_blank" rel="noopener">' + icone("video") + " Ver canal no You Tube " + icone("externo") + "</a>" +
     "</div></div>" +
     '<div class="grade-cartoes" id="gradeVideos"></div>';
 
@@ -913,7 +938,7 @@ function renderizarAgenda() {
     const key = chaveLocalAgenda(e);
     if (!opcoes.has(key)) {
       const cadastro = CADASTRO_LOCAIS_AGENDA.find(l => l.id === key);
-      opcoes.set(key, cadastro ? cadastro.nome : e.local);
+      opcoes.set(key, nomePlataformaVisivel(cadastro ? cadastro.nome : e.local));
     }
   }
   const centros = [...opcoes].sort((a,b) => a[1].localeCompare(b[1], 'pt-BR'));
@@ -951,7 +976,7 @@ function renderizarAgenda() {
     if (termoGlobal !== undefined) buscaGlobal = termoGlobal;
     const c = normalizarLocalAgenda(centro.value), centroId = centroSelecionado(), p = periodo.value;
     const t = normalizarLocalAgenda([busca.value,buscaGlobal].filter(Boolean).join(' '));
-    const corresponde = e => (!c || (centroId ? chaveLocalAgenda(e) === centroId : normalizarLocalAgenda(opcoes.get(chaveLocalAgenda(e)) || e.local).includes(c))) && (!t || t.split(/\s+/).every(palavra=>normalizarLocalAgenda([e.titulo,e.local,e.endereco||''].join(' ')).includes(palavra)));
+    const corresponde = e => (!c || (centroId ? chaveLocalAgenda(e) === centroId : normalizarLocalAgenda(nomePlataformaVisivel(opcoes.get(chaveLocalAgenda(e)) || e.local)).includes(c))) && (!t || t.split(/\s+/).every(palavra=>normalizarLocalAgenda(nomePlataformaVisivel([e.titulo,e.local,e.endereco||''].join(' '))).includes(palavra)));
     const futuros = (p==='passados' ? [] : eventos).filter(corresponde);
     const antigos = (p==='futuros' ? [] : passados).filter(corresponde);
     const alvo = document.getElementById('listaAgenda');
@@ -1047,7 +1072,7 @@ function renderizarContato() {
     '<div class="pagina-texto">' +
     '<div class="contato-lista">' +
     '<div class="contato-item">' + icone("email") + "<span>E-mail: <a href=\"mailto:" + escapar(DADOS.site.email) + "\">" + escapar(DADOS.site.email) + "</a></span></div>" +
-    '<div class="contato-item">' + icone("video") + "<span>YouTube: <a href=\"" + escapar(DADOS.site.canalYoutube) + '" target="_blank" rel="noopener">' + escapar(DADOS.site.canalNome) + "</a></span></div>" +
+    '<div class="contato-item">' + icone("video") + "<span>You Tube: <a href=\"" + escapar(DADOS.site.canalYoutube) + '" target="_blank" rel="noopener">' + escapar(DADOS.site.canalNome) + "</a></span></div>" +
     '<div class="contato-item">' + icone("instagram") + "<span>Instagram: <a href=\"https://www.instagram.com/pazqueilumina/\" target=\"_blank\" rel=\"noopener\">Paz que Ilumina</a></span></div>" +
     "</div></div>";
 }
@@ -1207,7 +1232,7 @@ function configurarAnalytics() {
     if (!a) return;
     const cartao = a.closest("article");
     const titulo = cartao ? cartao.querySelector("h3") : null;
-    registrarCliqueVideo(titulo ? titulo.textContent.trim().slice(0, 80) : (a.getAttribute("data-video") || "link YouTube"));
+    registrarCliqueVideo(titulo ? titulo.textContent.trim().slice(0, 80) : (a.getAttribute("data-video") || "link You Tube"));
   });
 }
 

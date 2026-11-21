@@ -8,7 +8,7 @@
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
   <link rel="stylesheet" href="/admin/palestras.css?v=pdfgit1">
-  <script defer src="/admin/palestras.js?v=centrohorario20261121"></script>
+  <script defer src="/admin/palestras.js?v=plataforma20261121"></script>
 </head>
 <body>
   <header class="topo">
@@ -52,11 +52,11 @@
           <form id="formP">
             <label>ID permanente<input id="pid" readonly placeholder="Gerado automaticamente"></label>
             <label>Título *<input id="titulo" maxlength="300" required></label>
-            <label>Centro Espírita ou YouTube (opcional)<select id="centroId"><option value="">Não informado</option><option value="youtube">YouTube (online)</option></select></label>
-            <p class="ajuda">Selecione o centro onde ocorreu a palestra ou YouTube (online) para apresentações exclusivamente virtuais. Para cadastrar um novo centro, utilize <a href="/admin/locais.html">Locais</a>.</p>
+            <label>Centro Espírita ou You Tube (opcional)<select id="centroId"><option value="">Não informado</option><option value="youtube">You Tube</option></select></label>
+            <p class="ajuda">Selecione o centro onde ocorreu a palestra ou You Tube para apresentações exclusivamente virtuais. Para cadastrar um novo centro, utilize <a href="/admin/locais.html">Locais</a>.</p>
             <div class="duas-colunas"><label>Data da palestra / publicação<input id="data" type="date"></label><label>Data aproximada<select id="aproximada"><option value="sim">Sim</option><option value="nao">Não</option></select></label></div>
              <label>Horário da palestra (opcional)<input id="horario" type="time" step="60"></label>
-            <label>URL do YouTube<input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=..."></label>
+            <label>URL do You Tube<input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=..."></label>
             <label>Link do MP3 existente<input id="audio" placeholder="https://... ou /audio/..." maxlength="1500"></label>
             <div class="upload-r2" aria-labelledby="tituloUploadR2">
               <strong id="tituloUploadR2">Enviar MP3 do computador para o R2</strong>
@@ -89,7 +89,7 @@
           <p>Importe um CSV com as colunas <code>ID,Titulo,Data,YouTube,Apresentacao</code>. Linhas existentes são atualizadas sem apagar campos vazios. Revise o resultado antes de publicar.</p>
           <label for="csvP" class="rotulo-importacao">Arquivo CSV</label><input type="file" id="csvP" accept=".csv,text/csv">
           <div class="acoes"><button id="colarP" type="button" class="botao secundario">Adicionar URLs em lote</button><button id="exportarP" type="button" class="botao discreto">Exportar CSV com IDs</button></div>
-          <label for="urlsP" class="rotulo-importacao" id="rotuloUrlsP" hidden>URLs do YouTube</label><textarea id="urlsP" rows="5" placeholder="Cole uma URL do YouTube por linha" hidden></textarea>
+          <label for="urlsP" class="rotulo-importacao" id="rotuloUrlsP" hidden>URLs do You Tube</label><textarea id="urlsP" rows="5" placeholder="Cole uma URL do You Tube por linha" hidden></textarea>
           <button id="aplicarUrlsP" class="botao principal" type="button" hidden>Preparar URLs</button>
           <p class="ajuda">A importação prepara os registros para revisão. Não envia arquivos de áudio ou apresentações e não publica automaticamente.</p>
         </div>
