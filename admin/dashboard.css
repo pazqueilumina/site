@@ -85,3 +85,18 @@
 .country-row .country-flag{font-size:16px;line-height:1;flex:none}
 .country-row .country-name{flex:1;min-width:0}
 .country-row .country-number{font-variant-numeric:tabular-nums}
+
+/* Apenas o novo gráfico: ocupa a largura interna já disponível, sem alterar as outras grades. */
+.visits-evolution-grid{grid-template-columns:minmax(0,1fr)}
+.widget-visits-evolution{min-width:0}
+.visits-chart-container{width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;min-height:234px;scrollbar-width:thin;scrollbar-color:#c7b2ef #eef2fa}
+.visits-chart-container svg.visits-chart-svg{display:block;width:100%;height:234px;stroke:none;fill:none;overflow:visible}
+.visits-chart-svg .visits-chart-grid{stroke:#e2e7f1;stroke-width:1}
+.visits-chart-svg .visits-chart-bar{fill:#8b5cf6;stroke:none}
+.visits-chart-svg .visits-chart-value{fill:#7443bd;font:700 10px Inter,"Segoe UI",Arial,sans-serif;stroke:none}
+.visits-chart-svg .visits-chart-axis{fill:#687b97;font:10px Inter,"Segoe UI",Arial,sans-serif;stroke:none}
+.visits-chart-svg .visits-chart-date{fill:#7351a6;font:600 10px Inter,"Segoe UI",Arial,sans-serif;stroke:none}
+.visits-chart-message{display:flex;align-items:center;justify-content:center;min-height:210px;margin:0;color:#647792;font-size:12px;text-align:center;padding:20px}
+/* Bandeira em SVG: não depende de fontes/emoji do Windows. */
+.country-single-flag.country-flag-image{display:block;width:32px;height:22px;object-fit:cover;border-radius:2px;box-shadow:0 0 0 1px #182d521c;flex:none}
+.country-row .country-flag.country-flag-image{display:block;width:21px;height:15px;object-fit:cover;border-radius:2px;box-shadow:0 0 0 1px #182d521c;flex:none}
