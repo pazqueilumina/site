@@ -602,6 +602,8 @@ h1, h2, h3, .serif {
 .cartao-meta span { display: inline-flex; align-items: center; gap: 6px; }
 
 .cartao-meta .icone { width: 12px; height: 12px; color: var(--cinza-claro); flex-shrink: 0; }
+.cartao-meta .cartao-centro { align-items: flex-start; overflow-wrap: anywhere; }
+.cartao-meta .cartao-centro .icone { margin-top: 3px; }
 
 .cartao-rodape {
   display: flex;
@@ -672,20 +674,23 @@ h1, h2, h3, .serif {
 
 .item-agenda:hover { box-shadow: var(--sombra-hover); border-color: #ddd2bc; }
 
-/* Eventos que acontecem hoje: destaque discreto na home e na agenda. */
+/* Eventos de hoje: azul suave e sombra para destaque, sem alterar os demais cartões. */
 .item-agenda.item-agenda--hoje {
-  background: #fff5df;
-  border-color: #d5a047;
-  box-shadow: 0 2px 12px rgba(151, 104, 35, 0.12);
+  background: #edf4fa;
+  border-color: #9bbad1;
+  box-shadow: 0 7px 22px rgba(25, 55, 83, 0.18), 0 1px 4px rgba(25, 55, 83, 0.06);
 }
-.item-agenda.item-agenda--hoje:hover { border-color: #ba8029; }
+.item-agenda.item-agenda--hoje:hover {
+  border-color: #729dbd;
+  box-shadow: 0 9px 25px rgba(25, 55, 83, 0.22);
+}
 .agenda-etiqueta-hoje {
   display: inline-block;
   margin-top: 6px;
   padding: 2px 6px;
   border-radius: 5px;
-  background: #eac071;
-  color: #463016;
+  background: #d3e5f3;
+  color: #234866;
   font: 700 9px/1.4 var(--fonte-sans);
   letter-spacing: .06em;
 }

@@ -184,6 +184,7 @@ function prepararApresentacoes() {
     return {
       id: v.id,
       titulo: titleCase(v.t),
+      tituloOriginal: v.t,
       serie: v.s,
       serieNome: (DADOS.series && DADOS.series[v.s]) || "Reflexões",
       etiquetaClasse: aparencia.etiqueta,
@@ -199,6 +200,8 @@ function prepararApresentacoes() {
       slides: v.slides || null,
       autor: DADOS.site.autor || "",
       local: DADOS.site.canalNome || "YouTube",
+      centroId: v.centroId || "",
+      centroNome: (CADASTRO_LOCAIS_AGENDA.find(l => l.id === v.centroId) || {}).nome || "",
       descricao: v.descricao || "",
       arte: aparencia.arte === "maos" && i % 2 ? "familia" : aparencia.arte
     };
@@ -231,6 +234,41 @@ function titleCase(titulo) {
     if (i > 0 && PALAVRAS_MENORES.has(minuscula.replace(/[^\p{L}]/gu, ""))) return minuscula;
     return minuscula.charAt(0).toLocaleUpperCase("pt-BR") + minuscula.slice(1);
   }).join(" ");
+}
+
+/* Somente os títulos dos cartões da página Apresentações usam estilo de frase.
+   Preserva os nomes próprios e não altera os títulos salvos no cadastro. */
+function tituloFraseApresentacao(titulo) {
+  const nomesProprios = [
+    ["doutrina espírita", "Doutrina Espírita"],
+    ["espírito santo", "Espírito Santo"],
+    ["chico xavier", "Chico Xavier"],
+    ["luiz gonzaga", "Luiz Gonzaga"],
+    ["pedro leopoldo", "Pedro Leopoldo"],
+    ["eurípides barsanulfo", "Eurípides Barsanulfo"],
+    ["setembro amarelo", "Setembro Amarelo"],
+    ["francisco de assis", "Francisco de Assis"],
+    ["jesus", "Jesus"], ["cristo", "Cristo"], ["deus", "Deus"],
+    ["consolador", "Consolador"], ["espiritismo", "Espiritismo"],
+    ["evangelho", "Evangelho"], ["kardec", "Kardec"],
+    ["allan", "Allan"], ["judas", "Judas"], ["lázaro", "Lázaro"],
+    ["pedro", "Pedro"], ["zaqueu", "Zaqueu"], ["jerusalém", "Jerusalém"],
+    ["getsêmani", "Getsêmani"], ["césar", "César"], ["miriam", "Miriam"],
+    ["saulo", "Saulo"], ["tarso", "Tarso"], ["maria", "Maria"],
+    ["nazaré", "Nazaré"], ["frança", "França"], ["brasil", "Brasil"],
+    ["uberaba", "Uberaba"], ["terra", "Terra"]
+  ];
+  let texto = String(titulo || "").toLocaleLowerCase("pt-BR");
+  texto = texto.replace(/\bd\.\s*c\./g, "d.C.").replace(/\ba\.\s*c\./g, "a.C.");
+  texto = texto.replace(/\braio x\b/g, "raio X");
+  texto = texto.replace(/\b(?:ii|iii|iv|vi|vii|viii|ix|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx)\b/g,
+    numeral => numeral.toUpperCase());
+  for (const [nome, grafia] of nomesProprios) {
+    texto = texto.replace(new RegExp("(^|[^\\p{L}])(" + nome + ")(?=$|[^\\p{L}])", "giu"),
+      (_, antes) => antes + grafia);
+  }
+  return texto.replace(/(^|[.!?]\s+)([\p{L}])/gu,
+    (_, inicio, letra) => inicio + letra.toLocaleUpperCase("pt-BR"));
 }
 
 function fmtData(iso) {
@@ -376,17 +414,19 @@ function miniatura(item) {
   );
 }
 
-function cartaoApresentacao(item) {
+function cartaoApresentacao(item, formatoFrase = false) {
   const link = item.youtube || "#";
+  const tituloExibido = formatoFrase ? tituloFraseApresentacao(item.tituloOriginal || item.titulo) : item.titulo;
   return (
     '<article class="cartao">' +
-    '<a href="' + escapar(link) + '" target="_blank" rel="noopener" aria-label="' + escapar(item.titulo) + '">' +
+    '<a href="' + escapar(link) + '" target="_blank" rel="noopener" aria-label="' + escapar(tituloExibido) + '">' +
     miniatura(item) + "</a>" +
     '<div class="cartao-corpo">' +
-    '<h3><a href="' + escapar(link) + '" target="_blank" rel="noopener">' + escapar(item.titulo) + "</a></h3>" +
+    '<h3><a href="' + escapar(link) + '" target="_blank" rel="noopener">' + escapar(tituloExibido) + "</a></h3>" +
     '<div class="cartao-meta">' +
     "<span>" + icone("agenda") + fmtData(item.data) + "</span>" +
     "<span>" + icone("tema") + escapar(item.serieNome) + "</span>" +
+    (item.centroNome ? '<span class="cartao-centro">' + icone("pin") + escapar(item.centroNome) + '</span>' : '') +
     "</div>" +
     '<div class="cartao-rodape">' +
     '<span class="etiqueta ' + item.etiquetaClasseCss + '">' + item.etiquetaClasse + "</span>" +
@@ -577,15 +617,16 @@ function renderizarInicio() {
     "<span>" + icone("agenda") + fmtData(destaque.data) + "</span>" +
     "<span>" + icone("tema") + escapar(destaque.serieNome) + "</span>" +
     "<span>" + icone("pessoa") + escapar(destaque.autor) + "</span>" +
+    (destaque.centroNome ? '<span>' + icone("pin") + escapar(destaque.centroNome) + '</span>' : '') +
     "</div>" +
     (destaque.descricao ? '<p class="destaque-descricao">' + escapar(destaque.descricao) + "</p>" : "") +
     '<div class="acoes">' +
-    '<a class="botao-acao" href="' + escapar(destaque.youtube) + '" target="_blank" rel="noopener">' + icone("play") + "Assistir vídeo</a>" +
+    '<a class="botao-acao" href="' + escapar(destaque.youtube) + '" target="_blank" rel="noopener">' + icone("play") + "Assistir</a>" +
     (destaque.audio
-      ? '<a class="botao-acao" href="' + escapar(destaque.audio) + '" target="_blank" rel="noopener">' + icone("audio") + "Ouvir áudio</a>"
+      ? '<a class="botao-acao" href="' + escapar(destaque.audio) + '" target="_blank" rel="noopener">' + icone("audio") + "Ouvir</a>"
       : '<span class="botao-acao botao-acao--desabilitado">' + icone("audio") + "Áudio não disponível</span>") +
     (destaque.slides
-      ? '<a class="botao-acao" href="' + escapar(destaque.slides) + '" target="_blank" rel="noopener">' + icone("download") + "Baixar slides (PDF)</a>"
+      ? '<a class="botao-acao" href="' + escapar(destaque.slides) + '" target="_blank" rel="noopener">' + icone("download") + "Baixar PDF</a>"
       : '<span class="botao-acao botao-acao--desabilitado">' + icone("download") + "Apresentação não disponível</span>") +
     "</div></div></article></section>" +
 
@@ -695,7 +736,7 @@ function renderizarApresentacoes() {
     });
     const grade = document.getElementById("gradeApresentacoes");
     grade.innerHTML = listaFiltrada.length
-      ? listaFiltrada.map(cartaoApresentacao).join("")
+      ? listaFiltrada.map(a => cartaoApresentacao(a, true)).join("")
       : '<div class="vazio" style="grid-column:1/-1">Nenhuma apresentação encontrada.</div>';
   }
 
@@ -1179,7 +1220,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (Array.isArray(catalogo.palestras)) {
         DADOS.videos = catalogo.palestras.filter(p => p.youtubeId).map(p => ({
           id:p.youtubeId, pid:p.pid, t:p.titulo, d:p.data, s:p.serie || "temas",
-          dur:p.duracao || "", audio:p.audio || "", audioPlataforma:p.audioPlataforma || "", slides:p.pdf || ""
+          dur:p.duracao || "", audio:p.audio || "", audioPlataforma:p.audioPlataforma || "", slides:p.pdf || "", centroId:p.centroId || ""
         }));
       }
     }
@@ -1199,7 +1240,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     sobre: renderizarSobre,
     contato: renderizarContato
   };
-  if (pagina === 'agenda' || pagina === 'inicio') {
+  if (pagina === 'agenda' || pagina === 'inicio' || pagina === 'apresentacoes') {
     try { const r = await fetch('/data/locais.json', {cache:'no-cache'}); if (r.ok) { const d=await r.json(); if(Array.isArray(d.locais)) CADASTRO_LOCAIS_AGENDA=d.locais; } }
     catch(e) { console.warn('Cadastro público de locais indisponível; usando nomes da agenda.'); }
   }
