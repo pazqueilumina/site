@@ -44,7 +44,7 @@ function tituloFraseApresentacao(titulo) {
   return texto.replace(/(^|[.!?]\s+)([\p{L}])/gu,
     (_, inicio, letra) => inicio + letra.toLocaleUpperCase("pt-BR"));
 }
-let records=[],places=new Map(),error=null,range={kind:'30'},applied={month:new Date().getMonth(),year:new Date().getFullYear(),start:'',end:''};
+let records=[],agendaEvents=[],places=new Map(),error=null,range={kind:'30'},applied={month:new Date().getMonth(),year:new Date().getFullYear(),start:'',end:''};
 const today=()=>{const d=new Date();d.setHours(23,59,59,999);return d;};
 const midnight=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
 function boundaries(){
@@ -61,7 +61,7 @@ const knownSeconds=items=>items.filter(p=>p.seconds!==null);
 const total=items=>knownSeconds(items).length?hm(seconds(items)):'—';
 const unique=(items,key)=>new Set(items.map(p=>p[key]).filter(Boolean)).size;
 const hasCentre=p=>!!p.centroId;
-const centreName=p=>!p.centroId?'Centro Espírita não informado':p.centroId==='youtube'?'YouTube (online)':places.get(p.centroId)||p.centroId;
+const centreName=p=>p.localAgenda||(!p.centroId?'Centro Espírita não informado':p.centroId==='youtube'?'YouTube (online)':places.get(p.centroId)||p.centroId);
 function countBy(items,key){const m=new Map();for(const p of items){const k=typeof key==='function'?key(p):p[key];m.set(k,(m.get(k)||0)+1);}return [...m.entries()].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'pt-BR'));}
 function setNotice(msg){$('avisoTexto').textContent=msg;$('aviso').hidden=false;}
 function initFilters(){
@@ -168,7 +168,7 @@ function chart(id,items,field){
   bins.push({label,year:begin.getFullYear(),fullLabel:unit==='day'?shortDate(begin):unit==='month'?fmtMonthYear(begin):label,count:subset.length,seconds:seconds(subset)});
   cursor.setTime(next.getTime());
  }
- if(!bins.length){empty(host,'Não há datas para o período selecionado.');return;}
+ if(unit==='day'){for(let i=bins.length-1;i>=0;i--)if(!bins[i].count)bins.splice(i,1);}\n if(!bins.length){empty(host,'Não há palestras nas datas do período selecionado.');return;}
  const vals=bins.map(b=>field==='count'?b.count:b.seconds/3600),max=Math.max(field==='count'?4:1,...vals);
  const w=660,h=230,L=39,R=13,T=38,B=40,inner=w-L-R,bw=inner/bins.length;
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.setAttribute('role','img');
@@ -189,16 +189,17 @@ function chart(id,items,field){
   node('line',{x1:L,y1:y,x2:w-R,y2:y,class:'axis'});
   node('text',{x:L-7,y:y+4,'text-anchor':'end'},field==='count'?String(Math.round(v)):v.toFixed(1).replace('.',','));
  }
- const skip=Math.max(1,Math.ceil(bins.length/12));
+ const skip=unit==='day'?1:Math.max(1,Math.ceil(bins.length/12));
  vals.forEach((v,i)=>{
   const height=v/max*(h-T-B),x=L+i*bw+bw*.13,y=h-B-height;
   const rect=node('rect',{x,y,width:bw*.74,height:Math.max(0,height),rx:Math.min(4,bw*.15),class:field==='count'?'bar':'bar-alt'});
   const title=document.createElementNS('http://www.w3.org/2000/svg','title');title.textContent=bins[i].fullLabel+': '+(field==='count'?nf(bins[i].count)+' palestras':hm(bins[i].seconds));rect.append(title);
+  if(v>0)node('text',{x:x+bw*.37,y:Math.max(31,y-5),'text-anchor':'middle',class:'speaker-bar-value'},field==='count'?String(bins[i].count):hm(bins[i].seconds));
   if(i%skip===0||i===bins.length-1)node('text',{x:x+bw*.37,y:h-15,'text-anchor':'middle'},bins[i].label);
  });
  host.append(svg);
  const fmt=d=>shortDate(d);
- host.append(el('p','Período: '+fmt(from)+' a '+fmt(to)+' · Datas estimadas podem alterar a distribuição.','widget-subtitle'));
+ host.append(el('p','Período: '+fmt(from)+' a '+fmt(to)+' · Datas oficiais da Agenda.','widget-subtitle'));
 }
 function comparison(){
  const k=range.kind,now=today();
@@ -332,48 +333,44 @@ function highlights(items){
  }
  note.textContent=notes.join(' ');
 }
-function calendar(items){
+function calendar(){
  const host=clear('calendar'),now=new Date();
  let ref=now;
  if(range.kind==='month')ref=new Date(applied.year,applied.month,1);
  else if(range.kind==='year')ref=new Date(applied.year,applied.year===now.getFullYear()?now.getMonth():11,1);
  else if(range.kind==='custom'){const d=date(applied.end);if(d)ref=d;}
- else if(range.kind==='all'){const last=[...items].sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];if(last?.when)ref=last.when;}
- const year=ref.getFullYear(),month=ref.getMonth(),first=new Date(year,month,1),lastDay=new Date(year,month+1,0).getDate();
- const label=fmtMonthYear(first);
- set('calendarMonth',label.charAt(0).toUpperCase()+label.slice(1));
+ else if(range.kind==='all'&&agendaEvents.length){const latest=agendaEvents[agendaEvents.length-1];ref=date(latest.data)||now;}
+ const year=ref.getFullYear(),month=ref.getMonth(),first=new Date(year,month,1),lastDay=new Date(year,month+1,0).getDate(),todayIso=iso(now);
+ const label=fmtMonthYear(first);set('calendarMonth',label.charAt(0).toUpperCase()+label.slice(1));
  const byDay=new Map();
- for(const p of items.filter(x=>x.when&&x.when.getFullYear()===year&&x.when.getMonth()===month)){
-  const d=p.when.getDate();if(!byDay.has(d))byDay.set(d,{talks:[],approx:0});
-  const v=byDay.get(d);v.talks.push(p);if(p.approx)v.approx++;
+ for(const p of agendaEvents.filter(x=>x.data.startsWith(year+'-'+pad(month+1)+'-'))){
+  const d=Number(p.data.slice(-2));if(!byDay.has(d))byDay.set(d,[]);byDay.get(d).push(p);
  }
- set('calendarTotal',nf([...byDay.values()].reduce((n,v)=>n+v.talks.length,0))+' palestras neste mês');
+ set('calendarTotal',nf([...byDay.values()].reduce((n,v)=>n+v.length,0))+' eventos neste mês');
  for(const day of ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'])host.append(el('div',day,'speaker-calendar-weekday'));
  for(let i=0;i<first.getDay();i++)host.append(el('div',null,'speaker-calendar-blank'));
  for(let day=1;day<=lastDay;day++){
-  const item=byDay.get(day),cell=el('div',null,'speaker-calendar-day'+(item?' has-talks':''));
+  const events=byDay.get(day),dayIso=iso(new Date(year,month,day)),status=dayIso<todayIso?'past':dayIso===todayIso?'today':'future';
+  const cell=el('div',null,'speaker-calendar-day'+(events?' has-talks status-'+status:''));
   cell.append(el('span',String(day),'speaker-calendar-day-number'));
-  if(item){
-   cell.append(el('strong',nf(item.talks.length)+' palestra'+(item.talks.length===1?'':'s'),'speaker-calendar-day-count'));
-   const talks=[...item.talks].sort((a,b)=>(a.horario||'99:99').localeCompare(b.horario||'99:99')||a.titulo.localeCompare(b.titulo,'pt-BR'));
-   for(const p of talks){
+  if(events){
+   for(const p of [...events].sort((a,b)=>a.horario.localeCompare(b.horario)||a.titulo.localeCompare(b.titulo,'pt-BR'))){
     const talk=el('div',null,'speaker-calendar-talk');
-    if(p.horario)talk.append(el('strong',p.horario.replace(':','h'),'speaker-calendar-talk-time'));
-    talk.append(el('span',centreName(p),'speaker-calendar-talk-place'));
-    talk.title=(p.horario?p.horario+' · ':'')+centreName(p)+' · '+tituloFraseApresentacao(p.titulo)+(p.approx?' (data estimada)':'');
+    talk.append(el('strong',p.horario.replace(':','h'),'speaker-calendar-talk-time'));
+    talk.append(el('span',p.local,'speaker-calendar-talk-place'));
+    talk.title=p.horario+' · '+p.local+' · '+tituloFraseApresentacao(p.titulo);
     cell.append(talk);
    }
-   cell.title=nf(item.talks.length)+' palestra(s) com data informada em '+shortDate(new Date(year,month,day))+(item.approx?' ('+item.approx+' com data estimada)':'');
+   cell.title=events.length+' evento(s) em '+fmtDate(dayIso);
   }
   host.append(cell);
  }
- const approximated=[...byDay.values()].reduce((n,v)=>n+v.approx,0);
- set('calendarNote',approximated?nf(approximated)+' palestra'+(approximated===1?' tem':'s têm')+' data estimada neste mês. O calendário não confirma o dia real de realização.':'O calendário considera as datas informadas nas palestras selecionadas.');
+ set('calendarNote','Datas, horários e locais provenientes da Agenda. Amarelo: passado · Lilás: hoje · Azul: futuro.');
 }
 function history(items){
  const host=clear('historico');if(!items.length){const tr=el('tr'),td=el('td','Nenhuma palestra encontrada neste período.');td.colSpan=5;tr.append(td);host.append(tr);return;}
  for(const p of [...items].sort((a,b)=>b.data.localeCompare(a.data)).slice(0,120)){
-  const tr=el('tr'),td=el('td');td.append(document.createTextNode(fmtDate(p.data)));if(p.approx)td.append(el('div','Data aproximada','approx'));tr.append(td);
+  const tr=el('tr'),td=el('td');td.append(document.createTextNode(fmtDate(p.data)));if(p.agendaOnly)td.append(el('div','Sem apresentação vinculada','approx'));tr.append(td);
   const title=el('td'),displayTitle=tituloFraseApresentacao(p.titulo);if(p.youtubeId){const a=el('a',displayTitle);a.href='https://www.youtube.com/watch?v='+encodeURIComponent(p.youtubeId);a.target='_blank';a.rel='noopener noreferrer';title.append(a);}else title.textContent=displayTitle;
   tr.append(title,el('td',centreName(p)),el('td',topicNames[p.serie]||p.serie||'Sem etiqueta'),el('td',p.seconds===null?'Não informada':hm(p.seconds)));host.append(tr);
  }
@@ -384,16 +381,27 @@ function render(){
  const items=filtered();set('kPalestras',nf(items.length));set('kTempo',total(items));set('kMedia',knownSeconds(items).length?hm(seconds(items)/knownSeconds(items).length):'—');set('kCentros',nf(unique(items.filter(hasCentre),'centroId')));set('kTemas',nf(unique(items,'serie')));const peak=countBy(items.filter(p=>p.when),p=>p.data.slice(0,7))[0];set('kPeakMonth',peak?fmtMonthYear(new Date(peak[0]+'-01T12:00:00'),'short'):'—');set('kPeakCount',peak?nf(peak[1])+' palestra'+(peak[1]===1?'':'s')+' neste mês':'Sem palestras no período');
  chart('chartMensal',items,'count');chart('chartHoras',items,'hours');comparison();
  centreRanking(items);donut(items);
- annual();highlights(items);calendar(items);history(items);
+ annual();highlights(items);calendar();history(items);
  set('siteStatus','Dados atualizados');
 }
 async function load(){
  const button=$('atualizar');if(button.disabled)return;button.disabled=true;button.classList.add('is-loading');set('refreshLabel','Atualizando…');set('refreshFeedback','Atualizando dados do palestrante.');
  try{
-  const [p,l]=await Promise.all(['/api/admin/palestras','/api/admin/locais'].map(async url=>{const r=await fetch(url,{credentials:'same-origin',cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return r.json();}));
-  if(!Array.isArray(p?.dados?.palestras)||!Array.isArray(l?.locais))throw Error('Formato de dados inesperado');
+  const [p,l,a]=await Promise.all(['/api/admin/palestras','/api/admin/locais','/api/admin/agenda'].map(async url=>{const r=await fetch(url,{credentials:'same-origin',cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return r.json();}));
+  if(!Array.isArray(p?.dados?.palestras)||!Array.isArray(l?.locais)||!Array.isArray(a?.agenda))throw Error('Formato de dados inesperado');
   places=new Map(l.locais.map(x=>[x.id,x.nome]));
-  records=p.dados.palestras.map(x=>({...x,when:date(x.data),seconds:duration(x.duracao),approx:!!x.dataAproximada}));error=null;render();
+  agendaEvents=a.agenda.filter(x=>date(x.data)&&x.horario&&x.titulo&&x.local).sort((x,y)=>x.data.localeCompare(y.data)||x.horario.localeCompare(y.horario));
+  const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g,' ').trim();
+  const presentations=p.dados.palestras;
+  const used=new Set();
+  records=agendaEvents.filter(x=>date(x.data)<=today()).map(event=>{
+   const matches=presentations.map((p,i)=>({p,i})).filter(({p,i})=>!used.has(i)&&norm(p.titulo)===norm(event.titulo));
+   const match=matches.length===1?matches[0]:null;
+   if(match)used.add(match.i);
+   const p=match?.p||{};
+   return {...p,data:event.data,when:date(event.data),horario:event.horario,titulo:event.titulo,centroId:event.localId||p.centroId||'',localAgenda:event.local,seconds:match?duration(p.duracao):null,approx:false,agendaOnly:!match};
+  });
+  error=null;render();
   $('aviso').hidden=true;set('lastUpdate',shortDate(new Date())+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));set('refreshLabel','Atualizado');set('refreshFeedback','Dados atualizados.');
  }catch(e){error=e;setNotice('Não foi possível carregar as palestras: '+e.message);set('siteStatus','Falha na conexão');set('refreshLabel','Falha ao atualizar');set('refreshFeedback','Falha ao atualizar os dados.');}
  finally{button.disabled=false;button.classList.remove('is-loading');setTimeout(()=>{if(!button.disabled)set('refreshLabel','Atualizar');},1800);}
