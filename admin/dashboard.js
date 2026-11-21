@@ -25,7 +25,7 @@ async function read(url){const r=await fetch(url,{credentials:'same-origin',cach
 function drawChart(palestras){const host=clear('chartAcervo');if(!palestras){host.append(txt('p','Dados do acervo indisponíveis.','empty-text'));return;}
  const period=rangeDays(),start=rangeStart(),series=[];const buckets=isYear()?12:Math.min(Math.max(period,2),14);const total=palestras.length;
  if(!period){host.append(txt("p","O período selecionado ainda não começou.","empty-text"));return;}
- for(let i=0;i<buckets;i++){const date=isYear()?new Date(appliedYear,i+1,0):new Date(start);if(!isYear())date.setDate(start.getDate()+Math.round((period-1)*i/(buckets-1)));date.setHours(23,59,59,999);const n=palestras.filter(p=>{const d=isoToDate(p.data);return d&&d<=date;}).length;series.push({date,n});}
+ for(let i=0;i<buckets;i++){const date=isYear()?new Date(appliedYear,i+1,0):new Date(start);if(!isYear())date.setDate(start.getDate()+Math.round((period-1)*i/(buckets-1)));date.setHours(23,59,59,999);const n=palestras.filter(p=>{const d=isoToDate(p.data);return d&&d<=date&&d<=rangeEnd();}).length;series.push({date,n});}
  if(!series.length){host.append(txt('p','Não há datas para exibir.','empty-text'));return;}
  const width=Math.max(360,Math.round(host.getBoundingClientRect().width||600)),height=Math.max(170,Math.round(host.getBoundingClientRect().height||178)),L=58,R=16,T=18,B=38;let min=Math.min(...series.map(x=>x.n)),max=Math.max(...series.map(x=>x.n));min=Math.max(0,min-1);max=Math.max(max,min+4);const x=i=>L+(width-L-R)*i/(series.length-1),y=n=>T+(height-T-B)*(max-n)/(max-min);
  const points=series.map((v,i)=>[x(i),y(v.n)]),path=points.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');

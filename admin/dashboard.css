@@ -131,3 +131,7 @@
 .admin-picker-month:disabled{opacity:.3;cursor:default}
 @media(max-width:1120px){.admin-period-controls{max-width:80%}.admin-period-extra select{max-width:110px}.admin-period-navigation #adminPeriodLabel{min-width:110px}}
 @media(max-width:800px){.admin-period-controls{max-width:100%;justify-content:flex-start}.dash-banner{height:auto;min-height:106px;flex-wrap:wrap;padding-bottom:10px;gap:8px}}
+
+/* Os seletores de mês ficam sobre os indicadores, sem serem cortados pelo cabeçalho. */
+.dash-banner{overflow:visible;z-index:4}
+.dash-banner .mountains,.dash-banner .sunlight{pointer-events:none}
