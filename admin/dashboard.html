@@ -4,9 +4,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard | Paz que Ilumina</title>
-<link rel="stylesheet" href="/admin/dashboard.css?v=periodo-refresh4">
+<link rel="stylesheet" href="/admin/dashboard.css?v=personalizado5">
 <script defer src="/js/dados.js?v=dashboardvisual2"></script>
-<script defer src="/admin/dashboard.js?v=periodo-refresh4"></script>
+<script defer src="/admin/dashboard.js?v=personalizado5"></script>
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -61,9 +61,16 @@
  <header class="dash-banner">
   <div class="mountains" aria-hidden="true"></div><div class="sunlight" aria-hidden="true"></div>
   <div class="dash-welcome"><h1>Olá, André!</h1><p>Visão geral do site Paz que Ilumina</p></div>
-  <div class="dash-filter-row"><div class="dash-controls"><label class="sr-only" for="periodo">Período dos indicadores</label><svg><use href="#i-calendar"/></svg><select id="periodo"><option value="7">Últimos 7 dias</option><option value="30" selected>Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="month">Mês específico…</option></select></div><div class="month-controls" id="monthControls" hidden><label class="sr-only" for="mesEspecifico">Mês</label><select id="mesEspecifico" aria-label="Mês específico"></select><label class="sr-only" for="anoEspecifico">Ano</label><select id="anoEspecifico" aria-label="Ano específico"></select><button type="button" id="aplicarMes">Aplicar</button></div></div>
+  <div class="dash-filter-row"><div class="dash-controls"><label class="sr-only" for="periodo">Período dos indicadores</label><svg><use href="#i-calendar"/></svg><select id="periodo"><option value="7">Últimos 7 dias</option><option value="30" selected>Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="month">Mês específico…</option><option value="custom">Personalizado…</option></select></div><div class="month-controls" id="monthControls" hidden><label class="sr-only" for="mesEspecifico">Mês</label><select id="mesEspecifico" aria-label="Mês específico"></select><label class="sr-only" for="anoEspecifico">Ano</label><select id="anoEspecifico" aria-label="Ano específico"></select><button type="button" id="aplicarMes">Aplicar</button></div></div>
  </header>
  <main class="dash-content" id="dashMainContent">
+  <section class="custom-range-panel" id="customRangePanel" aria-label="Período personalizado" hidden>
+   <strong>Período personalizado</strong>
+   <label for="dataInicio">De <input id="dataInicio" type="date" required></label>
+   <label for="dataFim">Até <input id="dataFim" type="date" required></label>
+   <button type="button" id="aplicarPeriodo">Aplicar período</button>
+   <span id="periodoErro" class="custom-range-error" role="alert" hidden></span>
+  </section>
   <section class="kpi-strip" aria-label="Indicadores principais">
    <article class="kpi kpi-blue"><div class="kpi-icon"><svg><use href="#i-users"/></svg></div><div class="kpi-info"><h2>Visitantes</h2><strong id="kVisitantes">—</strong><small id="sVisitantes">Integração pendente</small></div></article>
    <article class="kpi kpi-sky"><div class="kpi-icon"><svg><use href="#i-eye"/></svg></div><div class="kpi-info"><h2>Acessos</h2><strong id="kAcessos">—</strong><small id="sAcessos">Integração pendente</small></div></article>

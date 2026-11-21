@@ -44,3 +44,16 @@
 @media(max-width:1100px){.dash-banner{height:auto;min-height:110px;flex-wrap:wrap;gap:7px;padding-bottom:12px}.dash-filter-row{max-width:100%;justify-content:flex-start}.dash-controls,.month-controls{margin-top:0}}
 @media(max-width:760px){.dash-banner{height:auto;min-height:110px}.dash-filter-row{width:100%;gap:6px}.month-controls select{font-size:11px}.month-controls button{padding:6px 8px}}
 @media(prefers-reduced-motion:reduce){.dash-footer button.is-loading svg,.dash-content.is-fresh .dashboard-grid,.dash-content.is-fresh .kpi-strip{animation:none}.dash-content .dashboard-grid,.dash-content .kpi-strip{transition:none}}
+
+/* Filtro de datas personalizado, fora do banner para não sobrepor os indicadores. */
+.custom-range-panel{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;padding:12px 16px;margin-top:12px;border:1px solid #d5dfed;border-radius:11px;background:#fff;box-shadow:var(--shadow)}
+.custom-range-panel[hidden]{display:none}
+.custom-range-panel strong{color:#16345c;font-size:13px;margin-right:4px}
+.custom-range-panel label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:650;color:#2c476d}
+.custom-range-panel input[type=date]{height:36px;padding:0 9px;border:1px solid #c7d6e9;border-radius:7px;background:#fff;color:#0e254b;font:600 12px Inter,"Segoe UI",Arial,sans-serif;min-width:140px}
+.custom-range-panel input[type=date]:focus-visible{outline:2px solid #2678f7;outline-offset:2px}
+.custom-range-panel button{min-height:36px;padding:8px 14px;border:0;border-radius:7px;background:#235fa7;color:white;font-weight:700;cursor:pointer}
+.custom-range-panel button:hover{background:#164a8a}
+.custom-range-error{width:100%;font-size:12px;font-weight:650;color:#b1272c}
+.custom-range-error[hidden]{display:none}
+@media(max-width:760px){.custom-range-panel{gap:10px;padding:12px}.custom-range-panel strong{width:100%}.custom-range-panel label{flex:1 1 190px;justify-content:space-between}.custom-range-panel input[type=date]{min-width:0;max-width:180px;width:100%}.custom-range-panel button{width:100%}}
