@@ -33,11 +33,24 @@ function normalize(value){
 function streetName(value){
  return String(value||'').split(',')[0].replace(/\s+(?:n[º°o.]?\s*)?\d+[a-z]?\s*$/i,'').trim();
 }
+// O cadastro preserva a grafia oficial; só a busca aceita Souza/Sousa.
+function streetAlias(value){
+ const s=String(value||'');
+ if(/\bsouza\b/i.test(s))return s.replace(/\bsouza\b/ig,'Sousa');
+ if(/\bsousa\b/i.test(s))return s.replace(/\bsousa\b/ig,'Souza');
+ return null;
+}
 function sameStreet(result,street){
- const a=result.address||{},candidate=a.road||a.pedestrian||a.residential||a.footway||a.path||'';
- const clean=s=>normalize(s).replace(/^(?:rua|r|avenida|av|travessa|praca|estrada|alameda)\s+/,'');
+ const a=result.address||{};
+ const candidate=a.road||a.pedestrian||a.residential||a.footway||a.path||
+  ((result.class==='highway'||result.addresstype==='road')?result.name:'')||'';
+ const clean=s=>normalize(s)
+  .replace(/^(?:rua|r|avenida|av|travessa|praca|estrada|alameda)\s+/,'')
+  .replace(/\bsouza\b/g,'sousa');
  const expected=clean(street),actual=clean(candidate);
- return !!(expected&&actual&&(expected===actual||expected.includes(actual)&&actual.length>=8||actual.includes(expected)&&expected.length>=8));
+ return !!(expected&&actual&&(expected===actual||
+  (expected.includes(actual)&&actual.length>=8)||
+  (actual.includes(expected)&&expected.length>=8)));
 }
 function sameCity(result,city){
  const a=result.address||{},cityName=a.city||a.town||a.municipality||a.village||'';
@@ -48,12 +61,17 @@ function sameName(result,name){
  return !!(n&&(label===n||display===n||display.startsWith(n+' ')));
 }
 function geocodeQueries(local){
- const street=streetName(local.endereco);
- const withoutNumber=[street,local.bairro,local.cidade,local.uf,'Brasil'].filter(Boolean).join(', ');
+ const street=streetName(local.endereco),alias=streetAlias(street);
+ const streetVariants=[street,...(alias?[alias]:[])].filter(Boolean);
  const byName=[local.nome,local.bairro,local.cidade,local.uf,'Brasil'].filter(Boolean).join(', ');
  const list=[{q:address(local),mode:'street',fallback:false}];
- if(street&&normalize(street)!==normalize(local.endereco))list.push({q:withoutNumber,mode:'street',fallback:true});
- else if(street)list.push({q:[street,local.cidade,local.uf,'Brasil'].filter(Boolean).join(', '),mode:'street',fallback:true});
+ // Primeiro tentamos o número também com a grafia alternativa.
+ if(alias)list.push({q:address({...local,endereco:local.endereco.replace(street,alias)}),mode:'street',fallback:true});
+ // Depois buscamos a rua sem número, com e sem bairro, sem usar o centro da cidade como destino.
+ for(const name of streetVariants){
+  list.push({q:[name,local.bairro,local.cidade,local.uf,'Brasil'].filter(Boolean).join(', '),mode:'street',fallback:true});
+  list.push({q:[name,local.cidade,local.uf,'Brasil'].filter(Boolean).join(', '),mode:'street',fallback:true});
+ }
  if(local.nome)list.push({q:byName,mode:'name',fallback:true});
  return list.filter((x,i,arr)=>arr.findIndex(y=>normalize(y.q)===normalize(x.q))===i);
 }
@@ -84,7 +102,7 @@ export async function onRequestPost({request,env}){
  }
  async function geocode(q,criteria={}){
   const mode=criteria.mode||'origin';
-  const key='geo-v2-'+await hash(mode+'|'+q.toLocaleLowerCase('pt-BR'));
+  const key='geo-v3-'+await hash(mode+'|'+q.toLocaleLowerCase('pt-BR'));
   const hit=await readCache(cache,key);
   if(hit?.lat!=null&&hit?.lon!=null)return hit;
   const url=new URL(NOMINATIM);
@@ -126,7 +144,7 @@ export async function onRequestPost({request,env}){
  try{originPoint=await geocode(origin);}catch{ return json({erro:'Não foi possível localizar a origem configurada. Verifique o endereço e tente novamente.',codigo:'ORIGEM_INVALIDA'},502);}
  if(!originPoint)return json({erro:'Origem não localizada no mapa. Confira a configuração privada.',codigo:'ORIGEM_INVALIDA'},502);
  for(const place of unique){
-  const destination=address(place),key='route-v2-'+await hash(origin+'|'+destination+'|'+(place.nome||''));
+  const destination=address(place),key='route-v3-'+await hash(origin+'|'+destination+'|'+(place.nome||''));
   try{
    const hit=await readCache(cache,key);
    if(hit?.km>0){rotas.push({id:place.id,km:hit.km,aproximado:!!hit.aproximado});continue;}
