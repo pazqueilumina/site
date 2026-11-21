@@ -317,7 +317,7 @@ async function alternarStatus(pid){
   const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:state.sha,dados:novo})});
   const o=await r.json().catch(()=>({}));if(!r.ok||!o.sha)throw new Error(o.erro||`HTTP ${r.status}`);
   state.dados=novo;state.sha=o.sha;
-  msg((desativar?'Palestra desativada':'Palestra reativada')+'. Vídeo, MP3 e PDF serão '+(desativar?'ocultados':'exibidos')+' após a publicação do Cloudflare Pages.','sucesso');
+  msg((desativar?'Palestra desativada':'Palestra reativada')+' e alteração publicada com sucesso. O site será atualizado pelo Cloudflare Pages.','sucesso');
  }catch(e){msg('Não foi possível alterar o status: '+e.message,'erro');}
  finally{state.statusSaving=false;render();}
 }
