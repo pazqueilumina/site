@@ -1,6 +1,6 @@
 # Continuidade do projeto — Paz que Ilumina
 
-> **Atualizado em:** 22/11/2026 — revisão de encerramento para continuidade em novo chat  
+> **Atualizado em:** 22/11/2026 — continuidade atualizada após testes reais dos lembretes por e-mail  
 > **Último HEAD de código auditado antes desta atualização documental:** `1c66122381924bac1b1b3005586dccf5f52fa531`  
 > **Repositório:** https://github.com/pazqueilumina/site  
 > **Branch de trabalho autorizada:** `main`  
@@ -101,9 +101,9 @@ Após terminar o backlog, avaliar IDs e a modelagem de palestras reutilizáveis 
 
 Versão **planejada como sucessora da v3.0**: dois modos de PPTX→PDF, seleção múltipla, arrastar e soltar, fila, progresso, remoção de itens, tratamento de erros sem interromper lote, não sobrescrever PDFs e retirar avisos informativos. Conversas antigas mencionam um artefato/código de v3.1 preparado, mas **não foi possível verificar seu arquivo, testes reais, instalação nem lançamento**. Portanto, **status de entrega da v3.1: a confirmar**, e não afirmar que está pronta/publicada. O programa é separado do site; **não há fonte do executável neste repositório auditado**. Não gerar versão/instalador sem autorização.
 
-### P4 — Automações futuras, ainda em planejamento
+### P4 — Lembretes por e-mail e Leitura Semanal — estados diferentes
 
-Foram discutidos lembretes de Agenda (24h e 1h antes) e leitura semanal de trechos de PDFs, com processamento sequencial, revisão e acompanhamento de progresso. Não confundir o planejamento com funcionalidade publicada. Existe documentação de planejamento anterior fora deste repositório; recuperar antes de detalhar ou implementar. Não incluir dados pessoais de destinatários neste arquivo público.
+**Lembretes de Agenda (24h e 1h):** implementados em Worker independente do site e testados com entrega real de dois modelos HTML; **envio automático regular ainda não confirmado como ativado**. Ver a seção 10, que prevalece sobre o planejamento histórico da seção 8.8. **Leitura Semanal de PDFs:** continua apenas em planejamento, sem autorização para implementação. Não incluir dados pessoais de destinatários neste arquivo público.
 
 ## 5. Inconsistências e riscos que merecem atenção
 
@@ -222,7 +222,7 @@ Esta seção complementa o inventário anterior com decisões recuperadas de con
 
 Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails_leitura_semanal.md`** (arquivo pessoal fora deste repositório). **Não copiar endereços de e-mail pessoais ou lista de destinatários para este repositório público.**
 
-**Situação na última conversa sobre e-mails (22/11/2026):**
+**Registro histórico de uma revisão anterior sobre e-mails (22/11/2026):** as pendências listadas a seguir descrevem um estágio já ultrapassado. **Para o estado atual, prevalece a seção 10**, que registra testes reais posteriores.
 - **[RELATADO PELO USUÁRIO / HISTÓRICO DE CONVERSA]** O domínio `pazqueilumina.com.br` **já foi verificado no Resend**. Esse progresso foi mencionado na conversa, mas **não foi revalidado diretamente no painel Resend** nesta revisão. Não voltar à etapa de verificar domínio sem primeiro perguntar/consultar o estado atual.
 - **[AINDA NÃO CONFIRMADO]** Criação da chave de API do Resend; cadastro do segredo `RESEND_API_KEY` no Cloudflare; configuração do Worker e dos gatilhos agendados. **Não registrar nem solicitar que chaves secretas sejam publicadas no GitHub.**
 - **[CÓDIGO NÃO LOCALIZADO]** A árvore completa da `main` foi consultada em 22/11/2026 e não foram identificados arquivos de implementação com nomes relacionados a `email`, `resend`, `lembrete`, `cron`, `newsletter` ou `inscritos`. **Isso não substitui uma auditoria de todas as funções**, mas não há comprovação de envio automático funcionando.
@@ -270,7 +270,7 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 1. Dashboard do Palestrante: quadro “Por onde Alexandre passou” corrigido e separado entre **Visitas presenciais** e **Participações online**; instituição identificada e plataforma indicada separadamente. Conferir em produção se outubro de 2026 mostra as 4 instituições e contagens acima. **Não há relato posterior do usuário confirmando a aparência final desse último layout.**
 2. Dashboard Administrativo: bandeiras BR/US renderizadas por SVG, evitando texto “US” no Windows. Conferir a aparência se houver novo relato de erro.
 3. Mapa do Palestrante: carregamento corrigido, ampliação em tela cheia e cache incremental já implementados. **Melhoria estrutural de desempenho adiada expressamente pelo usuário**; não refazer nem iniciar persistência de coordenadas sem nova autorização.
-4. E-mail: planejamento de **lembretes 24h e 1h** com Resend + Cloudflare Workers; **domínio relatado como verificado**, mas chave de API, segredo, agendamento, testes e envio não confirmados. **Ainda não tratar como recurso operacional.**
+4. E-mail: **atualização posterior na seção 10** — Worker independente, Resend, D1 e cron configurados; dois testes HTML recebidos pelo usuário. **Envios regulares 24h/1h ainda não foram ativados/confirmados.**
 
 **Prioridades e cuidados:**
 - O usuário está cadastrando um backlog grande de eventos e PDFs; preservar IDs, dados e vínculos existentes.
@@ -278,8 +278,48 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - Não criar versão do programa Windows v3.1 sem pedido explícito.
 - Não implementar e-mails/inscritos/leitura semanal só porque aparecem como próximos passos neste documento.
 - Para qualquer nova solicitação, **ler o arquivo real na `main`**, identificar o HEAD, inspecionar código e dados relevantes, pedir autorização quando ainda não houver e relatar separadamente commit, testes e deploy Cloudflare.
-- **Última ação solicitada neste chat:** atualizar este arquivo para permitir começar outro chat. **Nenhuma outra mudança de código ou funcionalidade foi solicitada nesta ação.**
+- **Este item registrava a última ação de um chat anterior.** A atualização de e-mails posterior está documentada na seção 10. A solicitação atual autoriza **apenas atualizar este Markdown na `main`**, sem alterar o Worker, o site ou ativar envios.
 
 **Mensagem curta sugerida para o novo chat:**
 
-> Vamos continuar o site Paz que Ilumina. Leia o `CONTINUIDADE-PROJETO.md` na `main` do GitHub `pazqueilumina/site`, especialmente as seções 1, 3, 8.5, 8.8 e 9. Confirme o HEAD atual antes de agir. Não faça mudanças nem deploy sem minha autorização explícita. Vou passar a próxima tarefa.
+> Vamos continuar o projeto Paz que Ilumina. Leia o `CONTINUIDADE-PROJETO.md` na `main` do GitHub `pazqueilumina/site`, especialmente as seções 1, 8.8 e **10 (estado mais recente dos e-mails)**. Confirme o HEAD atual antes de agir. Os templates de lembrete já foram testados e recebidos; falta encerrar o modo de teste e, mediante minha autorização, ativar os lembretes regulares. Não altere código, configurações nem faça deploy sem minha autorização.
+## 10. Continuidade mais recente — e-mails de lembrete (22/11/2026)
+
+> **Esta seção prevalece sobre os estados antigos de planejamento nas seções 4, 8.8 e 9.** Registro baseado nas configurações realizadas e nos resultados observados pelo usuário na conversa de 22/11/2026. **HEAD da \`main\` antes desta atualização documental:** \`80dc40dd26c8924c7005e18403c8f6236b2d82fd\`. A atualização deste Markdown gera um novo commit, mas **não** publica código do site nem altera o Worker.
+
+### 10.1 O que já foi configurado e confirmado
+
+- **Resend:** domínio remetente \`pazqueilumina.com.br\` verificado; remetente \`lembretes@pazqueilumina.com.br\`. Um primeiro e-mail simples de teste, enviado manualmente pelo editor de templates do Resend, **foi recebido**.
+- **Cloudflare Worker separado do site:** \`pazqueilumina-lembretes\`, no endereço \`https://pazqueilumina-lembretes.pazqueilumina.workers.dev/\`. O código foi colado e publicado **manualmente no editor Cloudflare**, não pelo repositório GitHub. Uma visita HTTP comum ao endereço responde \`404 Not found\` **por projeto**, pois a execução útil ocorre no gatilho agendado.
+- **Agendamento:** cron \`*/5 * * * *\` (a cada cinco minutos). O painel **Observability** exibiu execuções reais do cron, portanto o gatilho foi confirmado.
+- **Banco:** Cloudflare D1 \`pazqueilumina-lembretes\`, binding \`DB\`, tabela \`reminder_deliveries\` criada. O Worker usa registros de estado, tentativas, IDs do Resend e chaves de idempotência para evitar repetição.
+- **Variáveis/segredos usados:** \`RESEND_API_KEY\` (Secret), \`REMINDER_RECIPIENTS\` (Secret), \`FROM_EMAIL\`, \`REPLY_TO_EMAIL\`, \`AGENDA_URL\`, \`LOCAIS_URL\`, \`EMAIL_ENABLED\` e \`TEST_TEMPLATES_NOW\`. **Não publicar valores secretos ou destinatários pessoais neste repositório.**
+- **Fonte dos eventos:** \`https://pazqueilumina.com.br/js/dados.js\`; **fonte dos centros:** \`https://pazqueilumina.com.br/data/locais.json\`. O Worker consulta os dados publicados, não os cadastros ainda não publicados. Horários de evento em \`America/Sao_Paulo\`; lembretes previstos para **24h** e **1h** antes, com janela de tolerância de dez minutos.
+- **Destinatários:** na última configuração informada pelo usuário, \`REMINDER_RECIPIENTS\` foi reduzido a **um único endereço para testes**. Não incluir esse endereço na documentação pública; consultar o Secret no Cloudflare se necessário.
+
+### 10.2 Templates HTML e regra de localização
+
+- Dois modelos visuais de e-mail **aprovados e recebidos**: um para **24 horas antes** e outro para **1 hora antes**. Identidade visual sóbria do Paz que Ilumina (verde-escuro, creme e dourado), adaptada para celular, com título, data, horário, instituição, local e chamada para a Agenda.
+- **Presencial:** nome do Centro Espírita clicável, abrindo uma pesquisa no **Google Maps** a partir do nome e endereço cadastrados; endereço escrito também aparece no e-mail. Quando um evento antigo não tem \`localId\`, o Worker tenta identificar o centro pelo nome. **O link é de pesquisa por endereço, não uma coordenada geográfica previamente verificada**; os nove locais examinados não tinham latitude/longitude persistidas.
+- **On-line:** não gerar link de Maps para a instituição; apresentar botão/link da transmissão **quando o evento possuir URL válida**. Não inventar URL para eventos sem link cadastrado.
+- **Importante:** os HTMLs estão **incorporados ao código do Worker**. Um template publicado separadamente no painel do Resend foi usado apenas para o primeiro teste manual e **não é carregado automaticamente pelo Worker**.
+
+### 10.3 Falha identificada e corrigida
+
+- Os primeiros testes automáticos não chegaram após mais de vinte minutos. Os logs em **Observability** mostraram: \`Invalid redirect value, must be one of "follow" or "manual"\`.
+- **Causa:** duas chamadas \`fetch\` usavam \`redirect:'error'\`, opção não aceita no Cloudflare Workers.
+- **Correção aplicada pelo usuário no editor do Worker e publicada via Deploy:** substituir as duas ocorrências por \`redirect:'manual'\`.
+- **Resultado confirmado:** após o novo Deploy, o usuário **recebeu os dois e-mails HTML de teste** (presencial/24h com Google Maps e on-line/1h) e aprovou a aparência: “recebi, ficaram muito bons”. Isso comprova a integração Worker → Resend → caixa de entrada no modo de teste; **não comprova ainda o disparo regular por antecedência de evento**.
+- O mecanismo de teste \`TEST_TEMPLATES_NOW=true\` utiliza D1 para enviar uma única vez cada modelo ao único destinatário configurado, sem exigir \`EMAIL_ENABLED=true\`.
+
+### 10.4 Estado exato ao encerrar esta conversa e próximos passos
+
+1. **Último estado informado, não revalidado no painel após os testes:** \`TEST_TEMPLATES_NOW=true\`; \`EMAIL_ENABLED=false\`. O assistente orientou o usuário a alterar \`TEST_TEMPLATES_NOW\` para \`false\`, mas **o usuário ainda não confirmou essa alteração**. Não presumir que o teste foi desligado.
+2. **Primeira ação no próximo chat:** confirmar em **Worker → Settings → Variables and Secrets** que \`TEST_TEMPLATES_NOW=false\`, mantendo \`EMAIL_ENABLED=false\` até autorização de ativação. O código de teste usa D1 para não repetir os dois e-mails já enviados, mas o modo de teste deve ser encerrado.
+3. **Somente com autorização explícita:** alterar \`EMAIL_ENABLED=true\` para iniciar os lembretes reais de 24h e 1h. Antes disso, confirmar a lista de destinatários autorizados, o cron e a implantação da versão corrigida.
+4. **Após ativação:** acompanhar **Observability → Logs**, **Resend → Emails** e **D1 → reminder_deliveries**, verificando um evento futuro real, sucesso/falha e ausência de duplicação. Não declarar a automação de lembretes reais validada antes dessa verificação.
+5. **Limites:** a atualização documental não altera código nem variáveis; a otimização do mapa do site continua adiada; a Leitura Semanal e o cadastro de inscritos continuam planejados, não implementados.
+
+**Artefato de referência da conversa:** arquivo local disponibilizado ao usuário como \`worker-pazqueilumina-templates-maps-corrigido.txt\`. Ele **não foi adicionado ao GitHub**. Para futuras alterações, consultar primeiro o código **efetivamente publicado no editor Cloudflare**; não reconstruir o Worker a partir do código antigo de 259 linhas nem reintroduzir \`redirect:'error'\`.
+
+**Retomada curta sugerida:** “Continue o projeto Paz que Ilumina lendo a seção 10 de \`CONTINUIDADE-PROJETO.md\` na \`main\`. Os dois modelos HTML foram recebidos. Verifique se \`TEST_TEMPLATES_NOW\` já está \`false\`; depois vamos decidir a ativação de \`EMAIL_ENABLED\`, sem alterar o site nem o Worker sem minha autorização.”
