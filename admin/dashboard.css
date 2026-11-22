@@ -164,3 +164,13 @@
 .email-year-label select{min-width:84px;padding:5px 9px;border:1px solid #d4dfe8;border-radius:7px;background:#fff;color:#183451;font:inherit;cursor:pointer}
 .email-year-label select:focus-visible{outline:2px solid #3c7eb5;outline-offset:2px}
 @media(max-width:560px){.email-monitor-heading{align-items:flex-start}.email-year-label{margin-left:25px}}
+
+/* Conteúdos recentes unificados. */
+.widget-bottom-links{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:14px}
+.content-row .content-type{display:inline-flex;align-items:center;max-width:100%;padding:1px 5px;margin-bottom:2px;border-radius:4px;background:#eaf2fc;color:#225785;font-size:9px;line-height:1.2;font-weight:700}
+.content-row .content-type--short{background:#e9f3ff;color:#2365b4}
+.content-row .content-type--audio{background:#f0eaff;color:#6d45a8}
+.content-row .content-type--pdf{background:#fff3e2;color:#9d6017}
+.content-row .content-type--original{background:#e8f6ec;color:#2c7043}
+.content-row .row-text strong{font-size:11px}
+.content-row .row-text small{font-size:9px}

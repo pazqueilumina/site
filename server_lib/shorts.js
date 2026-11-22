@@ -22,6 +22,7 @@ export function validarShorts(dados){
   videos.add(s.youtubeId);
   if(typeof s.titulo!=='string'||!s.titulo.trim()||s.titulo.length>200)throw new Error('Título inválido em '+s.sid);
   if(typeof s.ativo!=='boolean')throw new Error('Situação inválida em '+s.sid);
+  if(s.publicadoEm!==undefined&&(typeof s.publicadoEm!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(s.publicadoEm)||!Number.isFinite(Date.parse(s.publicadoEm))))throw new Error('Data de publicação inválida em '+s.sid);
   if(!Number.isInteger(s.ordem)||s.ordem<1||s.ordem>dados.shorts.length||ordens.has(s.ordem))throw new Error('Ordem inválida em '+s.sid);
   ordens.add(s.ordem);
  }

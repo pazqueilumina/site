@@ -1,5 +1,6 @@
 import { branchDaRequisicao } from '../../../server_lib/branch.js';
 import { lerShorts, gravarShorts, validarShorts } from '../../../server_lib/shorts.js';
+import { registrarPublicacoesShorts } from '../../../server_lib/publicacoes.js';
 function resp(obj,status=200){return new Response(JSON.stringify(obj),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});}
 export async function onRequestGet({request,env}){
  if(!env.GITHUB_TOKEN)return resp({erro:'Token do GitHub não configurado.'},503);
@@ -19,6 +20,8 @@ export async function onRequestPut({request,env}){
   if(atual.sha!==payload.sha)return resp({erro:'Cadastro alterado por outra operação. Recarregue.'},409);
   // O contador nunca diminui, mesmo quando um Short é excluído.
   if(payload.dados.proximoId<atual.dados.proximoId)return resp({erro:'Contador de IDs não pode diminuir.'},400);
+  registrarPublicacoesShorts(payload.dados,atual.dados);
+  validarShorts(payload.dados);
   const sha=await gravarShorts(env.GITHUB_TOKEN,payload.dados,atual.sha,branch);
   return resp({ok:true,sha,aviso:'Cadastro enviado ao GitHub. Aguarde o deploy do Cloudflare.'});
  }catch(e){return resp({erro:e.message},e.message.startsWith('CONFLITO:')?409:502);}

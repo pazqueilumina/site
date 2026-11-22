@@ -368,3 +368,14 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - O cartão **Pendências** exibe falhas de envio **recentes (30 dias)**, erros de execução ativos, execução atrasada (>15 minutos), primeira execução pendente e falha de consulta/conexão. Quando tudo estiver normal, não cria aviso de e-mail.
 - Os totais anuais e alertas recentes são separados na resposta da API (`deliveries` e `alerts`), evitando confundir problemas antigos com pendências atuais.
 - Não foi alterado o Worker, seus agendamentos, o envio da Agenda Mensal nem o conteúdo das mensagens.
+
+
+## 2026-11-22 — Conteúdos recentes unificados no Dashboard
+
+- Implementação autorizada pelo responsável diretamente na branch main.
+- O quadro **Conteúdos recentes** combina até **5 itens**: Shorts, vídeos completos, áudios/MP3, slides/PDF e referência a arquivo original PPT/PPTX quando houver.
+- Cada formato aparece com etiqueta, título, ID, data e link. Shorts e vídeos abrem no YouTube; áudios e PDFs usam seus links cadastrados; o nome de PPT/PPTX é **apenas referência de arquivo original**, portanto abre o cadastro administrativo, sem inventar link de download.
+- As datas de publicação são registradas no servidor nos campos publicadoEm (Shorts) e publicacoes por tipo (palestras), quando o cadastro é publicado no GitHub. Alterar somente título, ordem ou status inativo não gera nova publicação; adicionar ou trocar uma mídia ativa registra nova data.
+- Para acervo anterior sem carimbo de publicação, a data da palestra é exibida como **data da palestra**, não como publicação. Shorts antigos sem data ficam abaixo dos itens datados.
+- Backfill pontual do Short SHO-0020 com a data real do commit de publicação de data/shorts.json em 22/11/2026 às 21:47:48 UTC. Os demais Shorts históricos não recebem datas inventadas.
+- Atualização do Dashboard e dos endpoints protegidos de Shorts e palestras, sem alterar e-mails, Workers ou IDs.

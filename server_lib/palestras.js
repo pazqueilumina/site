@@ -47,6 +47,12 @@ export function validarCadastro(dados) {
    if(p.eventoId!==undefined&&p.eventoId!==''&&(typeof p.eventoId!=='string'||!/^evt-[a-z0-9-]{4,50}$/.test(p.eventoId)))throw new Error('Vínculo de agenda inválido em '+p.pid);
   for(const key of ['audio','pdf'])if(p[key]&&(typeof p[key]!=='string'||p[key].length>1500||!(/^(https:\/\/|\/)/.test(p[key]))))throw new Error('Link inválido em '+p.pid);
   if(p.apresentacaoOriginal&&(typeof p.apresentacaoOriginal!=='string'||p.apresentacaoOriginal.length>250||/[\/\\]/.test(p.apresentacaoOriginal)))throw new Error('Nome de arquivo inválido em '+p.pid);
+  if(p.publicacoes!==undefined){
+   if(!p.publicacoes||typeof p.publicacoes!=='object'||Array.isArray(p.publicacoes))throw new Error('Datas de publicação inválidas em '+p.pid);
+   for(const [tipo,valor] of Object.entries(p.publicacoes)){
+    if(!['video','audio','pdf','original'].includes(tipo)||typeof valor!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(valor)||!Number.isFinite(Date.parse(valor)))throw new Error('Data de publicação inválida em '+p.pid);
+   }
+  }
  }
  return dados;
 }
