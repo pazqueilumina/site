@@ -500,7 +500,7 @@ function renderJourneys(){
 /* Mapa dos centros presenciais visitados no período: não expõe a residência. */
 const journeyMapPoints=new Map(),journeyMapIssues=new Map();
 let journeyMapBusy=false,journeyMapInstance=null,journeyMapMarkers=null,journeyMapSignature='';
-let journeyTileLayer=null,journeyTileFailures=0,journeyTileProvider='carto',journeyMapTilesUnavailable=false,journeyMapLastTrips=[];
+let journeyTileLayer=null,journeyTileFailures=0,journeyTileLoads=0,journeyTileWatchdog=null,journeyMapTilesUnavailable=false,journeyMapLastTrips=[];
 function journeyMapVenues(trips){
  const uniquePlaces=new Map();
  for(const trip of trips){
@@ -556,37 +556,47 @@ async function fetchJourneyMap(venues){
  }finally{journeyMapBusy=false;renderJourneyMap(journeyTrips().trips);}
 }
 
-/* CARTO como base principal; Esri como alternativa. Nunca usar o servidor
-   público de tiles do OpenStreetMap, que bloqueia usos fora da política. */
-function journeySetTileProvider(provider){
- if(!journeyMapInstance||!window.L)return;
+/* Esri World Street Map (raster). Não usar tiles públicos do OSM nem CARTO:
+   os primeiros bloquearam o site e o CARTO devolveu imagens exigindo chave. */
+function journeyStopTileWatchdog(){
+ if(journeyTileWatchdog!==null){clearTimeout(journeyTileWatchdog);journeyTileWatchdog=null;}
+}
+function journeyDisableMapTiles(){
+ if(journeyMapTilesUnavailable)return;
+ journeyMapTilesUnavailable=true;
+ journeyStopTileWatchdog();
+ if(journeyTileLayer&&journeyMapInstance)journeyMapInstance.removeLayer(journeyTileLayer);
+ journeyTileLayer=null;
+ renderJourneyMap(journeyMapLastTrips);
+}
+function journeySetTileProvider(){
+ if(!journeyMapInstance||!window.L||journeyMapTilesUnavailable)return;
+ journeyStopTileWatchdog();
  if(journeyTileLayer)journeyMapInstance.removeLayer(journeyTileLayer);
- journeyTileProvider=provider;
- journeyTileFailures=0;
- const carto=provider==='carto';
- const url=carto
-  ? 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-  : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
- const attribution=carto
-  ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-  : 'Tiles &copy; Esri — Sources: Esri, TomTom, Garmin, FAO, NOAA, USGS, OpenStreetMap contributors, GIS User Community';
- const layer=window.L.tileLayer(url,{maxZoom:19,attribution});
+ journeyTileFailures=0;journeyTileLoads=0;
+ const url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
+ const attribution='Tiles &copy; Esri — Sources: Esri, HERE, Garmin, USGS, OpenStreetMap contributors and GIS User Community';
+ const layer=window.L.tileLayer(url,{
+  maxZoom:19,attribution,
+  // Em respostas HTTP inválidas, mostrar transparência, nunca o ícone de imagem quebrada.
+  errorTileUrl:'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
+ });
  journeyTileLayer=layer;
- layer.on('tileload',()=>{if(journeyTileLayer===layer)journeyTileFailures=0;});
+ layer.on('tileload',()=>{
+  if(journeyTileLayer!==layer)return;
+  journeyTileLoads++;
+  journeyStopTileWatchdog();
+ });
  layer.on('tileerror',()=>{
   if(journeyTileLayer!==layer)return;
   journeyTileFailures++;
-  if(journeyTileFailures<3)return;
-  if(journeyTileProvider==='carto'){
-   journeySetTileProvider('esri');
-  }else{
-   journeyMapTilesUnavailable=true;
-   journeyMapInstance.removeLayer(layer);
-   journeyTileLayer=null;
-   renderJourneyMap(journeyMapLastTrips);
-  }
+  if(journeyTileFailures>=3)journeyDisableMapTiles();
  });
  layer.addTo(journeyMapInstance);
+ // Se nenhum tile responder, não deixar o quadro vazio indefinidamente.
+ journeyTileWatchdog=setTimeout(()=>{
+  if(journeyTileLayer===layer&&journeyTileLoads===0)journeyDisableMapTiles();
+ },12000);
 }
 
 function renderJourneyMap(trips){
@@ -625,7 +635,7 @@ function renderJourneyMap(trips){
  }
  if(!located.length||!window.L||journeyMapTilesUnavailable){
   frame.hidden=true;message.hidden=false;
-  message.textContent=journeyMapTilesUnavailable?'O mapa não pôde ser carregado pelos provedores disponíveis. A lista de centros permanece acessível.':
+  message.textContent=journeyMapTilesUnavailable?'Não foi possível carregar o mapa do Esri. A lista de centros permanece disponível.':
    !window.L?'Mapa interativo indisponível. Verifique a conexão com a biblioteca de mapas.':
    journeyMapBusy?'Localizando os centros visitados…':
    'Nenhum centro pôde ser posicionado com segurança. Confira os endereços em Locais.';
@@ -633,8 +643,10 @@ function renderJourneyMap(trips){
   frame.hidden=false;message.hidden=true;
   if(!journeyMapInstance){
    journeyMapInstance=window.L.map(frame,{scrollWheelZoom:false,zoomControl:true}).setView([-22.92,-43.2],11);
-   journeySetTileProvider('carto');
+   journeySetTileProvider();
    journeyMapMarkers=window.L.layerGroup().addTo(journeyMapInstance);
+  }else if(!journeyTileLayer){
+   journeySetTileProvider();
   }
   journeyMapMarkers.clearLayers();
   const bounds=[];
@@ -792,7 +804,7 @@ async function load(){
    if(match)used.add(match);
    return {...p,data:match?match.data:p.data,when:date(match?match.data:p.data),horario:match?match.horario:p.horario,centroId:match?.localId||p.centroId||'',localAgenda:match?match.local:null,seconds:duration(p.duracao),approx:match?false:!!p.dataAproximada,agendaLinked:!!match};
   });
-  journeyRoutingError='';journeyRouteFailures.clear();journeyMapPoints.clear();journeyMapIssues.clear();journeyMapSignature='';
+  journeyRoutingError='';journeyRouteFailures.clear();journeyMapPoints.clear();journeyMapIssues.clear();journeyMapSignature='';journeyMapTilesUnavailable=false;
   error=null;render();
   $('aviso').hidden=true;set('lastUpdate',shortDate(new Date())+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));set('refreshLabel','Atualizado');set('refreshFeedback','Dados atualizados.');
  }catch(e){error=e;setNotice('Não foi possível carregar as palestras: '+e.message);set('siteStatus','Falha na conexão');set('refreshLabel','Falha ao atualizar');set('refreshFeedback','Falha ao atualizar os dados.');}
