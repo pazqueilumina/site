@@ -446,3 +446,5 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - Revisão pós-commit: formulário de cancelamento foi colocado **fora** do formulário de inscrição (HTML não permite formulários aninhados).
 
 - O Monitor de e-mails também passa a contabilizar entregas da agenda semanal quando existir a tabela D1 `weekly_deliveries`, mantendo compatibilidade com a tabela ainda não criada; falhas e histórico de execução semanal são incluídos. Corrigida a persistência da mensagem de sucesso após cancelamento administrativo.
+
+- Cancelamento administrativo suporta também uma tabela antiga sem as colunas semanais, detectando as colunas presentes antes do UPDATE.

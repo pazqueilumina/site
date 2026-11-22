@@ -79,7 +79,13 @@ export async function onRequestPost({env,request}){
   try{
     if(!await hasTable(db))return json({erro:'Inscrição não encontrada.'},404);
     const now=new Date().toISOString();
-    const r=await db.prepare("UPDATE monthly_subscribers SET status='unsubscribed',unsubscribed_at=?,unsubscribe_token=NULL,verify_hash=NULL,verify_expires_at=NULL,weekly_opt_in=0,weekly_verify_hash=NULL,weekly_verify_expires_at=NULL WHERE email=? AND status IN ('active','pending')").bind(now,email).run();
+    const cols=await db.prepare('PRAGMA table_info(monthly_subscribers)').all();
+    const existing=new Set((cols.results||[]).map(x=>x.name));
+    const assignments=["status='unsubscribed'","unsubscribed_at=?","unsubscribe_token=NULL","verify_hash=NULL","verify_expires_at=NULL"];
+    if(existing.has('weekly_opt_in'))assignments.push('weekly_opt_in=0');
+    if(existing.has('weekly_verify_hash'))assignments.push('weekly_verify_hash=NULL');
+    if(existing.has('weekly_verify_expires_at'))assignments.push('weekly_verify_expires_at=NULL');
+    const r=await db.prepare("UPDATE monthly_subscribers SET "+assignments.join(',')+" WHERE email=? AND status IN ('active','pending')").bind(now,email).run();
     if(r.meta?.changes!==1)return json({erro:'Inscrição não encontrada ou já cancelada.'},409);
     return json({status:'ok',message:'Inscrição cancelada. O endereço não receberá novos envios públicos.'});
   }catch(error){
