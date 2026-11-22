@@ -344,3 +344,10 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - Botão **Ativar/Desativar** incluído em cada linha; exige **Publicar alterações** para efetivar no site.
 - Corrigida a numeração inicial: acervo exibido em ordem de mais novo para mais antigo, com **SHO-0001** no Short mais antigo (ordem 19) e **SHO-0019** no mais recente (ordem 1). **SHO-0020** será o próximo ID gerado. Esta foi uma renumeração única do acervo inicial; IDs não devem mudar ao reordenar a lista.
 - Novo Short é incluído no topo da lista (mais recente primeiro).
+
+## 2026-11-22 — Formatação de títulos e miniaturas circulares no Admin Shorts
+
+- Alteração aprovada pelo responsável e publicada em `main`.
+- Na ação **Salvar na lista**, títulos digitados inteiramente em caixa alta são convertidos para capitalização normal, com início de frase em maiúscula e preservação de nomes especiais (Jesus, Deus, Chico Xavier, Allan Kardec, Brasil, YouTube e siglas conhecidas). Títulos já em caixa mista são preservados.
+- Miniaturas da lista administrativa de Shorts passam a ser circulares, seguindo a página pública de vídeos, com enquadramento central e ampliação da imagem.
+- Não há renumeração de IDs existentes nem alteração de títulos do acervo anterior: a conversão ocorre ao salvar o formulário de cada Short.

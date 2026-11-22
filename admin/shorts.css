@@ -5,7 +5,8 @@
 .pagina-shorts .short-registro.inativo .short-escolher{opacity:.65}
 .pagina-shorts .short-escolher{display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;border:0;background:transparent;cursor:pointer;padding:3px 0;color:var(--ink)}
 .pagina-shorts .short-escolher:hover strong{text-decoration:underline}
-.pagina-shorts .short-thumb{width:57px;height:78px;object-fit:cover;border-radius:6px;background:#e9eef2;flex-shrink:0}
+.pagina-shorts .short-thumb-circulo{display:block;width:64px;height:64px;flex:0 0 64px;overflow:hidden;border-radius:50%;border:2px solid #fff;outline:1px solid #d9e2ec;background:#192437;box-shadow:0 3px 9px rgba(21,35,58,.15)}
+.pagina-shorts .short-thumb{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(1.72);transform-origin:center center}
 .pagina-shorts .short-dados{min-width:0;display:block;overflow-wrap:anywhere}
 .pagina-shorts .short-dados strong{display:block;font-size:13px;line-height:1.4;color:var(--navy)}
 .pagina-shorts .short-dados small{display:block;margin-top:4px;font-size:11px;color:var(--muted)}
@@ -25,7 +26,7 @@
 .pagina-shorts .situacao{font-size:15px}
 .pagina-shorts .lista .filtros select{width:120px}
 .pagina-shorts .short-escolher:focus-visible,.pagina-shorts .short-ordem button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-@media(max-width:590px){.pagina-shorts .short-registro{padding:9px 10px;gap:6px}.pagina-shorts .short-thumb{width:47px;height:66px}.pagina-shorts .short-dados strong{font-size:12px}.pagina-shorts .lista .filtros select{width:100px}.pagina-shorts .preview-short img{width:92px;height:128px}}
+@media(max-width:590px){.pagina-shorts .short-registro{padding:9px 10px;gap:6px}.pagina-shorts .short-thumb-circulo{width:52px;height:52px;flex-basis:52px}.pagina-shorts .short-dados strong{font-size:12px}.pagina-shorts .lista .filtros select{width:100px}.pagina-shorts .preview-short img{width:92px;height:128px}}
 
 /* Mensagens ocultas não devem reservar espaço na página. */
 .pagina-shorts .mensagem[hidden]{display:none}

@@ -15,6 +15,15 @@ function youtubeId(valor){
   return /^[a-zA-Z0-9_-]{11}$/.test(id||'')?id:null;
  }catch{return null;}
 }
+function formatarTitulo(titulo){
+ const limpo=String(titulo||'').trim().replace(/\s+/g,' ');
+ // Converter somente títulos inteiramente em caixa alta; respeitar títulos mistos.
+ if(limpo!==limpo.toLocaleUpperCase('pt-BR')||limpo===limpo.toLocaleLowerCase('pt-BR'))return limpo;
+ const nomes={deus:'Deus',jesus:'Jesus',chico:'Chico',xavier:'Xavier',allan:'Allan',kardec:'Kardec',brasil:'Brasil',youtube:'YouTube',eua:'EUA',tdah:'TDAH',toc:'TOC'};
+ return limpo.toLocaleLowerCase('pt-BR')
+  .replace(/(^|[.!?]\s*)(\p{L})/gu,(_,inicio,letra)=>inicio+letra.toLocaleUpperCase('pt-BR'))
+  .replace(/[\p{L}]+/gu,palavra=>nomes[palavra]||palavra);
+}
 function idNovo(){return 'SHO-'+String(estado.dados.proximoId).padStart(4,'0');}
 function normalizarOrdem(){estado.dados.shorts.forEach((s,i)=>s.ordem=i+1);}
 function listaOrdenada(){return [...estado.dados.shorts].sort((a,b)=>a.ordem-b.ordem||a.sid.localeCompare(b.sid));}
@@ -67,10 +76,11 @@ function render(){
   const linha=document.createElement('div');linha.className='short-registro'+(estado.selecionado===s.sid?' selecionado':'')+(s.ativo===false?' inativo':'');
   const escolher=document.createElement('button');escolher.type='button';escolher.className='short-escolher';escolher.addEventListener('click',()=>selecionar(s.sid));
   const img=document.createElement('img');img.className='short-thumb';img.loading='lazy';img.alt='';img.src='https://i.ytimg.com/vi/'+s.youtubeId+'/hqdefault.jpg';
+  const circulo=document.createElement('span');circulo.className='short-thumb-circulo';circulo.append(img);
   const dados=document.createElement('span');dados.className='short-dados';
   const titulo=document.createElement('strong');titulo.textContent=s.titulo;
   const meta=document.createElement('small');meta.textContent=s.sid+' · '+(s.ativo===false?'Inativo':'Ativo')+' · Ordem '+s.ordem;
-  dados.append(titulo,meta);escolher.append(img,dados);
+  dados.append(titulo,meta);escolher.append(circulo,dados);
   const controles=document.createElement('div');controles.className='short-ordem';
   for(const [delta,rotulo] of [[-1,'↑'],[1,'↓']]){
    const b=document.createElement('button');b.type='button';b.textContent=rotulo;b.title=delta<0?'Subir Short':'Descer Short';b.setAttribute('aria-label',b.title+': '+s.titulo);
@@ -111,7 +121,7 @@ function salvar(evento){
  evento.preventDefault();
  if(!estado.sha){aviso('Aguarde o carregamento do cadastro.','erro');return;}
  if(!$('formShort').reportValidity())return;
- const id=youtubeId($('urlShort').value),titulo=$('tituloShort').value.trim();
+ const id=youtubeId($('urlShort').value),titulo=formatarTitulo($('tituloShort').value);
  if(!id){aviso('Informe um link válido do YouTube.','erro');return;}
  if(!titulo){aviso('O título é obrigatório.','erro');return;}
  const duplicado=estado.dados.shorts.find(s=>s.youtubeId===id&&s.sid!==estado.selecionado);
