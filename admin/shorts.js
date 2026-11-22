@@ -21,7 +21,7 @@ function listaOrdenada(){return [...estado.dados.shorts].sort((a,b)=>a.ordem-b.o
 function podeSair(){return !estado.formAlterado||confirm('Há alterações no formulário ainda não salvas. Deseja descartá-las?');}
 function preencher(s){
  estado.selecionado=s?s.sid:null;
- $('sidShort').value=s?s.sid:idNovo();
+ $('sidShort').textContent=s?s.sid:idNovo();
  $('tituloShort').value=s?s.titulo:'';
  $('urlShort').value=s?'https://www.youtube.com/shorts/'+s.youtubeId:'';
  $('statusShort').value=s&&s.ativo===false?'inativo':'ativo';
@@ -77,8 +77,25 @@ function render(){
    b.disabled=!reordenarPermitido||(delta<0?idx===0:idx===todos.length-1);
    b.addEventListener('click',()=>mover(s.sid,delta));controles.append(b);
   }
-  linha.append(escolher,controles);host.append(linha);
+  const acao=document.createElement('button');
+  acao.type='button';acao.className='short-toggle '+(s.ativo===false?'ativar':'desativar');
+  acao.textContent=s.ativo===false?'Ativar':'Desativar';
+  acao.title=(s.ativo===false?'Ativar':'Desativar')+' Short';
+  acao.setAttribute('aria-label',acao.title+': '+s.titulo);
+  acao.disabled=estado.publicando;
+  acao.addEventListener('click',()=>alternarAtivo(s.sid));
+  linha.append(escolher,acao,controles);host.append(linha);
  });
+}
+function alternarAtivo(sid){
+ if(!podeSair())return;
+ const s=estado.dados.shorts.find(x=>x.sid===sid);
+ if(!s||estado.publicando)return;
+ s.ativo=!s.ativo;
+ estado.alterado=true;
+ const atual=estado.dados.shorts.find(x=>x.sid===estado.selecionado);
+ preencher(atual||null);
+ aviso('Short '+(s.ativo?'ativado':'desativado')+' na lista. Clique em Publicar alterações para atualizar o site.','alerta');
 }
 function mover(sid,delta){
  if(!podeSair())return;
@@ -103,7 +120,7 @@ function salvar(evento){
  if(s){s.titulo=titulo;s.youtubeId=id;s.ativo=$('statusShort').value==='ativo';}
  else{
   s={sid:idNovo(),youtubeId:id,titulo,ativo:$('statusShort').value==='ativo',ordem:estado.dados.shorts.length+1};
-  estado.dados.proximoId++;estado.dados.shorts.push(s);
+  estado.dados.proximoId++;estado.dados.shorts.unshift(s);
  }
  normalizarOrdem();estado.alterado=true;preencher(s);
  aviso('Short salvo na lista. Clique em Publicar alterações para atualizar o site.','alerta');

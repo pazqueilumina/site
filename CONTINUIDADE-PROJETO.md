@@ -336,3 +336,11 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - A página pública `/videos.html` e a busca da página inicial carregam os Shorts ativos de `/data/shorts.json`; o Dashboard consulta o mesmo cadastro para seus indicadores.
 - Links de navegação do Admin e ação rápida de adicionar Short incluídos.
 - Preservar o fluxo de publicação pelo GitHub/Cloudflare e confirmar deploy de produção após o commit.
+
+## 2026-11-22 — Ajustes de cadastro de Shorts (autorizados)
+
+- Corrigido box vazio de mensagens com CSS `[hidden]`.
+- ID interno agora aparece como texto fixo, sem campo de digitação.
+- Botão **Ativar/Desativar** incluído em cada linha; exige **Publicar alterações** para efetivar no site.
+- Corrigida a numeração inicial: acervo exibido em ordem de mais novo para mais antigo, com **SHO-0001** no Short mais antigo (ordem 19) e **SHO-0019** no mais recente (ordem 1). **SHO-0020** será o próximo ID gerado. Esta foi uma renumeração única do acervo inicial; IDs não devem mudar ao reordenar a lista.
+- Novo Short é incluído no topo da lista (mais recente primeiro).
