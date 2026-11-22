@@ -18,7 +18,7 @@ const rangeStart=()=>{if(isCustom())return new Date(appliedCustomStart+'T00:00:0
 const rangeEnd=()=>{const end=new Date();end.setHours(23,59,59,999);if(isCustom())return new Date(appliedCustomEnd+'T23:59:59.999');if(isYear()){const last=new Date(appliedYear,11,31,23,59,59,999);return last<end?last:end;}if(!isMonth())return end;const monthEnd=new Date(appliedYear,appliedMonth+1,0,23,59,59,999);return monthEnd<end?monthEnd:end;};
 const rangeDays=()=>{const start=rangeStart(),end=rangeEnd();if(end<start)return 0;const utc=d=>Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());return Math.round((utc(end)-utc(start))/86400000)+1;};
 const inRange=s=>{const d=isoToDate(s);return !!d&&d>=rangeStart()&&d<=rangeEnd();};
-let current={p:null,a:null,l:null,activities:null,audience:null,visitsTrend:null};
+let current={p:null,a:null,l:null,activities:null,audience:null,visitsTrend:null,emails:null};
 let audienceSerial=0,trendSerial=0;
 function notice(msg){$('avisoTexto').textContent=msg;$('aviso').hidden=false;}
 async function read(url){const r=await fetch(url,{credentials:'same-origin',cache:'no-store'});const data=await r.json().catch(()=>({}));if(!r.ok)throw Error(data.erro||'HTTP '+r.status);return data;}
@@ -222,15 +222,80 @@ function renderDonut(palestras){const shorts=(typeof DADOS!=='undefined'&&Array.
  const rows=[['Vídeos',shorts,'#2f8bff'],['Apresentações',palestras.length,'#35c95d'],['Áudios',palestras.filter(p=>!!p.audio).length,'#9550e7'],['Slides (PDF)',palestras.filter(p=>!!p.pdf).length,'#ffad30']];const total=rows.reduce((n,r)=>n+r[1],0);set('donutTotal',nf(total));let offset=0;const parts=rows.map(r=>{const begin=offset;offset+=r[1]/(total||1)*100;return `${r[2]} ${begin.toFixed(2)}% ${offset.toFixed(2)}%`;});$('donut').style.background='conic-gradient('+parts.join(',')+')';const host=clear('donutLegend');rows.forEach(([name,count,color])=>{const row=txt('div','','donut-row'),dot=txt('span','','dot');dot.style.background=color;row.append(dot,txt('span',name,'donut-name'),txt('strong',nf(count)));host.append(row);});}
 function renderRecent(palestras){const host=clear('recentes');if(!palestras){host.append(txt('p','Dados indisponíveis.','empty-text'));return;}const items=palestras.filter(p=>p.data).sort((a,b)=>b.data.localeCompare(a.data)).slice(0,3);if(!items.length){host.append(txt('p','Nenhuma apresentação cadastrada.','empty-text'));return;}items.forEach(p=>{const link=txt('a','','content-row');link.href=p.youtubeId?'https://www.youtube.com/watch?v='+encodeURIComponent(p.youtubeId):'/admin/palestras.html';if(p.youtubeId){if(link.href.startsWith('https:')){link.target='_blank';link.rel='noopener noreferrer';}const img=document.createElement('img');img.src='https://i.ytimg.com/vi/'+p.youtubeId+'/mqdefault.jpg';img.alt='';img.loading='lazy';link.append(img);}else{const box=txt('span','PDF','thumb-fallback');link.append(box);}const wrap=txt('span','','row-text');wrap.append(txt('strong',p.titulo),txt('small',p.pid+' · '+fmtDate(p.data)+(p.dataAproximada?' (aprox.)':'')));link.append(wrap);host.append(link);});}
 function renderActivities(items){const host=clear('atividades');if(!Array.isArray(items)||!items.length){host.append(txt('p','Histórico do GitHub indisponível no momento.','empty-text'));return;}items.slice(0,5).forEach(item=>{const row=txt('div','','activity-row'),icon=txt('span','','activity-icon');icon.append(svg('refresh'));const wrap=txt('span','','row-text');wrap.append(txt('strong',item.message||'Atualização do site'),txt('small',item.date?new Date(item.date).toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'GitHub'));row.append(icon,wrap);host.append(row);});}
-function renderPending(palestras,agenda){const host=clear('pendencias');if(!palestras){host.append(txt('p','Dados indisponíveis.','empty-text'));return;}const rows=[];const missingPdf=palestras.filter(p=>!p.pdf).length,missingAudio=palestras.filter(p=>!p.audio).length,missingVideo=palestras.filter(p=>!p.youtubeId).length;
- if(missingPdf)rows.push([missingPdf+' apresentações sem PDF','warn','/admin/palestras.html']);if(missingAudio)rows.push([missingAudio+' apresentações sem MP3','warn','/admin/palestras.html']);if(missingVideo)rows.push([missingVideo+' apresentações sem vídeo','warn','/admin/palestras.html']);if(agenda){const incomplete=agenda.filter(e=>!e.titulo||!e.local||!e.data||!e.horario).length;if(incomplete)rows.push([incomplete+' eventos com informações incompletas','warn','/admin/agenda.html']);}
- if(!rows.length){host.append(txt('p','Nenhuma ausência de arquivo identificada no cadastro.','empty-text'));return;}
- rows.slice(0,4).forEach(([label,type,url])=>{const link=txt('a','','alert-row '+type);link.href=url;const icon=txt('span','','alert-icon');icon.append(svg('alert'));const wrap=txt('span','','row-text');wrap.append(txt('strong',label));link.append(icon,wrap,txt('span','›','arrow'));host.append(link);});}
+function renderPending(palestras,agenda,emails){
+ const host=clear('pendencias'),rows=[];
+ if(palestras){
+  const missingPdf=palestras.filter(p=>!p.pdf).length,missingAudio=palestras.filter(p=>!p.audio).length,missingVideo=palestras.filter(p=>!p.youtubeId).length;
+  if(missingPdf)rows.push([missingPdf+' apresentações sem PDF','warn','/admin/palestras.html']);
+  if(missingAudio)rows.push([missingAudio+' apresentações sem MP3','warn','/admin/palestras.html']);
+  if(missingVideo)rows.push([missingVideo+' apresentações sem vídeo','warn','/admin/palestras.html']);
+ }else rows.push(['Acervo indisponível no momento','warn','/admin/palestras.html']);
+ if(agenda){const incomplete=agenda.filter(e=>!e.titulo||!e.local||!e.data||!e.horario).length;if(incomplete)rows.push([incomplete+' eventos com informações incompletas','warn','/admin/agenda.html']);}
+ if(!emails||emails.status!=='ok'){
+  rows.unshift(['Monitor de e-mails '+(emails?.status==='not_configured'?'não conectado':'indisponível'),'warn','#emails']);
+ }else{
+  const deliveryErrors=Number(emails.deliveries?.failed||0)+Number(emails.deliveries?.stalled||0);
+  const executionErrors=Number(emails.monitor?.executionErrors||0);
+  if(deliveryErrors)rows.unshift([deliveryErrors+' envio(s) de e-mail com erro','warn','#emails']);
+  if(executionErrors)rows.unshift([executionErrors+' erro(s) de execução dos e-mails','warn','#emails']);
+  if(emails.monitor?.stale)rows.unshift(['Worker de e-mails sem execução recente','warn','#emails']);
+  if(!emails.monitor?.installed)rows.push(['Monitor de execução ainda não instalado','info','#emails']);
+ }
+ if(!rows.length){host.append(txt('p','Nenhuma pendência identificada.','empty-text'));return;}
+ rows.slice(0,5).forEach(([label,type,url])=>{const link=txt('a','','alert-row '+type);link.href=url;const icon=txt('span','','alert-icon');icon.append(svg('alert'));const wrap=txt('span','','row-text');wrap.append(txt('strong',label));link.append(icon,wrap,txt('span','›','arrow'));host.append(link);});
+}
+function emailDate(value){
+ if(!value||!Number.isFinite(Date.parse(value)))return '—';
+ return new Date(value).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
+function renderEmailStatus(data){
+ const toggle=$('emailFailed'),panel=$('emailFailuresPanel'),info=$('emailMonitorInfo');
+ const healthy=data?.status==='ok';
+ set('emailSent',healthy?nf(data.deliveries.sent):'—');
+ set('emailExecutionErrors',healthy&&data.monitor?.installed?nf(data.monitor.executionErrors):'—');
+ set('emailLastRun',healthy?emailDate(data.monitor?.lastRunAt):'—');
+ toggle.textContent=healthy?nf(Number(data.deliveries.failed||0)+Number(data.deliveries.stalled||0)):'—';
+ toggle.classList.toggle('has-email-errors',healthy&&(Number(data.deliveries.failed||0)+Number(data.deliveries.stalled||0)>0));
+ panel.replaceChildren();
+ if(!healthy){
+  info.textContent=data?.message||'Não foi possível consultar o monitor de e-mails.';
+  info.className='email-monitor-info warning';
+  toggle.disabled=true;panel.hidden=true;toggle.setAttribute('aria-expanded','false');return;
+ }
+ const issues=[...(data.deliveries?.failures||[]).map(r=>({
+  title:(r.kind==='mensal'?'Agenda Mensal':'Lembrete '+r.category)+(r.eventId?' · '+r.eventId:''),
+  detail:r.error||'Envio não concluído.',at:r.at
+ })),...(data.monitor?.errors||[]).map(r=>({
+  title:'Execução · '+({cron:'Agendamento',reminders:'Lembretes',monthly:'Agenda Mensal',test_templates:'Teste dos lembretes',test_monthly:'Teste mensal'}[r.job]||r.job),
+  detail:r.error||'Falha na execução.',at:r.at
+ }))];
+ if(data.monitor?.stale)issues.unshift({title:'Agendamento sem execução recente',detail:'A última execução registrada tem mais de 15 minutos.',at:data.monitor.lastRunAt});
+ if(!data.monitor?.installed)issues.push({title:'Monitor de execução pendente',detail:'O Worker ainda precisa gravar seu estado no D1.',at:null});
+ if(data.monitor?.pending)issues.push({title:'Aguardando primeira execução',detail:'A tabela do monitor existe, mas ainda não há execução registrada.',at:null});
+ if(!data.deliveries?.monthlyReady)issues.push({title:'Agenda Mensal',detail:'Aguardando o primeiro registro de envio mensal no D1.',at:null});
+ for(const item of issues.slice(0,14)){
+  const row=txt('div','','email-issue-row');
+  row.append(txt('strong',item.title),txt('small',item.detail+(item.at?' · '+emailDate(item.at):'')));
+  panel.append(row);
+ }
+ toggle.disabled=!issues.length;
+ if(!issues.length){panel.hidden=true;toggle.setAttribute('aria-expanded','false');}
+ else panel.hidden=toggle.getAttribute('aria-expanded')!=='true';
+ const notices=[];
+ if(!data.monitor?.installed)notices.push('Monitor de execução pendente');
+ if(data.monitor?.pending)notices.push('Aguardando primeira execução');
+ if(data.monitor?.stale)notices.push('Agendamento atrasado');
+ if(!data.deliveries?.monthlyReady)notices.push('Agenda Mensal ainda sem registros');
+ const failureCount=Number(data.deliveries.failed||0)+Number(data.deliveries.stalled||0)+Number(data.monitor?.executionErrors||0);
+ if(failureCount)notices.unshift(failureCount+' ocorrência(s) para verificar');
+ info.textContent=notices.join(' · ')||'Nenhuma falha registrada nos últimos 30 dias.';
+ info.className='email-monitor-info'+(notices.length?' warning':'');
+}
 function renderEvents(agenda){const host=clear('eventos');if(!agenda){host.append(txt('p','Agenda indisponível.','empty-text'));return;}const upcoming=agenda.filter(e=>e.data>=todayISO()).sort((a,b)=>a.data.localeCompare(b.data)||(a.horario||'').localeCompare(b.horario||'')).slice(0,2);if(!upcoming.length){host.append(txt('p','Nenhum evento futuro cadastrado.','empty-text'));return;}upcoming.forEach(e=>{const row=txt('div','','event-row'),date=txt('span','','event-date');date.append(txt('strong',e.data.slice(8,10)),txt('span',new Date(e.data+'T12:00:00').toLocaleDateString('pt-BR',{month:'short'}).replace('.','').toUpperCase()));const info=txt('span','','event-text');info.append(txt('strong',e.titulo),txt('small',e.local||'Local não informado'));row.append(date,info,txt('span',e.horario||'—','event-time'));host.append(row);});}
 function renderSummary(palestras){const host=clear('resumo');if(!palestras){const row=txt('tr','');const td=txt('td','Dados indisponíveis');td.colSpan=3;row.append(td);host.append(row);return;}const shorts=(typeof DADOS!=='undefined'&&Array.isArray(DADOS.shorts))?DADOS.shorts.length:0;const types=[['Vídeos (Shorts)',shorts,null,'#2f8bff'],['Apresentações',palestras.length,palestras.filter(p=>inRange(p.data)).length,'#35c95d'],['Áudios',palestras.filter(p=>p.audio).length,null,'#9550e7'],['Slides (PDF)',palestras.filter(p=>p.pdf).length,null,'#ffad30']];types.forEach(([name,count,newCount,color])=>{const tr=txt('tr',''),td=txt('td',''),dot=txt('span','','type-dot');dot.style.background=color;td.append(dot,document.createTextNode(name));tr.append(td,txt('td',nf(count)),txt('td',newCount===null?'—':(newCount?'+'+nf(newCount):'0'),newCount?'delta':''));host.append(tr);});}
 function render(){set('chartRangeText',isCustom()?'Apresentações acumuladas de '+fmtDate(appliedCustomStart)+' até '+fmtDate(appliedCustomEnd):isMonth()?'Apresentações acumuladas em '+new Date(appliedYear,appliedMonth,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}):isYear()?'Apresentações acumuladas em '+appliedYear:'Apresentações acumuladas no período selecionado');const palestras=Array.isArray(current.p?.dados?.palestras)?current.p.dados.palestras.filter(p=>p.ativo!==false):null,agenda=Array.isArray(current.a?.agenda)?current.a.agenda:null,locais=Array.isArray(current.l?.locais)?current.l.locais:null,shorts=(typeof DADOS!=='undefined'&&Array.isArray(DADOS.shorts))?DADOS.shorts.length:null;
  set('kVideos',shorts===null?'—':nf(shorts));set('sVideos','Vídeos curtos cadastrados');set('kPalestras',palestras?nf(palestras.length):'—');set('kAudios',palestras?nf(palestras.filter(p=>p.audio).length):'—');set('kPdfs',palestras?nf(palestras.filter(p=>p.pdf).length):'—');set('sPalestras',palestras?'+'+nf(palestras.filter(p=>inRange(p.data)).length)+' no período':'Cadastro indisponível');
- drawChart(palestras);renderAudience();renderVisitsTrend();renderDonut(palestras);renderRecent(palestras);renderActivities(current.activities?.commits);renderPending(palestras,agenda);renderEvents(agenda);renderSummary(palestras);
+ drawChart(palestras);renderAudience();renderVisitsTrend();renderDonut(palestras);renderRecent(palestras);renderActivities(current.activities?.commits);renderPending(palestras,agenda,current.emails);renderEmailStatus(current.emails);renderEvents(agenda);renderSummary(palestras);
  set('siteStatus',palestras&&agenda?'Dados conectados':'Verificar conexão');
 }
 let refreshTimer=null;
@@ -247,11 +312,11 @@ async function update(){
  const button=$('atualizar');if(button.disabled)return;
  if(refreshTimer){clearTimeout(refreshTimer);refreshTimer=null;}
  button.disabled=true;refreshState('loading');$('dashMainContent').classList.add('is-updating');
- const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade'];
+ const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade','/api/admin/email-status'];
  try{
   const results=await Promise.allSettled(urls.map(read));
-  ['p','a','l','activities'].forEach((key,i)=>{current[key]=results[i].status==='fulfilled'?results[i].value:null;});
-  const errors=results.map((r,i)=>r.status==='rejected'?['Acervo','Agenda','Locais','Atividades'][i]+': '+r.reason.message:null).filter(Boolean);
+  ['p','a','l','activities','emails'].forEach((key,i)=>{current[key]=results[i].status==='fulfilled'?results[i].value:null;});
+  const errors=results.map((r,i)=>r.status==='rejected'?['Acervo','Agenda','Locais','Atividades','E-mails'][i]+': '+r.reason.message:null).filter(Boolean);
   render();
   const [audienceOk,trendOk]=await Promise.all([loadAudience(),loadVisitsTrend()]);
   if(!audienceOk)errors.push('Audiência: '+(current.audience?.erro||'consulta indisponível'));
@@ -333,5 +398,6 @@ function applyCustomPeriod(){
 $('acervoToggle').addEventListener('click',()=>{const expanded=$('acervoToggle').getAttribute('aria-expanded')==='true';$('acervoToggle').setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});
 $('aplicarPeriodo').addEventListener('click',applyCustomPeriod);
 $('atualizar').addEventListener('click',update);
+$('emailFailed').addEventListener('click',()=>{const button=$('emailFailed'),expanded=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!expanded));$('emailFailuresPanel').hidden=expanded;});
 $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
 initCustomFilter();initPeriodControls();update();

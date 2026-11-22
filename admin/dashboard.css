@@ -135,3 +135,24 @@
 /* Os seletores de mês ficam sobre os indicadores, sem serem cortados pelo cabeçalho. */
 .dash-banner{overflow:visible;z-index:4}
 .dash-banner .mountains,.dash-banner .sunlight{pointer-events:none}
+/* Monitor de e-mails — dados reais do D1, sem exposição de credenciais. */
+.email-monitor-grid{grid-template-columns:minmax(0,1fr)}
+.widget-email-monitor{background:linear-gradient(160deg,#fff 0%,#f7fbfa 100%)}
+.email-monitor-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:11px}
+.email-monitor-metric{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:11px 13px;border:1px solid #dce6e6;border-radius:9px;background:#fff;min-width:0}
+.email-monitor-metric>span{font-size:11px;color:#526c73;font-weight:600}
+.email-monitor-metric strong,.email-error-count{font-size:23px;line-height:1.25;font-weight:750;color:#153e4a;font-family:inherit;font-variant-numeric:tabular-nums}
+.email-error-count{padding:0;border:0;background:none;cursor:pointer;color:#153e4a;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}
+.email-error-count:disabled{cursor:default;text-decoration:none}
+.email-error-count.has-email-errors{color:#b34332}
+.email-monitor-metric strong.email-monitor-date{font-size:16px;line-height:1.6}
+.email-monitor-info{font-size:11px;color:#4a7966;margin:10px 2px 1px;line-height:1.45}
+.email-monitor-info.warning{color:#9c6530}
+.email-failures-panel{display:grid;gap:0;border:1px solid #e5dfd8;border-radius:8px;background:#fff;margin-top:11px;overflow:hidden}
+.email-failures-panel[hidden]{display:none}
+.email-issue-row{display:grid;gap:4px;padding:10px 13px;border-bottom:1px solid #e8edf0}
+.email-issue-row:last-child{border-bottom:0}
+.email-issue-row strong{font-size:11px;color:#30465a}
+.email-issue-row small{font-size:10px;line-height:1.45;color:#667b8d;overflow-wrap:anywhere}
+@media(max-width:900px){.email-monitor-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.email-monitor-metrics{gap:6px}.email-monitor-metric{padding:9px 10px}.email-monitor-metric strong,.email-error-count{font-size:20px}}
