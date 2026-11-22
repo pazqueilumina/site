@@ -379,3 +379,12 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - Para acervo anterior sem carimbo de publicação, a data da palestra é exibida como **data da palestra**, não como publicação. Shorts antigos sem data ficam abaixo dos itens datados.
 - Backfill pontual do Short SHO-0020 com a data real do commit de publicação de data/shorts.json em 22/11/2026 às 21:47:48 UTC. Os demais Shorts históricos não recebem datas inventadas.
 - Atualização do Dashboard e dos endpoints protegidos de Shorts e palestras, sem alterar e-mails, Workers ou IDs.
+
+ 
+## 2026-11-22 — Ajustes visuais e contagem de novos em Conteúdos recentes
+
+- Solicitado e autorizado pelo responsável: miniatura **circular** para Shorts (como no cadastro), ícone de fones em círculo roxo para MP3, ícone de documento em círculo laranja para PDF, miniatura padronizada para vídeos e ícone verde para PPT/PPTX.
+- Etiqueta discreta **NOVO** para conteúdo cuja data real de publicação esteja nos **últimos 7 dias**; não atribuir NOVO com base na data da palestra ou a itens históricos sem data de publicação.
+- O Short SHO-0020, publicado em 22/11/2026, aparece com NOVO.
+- No quadro **Resumo do acervo**, coluna **Novos***, Shorts, MP3 e PDF agora são contados por data de publicação registrada dentro do **período selecionado**; apresentações continuam com a contagem histórica pela data cadastrada. Itens legados sem data de publicação não são considerados novos; a nota do quadro explica a diferença.
+- Mantido limite de 5 conteúdos recentes, IDs, links e histórico; nenhum Worker ou e-mail alterado. Cache-busting dos arquivos JS/CSS do dashboard atualizado.

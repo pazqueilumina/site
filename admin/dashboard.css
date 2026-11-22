@@ -174,3 +174,21 @@
 .content-row .content-type--original{background:#e8f6ec;color:#2c7043}
 .content-row .row-text strong{font-size:11px}
 .content-row .row-text small{font-size:9px}
+
+
+/* Conteúdos recentes: miniaturas circulares para Shorts, ícones de mídia e publicação NOVO. */
+.content-row{min-height:49px;padding:3px 0;gap:8px}
+.content-row .content-media{width:66px;height:44px;display:flex;align-items:center;justify-content:center;flex:none}
+.content-row .content-media img{display:block;width:64px;height:38px;object-fit:cover;border-radius:6px;background:#e8eef7}
+.content-row .content-media--short img{width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:center;box-shadow:0 2px 6px #173d6a24,0 0 0 2px #fff,0 0 0 3px #cad8e9}
+.content-row .content-media-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;border:1px solid transparent;box-shadow:0 2px 5px #173d6a0c}
+.content-row .content-media-icon svg{width:21px;height:21px;stroke-width:1.85}
+.content-row .content-media--audio .content-media-icon{background:linear-gradient(145deg,#f5edff,#e8dbff);border-color:#dac9f7;color:#7544b4}
+.content-row .content-media--pdf .content-media-icon{background:linear-gradient(145deg,#fff7e8,#ffe7c6);border-color:#f4d7a9;color:#b66b17}
+.content-row .content-media--original .content-media-icon{background:linear-gradient(145deg,#edfaef,#d8f0dd);border-color:#c5e6cd;color:#277844}
+.content-row .content-media--video .content-media-icon,.content-row .content-media--short .content-media-icon{background:#e7f1ff;border-color:#c5daf5;color:#2a6cb2}
+.content-row .content-meta{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-bottom:2px;min-width:0}
+.content-row .content-meta .content-type{margin-bottom:0}
+.content-row .content-fresh{display:inline-flex;align-items:center;padding:1px 6px;border-radius:999px;background:#e4f6ea;color:#126b3c;border:1px solid #c6e8d0;font-size:8px;font-weight:800;letter-spacing:.35px;line-height:1.25}
+.content-row .row-text strong{font-size:11px}
+.content-row .row-text small{font-size:9px}
