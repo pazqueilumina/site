@@ -423,3 +423,12 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - Alterado o cache-busting de `js/app.js` em `agenda.html`.
 - **Worker não publicado pelo GitHub**: é necessário fazer deploy manual da versão semanal corrigida na Cloudflare, depois testar inscrição e confirmação e, somente após validação, definir `WEEKLY_EMAIL_ENABLED=true`. Não alterar o envio mensal nem os lembretes 24h/1h.
 - Analytics: validação dos números reais permanece pendente de acesso aos dados da Cloudflare.
+
+
+## 22/11/2026 — correção de visibilidade do formulário de inscrição
+
+- **Causa real identificada:** `ativarInscricaoAgenda()` declarava `const dados` dentro de `try` e tentava ler `dados.weeklyEnabled` fora desse bloco, provocando `ReferenceError` antes de remover `hidden` do formulário. Corrigido para `let dados` no escopo da função, com atribuição no `try`.
+- O formulário foi movido do fim da página (após eventos passados) para **logo abaixo do subtítulo e antes dos filtros** da agenda pública.
+- Ajustada a margem do formulário e alterados os parâmetros de versão dos arquivos JS e CSS em `agenda.html` para invalidar cache.
+- O formulário continua protegido por verificação de disponibilidade real do Worker `/api/subscriptions/status`. O Worker já retornou `{"available":true,"weeklyEnabled":false}` ao usuário; a exibição depende da chamada no navegador.
+- Nenhuma configuração do Worker nem de envio automático foi modificada neste deploy.

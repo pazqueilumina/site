@@ -956,9 +956,10 @@ async function ativarInscricaoAgenda() {
   const secao = document.getElementById('inscricaoMensal');
   const form = document.getElementById('formInscricaoMensal');
   if (!secao || !form) return;
+  let dados = null;
   try {
     const r = await fetch(INSCRICAO_WORKER_URL + '/api/subscriptions/status', {mode:'cors', cache:'no-store'});
-    const dados = r.ok ? await r.json() : null;
+    dados = r.ok ? await r.json() : null;
     if (!dados || dados.available !== true) return;
   } catch { return; } // Não mostrar formulário enquanto o Worker não estiver pronto.
   // Enquanto o envio semanal estiver desativado, explicar isso antes do consentimento.
@@ -1013,6 +1014,19 @@ function renderizarAgenda() {
   principal.innerHTML =
     '<h1 class="titulo-pagina">Agenda de apresentações</h1>' +
     '<p class="subtitulo-pagina">Próximos encontros, palestras e estudos abertos. Participe — a entrada é gratuita.</p>' +
+    '<section class="inscricao-mensal" id="inscricaoMensal" aria-labelledby="tituloInscricaoMensal" hidden>' +
+      '<div class="inscricao-mensal-intro"><span class="inscricao-mensal-etiqueta">AGENDA POR E-MAIL</span>' +
+      '<h2 id="tituloInscricaoMensal">Receba as agendas mensal e semanal</h2>' +
+      '<p id="descricaoInscricaoAgenda">A programação do mês e, todo domingo, os encontros da semana seguinte. Gratuito, sem lembretes adicionais.</p></div>' +
+      '<form id="formInscricaoMensal" class="inscricao-mensal-form">' +
+        '<label for="emailInscricaoMensal">Seu e-mail</label>' +
+        '<div class="inscricao-mensal-linha"><input id="emailInscricaoMensal" type="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" maxlength="254" required>' +
+        '<button type="submit">Quero receber</button></div>' +
+        '<label class="inscricao-mensal-consentimento"><input type="checkbox" name="consent" required><span>Concordo em receber por e-mail a agenda mensal e a agenda semanal aos domingos. Posso cancelar ambas a qualquer momento pelo link nas mensagens.</span></label>' +
+        '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
+        '<p id="retornoInscricaoMensal" class="inscricao-mensal-retorno" role="status" aria-live="polite"></p>' +
+      '</form>' +
+    '</section>' +
     '<div class="filtro-agenda-publica" role="search" aria-label="Filtrar eventos da agenda">' +
       '<label>Filtrar por Centro / Local<input id="filtroCentroAgenda" type="search" list="opcoesCentroAgenda" placeholder="Todos os Centros e locais" maxlength="180" autocomplete="off" title="Digite o nome do Centro ou selecione na lista">' +
       '<datalist id="opcoesCentroAgenda">' +
@@ -1026,20 +1040,8 @@ function renderizarAgenda() {
     '<section class="secao" id="secaoPassados" style="margin-top:38px">' +
     '<div class="cabecalho-secao"><h2>Eventos passados</h2></div>' +
     '<div class="agenda-lista agenda-passados" id="listaPassados"></div>' +
-    '</section>' +
-    '<section class="inscricao-mensal" id="inscricaoMensal" aria-labelledby="tituloInscricaoMensal" hidden>' +
-      '<div class="inscricao-mensal-intro"><span class="inscricao-mensal-etiqueta">AGENDA POR E-MAIL</span>' +
-      '<h2 id="tituloInscricaoMensal">Receba as agendas mensal e semanal</h2>' +
-      '<p id="descricaoInscricaoAgenda">A programação do mês e, todo domingo, os encontros da semana seguinte. Gratuito, sem lembretes adicionais.</p></div>' +
-      '<form id="formInscricaoMensal" class="inscricao-mensal-form">' +
-        '<label for="emailInscricaoMensal">Seu e-mail</label>' +
-        '<div class="inscricao-mensal-linha"><input id="emailInscricaoMensal" type="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" maxlength="254" required>' +
-        '<button type="submit">Quero receber</button></div>' +
-        '<label class="inscricao-mensal-consentimento"><input type="checkbox" name="consent" required><span>Concordo em receber por e-mail a agenda mensal e a agenda semanal aos domingos. Posso cancelar ambas a qualquer momento pelo link nas mensagens.</span></label>' +
-        '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
-        '<p id="retornoInscricaoMensal" class="inscricao-mensal-retorno" role="status" aria-live="polite"></p>' +
-      '</form>' +
     '</section>';
+
   const centro = document.getElementById('filtroCentroAgenda');
   const periodo = document.getElementById('filtroPeriodoAgenda');
   const busca = document.getElementById('buscaAgendaPublica');
