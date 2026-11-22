@@ -414,3 +414,12 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - O código de integração foi entregue como arquivo `pazqueilumina-lembretes-com-inscricoes.js` na conversa. Não há publicação automática do Worker pelo commit da `main`.
 - Fluxo proposto e testado localmente: double opt-in (link por 48h), limite de requisições, inscrição ativa no D1, envio mensal somente a confirmados, cancelamento por link e preservação de destinatários fixos. O código normalizado passou na verificação de sintaxe e em testes locais simulando D1/Resend. **Não houve teste real de envio nem atualização do Worker na Cloudflare.**
 - Nenhuma página individual de palestra foi criada. Não adicionar e-mails públicos aos lembretes 24h/1h.
+
+
+## 22/11/2026 — consentimento para agendas mensal e semanal
+
+- Atualizado formulário público em `js/app.js` para informar expressamente agenda mensal e agenda semanal aos domingos. A caixa de consentimento é obrigatória e desmarcada por padrão; o pedido envia `cadence: 'monthly_weekly'` ao Worker atualizado, necessário para registrar `weekly_opt_in=1` no D1 apenas após confirmação por e-mail.
+- O formulário só é exibido se `/api/subscriptions/status` retornar `available: true`. Enquanto `weeklyEnabled` for falso, o texto esclarece que o envio semanal começará após ativação; isso não impede que a pessoa consinta antecipadamente.
+- Alterado o cache-busting de `js/app.js` em `agenda.html`.
+- **Worker não publicado pelo GitHub**: é necessário fazer deploy manual da versão semanal corrigida na Cloudflare, depois testar inscrição e confirmação e, somente após validação, definir `WEEKLY_EMAIL_ENABLED=true`. Não alterar o envio mensal nem os lembretes 24h/1h.
+- Analytics: validação dos números reais permanece pendente de acesso aos dados da Cloudflare.
