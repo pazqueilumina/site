@@ -64,6 +64,38 @@ function restaurarHistoricoVerificacao(){
  }catch{/* Histórico corrompido não impede acesso ao cadastro. */}
 }
 
+/* Só coordenadas OSM exatas, conferidas pelo verificador, podem ser preparadas.
+   ArcGIS não permite armazenamento nesta modalidade de consulta. */
+function locaisComCoordenadasConfirmadas(){
+ return estado.locais.filter(l=>{
+  const r=resultadoLocal(l);
+  return !l.latitude&&!l.longitude&&r?.status==='ok'&&r.fonte==='OpenStreetMap'&&
+   Number.isFinite(r.latitude)&&Number.isFinite(r.longitude)&&
+   r.latitude>=-34&&r.latitude<=6&&r.longitude>=-75&&r.longitude<=-33;
+ });
+}
+function prepararCoordenadasConfirmadas(){
+ if(estado.verificando||estado.formularioAlterado){
+  mensagem('Conclua a verificação e salve ou descarte as alterações do formulário antes de preparar coordenadas.','alerta');
+  return;
+ }
+ const candidatos=locaisComCoordenadasConfirmadas();
+ if(!candidatos.length)return;
+ if(!confirm('Preparar as coordenadas de '+candidatos.length+' local(is) verificado(s) no OpenStreetMap? Confira os pontos antes de publicar. Nenhuma alteração será publicada automaticamente.'))return;
+ const fmt=n=>Number(n).toFixed(7).replace(/0+$/,'').replace(/\.$/,'');
+ for(const l of candidatos){
+  const r=resultadoLocal(l);
+  l.latitude=fmt(r.latitude);l.longitude=fmt(r.longitude);
+  estado.verificacao.delete(l.id);
+  if(estado.selecionado===l.id){
+   $('latitudeLocal').value=l.latitude;$('longitudeLocal').value=l.longitude;
+  }
+ }
+ estado.alterado=true;
+ salvarHistoricoVerificacao();
+ renderizar();
+ mensagem(candidatos.length+' local(is) com coordenadas preparados. Confira os endereços e clique em “Publicar alterações” para gravar no Cadastro.','alerta');
+}
 function atualizarResumoVerificacao(){
  const resultados=estado.locais.map(resultadoLocal);
  const verificados=resultados.filter(r=>r&&r.status!=='pendente').length;
@@ -82,6 +114,8 @@ function atualizarResumoVerificacao(){
   :pendentes?verificados+' de '+estado.locais.length+' avaliados · '+pendentes+' pendente(s)'+quando
   :verificados+' de '+estado.locais.length+' avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+(manuais?' · '+manuais+' com coordenadas manuais':'')+(links?' · '+links+' com link do mapa':'')+quando;
  $('verificarLocais').disabled=estado.verificando||!estado.sha||!estado.locais.length;
+ $('guardarCoordenadas').hidden=!locaisComCoordenadasConfirmadas().length;
+ $('guardarCoordenadas').disabled=estado.verificando||!estado.sha;
  $('verificarLocais').textContent=estado.verificando?'Verificando…':'Verificar endereços';
  $('cartaoErrosLocais').classList.toggle('tem-erros',erros>0);
  $('filtrarErrosLocais').setAttribute('aria-pressed',String(estado.filtroErros));
@@ -247,6 +281,7 @@ $('fecharMensagemLocais').addEventListener('click',()=>{ $('mensagemLocais').hid
 $('publicarLocais').addEventListener('click',publicar);
 $('buscaLocal').addEventListener('input',renderizar);
 $('verificarLocais').addEventListener('click',verificarEnderecos);
+$('guardarCoordenadas').addEventListener('click',prepararCoordenadasConfirmadas);
 $('aplicarCoordenadas').addEventListener('click',aplicarCoordenadasSugeridas);
 $('filtrarErrosLocais').addEventListener('click',()=>{
  estado.filtroErros=!estado.filtroErros;

@@ -527,6 +527,58 @@ function journeySetMapExpanded(expanded,restoreFocus=false){
 
 /* Mapa dos centros presenciais visitados no período: não expõe a residência. */
 const journeyMapPoints=new Map(),journeyMapIssues=new Map();
+
+/* Cache por endereço: ArcGIS apenas em memória, sem armazenamento persistente. */
+const JOURNEY_POINT_STORAGE='pazqueilumina-mapa-pontos-v1';
+const JOURNEY_POINT_TTL=30*24*60*60*1000;
+const journeyPointCache=new Map();
+let journeyMapGeneration=0;
+const journeyPointSignature=v=>[v.id,v.nome,v.endereco,v.bairro,v.cidade,v.uf,v.maps,v.latitude,v.longitude].map(x=>String(x||'').trim()).join('|');
+const journeyValidPoint=p=>p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&p.lat>=-34&&p.lat<=6&&p.lon>=-75&&p.lon<=-33;
+function journeyReadPointCache(){
+ try{
+  const saved=JSON.parse(localStorage.getItem(JOURNEY_POINT_STORAGE)||'null');
+  if(!Array.isArray(saved?.items))return;
+  for(const entry of saved.items.slice(0,500)){
+   if(!entry||typeof entry.id!=='string'||typeof entry.signature!=='string'||typeof entry.fonte!=='string')continue;
+   if(!['OpenStreetMap','Cadastro','Google Maps'].includes(entry.fonte))continue;
+   if(!Number.isFinite(entry.savedAt)||Date.now()-entry.savedAt>JOURNEY_POINT_TTL||entry.savedAt>Date.now()+60000)continue;
+   if(!journeyValidPoint(entry.point))continue;
+   journeyPointCache.set(entry.id,entry);
+  }
+ }catch{/* Armazenamento bloqueado: cache somente na memória. */}
+}
+function journeyWritePointCache(){
+ try{
+  const items=[...journeyPointCache.values()].filter(e=>['OpenStreetMap','Cadastro','Google Maps'].includes(e.fonte)&&Date.now()-e.savedAt<=JOURNEY_POINT_TTL).slice(-250);
+  localStorage.setItem(JOURNEY_POINT_STORAGE,JSON.stringify({items}));
+ }catch{/* Armazenamento bloqueado: continuar sem cache persistente. */}
+}
+function journeyRememberPoint(venue,point,fonte){
+ if(!journeyValidPoint(point))return;
+ const entry={id:venue.id,signature:journeyPointSignature(venue),point:{lat:point.lat,lon:point.lon,precisao:point.precisao||'exata'},fonte,savedAt:Date.now()};
+ journeyPointCache.set(venue.id,entry);
+ journeyMapPoints.set(venue.id,entry.point);
+ if(['OpenStreetMap','Cadastro','Google Maps'].includes(fonte))journeyWritePointCache();
+}
+function journeyCachedPoint(venue){
+ const lat=Number(venue.latitude),lon=Number(venue.longitude);
+ if(venue.latitude&&venue.longitude&&journeyValidPoint({lat,lon})){
+  const point={lat,lon,precisao:'manual'};
+  journeyRememberPoint(venue,point,'Cadastro');
+  return point;
+ }
+ const entry=journeyPointCache.get(venue.id);
+ if(!entry)return null;
+ if(entry.signature!==journeyPointSignature(venue)||!journeyValidPoint(entry.point)||Date.now()-entry.savedAt>JOURNEY_POINT_TTL){
+  journeyPointCache.delete(venue.id);
+  journeyWritePointCache();
+  return null;
+ }
+ return entry.point;
+}
+journeyReadPointCache();
+
 let journeyMapBusy=false,journeyMapInstance=null,journeyMapMarkers=null,journeyMapSignature='';
 let journeyTileLayer=null,journeyTileWatchdog=null,journeyTileRetryTimer=null,journeyMapTilesUnavailable=false,journeyMapLastTrips=[],journeyMapRenderVersion=0;
 function journeyMapVenues(trips){
@@ -550,6 +602,7 @@ function journeyMapPopup(item){
  return box;
 }
 async function fetchJourneyMap(venues){
+ const generation=journeyMapGeneration;
  journeyMapBusy=true;
  try{
   for(let start=0;start<venues.length;start+=12){
@@ -565,12 +618,13 @@ async function fetchJourneyMap(venues){
     headers:{'Content-Type':'application/json'},body:JSON.stringify({locais})
    });
    const data=await response.json().catch(()=>({}));
+   if(generation!==journeyMapGeneration)return;
    if(!response.ok)throw Error(data.erro||'Não foi possível consultar o mapa.');
    for(const p of data.pontos||[]){
     const idx=Number(String(p.id).replace('mapa-',''));
     const v=batch[idx];
     if(v&&Number.isFinite(p.latitude)&&Number.isFinite(p.longitude))
-     journeyMapPoints.set(v.id,{lat:p.latitude,lon:p.longitude,precisao:p.precisao||'exata'});
+     journeyRememberPoint(v,{lat:p.latitude,lon:p.longitude,precisao:p.precisao||'exata'},p.fonte||'ArcGIS');
    }
    for(const p of data.erros||[]){
     const idx=Number(String(p.id).replace('mapa-',''));
@@ -580,8 +634,10 @@ async function fetchJourneyMap(venues){
     journeyMapIssues.set(v.id,'Localização não disponível.');
   }
  }catch(e){
-  for(const v of venues)if(!journeyMapPoints.has(v.id))journeyMapIssues.set(v.id,String(e.message||'Serviço de mapas indisponível.'));
- }finally{journeyMapBusy=false;renderJourneyMap(journeyTrips().trips);}
+  if(generation===journeyMapGeneration)for(const v of venues)if(!journeyMapPoints.has(v.id))journeyMapIssues.set(v.id,String(e.message||'Serviço de mapas indisponível.'));
+ }finally{
+  if(generation===journeyMapGeneration){journeyMapBusy=false;renderJourneyMap(journeyTrips().trips);}
+ }
 }
 
 /* Leaflet nativo, CSS/JS locais. O Leaflet gerencia tiles e posicionamento. */
@@ -612,7 +668,7 @@ function journeyInstallTileLayer(attempt=0){
  const base='https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
  const url=base+(attempt?'?pqi_retry=1':'');
  const attribution='Tiles &copy; Esri — Sources: Esri, HERE, Garmin, USGS, OpenStreetMap contributors and GIS User Community';
- const layer=window.L.tileLayer(url,{maxZoom:19,attribution,updateWhenIdle:true,keepBuffer:2});
+ const layer=window.L.tileLayer(url,{maxZoom:19,attribution,updateWhenIdle:true,keepBuffer:1});
  journeyTileLayer=layer;
  let failed=false,loadedTiles=0,retrying=false;
  const watchdog=()=>{
@@ -655,6 +711,10 @@ function journeyInstallTileLayer(attempt=0){
 function renderJourneyMap(trips){
  journeyMapLastTrips=trips;
  const items=journeyMapVenues(trips),host=clear('journeyCentresList');
+ for(const item of items)if(!journeyMapPoints.has(item.venue.id)){
+  const cached=journeyCachedPoint(item.venue);
+  if(cached)journeyMapPoints.set(item.venue.id,cached);
+ }
  const frame=$('journeyMap'),message=$('journeyMapMessage');
  set('journeyCentresTitle','Centros ('+nf(items.length)+')');
  const located=items.filter(item=>journeyMapPoints.has(item.venue.id));
@@ -873,8 +933,10 @@ async function load(){
    if(match)used.add(match);
    return {...p,data:match?match.data:p.data,when:date(match?match.data:p.data),horario:match?match.horario:p.horario,centroId:match?.localId||p.centroId||'',localAgenda:match?match.local:null,seconds:duration(p.duracao),approx:match?false:!!p.dataAproximada,agendaLinked:!!match};
   });
-  journeyRemoveTileLayer();journeyMapRenderVersion++;
+  // Preservar os tiles já carregados; coordenadas antigas são revalidadas pelo cadastro.
+  journeyMapGeneration++;journeyMapRenderVersion++;
   journeyRoutingError='';journeyRouteFailures.clear();journeyMapPoints.clear();journeyMapIssues.clear();journeyMapSignature='';journeyMapTilesUnavailable=false;
+  journeyMapBusy=false;
   error=null;render();
   $('aviso').hidden=true;set('lastUpdate',shortDate(new Date())+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));set('refreshLabel','Atualizado');set('refreshFeedback','Dados atualizados.');
  }catch(e){error=e;setNotice('Não foi possível carregar as palestras: '+e.message);set('siteStatus','Falha na conexão');set('refreshLabel','Falha ao atualizar');set('refreshFeedback','Falha ao atualizar os dados.');}

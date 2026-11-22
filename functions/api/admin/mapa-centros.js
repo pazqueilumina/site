@@ -1,4 +1,4 @@
-import {geocodeDestination} from '../../../server_lib/geocode.js';
+import {geocodeDestination,hash,readCache,writeCache} from '../../../server_lib/geocode.js';
 import {validarLocais} from '../../../server_lib/locais.js';
 
 /* Marcadores dos centros visitados. Não consulta nem devolve o endereço residencial. */
@@ -31,11 +31,20 @@ export async function onRequestPost({request}){
  const pontos=[],erros=[];
  for(const local of locais){
   try{
-   const point=await geocodeDestination(local,provider,cache);
-   if(!Number.isFinite(point.lat)||!Number.isFinite(point.lon))throw Error('Coordenadas indisponíveis.');
+   // Cache final de pontos exatos do OpenStreetMap, ligado ao endereço.
+   // Não persistir coordenadas ArcGIS (forStorage=false).
+   const signature=[local.nome,local.endereco,local.bairro,local.cidade,local.uf,local.maps,local.latitude,local.longitude].map(x=>String(x||'').trim()).join('|');
+   const key='mapa-centros-osm-v1-'+await hash(signature);
+   const stored=cache?await readCache(cache,key):null;
+   const valid=p=>p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&p.lat>=-34&&p.lat<=6&&p.lon>=-75&&p.lon<=-33;
+   const point=stored?.fonte==='OpenStreetMap'&&valid(stored)?stored:await geocodeDestination(local,provider,cache);
+   if(!valid(point))throw Error('Coordenadas indisponíveis.');
    if(point.aproximado&&!point.manual&&!point.link)throw Error('Endereço sem número confirmado; marcador omitido.');
+   const fonte=point.fonte||'';
    pontos.push({id:local.id,latitude:point.lat,longitude:point.lon,
-    precisao:point.manual?'manual':point.link?'link':'exata'});
+    precisao:point.manual?'manual':point.link?'link':'exata',fonte});
+   if(cache&&fonte==='OpenStreetMap'&&!point.aproximado&&!stored)
+    await writeCache(cache,key,{lat:point.lat,lon:point.lon,fonte:'OpenStreetMap',aproximado:false},2592000);
   }catch(e){
    erros.push({id:local.id,motivo:String(e.message||'Não foi possível localizar o centro.').slice(0,140)});
   }

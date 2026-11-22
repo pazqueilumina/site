@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
   <title>Cadastro de Locais | Estudos e Reflexões Espíritas</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=mapas20261121"><script defer src="/admin/locais.js?v=mensagens-sob-demanda20261121"></script>
+  <link rel="stylesheet" href="/admin/admin.css?v=mapas20261121"><script defer src="/admin/locais.js?v=cache-mapa20261122"></script>
 </head>
 <body class="pagina-locais">
   <header class="topo"><div class="topo-conteudo">
@@ -21,6 +21,7 @@
         <button type="button" id="filtrarErrosLocais" class="numero-erros" aria-pressed="false" title="Mostrar somente os endereços com erro"><strong id="errosLocais">—</strong></button>
         <small id="statusVerificacaoLocais" aria-live="polite">Aguardando verificação</small>
         <button type="button" id="verificarLocais" class="botao-verificar" disabled>Verificar endereços</button>
+         <button type="button" id="guardarCoordenadas" class="botao-verificar" hidden title="Preparar para publicação apenas coordenadas exatas verificadas no OpenStreetMap">Preparar coordenadas verificadas</button>
       </div>
       <div class="indicador" id="cartaoSituacaoLocais"><span>Situação</span><strong id="situacaoLocais" class="situacao">Carregando</strong></div>
     </div>
