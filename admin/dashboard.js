@@ -312,11 +312,12 @@ async function update(){
  const button=$('atualizar');if(button.disabled)return;
  if(refreshTimer){clearTimeout(refreshTimer);refreshTimer=null;}
  button.disabled=true;refreshState('loading');$('dashMainContent').classList.add('is-updating');
- const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade','/api/admin/email-status'];
+ const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade','/api/admin/email-status','/data/shorts.json'];
  try{
   const results=await Promise.allSettled(urls.map(read));
   ['p','a','l','activities','emails'].forEach((key,i)=>{current[key]=results[i].status==='fulfilled'?results[i].value:null;});
-  const errors=results.map((r,i)=>r.status==='rejected'?['Acervo','Agenda','Locais','Atividades','E-mails'][i]+': '+r.reason.message:null).filter(Boolean);
+  if(typeof DADOS!=='undefined')DADOS.shorts=results[5].status==='fulfilled'&&Array.isArray(results[5].value.shorts)?results[5].value.shorts.filter(s=>s.ativo!==false):[];
+  const errors=results.map((r,i)=>r.status==='rejected'?['Acervo','Agenda','Locais','Atividades','E-mails','Shorts'][i]+': '+r.reason.message:null).filter(Boolean);
   render();
   const [audienceOk,trendOk]=await Promise.all([loadAudience(),loadVisitsTrend()]);
   if(!audienceOk)errors.push('Audiência: '+(current.audience?.erro||'consulta indisponível'));

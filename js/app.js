@@ -1270,6 +1270,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
   } catch(e) { console.warn("Cadastro público indisponível; acervo oculto até a atualização."); }
+  // Os Shorts têm cadastro próprio; não usar cópia antiga ao falhar a consulta.
+  DADOS.shorts = [];
+  if (['inicio', 'videos'].includes(document.body.dataset.page)) {
+    try {
+      const res = await fetch('/data/shorts.json', {cache:'no-cache'});
+      if (!res.ok) throw new Error('HTTP '+res.status);
+      const catalogoShorts = await res.json();
+      if (!Array.isArray(catalogoShorts.shorts)) throw new Error('Formato inválido');
+      DADOS.shorts = catalogoShorts.shorts
+        .filter(s => s.ativo !== false && /^[a-zA-Z0-9_-]{11}$/.test(s.youtubeId || ''))
+        .sort((a,b) => a.ordem-b.ordem)
+        .map(s => ({id:s.youtubeId,t:s.titulo}));
+    } catch (e) { console.warn('Cadastro de Shorts indisponível:', e); }
+  }
   renderizarSidebar();
   renderizarTopbar();
 

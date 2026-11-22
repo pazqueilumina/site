@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="same-origin">
+  <title>Cadastro de Shorts | Estudos e Reflexões Espíritas</title>
+  <link rel="stylesheet" href="/admin/admin.css?v=shorts20261122">
+  <link rel="stylesheet" href="/admin/shorts.css?v=shorts20261122">
+  <script defer src="/admin/shorts.js?v=shorts20261122"></script>
+</head>
+<body class="pagina-shorts">
+<header class="topo"><div class="topo-conteudo">
+  <div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Área administrativa · Shorts</span></div></div>
+  <nav class="navegacao" aria-label="Navegação administrativa"><a href="/admin/dashboard.html">Dashboard</a><a href="/admin/agenda.html">Agenda</a><a href="/admin/locais.html">Locais</a><a href="/admin/palestras.html">Palestras</a><a href="/admin/shorts.html" aria-current="page">Shorts</a><a href="/">Voltar ao site</a></nav>
+</div></header>
+<main class="container">
+  <div class="intro"><div><p class="sobretitulo">ACERVO DE VÍDEOS CURTOS</p><h1>Cadastro de Shorts</h1><p>Adicione, edite, desative e organize os Shorts do canal. O ID interno é permanente e gerado automaticamente. As alterações só aparecem no site depois da publicação.</p></div><button type="button" id="publicarShorts" class="botao principal" disabled>Publicar alterações</button></div>
+  <div id="mensagemShorts" class="mensagem" hidden role="status" aria-live="polite"><span id="mensagemShortsTexto"></span><button type="button" id="fecharMensagemShorts" class="fechar-mensagem" aria-label="Fechar aviso">×</button></div>
+  <div class="indicadores"><div class="indicador"><span>Total de Shorts</span><strong id="totalShorts">—</strong></div><div class="indicador"><span>Ativos</span><strong id="ativosShorts">—</strong></div><div class="indicador"><span>Inativos</span><strong id="inativosShorts">—</strong></div><div class="indicador"><span>Situação</span><strong class="situacao" id="situacaoShorts">Carregando</strong></div></div>
+  <div class="painel">
+    <section class="cartao lista" aria-labelledby="tituloListaShorts">
+      <div class="cartao-cabecalho"><div><h2 id="tituloListaShorts">Shorts cadastrados</h2><p>Use as setas para alterar a ordem de exibição.</p></div><button id="novoShort" class="botao secundario" type="button">+ Novo Short</button></div>
+      <div class="filtros"><label class="campo-busca"><span class="sr-only">Buscar Short</span><input id="buscaShort" type="search" placeholder="Buscar por título ou ID…"></label><select id="filtroShort" aria-label="Filtrar Shorts"><option value="todos">Todos</option><option value="ativos">Ativos</option><option value="inativos">Inativos</option></select></div>
+      <div id="listaShorts" class="lista-eventos" aria-label="Lista de Shorts"></div>
+    </section>
+    <section class="cartao editor" aria-labelledby="tituloEditorShort">
+      <div class="cartao-cabecalho"><div><h2 id="tituloEditorShort">Novo Short</h2><p>Informe o link do YouTube e o título.</p></div></div>
+      <form id="formShort">
+        <div class="duas-colunas"><label>ID interno<input id="sidShort" type="text" readonly><small>Gerado automaticamente; não aparece no site.</small></label><label>Situação<select id="statusShort"><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select><small>Inativos não aparecem na página Vídeos.</small></label></div>
+        <label>Título do Short *<input id="tituloShort" type="text" maxlength="200" required placeholder="Ex.: A conversa da dor com a caridade"></label>
+        <label>Link do YouTube Shorts *<input id="urlShort" type="text" maxlength="500" required placeholder="https://www.youtube.com/shorts/XXXXXXXXXXX"><small>Aceita links de Shorts, youtu.be e links normais do YouTube.</small></label>
+        <div id="previewShort" class="preview-short" hidden>
+          <span>Prévia da miniatura</span>
+          <a id="previewShortLink" href="#" target="_blank" rel="noopener noreferrer"><img id="previewShortImagem" alt="Miniatura do Short" loading="lazy"><span>Assistir no YouTube ↗</span></a>
+        </div>
+        <p id="avisoPreviewShort" class="ajuda">Cole um link válido para visualizar a miniatura.</p>
+        <div class="acoes"><button type="submit" class="botao principal" id="salvarShort">Salvar na lista</button><button type="button" class="botao discreto" id="cancelarShort">Descartar edição</button><button type="button" class="botao perigoso" id="excluirShort" hidden>Excluir Short</button></div>
+        <p class="ajuda">Salvar na lista prepara a alteração. Para disponibilizá-la no site, clique em <strong>Publicar alterações</strong> no alto da página.</p>
+      </form>
+    </section>
+  </div>
+  <p class="rodape">Estudos e Reflexões Espíritas · Cadastro de Shorts</p>
+</main>
+</body>
+</html>

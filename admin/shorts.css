@@ -1,0 +1,28 @@
+.pagina-shorts .editor select{display:block;width:100%;height:43px;margin-top:8px;border:1px solid #d7dfe4;border-radius:8px;padding:0 12px;background:#fff;color:var(--ink);font-size:13px}
+.pagina-shorts .lista-eventos{max-height:720px}
+.pagina-shorts .short-registro{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #edf0f1}
+.pagina-shorts .short-registro.selecionado{background:#eef4f7;box-shadow:inset 4px 0 var(--gold)}
+.pagina-shorts .short-registro.inativo{opacity:.65}
+.pagina-shorts .short-escolher{display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;border:0;background:transparent;cursor:pointer;padding:3px 0;color:var(--ink)}
+.pagina-shorts .short-escolher:hover strong{text-decoration:underline}
+.pagina-shorts .short-thumb{width:57px;height:78px;object-fit:cover;border-radius:6px;background:#e9eef2;flex-shrink:0}
+.pagina-shorts .short-dados{min-width:0;display:block;overflow-wrap:anywhere}
+.pagina-shorts .short-dados strong{display:block;font-size:13px;line-height:1.4;color:var(--navy)}
+.pagina-shorts .short-dados small{display:block;margin-top:4px;font-size:11px;color:var(--muted)}
+.pagina-shorts .short-ordem{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.pagina-shorts .short-ordem button{width:28px;height:27px;border:1px solid #d5e0e8;border-radius:6px;background:#f8fafb;color:var(--navy);font-weight:800}
+.pagina-shorts .short-ordem button:hover:not(:disabled){background:#e3edf3}
+.pagina-shorts .short-ordem button:disabled{opacity:.3}
+.pagina-shorts .preview-short{margin:0 0 14px;padding:14px;background:#f7f9fb;border:1px solid #dce6ee;border-radius:10px}
+.pagina-shorts .preview-short>span{display:block;font-size:12px;font-weight:700;margin-bottom:9px}
+.pagina-shorts .preview-short a{display:flex;align-items:center;gap:15px;text-decoration:none;color:#245b8c;font-size:12px;font-weight:700}
+.pagina-shorts .preview-short img{display:block;width:112px;height:156px;object-fit:cover;border-radius:8px;background:#e6ecf0}
+.pagina-shorts .editor .acoes{margin-top:18px}
+.pagina-shorts .mensagem{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.pagina-shorts .fechar-mensagem{border:0;background:transparent;color:inherit;font-size:21px;line-height:1;cursor:pointer}
+.pagina-shorts .indicadores .indicador:nth-child(2) strong{color:#287b5c}
+.pagina-shorts .indicadores .indicador:nth-child(3) strong{color:#b68c47}
+.pagina-shorts .situacao{font-size:15px}
+.pagina-shorts .lista .filtros select{width:120px}
+.pagina-shorts .short-escolher:focus-visible,.pagina-shorts .short-ordem button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:590px){.pagina-shorts .short-registro{padding:9px 10px;gap:6px}.pagina-shorts .short-thumb{width:47px;height:66px}.pagina-shorts .short-dados strong{font-size:12px}.pagina-shorts .lista .filtros select{width:100px}.pagina-shorts .preview-short img{width:92px;height:128px}}

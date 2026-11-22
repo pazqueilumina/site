@@ -1,0 +1,139 @@
+{
+  "versao": 1,
+  "proximoId": 20,
+  "shorts": [
+    {
+      "sid": "SHO-0001",
+      "youtubeId": "Wr_eRBjhmuU",
+      "titulo": "A conversa da dor com a caridade",
+      "ativo": true,
+      "ordem": 1
+    },
+    {
+      "sid": "SHO-0002",
+      "youtubeId": "5S_wWvHYNL4",
+      "titulo": "Precisamos falar sobre as nossas emoções",
+      "ativo": true,
+      "ordem": 2
+    },
+    {
+      "sid": "SHO-0003",
+      "youtubeId": "r2SR558SF2s",
+      "titulo": "Eternidade Card: o grande presente de Deus",
+      "ativo": true,
+      "ordem": 3
+    },
+    {
+      "sid": "SHO-0004",
+      "youtubeId": "oGbjt-UKIg0",
+      "titulo": "Deixe a sua resposta nos comentários",
+      "ativo": true,
+      "ordem": 4
+    },
+    {
+      "sid": "SHO-0005",
+      "youtubeId": "aGEvttQbi9Y",
+      "titulo": "Um pouco da palestra sobre a mulher hemorroíssa",
+      "ativo": true,
+      "ordem": 5
+    },
+    {
+      "sid": "SHO-0006",
+      "youtubeId": "uxphxb9rvpY",
+      "titulo": "Um trecho da palestra Um Toque de Esperança — a História da Mulher Hemorroíssa",
+      "ativo": true,
+      "ordem": 6
+    },
+    {
+      "sid": "SHO-0007",
+      "youtubeId": "CS3jdgE8DIw",
+      "titulo": "Você reclama muito da vida?",
+      "ativo": true,
+      "ordem": 7
+    },
+    {
+      "sid": "SHO-0008",
+      "youtubeId": "ARhu4Byo-sQ",
+      "titulo": "Você descobriu quem é o personagem antes do final do texto?",
+      "ativo": true,
+      "ordem": 8
+    },
+    {
+      "sid": "SHO-0009",
+      "youtubeId": "u53EArBboOc",
+      "titulo": "Entre no Centro Espírita Luiz Gonzaga, fundado por Chico Xavier em Pedro Leopoldo",
+      "ativo": true,
+      "ordem": 9
+    },
+    {
+      "sid": "SHO-0010",
+      "youtubeId": "-2gwu48yWz8",
+      "titulo": "O ensinamento de Francisco de Assis",
+      "ativo": true,
+      "ordem": 10
+    },
+    {
+      "sid": "SHO-0011",
+      "youtubeId": "it9AxEVMYEk",
+      "titulo": "Sobre o poder da palavra que sai da sua boca",
+      "ativo": true,
+      "ordem": 11
+    },
+    {
+      "sid": "SHO-0012",
+      "youtubeId": "s0Cw-NmJGzc",
+      "titulo": "Como está a sintonia no seu lar?",
+      "ativo": true,
+      "ordem": 12
+    },
+    {
+      "sid": "SHO-0013",
+      "youtubeId": "BGQWVAnHqYg",
+      "titulo": "Entre comigo na casa de Chico Xavier em Uberaba-MG",
+      "ativo": true,
+      "ordem": 13
+    },
+    {
+      "sid": "SHO-0014",
+      "youtubeId": "K3_IbT7_1ko",
+      "titulo": "Permita-se emocionar com o quartinho onde Chico Xavier dormia em Uberaba-MG",
+      "ativo": true,
+      "ordem": 14
+    },
+    {
+      "sid": "SHO-0015",
+      "youtubeId": "AXlgkwFz4WI",
+      "titulo": "A sala de jantar de Chico Xavier em Uberaba-MG",
+      "ativo": true,
+      "ordem": 15
+    },
+    {
+      "sid": "SHO-0016",
+      "youtubeId": "lvTDZS05G1c",
+      "titulo": "Visite comigo a casa onde Chico Xavier viveu em Uberaba-MG",
+      "ativo": true,
+      "ordem": 16
+    },
+    {
+      "sid": "SHO-0017",
+      "youtubeId": "UWE_VVDNsTk",
+      "titulo": "Visitando a casa onde Chico Xavier viveu em Uberaba-MG",
+      "ativo": true,
+      "ordem": 17
+    },
+    {
+      "sid": "SHO-0018",
+      "youtubeId": "s2Y0S0wsRIw",
+      "titulo": "Visite o Grupo Espírita da Prece, fundado por Chico Xavier em Uberaba-MG",
+      "ativo": true,
+      "ordem": 18
+    },
+    {
+      "sid": "SHO-0019",
+      "youtubeId": "Y_BnkTbxibU",
+      "titulo": "Visite a casa onde Chico Xavier morou em Pedro Leopoldo-MG, entre 1918 e 1948",
+      "ativo": true,
+      "ordem": 19
+    }
+  ]
+}

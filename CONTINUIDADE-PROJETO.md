@@ -324,3 +324,15 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 **Artefato de referência da conversa:** arquivo local disponibilizado ao usuário como `worker-pazqueilumina-templates-maps-corrigido.txt`. Ele **não foi adicionado ao GitHub**. Para futuras alterações, consultar primeiro o código **efetivamente publicado no editor Cloudflare**; não reconstruir o Worker a partir do código antigo de 259 linhas nem reintroduzir `redirect:'error'`.
 
 **Retomada curta sugerida:** “Continue o projeto Paz que Ilumina lendo a seção 10 de `CONTINUIDADE-PROJETO.md` na `main`. Os dois modelos HTML foram recebidos. Verifique se `TEST_TEMPLATES_NOW` já está `false`; depois vamos decidir a ativação de `EMAIL_ENABLED`, sem alterar o site nem o Worker sem minha autorização.”
+
+## 2026-11-22 — Cadastro administrativo de Shorts (autorizado)
+
+- O responsável aprovou a implementação e publicação na branch `main` da nova tela **Admin → Shorts**, com IDs internos permanentes.
+- Migração preserva os **19 Shorts existentes**, na ordem original, de `js/dados.js` para `data/shorts.json`.
+- Novo esquema: `versao`, `proximoId` monotônico e `shorts` com `sid` (`SHO-0001` etc.), `youtubeId`, `titulo`, `ativo` e `ordem`.
+- `sid` é gerado automaticamente, nunca exibido no site público; o YouTube ID continua usado para link e miniatura. Exclusões não reutilizam IDs.
+- Tela `/admin/shorts.html`: adicionar, editar, excluir, ativar/desativar, prévia da miniatura, pesquisa, filtro, ordenação com setas e publicação manual no GitHub.
+- API protegida por Cloudflare Access: `GET/PUT /api/admin/shorts`, usando `GITHUB_TOKEN` existente e controle de concorrência por SHA. Sem banco D1 adicional.
+- A página pública `/videos.html` e a busca da página inicial carregam os Shorts ativos de `/data/shorts.json`; o Dashboard consulta o mesmo cadastro para seus indicadores.
+- Links de navegação do Admin e ação rápida de adicionar Short incluídos.
+- Preservar o fluxo de publicação pelo GitHub/Cloudflare e confirmar deploy de produção após o commit.

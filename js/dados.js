@@ -160,27 +160,8 @@ const DADOS = {
      SHORTS DO CANAL (exibidos na página "Vídeos")
      id → código do vídeo · t → título
      ============================================================ */
-  shorts: [
-    { id: "Wr_eRBjhmuU", t: "A conversa da dor com a caridade" },
-    { id: "5S_wWvHYNL4", t: "Precisamos falar sobre as nossas emoções" },
-    { id: "r2SR558SF2s", t: "Eternidade Card: o grande presente de Deus" },
-    { id: "oGbjt-UKIg0", t: "Deixe a sua resposta nos comentários" },
-    { id: "aGEvttQbi9Y", t: "Um pouco da palestra sobre a mulher hemorroíssa" },
-    { id: "uxphxb9rvpY", t: "Um trecho da palestra Um Toque de Esperança — a História da Mulher Hemorroíssa" },
-    { id: "CS3jdgE8DIw", t: "Você reclama muito da vida?" },
-    { id: "ARhu4Byo-sQ", t: "Você descobriu quem é o personagem antes do final do texto?" },
-    { id: "u53EArBboOc", t: "Entre no Centro Espírita Luiz Gonzaga, fundado por Chico Xavier em Pedro Leopoldo" },
-    { id: "-2gwu48yWz8", t: "O ensinamento de Francisco de Assis" },
-    { id: "it9AxEVMYEk", t: "Sobre o poder da palavra que sai da sua boca" },
-    { id: "s0Cw-NmJGzc", t: "Como está a sintonia no seu lar?" },
-    { id: "BGQWVAnHqYg", t: "Entre comigo na casa de Chico Xavier em Uberaba-MG" },
-    { id: "K3_IbT7_1ko", t: "Permita-se emocionar com o quartinho onde Chico Xavier dormia em Uberaba-MG" },
-    { id: "AXlgkwFz4WI", t: "A sala de jantar de Chico Xavier em Uberaba-MG" },
-    { id: "lvTDZS05G1c", t: "Visite comigo a casa onde Chico Xavier viveu em Uberaba-MG" },
-    { id: "UWE_VVDNsTk", t: "Visitando a casa onde Chico Xavier viveu em Uberaba-MG" },
-    { id: "s2Y0S0wsRIw", t: "Visite o Grupo Espírita da Prece, fundado por Chico Xavier em Uberaba-MG" },
-    { id: "Y_BnkTbxibU", t: "Visite a casa onde Chico Xavier morou em Pedro Leopoldo-MG, entre 1918 e 1948" }
-  ],
+  // Shorts administrados em data/shorts.json; a lista é carregada dinamicamente.
+  shorts: [],
 
   /* ============================================================
      AGENDA DE APRESENTAÇÕES
