@@ -405,3 +405,12 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - Agenda: link Google Calendar por evento, fuso America/Sao_Paulo, duração estimada de 1 hora.
 - Inscrição pública mensal: ainda não ativada; requer fluxo seguro de confirmação, cancelamento e integração ao Worker de e-mails e D1. Não criar inscrições sem essa integração.
 - Não criadas páginas individuais de palestras.
+
+
+## 22/11/2026 — inscrição pública da agenda mensal (preparação de integração)
+
+- Página pública `agenda.html`: formulário de inscrição com consentimento, campo anti-spam e confirmação por e-mail. O formulário **só aparece** se o endpoint `/api/subscriptions/status` do Worker `pazqueilumina-lembretes` responder `available: true`; não mostrar um cadastro que não funcione.
+- Worker é **independente do GitHub Pages** e continua publicado manualmente no painel Cloudflare. A versão atual ainda precisa ser substituída manualmente pelo código com endpoints `/api/subscriptions`, `/api/subscriptions/confirm` e `/api/subscriptions/unsubscribe`.
+- O código de integração foi entregue como arquivo `pazqueilumina-lembretes-com-inscricoes.js` na conversa. Não há publicação automática do Worker pelo commit da `main`.
+- Fluxo proposto e testado localmente: double opt-in (link por 48h), limite de requisições, inscrição ativa no D1, envio mensal somente a confirmados, cancelamento por link e preservação de destinatários fixos. O código normalizado passou na verificação de sintaxe e em testes locais simulando D1/Resend. **Não houve teste real de envio nem atualização do Worker na Cloudflare.**
+- Nenhuma página individual de palestra foi criada. Não adicionar e-mails públicos aos lembretes 24h/1h.
