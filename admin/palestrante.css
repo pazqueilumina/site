@@ -256,3 +256,37 @@
 .speaker-annual-separator{height:1px;background:#e3e8f1;margin:19px 0}
 @media(max-width:1100px){.speaker-journey-metric{padding:9px 6px}.speaker-journey-metric strong{font-size:16px}}
 @media(max-width:550px){.speaker-journey-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.speaker-journey-metric strong{font-size:19px}.speaker-journey-period{font-size:9px}}
+
+/* Mapa dos centros visitados no período selecionado. */
+.speaker-journey-map-section{margin-top:18px;padding-top:17px;border-top:1px solid #e2e8f2}
+.speaker-journey-map-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.speaker-journey-map-heading h3{display:flex;align-items:center;gap:8px;margin:0;color:#17325a;font-size:16px;font-weight:800}
+.speaker-journey-map-heading h3 svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8}
+.speaker-journey-map-heading p{margin:4px 0 0;color:#6a7c96;font-size:11px}
+.speaker-journey-map-count{font-size:11px;font-weight:750;color:#6c46b3;white-space:nowrap}
+.speaker-journey-map-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(240px,1fr);gap:12px;align-items:stretch}
+.speaker-journey-map-frame{position:relative;min-width:0;min-height:315px;border:1px solid #dce4ef;border-radius:13px;overflow:hidden;background:#f2f5f9}
+#journeyMap{width:100%;height:315px;z-index:0}
+#journeyMap[hidden]{display:none}
+.speaker-journey-map-message{display:flex;align-items:center;justify-content:center;text-align:center;min-height:315px;padding:24px;color:#687c96;font-size:12px;line-height:1.6;margin:0}
+.speaker-journey-map-message[hidden]{display:none}
+.speaker-journey-centres-panel{min-width:0;min-height:315px;border:1px solid #dce4ef;border-radius:13px;overflow:hidden;background:#fff}
+.speaker-journey-centres-panel h4{font-size:15px;font-weight:800;color:#17325a;background:#f5f7fc;margin:0;padding:13px 15px;border-bottom:1px solid #e2e8f2}
+.speaker-journey-centres-list{max-height:270px;overflow-y:auto}
+.speaker-map-centre{display:grid;grid-template-columns:29px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;padding:11px 12px;border:0;border-bottom:1px solid #edf0f6;background:#fff;color:#19365c;text-align:left;cursor:pointer;font:inherit}
+.speaker-map-centre:hover:not(:disabled),.speaker-map-centre:focus-visible{background:#f5f1fd;outline:none}
+.speaker-map-centre:disabled{cursor:default;opacity:.76}
+.speaker-map-centre-num{display:flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:50%;background:#7143b7;color:#fff;font-size:12px;font-weight:800}
+.speaker-map-centre-copy{display:flex;flex-direction:column;min-width:0;gap:3px}
+.speaker-map-centre-copy strong{font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.speaker-map-centre-copy small{font-size:10px;color:#647890}
+.speaker-map-centre-km{font-size:11px;font-weight:800;color:#6d43ad;background:#f2ecfc;border-radius:16px;padding:6px 8px;white-space:nowrap}
+.speaker-journey-map-foot{margin:9px 0 0;color:#72819a;font-size:10px;line-height:1.5}
+.speaker-map-pin-wrap{background:transparent;border:0}
+.speaker-map-pin{display:flex;align-items:center;justify-content:center;width:31px;height:31px;border:2px solid #fff;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:#7143b7;box-shadow:0 2px 8px #23304c55;color:#fff;font-size:0}
+.speaker-map-pin b{display:inline-block;transform:rotate(45deg);font-size:12px;font-weight:800}
+.speaker-map-popup{display:flex;flex-direction:column;gap:5px;color:#294365;font-size:12px;max-width:250px}
+.speaker-map-popup strong{font-size:13px;color:#17325a}
+.speaker-journey-map-frame .leaflet-container{font-family:Inter,"Segoe UI",Arial,sans-serif}
+@media(max-width:850px){.speaker-journey-map-layout{grid-template-columns:1fr}.speaker-journey-centres-panel{min-height:0}.speaker-journey-centres-list{max-height:220px}}
+@media(max-width:480px){.speaker-journey-map-heading{align-items:flex-start;flex-direction:column}.speaker-journey-map-frame,.speaker-journey-map-message{min-height:260px}#journeyMap{height:260px}.speaker-map-centre{gap:7px;padding:10px 8px}.speaker-map-centre-copy strong{font-size:11px}}

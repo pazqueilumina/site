@@ -489,9 +489,139 @@ function renderJourneys(){
  if(missing)notes.push(nf(missing)+' evento(s) presenciais sem endereço válido não contabilizado(s).');
  if(measured.length)notes.push('Quilometragem estimada por rotas rodoviárias de ida e volta; não é medição do odômetro.');
  set('journeyNote',notes.join(' '));
+ renderJourneyMap(trips);
  if(!journeyRoutingBusy&&!journeyRoutingError){
   const needed=[...new Map(trips.filter(t=>t.km===null&&!journeyRouteFailures.has(t.venue.id)).map(t=>[t.venue.id,t.venue])).values()];
   if(needed.length)void fetchJourneyRoutes(needed.slice(0,20));
+ }
+}
+
+
+/* Mapa dos centros presenciais visitados no período: não expõe a residência. */
+const journeyMapPoints=new Map(),journeyMapIssues=new Map();
+let journeyMapBusy=false,journeyMapInstance=null,journeyMapMarkers=null,journeyMapSignature='';
+function journeyMapVenues(trips){
+ const uniquePlaces=new Map();
+ for(const trip of trips){
+  let item=uniquePlaces.get(trip.venue.id);
+  if(!item){item={venue:trip.venue,visitas:0,km:trip.km,aproximado:trip.aproximado};uniquePlaces.set(trip.venue.id,item);}
+  item.visitas++;
+  if(item.km===null&&trip.km!==null){item.km=trip.km;item.aproximado=trip.aproximado;}
+ }
+ return [...uniquePlaces.values()].sort((a,b)=>String(a.venue.nome).localeCompare(String(b.venue.nome),'pt-BR'));
+}
+function journeyMapPopup(item){
+ const box=el('div',null,'speaker-map-popup'),v=item.venue;
+ box.append(el('strong',v.nome||'Centro Espírita'));
+ box.append(el('span',[v.endereco,v.bairro,v.cidade].filter(Boolean).join(' · ')));
+ box.append(el('span',nf(item.visitas)+' visita'+(item.visitas===1?'':'s')+' no período'));
+ if(item.km!==null)box.append(el('span',item.km.toLocaleString('pt-BR',{maximumFractionDigits:1})+' km por viagem (ida e volta)'));
+ const point=journeyMapPoints.get(v.id);
+ if(point?.precisao==='manual'||point?.precisao==='link')box.append(el('small','Localização informada no cadastro; confira o ponto.'));
+ return box;
+}
+async function fetchJourneyMap(venues){
+ journeyMapBusy=true;
+ try{
+  for(let start=0;start<venues.length;start+=12){
+   const batch=venues.slice(start,start+12);
+   const locais=batch.map((v,i)=>({
+    id:'mapa-'+i,nome:v.nome||'Local da Agenda',endereco:v.endereco,
+    bairro:v.bairro||'',cidade:v.cidade||'Rio de Janeiro',uf:v.uf||'RJ',
+    ...(v.latitude&&v.longitude?{latitude:v.latitude,longitude:v.longitude}:{}),
+    ...(v.maps?{maps:v.maps}:{})
+   }));
+   const response=await fetch('/api/admin/mapa-centros',{
+    method:'POST',credentials:'same-origin',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({locais})
+   });
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok)throw Error(data.erro||'Não foi possível consultar o mapa.');
+   for(const p of data.pontos||[]){
+    const idx=Number(String(p.id).replace('mapa-',''));
+    const v=batch[idx];
+    if(v&&Number.isFinite(p.latitude)&&Number.isFinite(p.longitude))
+     journeyMapPoints.set(v.id,{lat:p.latitude,lon:p.longitude,precisao:p.precisao||'exata'});
+   }
+   for(const p of data.erros||[]){
+    const idx=Number(String(p.id).replace('mapa-',''));
+    const v=batch[idx];if(v)journeyMapIssues.set(v.id,p.motivo||'Localização não confirmada.');
+   }
+   for(const v of batch)if(!journeyMapPoints.has(v.id)&&!journeyMapIssues.has(v.id))
+    journeyMapIssues.set(v.id,'Localização não disponível.');
+  }
+ }catch(e){
+  for(const v of venues)if(!journeyMapPoints.has(v.id))journeyMapIssues.set(v.id,String(e.message||'Serviço de mapas indisponível.'));
+ }finally{journeyMapBusy=false;renderJourneyMap(journeyTrips().trips);}
+}
+function renderJourneyMap(trips){
+ const items=journeyMapVenues(trips),host=clear('journeyCentresList');
+ const frame=$('journeyMap'),message=$('journeyMapMessage');
+ set('journeyCentresTitle','Centros ('+nf(items.length)+')');
+ const located=items.filter(item=>journeyMapPoints.has(item.venue.id));
+ set('journeyMapSummary',nf(located.length)+' de '+nf(items.length)+' localizados');
+ const markers=new Map();
+ for(let i=0;i<items.length;i++){
+  const item=items[i],v=item.venue,point=journeyMapPoints.get(v.id);
+  const row=el('button',null,'speaker-map-centre'),num=el('span',String(i+1),'speaker-map-centre-num');
+  const copy=el('span',null,'speaker-map-centre-copy');
+  copy.append(el('strong',v.nome||'Centro Espírita'));
+  const status=journeyMapIssues.get(v.id);
+  const bairro=v.bairro||v.cidade||'';
+  copy.append(el('small',status||((bairro?bairro+' · ':'')+nf(item.visitas)+' visita'+(item.visitas===1?'':'s'))));
+  const km=el('span',item.km===null?'—':item.km.toLocaleString('pt-BR',{maximumFractionDigits:1})+' km','speaker-map-centre-km');
+  row.type='button';row.disabled=!point||!window.L;
+  row.append(num,copy,km);
+  row.addEventListener('click',()=>{
+   const marker=markers.get(v.id);
+   if(marker&&journeyMapInstance){
+    journeyMapInstance.setView([point.lat,point.lon],Math.max(14,journeyMapInstance.getZoom()));
+    marker.openPopup();
+   }
+  });
+  host.append(row);
+ }
+ if(!items.length){
+  frame.hidden=true;message.hidden=false;message.textContent='Nenhum centro presencial visitado no período selecionado.';
+  if(journeyMapMarkers)journeyMapMarkers.clearLayers();
+  journeyMapSignature='';
+  return;
+ }
+ if(!located.length||!window.L){
+  frame.hidden=true;message.hidden=false;
+  message.textContent=!window.L?'Mapa interativo indisponível. Verifique a conexão com a biblioteca de mapas.':
+   journeyMapBusy?'Localizando os centros visitados…':
+   'Nenhum centro pôde ser posicionado com segurança. Confira os endereços em Locais.';
+ }else{
+  frame.hidden=false;message.hidden=true;
+  if(!journeyMapInstance){
+   journeyMapInstance=window.L.map(frame,{scrollWheelZoom:false,zoomControl:true}).setView([-22.92,-43.2],11);
+   window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
+   }).addTo(journeyMapInstance);
+   journeyMapMarkers=window.L.layerGroup().addTo(journeyMapInstance);
+  }
+  journeyMapMarkers.clearLayers();
+  const bounds=[];
+  for(let i=0;i<items.length;i++){
+   const item=items[i],point=journeyMapPoints.get(item.venue.id);
+   if(!point)continue;
+   const icon=window.L.divIcon({className:'speaker-map-pin-wrap',
+    html:'<span class="speaker-map-pin"><b>'+String(i+1)+'</b></span>',iconSize:[31,31],iconAnchor:[16,30]});
+   const marker=window.L.marker([point.lat,point.lon],{icon}).bindPopup(journeyMapPopup(item));
+   marker.addTo(journeyMapMarkers);markers.set(item.venue.id,marker);bounds.push([point.lat,point.lon]);
+  }
+  const signature=items.map(x=>{const p=journeyMapPoints.get(x.venue.id);return x.venue.id+':'+(p?p.lat+','+p.lon:'');}).join('|');
+  if(signature!==journeyMapSignature){
+   journeyMapSignature=signature;
+   if(bounds.length===1)journeyMapInstance.setView(bounds[0],15);
+   else journeyMapInstance.fitBounds(bounds,{padding:[35,35],maxZoom:15});
+  }
+  requestAnimationFrame(()=>journeyMapInstance?.invalidateSize());
+ }
+ if(!journeyMapBusy){
+  const pending=items.filter(x=>!journeyMapPoints.has(x.venue.id)&&!journeyMapIssues.has(x.venue.id)).map(x=>x.venue);
+  if(pending.length)void fetchJourneyMap(pending);
  }
 }
 
@@ -627,7 +757,7 @@ async function load(){
    if(match)used.add(match);
    return {...p,data:match?match.data:p.data,when:date(match?match.data:p.data),horario:match?match.horario:p.horario,centroId:match?.localId||p.centroId||'',localAgenda:match?match.local:null,seconds:duration(p.duracao),approx:match?false:!!p.dataAproximada,agendaLinked:!!match};
   });
-  journeyRoutingError='';journeyRouteFailures.clear();
+  journeyRoutingError='';journeyRouteFailures.clear();journeyMapPoints.clear();journeyMapIssues.clear();journeyMapSignature='';
   error=null;render();
   $('aviso').hidden=true;set('lastUpdate',shortDate(new Date())+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));set('refreshLabel','Atualizado');set('refreshFeedback','Dados atualizados.');
  }catch(e){error=e;setNotice('Não foi possível carregar as palestras: '+e.message);set('siteStatus','Falha na conexão');set('refreshLabel','Falha ao atualizar');set('refreshFeedback','Falha ao atualizar os dados.');}
