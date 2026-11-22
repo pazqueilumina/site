@@ -120,6 +120,15 @@ function initFilters(){
  $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
  $('acervoToggle').addEventListener('click',()=>{const btn=$('acervoToggle'),expanded=btn.getAttribute('aria-expanded')==='true';btn.setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});
  $('atualizar').addEventListener('click',load);
+ $('journeyMapExpand').addEventListener('click',()=>{
+  journeySetMapExpanded(!$('journeyMapFrame').classList.contains('is-expanded'));
+ });
+ document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&$('journeyMapFrame').classList.contains('is-expanded')){
+   e.preventDefault();
+   journeySetMapExpanded(false,true);
+  }
+ });
  speakerPeriodUI();
 }
 const topicLabel=p=>topicNames[p.serie]||p.serie||'Sem tema informado';
@@ -497,6 +506,25 @@ function renderJourneys(){
 }
 
 
+
+/* Ampliação visual do mapa: sem abrir outra página nem reinstanciar o Leaflet. */
+function journeySetMapExpanded(expanded,restoreFocus=false){
+ const frame=$('journeyMapFrame'),button=$('journeyMapExpand'),map=$('journeyMap');
+ if(expanded&&(button.hidden||map.hidden||journeyMapTilesUnavailable||!journeyMapInstance))return;
+ if(frame.classList.contains('is-expanded')===expanded)return;
+ frame.classList.toggle('is-expanded',expanded);
+ document.body.classList.toggle('speaker-map-expanded',expanded);
+ button.setAttribute('aria-expanded',String(expanded));
+ const label=expanded?'Fechar mapa':'Ampliar mapa';
+ button.setAttribute('aria-label',label);
+ button.title=label;
+ $('journeyMapExpandIcon').setAttribute('d',expanded?'M6 6l12 12M18 6L6 18':'M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5');
+ if(!expanded&&restoreFocus&&!button.hidden)button.focus();
+ requestAnimationFrame(()=>{
+  if(journeyMapInstance&&!map.hidden)journeyMapInstance.invalidateSize({pan:false,animate:false});
+ });
+}
+
 /* Mapa dos centros presenciais visitados no período: não expõe a residência. */
 const journeyMapPoints=new Map(),journeyMapIssues=new Map();
 let journeyMapBusy=false,journeyMapInstance=null,journeyMapMarkers=null,journeyMapSignature='';
@@ -630,6 +658,8 @@ function renderJourneyMap(trips){
  const frame=$('journeyMap'),message=$('journeyMapMessage');
  set('journeyCentresTitle','Centros ('+nf(items.length)+')');
  const located=items.filter(item=>journeyMapPoints.has(item.venue.id));
+ $('journeyMapExpand').hidden=!located.length||!window.L||journeyMapTilesUnavailable;
+ if($('journeyMapExpand').hidden)journeySetMapExpanded(false);
  set('journeyMapSummary',nf(located.length)+' de '+nf(items.length)+' localizados');
  const markers=new Map();
  for(let i=0;i<items.length;i++){
