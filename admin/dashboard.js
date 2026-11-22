@@ -362,10 +362,10 @@ function renderEmailStatus(data){
   toggle.disabled=true;panel.hidden=true;toggle.setAttribute('aria-expanded','false');return;
  }
  const issues=[...(data.deliveries?.failures||[]).map(r=>({
-  title:(r.kind==='mensal'?'Agenda Mensal':'Lembrete '+r.category)+(r.eventId?' · '+r.eventId:''),
+  title:(r.kind==='mensal'?'Agenda Mensal':r.kind==='semanal'?'Agenda Semanal':'Lembrete '+r.category)+(r.eventId?' · '+r.eventId:''),
   detail:r.error||'Envio não concluído.',at:r.at
  })),...(data.monitor?.errors||[]).map(r=>({
-  title:'Execução · '+({cron:'Agendamento',reminders:'Lembretes',monthly:'Agenda Mensal',test_templates:'Teste dos lembretes',test_monthly:'Teste mensal'}[r.job]||r.job),
+  title:'Execução · '+({cron:'Agendamento',reminders:'Lembretes',monthly:'Agenda Mensal',weekly:'Agenda Semanal',test_templates:'Teste dos lembretes',test_monthly:'Teste mensal',test_weekly:'Teste semanal'}[r.job]||r.job),
   detail:r.error||'Falha na execução.',at:r.at
  }))];
  if(data.monitor?.stale)issues.unshift({title:'Agendamento sem execução recente',detail:'A última execução registrada tem mais de 15 minutos.',at:data.monitor.lastRunAt});

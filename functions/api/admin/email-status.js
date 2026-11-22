@@ -12,7 +12,7 @@ function respond(body,status=200) {
 }
 const safeCount = n => Number.isFinite(Number(n)) ? Math.max(0,Number(n)) : 0;
 const safeText = (value,max=160) => String(value||'').replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,'[e-mail]').slice(0,max);
-const VALID_TABLES = new Set(['reminder_deliveries','monthly_deliveries','email_worker_runs']);
+const VALID_TABLES = new Set(['reminder_deliveries','monthly_deliveries','weekly_deliveries','email_worker_runs']);
 async function tableExists(db,name) {
   if(!VALID_TABLES.has(name)) throw Error('Tabela não permitida');
   return !!(await db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?").bind(name).first());
@@ -28,7 +28,7 @@ async function deliveryStats(db,table,start,end,now) {
     MAX(updated_at) AS last_activity_at
     FROM ${table} WHERE updated_at >= ? AND updated_at < ?`).bind(now,start,end).first();
   const recent = await db.prepare(`SELECT status,attempts,last_error,updated_at,
-    ${table==='reminder_deliveries' ? 'reminder_type,event_id' : 'month_key'}
+    ${table==='reminder_deliveries' ? 'reminder_type,event_id' : table==='weekly_deliveries' ? 'week_key' : 'month_key'}
     FROM ${table}
     WHERE updated_at >= ? AND updated_at < ? AND (status='failed' OR (status='sending' AND lease_until < ?))
     ORDER BY updated_at DESC LIMIT 8`).bind(start,end,now).all();
@@ -36,8 +36,8 @@ async function deliveryStats(db,table,start,end,now) {
     total:safeCount(row?.total),sent:safeCount(row?.sent),failed:safeCount(row?.failed),stalled:safeCount(row?.stalled),
     lastSentAt:row?.last_sent_at||null,lastActivityAt:row?.last_activity_at||null,
     failures:(Array.isArray(recent?.results)?recent.results:[]).map(item=>({
-      kind:table==='reminder_deliveries'?'lembrete':'mensal',
-      category:table==='reminder_deliveries'?String(item.reminder_type||'').slice(0,8):String(item.month_key||'').slice(0,18),
+      kind:table==='reminder_deliveries'?'lembrete':table==='weekly_deliveries'?'semanal':'mensal',
+      category:table==='reminder_deliveries'?String(item.reminder_type||'').slice(0,8):String(table==='weekly_deliveries'?item.week_key:item.month_key||'').slice(0,18),
       eventId:table==='reminder_deliveries'?String(item.event_id||'').slice(0,64):null,
       status:item.status==='failed'?'failed':'stalled',
       attempts:safeCount(item.attempts),at:item.updated_at||null,
@@ -61,20 +61,22 @@ export async function onRequestGet({env,request}) {
   const end=new Date(Date.UTC(year+1,0,1,3)).toISOString();
   const nowIso=now.toISOString(),recentStart=new Date(now.getTime()-30*86400000).toISOString();
   try {
-    const [hasReminder,hasMonthly,hasRuns]=await Promise.all([
-      tableExists(db,'reminder_deliveries'),tableExists(db,'monthly_deliveries'),tableExists(db,'email_worker_runs')
+    const [hasReminder,hasMonthly,hasWeekly,hasRuns]=await Promise.all([
+      tableExists(db,'reminder_deliveries'),tableExists(db,'monthly_deliveries'),tableExists(db,'weekly_deliveries'),tableExists(db,'email_worker_runs')
     ]);
     if(!hasReminder) return respond({status:'incomplete',message:'Tabela de lembretes não encontrada no D1 vinculado. Confira o banco selecionado.'});
-    const [reminder,monthly,recentReminder,recentMonthly]=await Promise.all([
+    const [reminder,monthly,weekly,recentReminder,recentMonthly,recentWeekly]=await Promise.all([
       deliveryStats(db,'reminder_deliveries',start,end,nowIso),
       hasMonthly?deliveryStats(db,'monthly_deliveries',start,end,nowIso):Promise.resolve(null),
+      hasWeekly?deliveryStats(db,'weekly_deliveries',start,end,nowIso):Promise.resolve(null),
       deliveryStats(db,'reminder_deliveries',recentStart,nowIso,nowIso),
-      hasMonthly?deliveryStats(db,'monthly_deliveries',recentStart,nowIso,nowIso):Promise.resolve(null)
+      hasMonthly?deliveryStats(db,'monthly_deliveries',recentStart,nowIso,nowIso):Promise.resolve(null),
+      hasWeekly?deliveryStats(db,'weekly_deliveries',recentStart,nowIso,nowIso):Promise.resolve(null)
     ]);
     let runs=[];
     if(hasRuns) {
       const result=await db.prepare(`SELECT job,last_run_at,last_success_at,last_error_at,last_error
-        FROM email_worker_runs WHERE job IN ('cron','reminders','monthly','test_templates','test_monthly')`).all();
+        FROM email_worker_runs WHERE job IN ('cron','reminders','monthly','test_templates','test_monthly','weekly','test_weekly')`).all();
       runs=(Array.isArray(result?.results)?result.results:[]).map(r=>({
         job:String(r.job||''),lastRunAt:r.last_run_at||null,lastSuccessAt:r.last_success_at||null,
         lastErrorAt:r.last_error_at||null,error:r.last_error?safeText(r.last_error):null
@@ -83,20 +85,20 @@ export async function onRequestGet({env,request}) {
     const cron=runs.find(r=>r.job==='cron')||null;
     const staleCron=!!cron?.lastRunAt && (now.getTime()-Date.parse(cron.lastRunAt)>15*60000);
     const executionErrors=runs.filter(r=>!!r.error);
-    const failures=[...reminder.failures,...(monthly?.failures||[])].sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,12);
-    const recentFailures=[...recentReminder.failures,...(recentMonthly?.failures||[])].sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,12);
+    const failures=[...reminder.failures,...(monthly?.failures||[]),...(weekly?.failures||[])].sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,12);
+    const recentFailures=[...recentReminder.failures,...(recentMonthly?.failures||[]),...(recentWeekly?.failures||[])].sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,12);
     return respond({
       status:'ok',year,periodStart:start,periodEnd:end,
       deliveries:{
-        sent:reminder.sent+(monthly?.sent||0),failed:reminder.failed+(monthly?.failed||0),
-        stalled:reminder.stalled+(monthly?.stalled||0),
-        lastSentAt:[reminder.lastSentAt,monthly?.lastSentAt].filter(Boolean).sort().at(-1)||null,
+        sent:reminder.sent+(monthly?.sent||0)+(weekly?.sent||0),failed:reminder.failed+(monthly?.failed||0)+(weekly?.failed||0),
+        stalled:reminder.stalled+(monthly?.stalled||0)+(weekly?.stalled||0),
+        lastSentAt:[reminder.lastSentAt,monthly?.lastSentAt,weekly?.lastSentAt].filter(Boolean).sort().at(-1)||null,
         reminders:reminder,monthly:monthly?{...monthly,failures:undefined}:null,
-        monthlyReady:hasMonthly,failures
+        monthlyReady:hasMonthly,weeklyReady:hasWeekly,failures
       },
       alerts:{
-        windowDays:30,failed:recentReminder.failed+(recentMonthly?.failed||0),
-        stalled:recentReminder.stalled+(recentMonthly?.stalled||0),failures:recentFailures
+        windowDays:30,failed:recentReminder.failed+(recentMonthly?.failed||0)+(recentWeekly?.failed||0),
+        stalled:recentReminder.stalled+(recentMonthly?.stalled||0)+(recentWeekly?.stalled||0),failures:recentFailures
       },
       monitor:{
         installed:hasRuns,pending:hasRuns&&!cron,lastRunAt:cron?.lastRunAt||null,lastSuccessAt:cron?.lastSuccessAt||null,

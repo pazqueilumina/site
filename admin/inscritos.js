@@ -60,7 +60,7 @@ async function cancelar(email,botao){
    body:JSON.stringify({action:'cancel',confirm:true,email})});
   const dados=await r.json().catch(()=>({}));
   if(!r.ok)throw Error(dados.erro||'Não foi possível cancelar.');
-  mensagem(dados.message||'Inscrição cancelada.');await carregar();
+  await carregar();mensagem(dados.message||'Inscrição cancelada.');
  }catch(e){mensagem(e.message||'Falha no cancelamento.',true);botao.disabled=false;}
 }
 $('atualizarInscritos').addEventListener('click',carregar);
