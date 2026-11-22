@@ -1,7 +1,7 @@
 # Continuidade do projeto — Paz que Ilumina
 
-> **Atualizado em:** 22/11/2026 — segunda revisão histórica  
-> **Último HEAD auditado nesta revisão:** `9a0512247cd1461ace6f2a036172b9c3560bab17`  
+> **Atualizado em:** 22/11/2026 — revisão de encerramento para continuidade em novo chat  
+> **Último HEAD de código auditado antes desta atualização documental:** `1c66122381924bac1b1b3005586dccf5f52fa531`  
 > **Repositório:** https://github.com/pazqueilumina/site  
 > **Branch de trabalho autorizada:** `main`  
 > **Site:** https://pazqueilumina.com.br  
@@ -54,6 +54,15 @@ Esses números são um **retrato histórico**, não totais permanentes: consulta
 - Ampliação em sobreposição de tela cheia pelo botão no canto superior direito; fecha pelo botão ou tecla **Esc**; mantém a instância do mapa e a lista original: commit `ad7a7892`.
 - Cache de coordenadas elegíveis no navegador/servidor, preservação de mosaicos e botão **“Preparar coordenadas verificadas”** no Cadastro de Locais: commit `246e75ae`.
 - **Resultado observado pelo usuário:** a otimização de carregamento **não produziu melhora significativa**. Não apresentar esse problema como resolvido.
+
+### Dashboard do palestrante — ranking presencial e online (última entrega)
+
+- **Commit `45ed4378`:** corrigiu a inconsistência entre o quadro “Por onde Alexandre passou” e o mapa, passando a consultar eventos **já realizados** da Agenda em vez de depender de `centroId` preenchido em Palestras.
+- **Commit `1c661223` (último código na `main` conferido em 22/11/2026):** separou o quadro em **Visitas presenciais** e **Participações online**, agrupando cada modalidade por instituição, e não mais todas as transmissões sob o rótulo genérico “You Tube”. A plataforma (YouTube, Instagram etc.) aparece como informação complementar. Não há mais destaque arbitrário de um centro empatado em visitas.
+- **Teste com os dados reais de outubro de 2026:** presenciais: **Grupo Espírita Fabiano — 1 visita**, **Lar de Frei Luiz — 1 visita**; online: **Cristo Consolador — 2 participações no YouTube**, **Consolador – Comunidade Espírita Cristã — 1 participação no Instagram**. O KPI de Centros Espíritas/Instituições passa a mostrar **4 instituições distintas** nesse período.
+- A contagem de visitas presenciais segue a mesma deduplicação do mapa (evento por data e centro). Participações online são contadas por evento e agrupadas por instituição. A duração só é atribuída quando existe **`eventoId` explícito, único e com duração válida**; não inferir tempo a partir de título, centro ou proximidade de datas.
+- **Validação realizada:** sintaxe JS e testes funcionais de agrupamento, períodos vazios, vínculo de duração inequívoco e casos ambíguos; arquivos CSS/HTML atualizados com cache-busting. **O GitHub confirmou o commit na `main`; a conclusão do deploy automático no Cloudflare e a visualização final no navegador do usuário não foram confirmadas.**
+- Arquivos modificados: `admin/palestrante.js`, `admin/palestrante.css`, `admin/palestrante.html` e este documento. **Mapa, cálculo de quilometragem e dados da Agenda/Palestras/Locais não foram modificados.**
 
 ### Dashboard administrativo — origem das visitas
 
@@ -121,6 +130,9 @@ Foram discutidos lembretes de Agenda (24h e 1h antes) e leitura semanal de trech
 
 | Commit | Mudança |
 | --- | --- |
+| `1c661223` | Separação entre centros presenciais e participações online por instituição no Dashboard do Palestrante |
+| `45ed4378` | Quadro “Por onde Alexandre passou” passou a usar a Agenda como fonte |
+| `8b03876e` | Segunda revisão histórica do documento de continuidade |
 | `24a2fcf2` | Bandeiras por imagem no Dashboard administrativo, com SVG local para BR/US |
 | `246e75ae` | Cache de mapa, mosaicos reaproveitados e preparação de coordenadas verificadas |
 | `ad7a7892` | Ampliação do mapa em tela cheia |
@@ -210,6 +222,13 @@ Esta seção complementa o inventário anterior com decisões recuperadas de con
 
 Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails_leitura_semanal.md`** (arquivo pessoal fora deste repositório). **Não copiar endereços de e-mail pessoais ou lista de destinatários para este repositório público.**
 
+**Situação na última conversa sobre e-mails (22/11/2026):**
+- **[RELATADO PELO USUÁRIO / HISTÓRICO DE CONVERSA]** O domínio `pazqueilumina.com.br` **já foi verificado no Resend**. Esse progresso foi mencionado na conversa, mas **não foi revalidado diretamente no painel Resend** nesta revisão. Não voltar à etapa de verificar domínio sem primeiro perguntar/consultar o estado atual.
+- **[AINDA NÃO CONFIRMADO]** Criação da chave de API do Resend; cadastro do segredo `RESEND_API_KEY` no Cloudflare; configuração do Worker e dos gatilhos agendados. **Não registrar nem solicitar que chaves secretas sejam publicadas no GitHub.**
+- **[CÓDIGO NÃO LOCALIZADO]** A árvore completa da `main` foi consultada em 22/11/2026 e não foram identificados arquivos de implementação com nomes relacionados a `email`, `resend`, `lembrete`, `cron`, `newsletter` ou `inscritos`. **Isso não substitui uma auditoria de todas as funções**, mas não há comprovação de envio automático funcionando.
+- **[PRÓXIMA ETAPA, SOMENTE QUANDO AUTORIZADO]** Confirmar domínio/chave/segredo, implementar agendamento 24h e 1h antes (fuso `America/Sao_Paulo`), destinatários autorizados, proteção contra envio duplicado, tratamento de alterações/cancelamentos, logs e testes controlados antes de qualquer disparo real. O envio de mensagens para pessoas reais requer autorização específica.
+
+
 - **[PLANEJADO — PRIORIDADE 1]** Lembretes de Agenda por e-mail **24 horas e 1 hora antes** de cada apresentação, usando tema, data, horário e local; registrar envios, falhas e duplicações; considerar alteração ou cancelamento de eventos.
 - **[PLANEJADO]** Infraestrutura preferida: **Cloudflare Workers + Resend**, com domínio autenticado. GitHub Actions/Gmail e Brevo foram alternativas consideradas; não tratar qualquer serviço como já contratado/ativado.
 - **[PLANEJADO — POSTERIOR]** Cadastro de inscritos com consentimento, cancelamento de inscrição e envio de comunicados/campanhas, dimensionado para algumas centenas de pessoas.
@@ -241,3 +260,26 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 | `cee4a9af` | Criação inicial do Dashboard do Palestrante |
 
 **Princípio de continuidade:** as seções acima descrevem o que foi encontrado ou combinado, **não** substituem uma leitura do código atual. Quando memória, documento e código divergirem, registrar a divergência, preservar o estado atual e pedir decisão antes de qualquer migração.
+
+
+## 9. Ponto de retomada para o próximo chat (22/11/2026)
+
+**Último código confirmado na `main` antes desta atualização do documento:** `1c66122381924bac1b1b3005586dccf5f52fa531`. A atualização deste próprio Markdown produzirá um **novo commit apenas documental**; portanto, no novo chat, conferir o HEAD novamente. Não confundir SHA do documento com nova versão de código.
+
+**O que foi entregue recentemente:**
+1. Dashboard do Palestrante: quadro “Por onde Alexandre passou” corrigido e separado entre **Visitas presenciais** e **Participações online**; instituição identificada e plataforma indicada separadamente. Conferir em produção se outubro de 2026 mostra as 4 instituições e contagens acima. **Não há relato posterior do usuário confirmando a aparência final desse último layout.**
+2. Dashboard Administrativo: bandeiras BR/US renderizadas por SVG, evitando texto “US” no Windows. Conferir a aparência se houver novo relato de erro.
+3. Mapa do Palestrante: carregamento corrigido, ampliação em tela cheia e cache incremental já implementados. **Melhoria estrutural de desempenho adiada expressamente pelo usuário**; não refazer nem iniciar persistência de coordenadas sem nova autorização.
+4. E-mail: planejamento de **lembretes 24h e 1h** com Resend + Cloudflare Workers; **domínio relatado como verificado**, mas chave de API, segredo, agendamento, testes e envio não confirmados. **Ainda não tratar como recurso operacional.**
+
+**Prioridades e cuidados:**
+- O usuário está cadastrando um backlog grande de eventos e PDFs; preservar IDs, dados e vínculos existentes.
+- Não retomar migração de Agenda/Palestras nem refatoração de coordenadas por iniciativa própria.
+- Não criar versão do programa Windows v3.1 sem pedido explícito.
+- Não implementar e-mails/inscritos/leitura semanal só porque aparecem como próximos passos neste documento.
+- Para qualquer nova solicitação, **ler o arquivo real na `main`**, identificar o HEAD, inspecionar código e dados relevantes, pedir autorização quando ainda não houver e relatar separadamente commit, testes e deploy Cloudflare.
+- **Última ação solicitada neste chat:** atualizar este arquivo para permitir começar outro chat. **Nenhuma outra mudança de código ou funcionalidade foi solicitada nesta ação.**
+
+**Mensagem curta sugerida para o novo chat:**
+
+> Vamos continuar o site Paz que Ilumina. Leia o `CONTINUIDADE-PROJETO.md` na `main` do GitHub `pazqueilumina/site`, especialmente as seções 1, 3, 8.5, 8.8 e 9. Confirme o HEAD atual antes de agir. Não faça mudanças nem deploy sem minha autorização explícita. Vou passar a próxima tarefa.
