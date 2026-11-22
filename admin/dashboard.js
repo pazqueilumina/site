@@ -271,12 +271,28 @@ function renderRecent(palestras,shorts){
   media.setAttribute('aria-hidden','true');
   if(item.youtubeId){
    const img=document.createElement('img');
-   img.src='https://i.ytimg.com/vi/'+item.youtubeId+'/mqdefault.jpg';
    img.alt='';img.loading='lazy';img.decoding='async';
+   // Shorts usam miniatura HD e recorte circular igual ao site público.
+   const short=item.chave==='short';
+   const imageHost=short?txt('span','','content-short-crop'):media;
+   const fallbackIcon=()=>{
+    const fallback=txt('span','','content-media-icon');fallback.append(svg('play'));
+    img.replaceWith(fallback);
+   };
+   if(short){
+    img.addEventListener('load',()=>{
+     if(img.naturalWidth>=300)return;
+     if(img.src.includes('/hq720.jpg'))img.src=img.src.replace('/hq720.jpg','/hqdefault.jpg');
+     else fallbackIcon();
+    });
+   }
    img.addEventListener('error',()=>{
-    const fallback=txt('span','','content-media-icon');fallback.append(svg('play'));img.replaceWith(fallback);
-   },{once:true});
-   media.append(img);
+    if(short&&img.src.includes('/hq720.jpg'))img.src=img.src.replace('/hq720.jpg','/hqdefault.jpg');
+    else fallbackIcon();
+   });
+   img.src='https://i.ytimg.com/vi/'+item.youtubeId+(short?'/hq720.jpg':'/mqdefault.jpg');
+   imageHost.append(img);
+   if(short)media.append(imageHost);
   }else{
    const icon=txt('span','','content-media-icon');
    icon.append(svg(item.chave==='audio'?'headphones':item.chave==='pdf'?'file':'presentation'));

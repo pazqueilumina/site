@@ -388,3 +388,11 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - O Short SHO-0020, publicado em 22/11/2026, aparece com NOVO.
 - No quadro **Resumo do acervo**, coluna **Novos***, Shorts, MP3 e PDF agora são contados por data de publicação registrada dentro do **período selecionado**; apresentações continuam com a contagem histórica pela data cadastrada. Itens legados sem data de publicação não são considerados novos; a nota do quadro explica a diferença.
 - Mantido limite de 5 conteúdos recentes, IDs, links e histórico; nenhum Worker ou e-mail alterado. Cache-busting dos arquivos JS/CSS do dashboard atualizado.
+
+ 
+## 2026-11-22 — Miniaturas de Shorts sem barras pretas (site e dashboard)
+
+- Ajuste aprovado para os **dois ambientes**: site público (Vídeos) e Dashboard administrativo (Conteúdos recentes).
+- O Dashboard passou a usar thumbnail HD `hq720.jpg` dos Shorts com fallback para `hqdefault.jpg`, e recorte circular com zoom 1,72× **dentro de um contêiner com overflow hidden**. O zoom evita as faixas laterais escuras do thumbnail horizontal de Shorts.
+- A página pública de Vídeos mantém seu recorte circular e zoom 1,72×; a escala agora usa variável CSS `--short-thumb-zoom` para manter a configuração alinhada com o Dashboard.
+- Alteração limitada à apresentação das miniaturas, sem modificar títulos, IDs, ordenação, conteúdo ou cadastros. Cache-busting de CSS/JS atualizado.
