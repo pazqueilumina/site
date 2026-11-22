@@ -290,3 +290,7 @@
 .speaker-journey-map-frame .leaflet-container{font-family:Inter,"Segoe UI",Arial,sans-serif}
 @media(max-width:850px){.speaker-journey-map-layout{grid-template-columns:1fr}.speaker-journey-centres-panel{min-height:0}.speaker-journey-centres-list{max-height:220px}}
 @media(max-width:480px){.speaker-journey-map-heading{align-items:flex-start;flex-direction:column}.speaker-journey-map-frame,.speaker-journey-map-message{min-height:260px}#journeyMap{height:260px}.speaker-map-centre{gap:7px;padding:10px 8px}.speaker-map-centre-copy strong{font-size:11px}}
+
+/* Cobertura temporária: nunca mostrar um mapa parcialmente carregado. */
+.speaker-journey-map-loading{position:absolute;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;background:#f2f5f9;color:#687c96;font-size:12px;font-weight:600}
+.speaker-journey-map-loading[hidden]{display:none}

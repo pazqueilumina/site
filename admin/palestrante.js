@@ -500,7 +500,7 @@ function renderJourneys(){
 /* Mapa dos centros presenciais visitados no período: não expõe a residência. */
 const journeyMapPoints=new Map(),journeyMapIssues=new Map();
 let journeyMapBusy=false,journeyMapInstance=null,journeyMapMarkers=null,journeyMapSignature='';
-let journeyTileLayer=null,journeyTileFailures=0,journeyTileLoads=0,journeyTileWatchdog=null,journeyMapTilesUnavailable=false,journeyMapLastTrips=[];
+let journeyTileLayer=null,journeyTileWatchdog=null,journeyMapTilesUnavailable=false,journeyMapLastTrips=[];
 function journeyMapVenues(trips){
  const uniquePlaces=new Map();
  for(const trip of trips){
@@ -556,47 +556,96 @@ async function fetchJourneyMap(venues){
  }finally{journeyMapBusy=false;renderJourneyMap(journeyTrips().trips);}
 }
 
-/* Esri World Street Map (raster). Não usar tiles públicos do OSM nem CARTO:
-   os primeiros bloquearam o site e o CARTO devolveu imagens exigindo chave. */
+/* Esri World Street Map: carregar cada bloco até 3 vezes. Não mascarar
+   erros com imagens transparentes: um único bloco indisponível invalida o mapa. */
+function journeyShowMapLoading(visible){
+ const overlay=$('journeyMapLoading');
+ if(overlay)overlay.hidden=!visible;
+}
 function journeyStopTileWatchdog(){
  if(journeyTileWatchdog!==null){clearTimeout(journeyTileWatchdog);journeyTileWatchdog=null;}
+}
+function journeyScheduleTileWatchdog(layer){
+ journeyStopTileWatchdog();
+ journeyTileWatchdog=setTimeout(()=>{
+  if(journeyTileLayer===layer)journeyDisableMapTiles();
+ },20000);
+}
+function journeyRemoveTileLayer(){
+ journeyStopTileWatchdog();
+ journeyShowMapLoading(false);
+ if(journeyTileLayer&&journeyMapInstance)journeyMapInstance.removeLayer(journeyTileLayer);
+ journeyTileLayer=null;
 }
 function journeyDisableMapTiles(){
  if(journeyMapTilesUnavailable)return;
  journeyMapTilesUnavailable=true;
- journeyStopTileWatchdog();
- if(journeyTileLayer&&journeyMapInstance)journeyMapInstance.removeLayer(journeyTileLayer);
- journeyTileLayer=null;
+ journeyRemoveTileLayer();
  renderJourneyMap(journeyMapLastTrips);
 }
 function journeySetTileProvider(){
  if(!journeyMapInstance||!window.L||journeyMapTilesUnavailable)return;
- journeyStopTileWatchdog();
- if(journeyTileLayer)journeyMapInstance.removeLayer(journeyTileLayer);
- journeyTileFailures=0;journeyTileLoads=0;
+ journeyRemoveTileLayer();
  const url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
  const attribution='Tiles &copy; Esri — Sources: Esri, HERE, Garmin, USGS, OpenStreetMap contributors and GIS User Community';
- const layer=window.L.tileLayer(url,{
-  maxZoom:19,attribution,
-  // Em respostas HTTP inválidas, mostrar transparência, nunca o ícone de imagem quebrada.
-  errorTileUrl:'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
- });
+ const layer=window.L.tileLayer(url,{maxZoom:19,attribution,updateWhenIdle:true,keepBuffer:1});
+ // O Leaflet mantém o posicionamento, zoom e identificação dos blocos visíveis.
+ layer.createTile=function(coords,done){
+  const tile=document.createElement('img');
+  tile.alt='';
+  tile.setAttribute('role','presentation');
+  let attempts=0,finished=false,retryTimer=null;
+  const baseUrl=this.getTileUrl(coords);
+  const finish=error=>{
+   if(finished)return;
+   finished=true;
+   if(retryTimer!==null)clearTimeout(retryTimer);
+   tile.onload=null;tile.onerror=null;
+   done(error,tile);
+  };
+  const retry=()=>{
+   if(finished)return;
+   if(attempts>=2){finish(new Error('Bloco do mapa indisponível após três tentativas.'));return;}
+   attempts++;
+   retryTimer=setTimeout(load,attempts*700);
+  };
+  const load=()=>{
+   if(finished)return;
+   tile.onload=()=>{
+    if(finished)return;
+    if(tile.naturalWidth<128||tile.naturalHeight<128){retry();return;}
+    finish(null);
+   };
+   tile.onerror=retry;
+   const suffix=attempts===0?'':(baseUrl.includes('?')?'&':'?')+'pqi_retry='+attempts;
+   tile.src=baseUrl+suffix;
+  };
+  tile._journeyCancel=()=>{
+   finished=true;
+   if(retryTimer!==null)clearTimeout(retryTimer);
+   tile.onload=null;tile.onerror=null;
+  };
+  load();
+  return tile;
+ };
  journeyTileLayer=layer;
- layer.on('tileload',()=>{
+ layer.on('tileunload',event=>event.tile?._journeyCancel?.());
+ layer.on('loading',()=>{
   if(journeyTileLayer!==layer)return;
-  journeyTileLoads++;
-  journeyStopTileWatchdog();
+  journeyShowMapLoading(true);
+  journeyScheduleTileWatchdog(layer);
  });
  layer.on('tileerror',()=>{
-  if(journeyTileLayer!==layer)return;
-  journeyTileFailures++;
-  if(journeyTileFailures>=3)journeyDisableMapTiles();
+  if(journeyTileLayer===layer)journeyDisableMapTiles();
  });
+ layer.on('load',()=>{
+  if(journeyTileLayer!==layer||journeyMapTilesUnavailable)return;
+  journeyStopTileWatchdog();
+  journeyShowMapLoading(false);
+ });
+ journeyShowMapLoading(true);
+ journeyScheduleTileWatchdog(layer);
  layer.addTo(journeyMapInstance);
- // Se nenhum tile responder, não deixar o quadro vazio indefinidamente.
- journeyTileWatchdog=setTimeout(()=>{
-  if(journeyTileLayer===layer&&journeyTileLoads===0)journeyDisableMapTiles();
- },12000);
 }
 
 function renderJourneyMap(trips){
@@ -628,14 +677,16 @@ function renderJourneyMap(trips){
   host.append(row);
  }
  if(!items.length){
+  journeyRemoveTileLayer();
   frame.hidden=true;message.hidden=false;message.textContent='Nenhum centro presencial visitado no período selecionado.';
   if(journeyMapMarkers)journeyMapMarkers.clearLayers();
   journeyMapSignature='';
   return;
  }
  if(!located.length||!window.L||journeyMapTilesUnavailable){
+  if(!located.length)journeyRemoveTileLayer();
   frame.hidden=true;message.hidden=false;
-  message.textContent=journeyMapTilesUnavailable?'Não foi possível carregar o mapa do Esri. A lista de centros permanece disponível.':
+  message.textContent=journeyMapTilesUnavailable?'Não foi possível carregar todos os blocos do mapa após novas tentativas. A lista de centros permanece disponível.':
    !window.L?'Mapa interativo indisponível. Verifique a conexão com a biblioteca de mapas.':
    journeyMapBusy?'Localizando os centros visitados…':
    'Nenhum centro pôde ser posicionado com segurança. Confira os endereços em Locais.';

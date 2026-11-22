@@ -4,9 +4,9 @@
 <title>Dashboard do Palestrante | Paz que Ilumina</title>
 <link rel="stylesheet" href="/admin/dashboard.css?v=menuperiodoajuste20261121">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoTgkXkR8fx8c4=" crossorigin="">
-<link rel="stylesheet" href="/admin/palestrante.css?v=mapacentros20261122">
+<link rel="stylesheet" href="/admin/palestrante.css?v=tiles-retry20261122">
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/admin/palestrante.js?v=mapa-esri20261122"></script></head><body>
+<script defer src="/admin/palestrante.js?v=tiles-retry20261122"></script></head><body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-8h6v8"/></symbol>
  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"/></symbol>
@@ -120,6 +120,7 @@
  <div class="speaker-journey-map-layout">
   <div class="speaker-journey-map-frame">
    <div id="journeyMap" aria-label="Mapa interativo dos centros visitados no período" hidden></div>
+   <div id="journeyMapLoading" class="speaker-journey-map-loading" role="status" hidden>Carregando mapa…</div>
    <p id="journeyMapMessage" class="speaker-journey-map-message" role="status">Consultando locais do período…</p>
   </div>
   <aside class="speaker-journey-centres-panel" aria-label="Centros visitados">
@@ -127,7 +128,7 @@
    <div id="journeyCentresList" class="speaker-journey-centres-list"></div>
   </aside>
  </div>
- <p class="speaker-journey-map-foot">Marcadores exibidos somente quando a localização está confirmada ou foi informada explicitamente. Distâncias são de ida e volta por viagem, não em linha reta. Mapa: © OpenStreetMap.</p>
+ <p class="speaker-journey-map-foot">Marcadores exibidos somente quando a localização está confirmada ou foi informada explicitamente. Distâncias são de ida e volta por viagem, não em linha reta. Base cartográfica: Esri, com dados de diversas fontes.</p>
 </div>
 </div>
 </article></section>
