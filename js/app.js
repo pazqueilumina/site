@@ -1056,11 +1056,11 @@ function renderizarAgenda() {
         '<label class="inscricao-mensal-consentimento"><input type="checkbox" name="consent" required><span>Concordo em receber por e-mail a agenda mensal e a agenda semanal aos domingos. Posso cancelar ambas a qualquer momento pelo link nas mensagens.</span></label>' +
         '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
         '<p id="retornoInscricaoMensal" class="inscricao-mensal-retorno" role="status" aria-live="polite"></p>' +
-        '<div class="inscricao-mensal-cancelar"><button type="button" id="abrirCancelamentoAgenda" aria-expanded="false" aria-controls="formCancelamentoAgenda" hidden>Já recebe as agendas? Cancelar inscrição</button>' +
+      '</form>' +
+      '<div class="inscricao-mensal-cancelar"><button type="button" id="abrirCancelamentoAgenda" aria-expanded="false" aria-controls="formCancelamentoAgenda" hidden>Já recebe as agendas? Cancelar inscrição</button>' +
         '<form id="formCancelamentoAgenda" hidden><label for="emailCancelamentoAgenda">E-mail cadastrado</label><div class="inscricao-mensal-linha"><input id="emailCancelamentoAgenda" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required maxlength="254"><button type="submit">Enviar confirmação</button></div>' +
         '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
         '<p id="retornoCancelamentoAgenda" class="inscricao-mensal-retorno" role="status" aria-live="polite"></p></form></div>' +
-      '</form>' +
     '</section>' +
     '<div class="filtro-agenda-publica" role="search" aria-label="Filtrar eventos da agenda">' +
       '<label>Filtrar por Centro / Local<input id="filtroCentroAgenda" type="search" list="opcoesCentroAgenda" placeholder="Todos os Centros e locais" maxlength="180" autocomplete="off" title="Digite o nome do Centro ou selecione na lista">' +

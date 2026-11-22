@@ -442,3 +442,5 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - **Worker independente do GitHub:** preparado o arquivo `worker-pazqueilumina-inscritos-cancelamento-20261122.js`, baseado na versão semanal corrigida. Adiciona POST `/api/subscriptions/unsubscribe/request`, `unsubscribeRequestEnabled` no status e resposta HTTP 409 para e-mails já inscritos ou pendentes (sem bloquear atualização legítima mensal→semanal). O arquivo deve ser publicado manualmente no editor do Worker; o deploy Pages não o atualiza. Mantém agendamentos, destinatários e parâmetros de envio existentes.
 - **Atenção à privacidade:** o aviso explícito de e-mail duplicado revela que o endereço está cadastrado. Foi solicitado pelo responsável; a rota mantém limitação de solicitações por IP e e-mail. Cancelamento por e-mail não revela existência do cadastro.
 - Validar em produção: leitura do D1 pela API protegida, confirmação por e-mail, duplicidade 409 e solicitação de cancelamento após deploy manual do Worker.
+
+- Revisão pós-commit: formulário de cancelamento foi colocado **fora** do formulário de inscrição (HTML não permite formulários aninhados).
