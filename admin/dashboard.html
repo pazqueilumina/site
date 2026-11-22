@@ -4,9 +4,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard | Paz que Ilumina</title>
-<link rel="stylesheet" href="/admin/dashboard.css?v=shorts20261122">
+<link rel="stylesheet" href="/admin/dashboard.css?v=emails-annual20261122">
 <script defer src="/js/dados.js?v=dashboardvisual2"></script>
-<script defer src="/admin/dashboard.js?v=shorts20261122"></script>
+<script defer src="/admin/dashboard.js?v=emails-annual20261122"></script>
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -103,11 +103,14 @@
   </section>
   <section class="dashboard-grid email-monitor-grid" id="emails" aria-label="Monitor de e-mails">
    <article class="widget widget-email-monitor">
-    <h2><svg><use href="#i-alert"/></svg>Monitor de e-mails</h2>
-    <p class="widget-subtitle">Lembretes de 24h e 1h · Agenda Mensal · Últimos 30 dias</p>
+    <div class="email-monitor-heading">
+     <h2><svg><use href="#i-alert"/></svg>Monitor de e-mails</h2>
+     <label class="email-year-label" for="emailYear">Ano <select id="emailYear" aria-label="Ano do histórico de envios"></select></label>
+    </div>
+    <p class="widget-subtitle">Lembretes de 24h e 1h · Agenda Mensal · Envios do ano selecionado</p>
     <div class="email-monitor-metrics">
      <div class="email-monitor-metric"><span>Falhas de envio</span><button id="emailFailed" class="email-error-count" type="button" aria-expanded="false" aria-controls="emailFailuresPanel" disabled>—</button></div>
-     <div class="email-monitor-metric"><span>Falhas de execução</span><strong id="emailExecutionErrors">—</strong></div>
+     <div class="email-monitor-metric"><span>Erros de execução ativos</span><strong id="emailExecutionErrors">—</strong></div>
      <div class="email-monitor-metric"><span>Enviados</span><strong id="emailSent">—</strong></div>
      <div class="email-monitor-metric"><span>Última execução</span><strong id="emailLastRun" class="email-monitor-date">—</strong></div>
     </div>

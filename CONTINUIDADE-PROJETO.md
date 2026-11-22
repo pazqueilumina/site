@@ -358,3 +358,13 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - A miniatura exibida na seção **Prévia da miniatura** do formulário de cadastro/edição também passa a ser circular, com o mesmo enquadramento central da lista de Shorts cadastrados.
 - Mantidos o link **Assistir no YouTube**, os botões e os demais comportamentos do cadastro.
 - Atualização restrita aos arquivos `admin/shorts.html` e `admin/shorts.css`; os dados dos Shorts já publicados não foram modificados.
+
+## 2026-11-22 — Monitor de e-mails anual e alertas em Pendências
+
+- Alteração aprovada para publicação na branch `main`.
+- O **Monitor de e-mails** do Dashboard passa a mostrar envios e falhas de envio por **ano-calendário de São Paulo**, desde 2026, com seletor de ano independente do filtro geral do Dashboard.
+- A API protegida `/api/admin/email-status?year=AAAA` consulta as tabelas D1 `reminder_deliveries` e `monthly_deliveries` no intervalo anual, mantendo `monitor.lastRunAt` como a última execução global, sem filtro de ano.
+- **Erros de execução ativos** permanecem um indicador do estado atual do Worker, não um total histórico anual, pois a tabela `email_worker_runs` registra o último estado por tarefa, não cada erro histórico.
+- O cartão **Pendências** exibe falhas de envio **recentes (30 dias)**, erros de execução ativos, execução atrasada (>15 minutos), primeira execução pendente e falha de consulta/conexão. Quando tudo estiver normal, não cria aviso de e-mail.
+- Os totais anuais e alertas recentes são separados na resposta da API (`deliveries` e `alerts`), evitando confundir problemas antigos com pendências atuais.
+- Não foi alterado o Worker, seus agendamentos, o envio da Agenda Mensal nem o conteúdo das mensagens.

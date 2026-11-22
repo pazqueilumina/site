@@ -234,12 +234,14 @@ function renderPending(palestras,agenda,emails){
  if(!emails||emails.status!=='ok'){
   rows.unshift(['Monitor de e-mails '+(emails?.status==='not_configured'?'não conectado':'indisponível'),'warn','#emails']);
  }else{
-  const deliveryErrors=Number(emails.deliveries?.failed||0)+Number(emails.deliveries?.stalled||0);
+  // Pendências são problemas recentes, não o total histórico do ano selecionado.
+  const deliveryErrors=Number(emails.alerts?.failed||0)+Number(emails.alerts?.stalled||0);
   const executionErrors=Number(emails.monitor?.executionErrors||0);
   if(deliveryErrors)rows.unshift([deliveryErrors+' envio(s) de e-mail com erro','warn','#emails']);
   if(executionErrors)rows.unshift([executionErrors+' erro(s) de execução dos e-mails','warn','#emails']);
   if(emails.monitor?.stale)rows.unshift(['Worker de e-mails sem execução recente','warn','#emails']);
   if(!emails.monitor?.installed)rows.push(['Monitor de execução ainda não instalado','info','#emails']);
+  else if(emails.monitor?.pending)rows.unshift(['Worker de e-mails aguardando primeira execução','warn','#emails']);
  }
  if(!rows.length){host.append(txt('p','Nenhuma pendência identificada.','empty-text'));return;}
  rows.slice(0,5).forEach(([label,type,url])=>{const link=txt('a','','alert-row '+type);link.href=url;const icon=txt('span','','alert-icon');icon.append(svg('alert'));const wrap=txt('span','','row-text');wrap.append(txt('strong',label));link.append(icon,wrap,txt('span','›','arrow'));host.append(link);});
@@ -286,9 +288,11 @@ function renderEmailStatus(data){
  if(data.monitor?.pending)notices.push('Aguardando primeira execução');
  if(data.monitor?.stale)notices.push('Agendamento atrasado');
  if(!data.deliveries?.monthlyReady)notices.push('Agenda Mensal ainda sem registros');
- const failureCount=Number(data.deliveries.failed||0)+Number(data.deliveries.stalled||0)+Number(data.monitor?.executionErrors||0);
+ const failureCount=Number(data.alerts?.failed||0)+Number(data.alerts?.stalled||0)+Number(data.monitor?.executionErrors||0);
  if(failureCount)notices.unshift(failureCount+' ocorrência(s) para verificar');
- info.textContent=notices.join(' · ')||'Nenhuma falha registrada nos últimos 30 dias.';
+ const annualFailures=Number(data.deliveries?.failed||0)+Number(data.deliveries?.stalled||0);
+ if(annualFailures)notices.push(annualFailures+' envio(s) com falha no histórico de '+data.year);
+ info.textContent=notices.join(' · ')||'Nenhuma falha recente nos últimos 30 dias.';
  info.className='email-monitor-info'+(notices.length?' warning':'');
 }
 function renderEvents(agenda){const host=clear('eventos');if(!agenda){host.append(txt('p','Agenda indisponível.','empty-text'));return;}const upcoming=agenda.filter(e=>e.data>=todayISO()).sort((a,b)=>a.data.localeCompare(b.data)||(a.horario||'').localeCompare(b.horario||'')).slice(0,2);if(!upcoming.length){host.append(txt('p','Nenhum evento futuro cadastrado.','empty-text'));return;}upcoming.forEach(e=>{const row=txt('div','','event-row'),date=txt('span','','event-date');date.append(txt('strong',e.data.slice(8,10)),txt('span',new Date(e.data+'T12:00:00').toLocaleDateString('pt-BR',{month:'short'}).replace('.','').toUpperCase()));const info=txt('span','','event-text');info.append(txt('strong',e.titulo),txt('small',e.local||'Local não informado'));row.append(date,info,txt('span',e.horario||'—','event-time'));host.append(row);});}
@@ -312,7 +316,7 @@ async function update(){
  const button=$('atualizar');if(button.disabled)return;
  if(refreshTimer){clearTimeout(refreshTimer);refreshTimer=null;}
  button.disabled=true;refreshState('loading');$('dashMainContent').classList.add('is-updating');
- const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade','/api/admin/email-status','/data/shorts.json'];
+ const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade','/api/admin/email-status?year='+encodeURIComponent($('emailYear').value),'/data/shorts.json'];
  try{
   const results=await Promise.allSettled(urls.map(read));
   ['p','a','l','activities','emails'].forEach((key,i)=>{current[key]=results[i].status==='fulfilled'?results[i].value:null;});
@@ -396,9 +400,18 @@ function applyCustomPeriod(){
  appliedCustomStart=start;appliedCustomEnd=end;
  render();loadAudience();loadVisitsTrend();
 }
+function initEmailYear(){
+ const select=$('emailYear');
+ const currentYear=Number(new Intl.DateTimeFormat('en-US',{timeZone:'America/Sao_Paulo',year:'numeric'}).format(new Date()));
+ for(let year=currentYear;year>=2026;year--){
+  const option=document.createElement('option');option.value=String(year);option.textContent=String(year);select.append(option);
+ }
+ select.value=String(currentYear);
+ select.addEventListener('change',()=>update());
+}
 $('acervoToggle').addEventListener('click',()=>{const expanded=$('acervoToggle').getAttribute('aria-expanded')==='true';$('acervoToggle').setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});
 $('aplicarPeriodo').addEventListener('click',applyCustomPeriod);
 $('atualizar').addEventListener('click',update);
 $('emailFailed').addEventListener('click',()=>{const button=$('emailFailed'),expanded=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!expanded));$('emailFailuresPanel').hidden=expanded;});
 $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
-initCustomFilter();initPeriodControls();update();
+initCustomFilter();initPeriodControls();initEmailYear();update();

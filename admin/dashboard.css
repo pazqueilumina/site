@@ -156,3 +156,11 @@
 .email-issue-row small{font-size:10px;line-height:1.45;color:#667b8d;overflow-wrap:anywhere}
 @media(max-width:900px){.email-monitor-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.email-monitor-metrics{gap:6px}.email-monitor-metric{padding:9px 10px}.email-monitor-metric strong,.email-error-count{font-size:20px}}
+
+/* Ano próprio para o monitor de e-mails, independente do período geral. */
+.email-monitor-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.email-monitor-heading h2{margin-bottom:8px}
+.email-year-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:#53697b}
+.email-year-label select{min-width:84px;padding:5px 9px;border:1px solid #d4dfe8;border-radius:7px;background:#fff;color:#183451;font:inherit;cursor:pointer}
+.email-year-label select:focus-visible{outline:2px solid #3c7eb5;outline-offset:2px}
+@media(max-width:560px){.email-monitor-heading{align-items:flex-start}.email-year-label{margin-left:25px}}
