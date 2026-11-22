@@ -17,6 +17,18 @@ export async function gravarArquivo(token,dados,sha,branch) {
  if(!res.ok)throw new Error('Falha ao gravar cadastro no GitHub (HTTP '+res.status+').');
  const obj=await res.json();return obj.content.sha;
 }
+
+/* Normaliza os tempos antigos MM:SS ou H:MM:SS antes de gravar o catálogo. */
+function normalizarDuracao(valor) {
+ if(typeof valor!=='string')throw new Error('Duração inválida.');
+ const partes=valor.trim().split(':');
+ if(partes.length<2||partes.length>3||partes.some(p=>!/^\d{1,3}$/.test(p)))throw new Error('Duração inválida.');
+ const nums=partes.map(Number);
+ const [h,m,s]=partes.length===2?[0,nums[0],nums[1]]:nums;
+ if(m>59||s>59)throw new Error('Duração inválida.');
+ return [h,m,s].map(n=>String(n).padStart(2,'0')).join(':');
+}
+
 export function validarCadastro(dados) {
  if(!dados||dados.versao!==1||!Array.isArray(dados.palestras)||dados.palestras.length>10000)throw new Error('Formato do cadastro inválido.');
  const ids=new Set(),videos=new Set();
@@ -27,6 +39,9 @@ export function validarCadastro(dados) {
   if(typeof p.titulo!=='string'||!p.titulo.trim()||p.titulo.length>300)throw new Error('Título inválido em '+p.pid);
   if(p.youtubeId){if(!/^[a-zA-Z0-9_-]{11}$/.test(p.youtubeId)||videos.has(p.youtubeId))throw new Error('YouTube inválido ou repetido em '+p.pid);videos.add(p.youtubeId);}
   if(p.data&&!/^\d{4}-\d{2}-\d{2}$/.test(p.data))throw new Error('Data inválida em '+p.pid);
+  if(p.duracao!==undefined&&p.duracao!==''){
+   try{p.duracao=normalizarDuracao(p.duracao);}catch{throw new Error('Duração inválida em '+p.pid);}
+  }
   if(p.horario!==undefined&&p.horario!==''&&(typeof p.horario!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(p.horario)))throw new Error('Horário inválido em '+p.pid);
   if(p.centroId&&(typeof p.centroId!=='string'||p.centroId.length>120||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.centroId)))throw new Error('Centro inválido em '+p.pid);
    if(p.eventoId!==undefined&&p.eventoId!==''&&(typeof p.eventoId!=='string'||!/^evt-[a-z0-9-]{4,50}$/.test(p.eventoId)))throw new Error('Vínculo de agenda inválido em '+p.pid);

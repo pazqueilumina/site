@@ -179,6 +179,16 @@ const APARENCIA_SERIE = {
 
 /* ---------------- NORMALIZAÇÃO DOS DADOS ---------------- */
 
+/* Tempo de cada apresentação: sempre HH:MM:SS, inclusive vídeos abaixo de uma hora. */
+function formatarDuracaoApresentacao(valor) {
+ const partes=String(valor||'').trim().split(':');
+ if(partes.length<2||partes.length>3||partes.some(p=>!/^\d{1,3}$/.test(p)))return '';
+ const nums=partes.map(Number);
+ const [horas,minutos,segundos]=partes.length===2?[0,nums[0],nums[1]]:nums;
+ if(minutos>59||segundos>59)return '';
+ return [horas,minutos,segundos].map(n=>String(n).padStart(2,'0')).join(':');
+}
+
 function prepararApresentacoes() {
   return (DADOS.videos || []).map((v, i) => {
     const aparencia = APARENCIA_SERIE[v.s] || APARENCIA_SERIE.temas;
@@ -193,7 +203,7 @@ function prepararApresentacoes() {
       iconeTema: aparencia.icone,
       corTema: aparencia.cor,
       data: v.d,
-      duracao: v.dur || "",
+      duracao: formatarDuracaoApresentacao(v.dur),
       thumb: "https://i.ytimg.com/vi/" + v.id + "/hq720.jpg",
       youtube: "https://www.youtube.com/watch?v=" + v.id,
       audio: v.audio || null,

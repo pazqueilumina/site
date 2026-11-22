@@ -500,6 +500,7 @@ function renderJourneys(){
 /* Mapa dos centros presenciais visitados no período: não expõe a residência. */
 const journeyMapPoints=new Map(),journeyMapIssues=new Map();
 let journeyMapBusy=false,journeyMapInstance=null,journeyMapMarkers=null,journeyMapSignature='';
+let journeyTileLayer=null,journeyTileFailures=0,journeyTileProvider='carto',journeyMapTilesUnavailable=false,journeyMapLastTrips=[];
 function journeyMapVenues(trips){
  const uniquePlaces=new Map();
  for(const trip of trips){
@@ -554,7 +555,42 @@ async function fetchJourneyMap(venues){
   for(const v of venues)if(!journeyMapPoints.has(v.id))journeyMapIssues.set(v.id,String(e.message||'Serviço de mapas indisponível.'));
  }finally{journeyMapBusy=false;renderJourneyMap(journeyTrips().trips);}
 }
+
+/* CARTO como base principal; Esri como alternativa. Nunca usar o servidor
+   público de tiles do OpenStreetMap, que bloqueia usos fora da política. */
+function journeySetTileProvider(provider){
+ if(!journeyMapInstance||!window.L)return;
+ if(journeyTileLayer)journeyMapInstance.removeLayer(journeyTileLayer);
+ journeyTileProvider=provider;
+ journeyTileFailures=0;
+ const carto=provider==='carto';
+ const url=carto
+  ? 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+  : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
+ const attribution=carto
+  ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  : 'Tiles &copy; Esri — Sources: Esri, TomTom, Garmin, FAO, NOAA, USGS, OpenStreetMap contributors, GIS User Community';
+ const layer=window.L.tileLayer(url,{maxZoom:19,attribution});
+ journeyTileLayer=layer;
+ layer.on('tileload',()=>{if(journeyTileLayer===layer)journeyTileFailures=0;});
+ layer.on('tileerror',()=>{
+  if(journeyTileLayer!==layer)return;
+  journeyTileFailures++;
+  if(journeyTileFailures<3)return;
+  if(journeyTileProvider==='carto'){
+   journeySetTileProvider('esri');
+  }else{
+   journeyMapTilesUnavailable=true;
+   journeyMapInstance.removeLayer(layer);
+   journeyTileLayer=null;
+   renderJourneyMap(journeyMapLastTrips);
+  }
+ });
+ layer.addTo(journeyMapInstance);
+}
+
 function renderJourneyMap(trips){
+ journeyMapLastTrips=trips;
  const items=journeyMapVenues(trips),host=clear('journeyCentresList');
  const frame=$('journeyMap'),message=$('journeyMapMessage');
  set('journeyCentresTitle','Centros ('+nf(items.length)+')');
@@ -570,7 +606,7 @@ function renderJourneyMap(trips){
   const bairro=v.bairro||v.cidade||'';
   copy.append(el('small',status||((bairro?bairro+' · ':'')+nf(item.visitas)+' visita'+(item.visitas===1?'':'s'))));
   const km=el('span',item.km===null?'—':item.km.toLocaleString('pt-BR',{maximumFractionDigits:1})+' km','speaker-map-centre-km');
-  row.type='button';row.disabled=!point||!window.L;
+  row.type='button';row.disabled=!point||!window.L||journeyMapTilesUnavailable;
   row.append(num,copy,km);
   row.addEventListener('click',()=>{
    const marker=markers.get(v.id);
@@ -587,18 +623,17 @@ function renderJourneyMap(trips){
   journeyMapSignature='';
   return;
  }
- if(!located.length||!window.L){
+ if(!located.length||!window.L||journeyMapTilesUnavailable){
   frame.hidden=true;message.hidden=false;
-  message.textContent=!window.L?'Mapa interativo indisponível. Verifique a conexão com a biblioteca de mapas.':
+  message.textContent=journeyMapTilesUnavailable?'O mapa não pôde ser carregado pelos provedores disponíveis. A lista de centros permanece acessível.':
+   !window.L?'Mapa interativo indisponível. Verifique a conexão com a biblioteca de mapas.':
    journeyMapBusy?'Localizando os centros visitados…':
    'Nenhum centro pôde ser posicionado com segurança. Confira os endereços em Locais.';
  }else{
   frame.hidden=false;message.hidden=true;
   if(!journeyMapInstance){
    journeyMapInstance=window.L.map(frame,{scrollWheelZoom:false,zoomControl:true}).setView([-22.92,-43.2],11);
-   window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
-   }).addTo(journeyMapInstance);
+   journeySetTileProvider('carto');
    journeyMapMarkers=window.L.layerGroup().addTo(journeyMapInstance);
   }
   journeyMapMarkers.clearLayers();
