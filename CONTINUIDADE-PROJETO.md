@@ -396,3 +396,12 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - O Dashboard passou a usar thumbnail HD `hq720.jpg` dos Shorts com fallback para `hqdefault.jpg`, e recorte circular com zoom 1,72× **dentro de um contêiner com overflow hidden**. O zoom evita as faixas laterais escuras do thumbnail horizontal de Shorts.
 - A página pública de Vídeos mantém seu recorte circular e zoom 1,72×; a escala agora usa variável CSS `--short-thumb-zoom` para manter a configuração alinhada com o Dashboard.
 - Alteração limitada à apresentação das miniaturas, sem modificar títulos, IDs, ordenação, conteúdo ou cadastros. Cache-busting de CSS/JS atualizado.
+
+
+## 22/11/2026 — melhorias públicas (lote 1)
+
+- Analytics: removida a segunda injeção do GoatCounter em `js/app.js`; o script permanece no HTML. Dashboard usa Cloudflare Web Analytics, independente do GoatCounter; dados reais ainda exigem validação autenticada.
+- Busca global: Shorts carregados em todas as páginas.
+- Agenda: link Google Calendar por evento, fuso America/Sao_Paulo, duração estimada de 1 hora.
+- Inscrição pública mensal: ainda não ativada; requer fluxo seguro de confirmação, cancelamento e integração ao Worker de e-mails e D1. Não criar inscrições sem essa integração.
+- Não criadas páginas individuais de palestras.

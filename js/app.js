@@ -543,6 +543,17 @@ function linhaPlataformaAgenda(plataforma, url) {
          : '<span class="' + classe + '">' + conteudo + '</span>') +
     '</div>';
 }
+function linkCalendarioAgenda(e) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(e.data||'') || !/^\d{2}:\d{2}$/.test(e.horario||'')) return '';
+  const inicio=e.data.replace(/-/g,'')+'T'+e.horario.replace(':','')+'00';
+  const dt=new Date(e.data+'T'+e.horario+':00-03:00');
+  if(Number.isNaN(dt.getTime())) return '';
+  const fim=new Date(dt.getTime()+3600000);
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(fim).map(p=>[p.type,p.value]));
+  const fimLocal=parts.year+parts.month+parts.day+'T'+parts.hour+parts.minute+parts.second;
+  const local=eventoOnlineAgenda(e)?(linkDiretoAgenda(e)||e.local||'Online'):(enderecoExibidoAgenda(e)||e.local||'');
+  return 'https://calendar.google.com/calendar/render?'+new URLSearchParams({action:'TEMPLATE',text:e.titulo||'Palestra',dates:inicio+'/'+fimLocal,ctz:'America/Sao_Paulo',location:local,details:'Duração estimada em 1 hora. Confirme a duração com o organizador.'}).toString();
+}
 function itemAgenda(evento, compacto) {
   const bloco = fmtAgendaBloco(evento.data);
   const hora = fmtHora(evento.horario);
@@ -591,6 +602,7 @@ function itemAgenda(evento, compacto) {
     '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(nomePlataformaVisivel(evento.titulo)) + '</h3>' +
     '<div class="agenda-linha"><span class="agenda-centro">' + escapar(nomePlataformaVisivel(cadastroDoEventoAgenda(evento)?.nome || evento.local)) + '</span></div>' +
     linhaEndereco + linhaLink +
+    '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(linkCalendarioAgenda(evento)) + '" target="_blank" rel="noopener noreferrer" title="Adicionar ao Google Agenda; duração estimada de 1 hora">' + icone('agenda') + 'Adicionar ao calendário' + icone('externo') + '</a></div>' +
     '</div>' + icone('seta', 'agenda-seta') +
     '</article>'
   );
@@ -1232,12 +1244,7 @@ function configurarAnalytics() {
   const cfg = DADOS.site && DADOS.site.analytics;
   if (!cfg || !cfg.goatcounter) return;
 
-  // Carrega o script do GoatCounter
-  const s = document.createElement("script");
-  s.async = true;
-  s.setAttribute("data-goatcounter", cfg.goatcounter);
-  s.src = "//gc.zgo.at/count.js";
-  document.body.appendChild(s);
+  // Script GoatCounter já presente uma única vez no HTML; Dashboard usa Cloudflare RUM.
 
   // Cliques em links de vídeo: identifica o vídeo pelo cartão
   document.addEventListener("click", (ev) => {
@@ -1272,7 +1279,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch(e) { console.warn("Cadastro público indisponível; acervo oculto até a atualização."); }
   // Os Shorts têm cadastro próprio; não usar cópia antiga ao falhar a consulta.
   DADOS.shorts = [];
-  if (['inicio', 'videos'].includes(document.body.dataset.page)) {
+  { // Shorts também alimentam a busca global de todas as páginas.
     try {
       const res = await fetch('/data/shorts.json', {cache:'no-cache'});
       if (!res.ok) throw new Error('HTTP '+res.status);
