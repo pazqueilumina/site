@@ -294,3 +294,8 @@
 /* Cobertura temporária: nunca mostrar um mapa parcialmente carregado. */
 .speaker-journey-map-loading{position:absolute;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;background:#f2f5f9;color:#687c96;font-size:12px;font-weight:600}
 .speaker-journey-map-loading[hidden]{display:none}
+
+/* Leaflet local: isolar mapa, controles e marcadores do CSS geral do Dashboard. */
+.speaker-journey-map-frame .leaflet-container{isolation:isolate;background:#f2f5f9}
+.speaker-journey-map-frame .leaflet-control-zoom a{font-size:20px;line-height:28px}
+.speaker-journey-map-frame .leaflet-marker-pane{z-index:600}

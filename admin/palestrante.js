@@ -500,7 +500,7 @@ function renderJourneys(){
 /* Mapa dos centros presenciais visitados no período: não expõe a residência. */
 const journeyMapPoints=new Map(),journeyMapIssues=new Map();
 let journeyMapBusy=false,journeyMapInstance=null,journeyMapMarkers=null,journeyMapSignature='';
-let journeyTileLayer=null,journeyTileWatchdog=null,journeyMapTilesUnavailable=false,journeyMapLastTrips=[];
+let journeyTileLayer=null,journeyTileWatchdog=null,journeyTileRetryTimer=null,journeyMapTilesUnavailable=false,journeyMapLastTrips=[],journeyMapRenderVersion=0;
 function journeyMapVenues(trips){
  const uniquePlaces=new Map();
  for(const trip of trips){
@@ -556,26 +556,21 @@ async function fetchJourneyMap(venues){
  }finally{journeyMapBusy=false;renderJourneyMap(journeyTrips().trips);}
 }
 
-/* Esri World Street Map: carregar cada bloco até 3 vezes. Não mascarar
-   erros com imagens transparentes: um único bloco indisponível invalida o mapa. */
+/* Leaflet nativo, CSS/JS locais. O Leaflet gerencia tiles e posicionamento. */
 function journeyShowMapLoading(visible){
  const overlay=$('journeyMapLoading');
  if(overlay)overlay.hidden=!visible;
 }
-function journeyStopTileWatchdog(){
+function journeyClearTileTimers(){
  if(journeyTileWatchdog!==null){clearTimeout(journeyTileWatchdog);journeyTileWatchdog=null;}
-}
-function journeyScheduleTileWatchdog(layer){
- journeyStopTileWatchdog();
- journeyTileWatchdog=setTimeout(()=>{
-  if(journeyTileLayer===layer)journeyDisableMapTiles();
- },20000);
+ if(journeyTileRetryTimer!==null){clearTimeout(journeyTileRetryTimer);journeyTileRetryTimer=null;}
 }
 function journeyRemoveTileLayer(){
- journeyStopTileWatchdog();
+ journeyClearTileTimers();
  journeyShowMapLoading(false);
- if(journeyTileLayer&&journeyMapInstance)journeyMapInstance.removeLayer(journeyTileLayer);
+ const layer=journeyTileLayer;
  journeyTileLayer=null;
+ if(layer&&journeyMapInstance)journeyMapInstance.removeLayer(layer);
 }
 function journeyDisableMapTiles(){
  if(journeyMapTilesUnavailable)return;
@@ -583,68 +578,49 @@ function journeyDisableMapTiles(){
  journeyRemoveTileLayer();
  renderJourneyMap(journeyMapLastTrips);
 }
-function journeySetTileProvider(){
+function journeyInstallTileLayer(attempt=0){
  if(!journeyMapInstance||!window.L||journeyMapTilesUnavailable)return;
  journeyRemoveTileLayer();
- const url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
+ const base='https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
+ const url=base+(attempt?'?pqi_retry=1':'');
  const attribution='Tiles &copy; Esri — Sources: Esri, HERE, Garmin, USGS, OpenStreetMap contributors and GIS User Community';
- const layer=window.L.tileLayer(url,{maxZoom:19,attribution,updateWhenIdle:true,keepBuffer:1});
- // O Leaflet mantém o posicionamento, zoom e identificação dos blocos visíveis.
- layer.createTile=function(coords,done){
-  const tile=document.createElement('img');
-  tile.alt='';
-  tile.setAttribute('role','presentation');
-  let attempts=0,finished=false,retryTimer=null;
-  const baseUrl=this.getTileUrl(coords);
-  const finish=error=>{
-   if(finished)return;
-   finished=true;
-   if(retryTimer!==null)clearTimeout(retryTimer);
-   tile.onload=null;tile.onerror=null;
-   done(error,tile);
-  };
-  const retry=()=>{
-   if(finished)return;
-   if(attempts>=2){finish(new Error('Bloco do mapa indisponível após três tentativas.'));return;}
-   attempts++;
-   retryTimer=setTimeout(load,attempts*700);
-  };
-  const load=()=>{
-   if(finished)return;
-   tile.onload=()=>{
-    if(finished)return;
-    if(tile.naturalWidth<128||tile.naturalHeight<128){retry();return;}
-    finish(null);
-   };
-   tile.onerror=retry;
-   const suffix=attempts===0?'':(baseUrl.includes('?')?'&':'?')+'pqi_retry='+attempts;
-   tile.src=baseUrl+suffix;
-  };
-  tile._journeyCancel=()=>{
-   finished=true;
-   if(retryTimer!==null)clearTimeout(retryTimer);
-   tile.onload=null;tile.onerror=null;
-  };
-  load();
-  return tile;
- };
+ const layer=window.L.tileLayer(url,{maxZoom:19,attribution,updateWhenIdle:true,keepBuffer:2});
  journeyTileLayer=layer;
- layer.on('tileunload',event=>event.tile?._journeyCancel?.());
+ let failed=false,loadedTiles=0,retrying=false;
+ const watchdog=()=>{
+  if(journeyTileLayer!==layer)return;
+  if(journeyTileWatchdog!==null)clearTimeout(journeyTileWatchdog);
+  journeyTileWatchdog=setTimeout(()=>{
+   if(journeyTileLayer===layer)journeyDisableMapTiles();
+  },18000);
+ };
  layer.on('loading',()=>{
   if(journeyTileLayer!==layer)return;
   journeyShowMapLoading(true);
-  journeyScheduleTileWatchdog(layer);
+  watchdog();
+ });
+ layer.on('tileload',()=>{
+  if(journeyTileLayer===layer)loadedTiles++;
  });
  layer.on('tileerror',()=>{
-  if(journeyTileLayer===layer)journeyDisableMapTiles();
+  if(journeyTileLayer!==layer)return;
+  failed=true;
+  if(attempt===0&&!retrying){
+   retrying=true;
+   journeyTileRetryTimer=setTimeout(()=>{
+    if(journeyTileLayer===layer)journeyInstallTileLayer(1);
+   },900);
+  }else if(attempt>0){
+   journeyDisableMapTiles();
+  }
  });
  layer.on('load',()=>{
-  if(journeyTileLayer!==layer||journeyMapTilesUnavailable)return;
-  journeyStopTileWatchdog();
+  if(journeyTileLayer!==layer||journeyMapTilesUnavailable||failed||!loadedTiles)return;
+  journeyClearTileTimers();
   journeyShowMapLoading(false);
  });
  journeyShowMapLoading(true);
- journeyScheduleTileWatchdog(layer);
+ watchdog();
  layer.addTo(journeyMapInstance);
 }
 
@@ -677,6 +653,7 @@ function renderJourneyMap(trips){
   host.append(row);
  }
  if(!items.length){
+  journeyMapRenderVersion++;
   journeyRemoveTileLayer();
   frame.hidden=true;message.hidden=false;message.textContent='Nenhum centro presencial visitado no período selecionado.';
   if(journeyMapMarkers)journeyMapMarkers.clearLayers();
@@ -684,20 +661,20 @@ function renderJourneyMap(trips){
   return;
  }
  if(!located.length||!window.L||journeyMapTilesUnavailable){
+  journeyMapRenderVersion++;
   if(!located.length)journeyRemoveTileLayer();
   frame.hidden=true;message.hidden=false;
-  message.textContent=journeyMapTilesUnavailable?'Não foi possível carregar todos os blocos do mapa após novas tentativas. A lista de centros permanece disponível.':
+  message.textContent=journeyMapTilesUnavailable?'Não foi possível carregar o mapa completo. A lista de centros permanece disponível.':
    !window.L?'Mapa interativo indisponível. Verifique a conexão com a biblioteca de mapas.':
    journeyMapBusy?'Localizando os centros visitados…':
    'Nenhum centro pôde ser posicionado com segurança. Confira os endereços em Locais.';
  }else{
+  const wasHidden=frame.hidden;
   frame.hidden=false;message.hidden=true;
   if(!journeyMapInstance){
-   journeyMapInstance=window.L.map(frame,{scrollWheelZoom:false,zoomControl:true}).setView([-22.92,-43.2],11);
-   journeySetTileProvider();
+   // Sem vista fictícia: enquadrar os centros antes de solicitar tiles.
+   journeyMapInstance=window.L.map(frame,{scrollWheelZoom:false,zoomControl:true});
    journeyMapMarkers=window.L.layerGroup().addTo(journeyMapInstance);
-  }else if(!journeyTileLayer){
-   journeySetTileProvider();
   }
   journeyMapMarkers.clearLayers();
   const bounds=[];
@@ -710,12 +687,23 @@ function renderJourneyMap(trips){
    marker.addTo(journeyMapMarkers);markers.set(item.venue.id,marker);bounds.push([point.lat,point.lon]);
   }
   const signature=items.map(x=>{const p=journeyMapPoints.get(x.venue.id);return x.venue.id+':'+(p?p.lat+','+p.lon:'');}).join('|');
-  if(signature!==journeyMapSignature){
-   journeyMapSignature=signature;
-   if(bounds.length===1)journeyMapInstance.setView(bounds[0],15);
-   else journeyMapInstance.fitBounds(bounds,{padding:[35,35],maxZoom:15});
-  }
-  requestAnimationFrame(()=>journeyMapInstance?.invalidateSize());
+  const renderVersion=++journeyMapRenderVersion;
+  requestAnimationFrame(()=>{
+   if(renderVersion!==journeyMapRenderVersion||frame.hidden)return;
+   // CSS ausente gera mosaicos em colunas e esconde marcadores: detectar.
+   const pane=journeyMapInstance.getPane?.('tilePane');
+   if(pane&&typeof window.getComputedStyle==='function'&&window.getComputedStyle(pane).position!=='absolute'){
+    journeyDisableMapTiles();
+    return;
+   }
+   journeyMapInstance.invalidateSize({pan:false,animate:false});
+   if(signature!==journeyMapSignature||wasHidden){
+    journeyMapSignature=signature;
+    if(bounds.length===1)journeyMapInstance.setView(bounds[0],15,{animate:false});
+    else journeyMapInstance.fitBounds(bounds,{padding:[35,35],maxZoom:15,animate:false});
+   }
+   if(!journeyTileLayer&&!journeyMapTilesUnavailable)journeyInstallTileLayer();
+  });
  }
  if(!journeyMapBusy){
   const pending=items.filter(x=>!journeyMapPoints.has(x.venue.id)&&!journeyMapIssues.has(x.venue.id)).map(x=>x.venue);
@@ -855,6 +843,7 @@ async function load(){
    if(match)used.add(match);
    return {...p,data:match?match.data:p.data,when:date(match?match.data:p.data),horario:match?match.horario:p.horario,centroId:match?.localId||p.centroId||'',localAgenda:match?match.local:null,seconds:duration(p.duracao),approx:match?false:!!p.dataAproximada,agendaLinked:!!match};
   });
+  journeyRemoveTileLayer();journeyMapRenderVersion++;
   journeyRoutingError='';journeyRouteFailures.clear();journeyMapPoints.clear();journeyMapIssues.clear();journeyMapSignature='';journeyMapTilesUnavailable=false;
   error=null;render();
   $('aviso').hidden=true;set('lastUpdate',shortDate(new Date())+' '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));set('refreshLabel','Atualizado');set('refreshFeedback','Dados atualizados.');
