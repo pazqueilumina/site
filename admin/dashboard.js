@@ -46,25 +46,32 @@ function countryName(value){
  }
  return String(value);
 }
-function countryFlag(value){
+function countryCode(value){
  const raw=String(value||'').trim().toUpperCase();
- const aliases={'BRAZIL':'BR','BRASIL':'BR','UNITED STATES':'US','ESTADOS UNIDOS':'US','PORTUGAL':'PT','GERMANY':'DE','ALEMANHA':'DE'};
- const code=aliases[raw]||raw;
- if(!/^[A-Z]{2}$/.test(code))return '🌐';
- return String.fromCodePoint(...[...code].map(letter=>127397+letter.charCodeAt(0)));
+ const aliases={'BRAZIL':'BR','BRASIL':'BR','UNITED STATES':'US','UNITED STATES OF AMERICA':'US','ESTADOS UNIDOS':'US','PORTUGAL':'PT','GERMANY':'DE','ALEMANHA':'DE'};
+ return aliases[raw]||raw;
 }
 const pctLabel=value=>Number(value).toLocaleString('pt-BR',{maximumFractionDigits:1,minimumFractionDigits:value%1?1:0})+'%';
 function countryFlagElement(value,cls){
- const code=String(value||'').trim().toUpperCase();
- if(code==='BR'||code==='BRAZIL'||code==='BRASIL'){
-  const img=document.createElement('img');
-  img.src='/admin/flag-br.svg';
-  img.alt='Bandeira do Brasil';
-  img.className=cls+' country-flag-image';
-  img.width=32;img.height=22;
-  return img;
- }
- return txt('span',countryFlag(value),cls);
+ const code=countryCode(value);
+ if(!/^[A-Z]{2}$/.test(code)||code==='XX'||code==='ZZ')return txt('span','🌐',cls);
+ // Imagens reais, sem emojis de bandeiras: no Windows 🇺🇸 pode virar "US".
+ const img=document.createElement('img');
+ img.className=cls+' country-flag-image';
+ img.alt='Bandeira: '+countryName(code);
+ img.width=32;img.height=22;
+ img.decoding='async';
+ img.referrerPolicy='no-referrer';
+ // Brasil e Estados Unidos ficam hospedados no próprio site.
+ img.src=code==='BR'||code==='US'
+  ?'/admin/flag-'+code.toLowerCase()+'.svg'
+  :'https://flagcdn.com/w40/'+code.toLowerCase()+'.png';
+ img.addEventListener('error',()=>{
+  const fallback=txt('span','🌐',cls);
+  fallback.title='Bandeira indisponível: '+countryName(code);
+  img.replaceWith(fallback);
+ },{once:true});
+ return img;
 }
 
 
