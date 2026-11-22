@@ -94,25 +94,27 @@
 @media(max-width:850px){.speaker-highlight-tile{min-height:140px}}
 @media(max-width:500px){.speaker-highlights-grid{grid-template-columns:1fr}.speaker-highlight-tile{min-height:115px}.speaker-year-metrics{gap:5px}.speaker-year-metric strong{font-size:15px}.speaker-year-metric{padding:9px 6px}}
 
-/* Destaque de centros: um centro sem gráfico; vários com destaque e ranking */
-.speaker-centre-feature{background:linear-gradient(125deg,#eef5ff,#f6f9ff);border:1px solid #dce8f8;border-radius:15px;padding:17px 18px;margin:5px 0 12px}
-.speaker-centre-feature-label{display:block;color:#4675ad;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.055em}
-.speaker-centre-feature-name{color:#1b3d68;font-size:17px;line-height:1.35;margin:9px 0 8px}
-.speaker-centre-feature-count{display:block;font-size:25px;line-height:1.2;color:#245da3;margin-bottom:12px}
-.speaker-centre-feature .speaker-centre-meta{border-top:1px solid #d6e4f5;padding-top:10px}
-.speaker-centre-rank-title{font-size:12px;font-weight:800;color:#45617f;margin:19px 0 3px}
-@media(max-width:500px){.speaker-centre-feature{padding:14px}.speaker-centre-feature-name{font-size:15px}.speaker-centre-feature-count{font-size:22px}}
-
-/* Ranking de centros e gráfico de rosca */
-.speaker-centres{padding-top:6px}
-.speaker-centre-entry{padding:11px 0 13px;border-bottom:1px solid #e7edf6}
-.speaker-centre-entry:last-of-type{border-bottom:0}
-.speaker-centre-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12px}
-.speaker-centre-heading strong{font-size:13px;color:#244471;line-height:1.35}
-.speaker-centre-heading>span{font-weight:750;color:#2d67ba;white-space:nowrap}
-.speaker-centre-entry .speaker-meter{margin:9px 0}
-.speaker-centre-meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:#627892;font-size:11px}
-.speaker-centre-note{font-size:11px;color:#85682d;line-height:1.5;margin:13px 0 0}
+/* Centros da Agenda: presenciais e online em painéis independentes. */
+.speaker-centres{padding-top:8px}
+.speaker-centres-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.speaker-centre-section{min-width:0;overflow:hidden;border:1px solid #dce7f5;border-radius:12px;background:#f8faff}
+.speaker-centre-section.is-online{background:#faf8ff;border-color:#e7ddf7}
+.speaker-centre-section-header{display:flex;align-items:flex-start;justify-content:space-between;gap:7px;flex-wrap:wrap;padding:12px 13px 10px;border-bottom:1px solid #e1e9f5}
+.is-online .speaker-centre-section-header{border-color:#e9e2f5}
+.speaker-centre-section-title{margin:0!important;color:#1d416d;font-size:13px!important;font-weight:800;line-height:1.35}
+.speaker-centre-section-total{color:#657994;font-size:10px;font-weight:700;white-space:nowrap}
+.speaker-centre-item{padding:12px 13px;background:#fff;border-bottom:1px solid #e7edf5}
+.speaker-centre-item:last-child{border-bottom:0}
+.speaker-centre-item-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.speaker-centre-item-name{font-size:12px;color:#193d6b;line-height:1.4;overflow-wrap:anywhere}
+.speaker-centre-item-count{flex:none;font-size:11px;font-weight:800;color:#3468af;white-space:nowrap}
+.is-online .speaker-centre-item-count{color:#764eb3}
+.speaker-centre-item-channels{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.speaker-centre-channel{display:inline-flex;align-items:center;padding:3px 8px;border-radius:12px;background:#f0e9fb;color:#6840a5;font-size:10px;font-weight:750}
+.speaker-centre-item-meta{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:9px;color:#627892;font-size:10px;line-height:1.4}
+.speaker-centre-section-empty{padding:15px 13px;color:#6b7d94;font-size:11px;line-height:1.5}
+@media(max-width:1250px){.speaker-centres-columns{grid-template-columns:1fr}}
+@media(min-width:1251px) and (max-width:1450px){.speaker-centre-item-heading{flex-wrap:wrap}}
 .speaker-donut-widget{display:flex;flex-direction:column}.speaker-donut-panel{padding:12px 0 0;display:flex;flex-direction:column;flex:1;min-height:0}
 .speaker-donut-layout{display:grid;grid-template-columns:minmax(155px,210px) minmax(0,1fr);align-items:center;gap:18px}
 .speaker-donut-chart{aspect-ratio:1;width:100%;max-width:210px;display:grid;place-items:center;border-radius:50%;position:relative}
