@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="/vendor/leaflet/leaflet.css?v=1.9.4">
 <link rel="stylesheet" href="/admin/palestrante.css?v=mapa-ampliado20261122">
 <script defer src="/vendor/leaflet/leaflet.js?v=1.9.4"></script>
-<script defer src="/admin/palestrante.js?v=cache-mapa20261122"></script></head><body>
+<script defer src="/admin/palestrante.js?v=centros-agenda20261122"></script></head><body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-8h6v8"/></symbol>
  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"/></symbol>
@@ -81,7 +81,7 @@
 <article class="kpi kpi-blue"><div class="kpi-icon"><svg><use href="#i-presentation"/></svg></div><div class="kpi-info"><h2>Palestras</h2><strong id="kPalestras">—</strong><small>Apresentadas no período</small></div></article>
 <article class="kpi kpi-purple"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Tempo total</h2><strong id="kTempo">—</strong><small>Horas de palestras</small></div></article>
 <article class="kpi kpi-sky"><div class="kpi-icon"><svg><use href="#i-clock"/></svg></div><div class="kpi-info"><h2>Duração média</h2><strong id="kMedia">—</strong><small>Por palestra</small></div></article>
-<article class="kpi kpi-green"><div class="kpi-icon"><svg><use href="#i-map-pin"/></svg></div><div class="kpi-info"><h2>Centros Espíritas</h2><strong id="kCentros">—</strong><small>Centros Espíritas e You Tube identificados</small></div></article>
+<article class="kpi kpi-green"><div class="kpi-icon"><svg><use href="#i-map-pin"/></svg></div><div class="kpi-info"><h2>Centros Espíritas</h2><strong id="kCentros">—</strong><small>Centros e You Tube identificados na Agenda</small></div></article>
 <article class="kpi kpi-orange"><div class="kpi-icon"><svg><use href="#i-layers"/></svg></div><div class="kpi-info"><h2>Temas</h2><strong id="kTemas">—</strong><small>Assuntos abordados</small></div></article>
 <article class="kpi kpi-yellow"><div class="kpi-icon"><svg><use href="#i-calendar"/></svg></div><div class="kpi-info"><h2>Mês mais ativo</h2><strong id="kPeakMonth">—</strong><small id="kPeakCount">No período</small></div></article></section>
 <div id="aviso" class="status-banner" role="status" hidden><span id="avisoTexto"></span><button type="button" id="fecharAviso" aria-label="Fechar aviso">×</button></div>
@@ -99,7 +99,7 @@
 <div class="compare-summary"><svg><use href="#i-activity"/></svg><div><strong>Resultado do período</strong><div id="cmpSummary" class="compare-summary-lines">Carregando dados…</div></div></div><p class="compare-caveat" id="cmpCaveat"></p>
 </article></section>
 <section class="speaker-row two-col">
-<article class="widget speaker-centres-widget"><h2><svg><use href="#i-map-pin"/></svg>Por onde Alexandre passou</h2><p class="widget-subtitle">Centros Espíritas e You Tube, número de palestras, tempo total e última data informada</p><div id="centros" class="speaker-panel speaker-centres"></div></article>
+<article class="widget speaker-centres-widget"><h2><svg><use href="#i-map-pin"/></svg>Por onde Alexandre passou</h2><p class="widget-subtitle">Centros presenciais e You Tube na Agenda, visitas, última data e duração vinculada</p><div id="centros" class="speaker-panel speaker-centres"></div></article>
 <article class="widget speaker-donut-widget"><h2><svg><use href="#i-layers"/></svg>Sobre o que Alexandre mais fala?</h2><p class="widget-subtitle">Participação dos temas nas palestras do período</p><div id="temas" class="speaker-donut-panel"></div></article></section>
 <section class="speaker-row one-col">
 <article class="widget speaker-journeys-widget">

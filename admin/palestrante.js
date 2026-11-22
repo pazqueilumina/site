@@ -132,42 +132,70 @@ function initFilters(){
  speakerPeriodUI();
 }
 const topicLabel=p=>topicNames[p.serie]||p.serie||'Sem tema informado';
-function centreRanking(items){
- const host=clear('centros'),known=items.filter(hasCentre),groups=new Map();
- for(const p of known){
-  const id=p.centroId;
-  if(!groups.has(id))groups.set(id,{id,name:id==='youtube'?'You Tube':places.get(id)||id,n:0,seconds:0,knownTime:0,last:null,approx:false});
-  const g=groups.get(id);g.n++;g.seconds+=p.seconds||0;if(p.seconds!==null)g.knownTime++;
-  if(p.when&&(!g.last||p.when>g.last)){g.last=p.when;g.approx=p.approx;}
+function centreRanking(){
+ // Mesma fonte do mapa: Agenda e viagens presenciais concluídas no período.
+ const host=clear('centros'),past=journeyPastEvents(),groups=new Map();
+ const ensure=(id,name,online)=>{
+  if(!groups.has(id))groups.set(id,{id,name,online,n:0,seconds:0,knownTime:0,last:''});
+  return groups.get(id);
+ };
+ for(const trip of journeyTrips().trips){
+  const g=ensure(trip.venue.id,trip.venue.nome||'Centro Espírita',false);
+  g.n++;
+  if(trip.data>g.last)g.last=trip.data;
  }
- const ranking=[...groups.values()].sort((a,b)=>b.n-a.n||a.name.localeCompare(b.name,'pt-BR'));
+ const isYouTube=e=>/\byou\s*tube\b/.test(journeyNorm([e.local,e.endereco].join(' ')));
+ for(const e of past){
+  if(!journeyIsOnline(e)||!isYouTube(e))continue;
+  const g=ensure('youtube','You Tube',true);
+  g.n++;
+  if(e.data>g.last)g.last=e.data;
+ }
+ // Duração só de palestras com vínculo explícito e inequívoco ao ID da Agenda.
+ const byEvent=new Map();
+ for(const p of records){
+  const id=String(p.eventoId||'').trim();
+  if(!id)continue;
+  if(!byEvent.has(id))byEvent.set(id,[]);
+  byEvent.get(id).push(p.seconds);
+ }
+ for(const e of past){
+  const online=journeyIsOnline(e);
+  const venue=online?null:journeyVenue(e);
+  const g=online?(isYouTube(e)?groups.get('youtube'):null):(venue?groups.get(venue.id):null);
+  const durations=byEvent.get(e.id);
+  if(!g||!durations||durations.length!==1||durations[0]===null)continue;
+  g.seconds+=durations[0];
+  g.knownTime++;
+ }
+ const ranking=[...groups.values()].sort((a,b)=>Number(a.online)-Number(b.online)||b.n-a.n||a.name.localeCompare(b.name,'pt-BR'));
+ set('kCentros',nf(ranking.length));
+ const identified=ranking.reduce((sum,g)=>sum+g.n,0);
+ const countLabel=g=>nf(g.n)+(g.online?(g.n===1?' participação online':' participações online'):(g.n===1?' visita':' visitas'));
  const details=g=>{
   const meta=el('div',null,'speaker-centre-meta');
-  meta.append(el('span',g.knownTime?hm(g.seconds)+' de palestras':'Tempo não informado'));
-  if(ranking.length>1)meta.append(el('span',(100*g.n/known.length).toFixed(1).replace('.',',')+'% das palestras com Centro Espírita ou You Tube identificado'));
-  if(g.last)meta.append(el('span','Última data: '+fmtDate(iso(g.last))+(g.approx?' (estimada)':'')));
+  if(g.knownTime)meta.append(el('span','Tempo vinculado: '+hm(g.seconds)+' ('+nf(g.knownTime)+' palestra'+(g.knownTime===1?'':'s')+')'));
+  if(ranking.length>1)meta.append(el('span',(100*g.n/identified).toFixed(1).replace('.',',')+'% das visitas e participações identificadas'));
+  if(g.last)meta.append(el('span',(g.online?'Última participação: ':'Última visita: ')+fmtDate(g.last)));
   return meta;
  };
- if(!ranking.length)empty(host,'Ainda não há Centros Espíritas ou You Tube identificados neste período.');
- else{
-  const top=ranking[0],feature=el('div',null,'speaker-centre-feature');
-  feature.append(el('span',ranking.length===1?'Centro Espírita identificado no período':'Centro Espírita mais visitado','speaker-centre-feature-label'));
-  feature.append(el('h3',top.name,'speaker-centre-feature-name'));
-  feature.append(el('strong',nf(top.n)+' palestra'+(top.n===1?'':'s'),'speaker-centre-feature-count'));
-  feature.append(details(top));host.append(feature);
-  if(ranking.length>1){
-   host.append(el('h3','Outros Centros Espíritas e You Tube','speaker-centre-rank-title'));
-   for(const g of ranking.slice(1,7)){
-    const card=el('div',null,'speaker-centre-entry'),heading=el('div',null,'speaker-centre-heading');
-    heading.append(el('strong',g.name),el('span',nf(g.n)+' palestra'+(g.n===1?'':'s')));
-    const bar=el('div',null,'speaker-meter'),fill=el('span');
-    fill.style.width=(100*g.n/top.n)+'%';bar.append(fill);
-    card.append(heading,bar,details(g));host.append(card);
-   }
+ if(!ranking.length){empty(host,'Nenhum centro presencial ou participação no You Tube identificado na Agenda neste período.');return;}
+ const top=ranking[0],feature=el('div',null,'speaker-centre-feature');
+ feature.append(el('span',top.online?'Participações no You Tube':ranking.filter(g=>!g.online).length===1?'Centro Espírita visitado no período':'Centro Espírita mais visitado','speaker-centre-feature-label'));
+ feature.append(el('h3',top.name,'speaker-centre-feature-name'));
+ feature.append(el('strong',countLabel(top),'speaker-centre-feature-count'));
+ feature.append(details(top));host.append(feature);
+ if(ranking.length>1){
+  host.append(el('h3','Outros Centros Espíritas e You Tube','speaker-centre-rank-title'));
+  for(const g of ranking.slice(1,7)){
+   const card=el('div',null,'speaker-centre-entry'),heading=el('div',null,'speaker-centre-heading');
+   heading.append(el('strong',g.name),el('span',countLabel(g)));
+   const bar=el('div',null,'speaker-meter'),fill=el('span');
+   fill.style.width=(100*g.n/Math.max(...ranking.map(item=>item.n)))+'%';bar.append(fill);
+   card.append(heading,bar,details(g));host.append(card);
   }
  }
- const missing=items.filter(p=>!p.centroId).length;
- if(missing)host.append(el('p',nf(missing)+' palestra'+(missing===1?'':'s')+' sem Centro Espírita informado. A análise considera os Centros Espíritas e o You Tube identificados.','speaker-centre-note'));
+ if(!ranking.some(g=>g.knownTime))host.append(el('p','Tempo total indisponível: não há duração confirmada de palestras vinculadas a esses eventos.','speaker-centre-note'));
 }
 function donut(items){
  const host=clear('temas'),entries=countBy(items,topicLabel);
@@ -423,7 +451,7 @@ const journeyNorm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'
 const journeyRouteKm=new Map(),journeyRouteFailures=new Map();
 let journeyRoutingBusy=false,journeyRoutingError='';
 function journeyIsOnline(e){
- return /\b(online|youtube|instagram|web radio|webradio|live)\b/.test(journeyNorm([e.local,e.endereco].join(' ')));
+ return /\b(online|you\s*tube|instagram|web radio|webradio|live)\b/.test(journeyNorm([e.local,e.endereco].join(' ')));
 }
 function journeyVenue(e){
  if(e.enderecoProprio!=='sim'){
@@ -440,12 +468,18 @@ function journeyBrazilNow(){
  const part=type=>parts.find(p=>p.type===type)?.value||'00';
  return {date:part('year')+'-'+part('month')+'-'+part('day'),time:part('hour')+':'+part('minute')};
 }
-function journeyTrips(){
- const [from,to]=boundaries(),now=journeyBrazilNow(),uniqueTrips=new Map();
- let missing=0;
- for(const e of agendaEvents){
+function journeyPastEvents(){
+ const [from,to]=boundaries(),now=journeyBrazilNow();
+ return agendaEvents.filter(e=>{
   const d=date(e.data);
-  if(!d||d<from||d>to||(e.data>now.date||(e.data===now.date&&e.horario>now.time))||journeyIsOnline(e))continue;
+  return d&&d>=from&&d<=to&&(e.data<now.date||(e.data===now.date&&e.horario<=now.time));
+ });
+}
+function journeyTrips(){
+ const uniqueTrips=new Map();
+ let missing=0;
+ for(const e of journeyPastEvents()){
+  if(journeyIsOnline(e))continue;
   const venue=journeyVenue(e);
   if(!venue){missing++;continue;}
   const key=e.data+'|'+venue.id;
@@ -909,9 +943,9 @@ function history(items){
 }
 function render(){
  if(error)return;
- const items=filtered();set('kPalestras',nf(items.length));set('kTempo',total(items));set('kMedia',knownSeconds(items).length?hm(seconds(items)/knownSeconds(items).length):'—');set('kCentros',nf(unique(items.filter(hasCentre),'centroId')));set('kTemas',nf(unique(items,'serie')));const peak=countBy(items.filter(p=>p.when),p=>p.data.slice(0,7))[0];set('kPeakMonth',peak?fmtMonthYear(new Date(peak[0]+'-01T12:00:00'),'short'):'—');set('kPeakCount',peak?nf(peak[1])+' palestra'+(peak[1]===1?'':'s')+' neste mês':'Sem palestras no período');
+ const items=filtered();set('kPalestras',nf(items.length));set('kTempo',total(items));set('kMedia',knownSeconds(items).length?hm(seconds(items)/knownSeconds(items).length):'—');set('kTemas',nf(unique(items,'serie')));const peak=countBy(items.filter(p=>p.when),p=>p.data.slice(0,7))[0];set('kPeakMonth',peak?fmtMonthYear(new Date(peak[0]+'-01T12:00:00'),'short'):'—');set('kPeakCount',peak?nf(peak[1])+' palestra'+(peak[1]===1?'':'s')+' neste mês':'Sem palestras no período');
  chart('chartMensal',items,'count');chart('chartHoras',items,'hours');comparison();
- centreRanking(items);donut(items);
+ centreRanking();donut(items);
  renderJourneys();annual();highlights(items);calendar();history(items);
  set('siteStatus','Dados atualizados');
 }
