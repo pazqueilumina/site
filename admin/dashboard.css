@@ -193,3 +193,10 @@
 .content-row .content-fresh{display:inline-flex;align-items:center;padding:1px 6px;border-radius:999px;background:#e4f6ea;color:#126b3c;border:1px solid #c6e8d0;font-size:8px;font-weight:800;letter-spacing:.35px;line-height:1.25}
 .content-row .row-text strong{font-size:11px}
 .content-row .row-text small{font-size:9px}
+
+/* Inscrições: quadro independente logo abaixo do monitor de e-mails. */
+.inscricoes-rodape{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px;flex-wrap:wrap}
+.inscricoes-rodape p{margin:0;color:#5d7180;font-size:11px}
+.inscricoes-rodape p.warning{color:#a35b32}
+.inscricoes-rodape a{font-size:12px;font-weight:750;color:#1d5b87;text-decoration:none}
+.inscricoes-rodape a:hover{text-decoration:underline}

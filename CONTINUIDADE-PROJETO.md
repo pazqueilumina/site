@@ -432,3 +432,13 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - Ajustada a margem do formulário e alterados os parâmetros de versão dos arquivos JS e CSS em `agenda.html` para invalidar cache.
 - O formulário continua protegido por verificação de disponibilidade real do Worker `/api/subscriptions/status`. O Worker já retornou `{"available":true,"weeklyEnabled":false}` ao usuário; a exibição depende da chamada no navegador.
 - Nenhuma configuração do Worker nem de envio automático foi modificada neste deploy.
+
+
+## 22/11/2026 — gestão de inscritos, horário e cancelamento
+- Criada a página administrativa protegida `/admin/inscritos.html` com resumo acumulado, pesquisa, filtros por situação, paginação, exportação CSV e cancelamento administrativo confirmado. Dados vêm da API `/api/admin/inscritos`, usando o binding Pages `EMAIL_DB` já utilizado pelo Monitor de e-mails. Não expõe tokens de inscrição, hashes ou segredos. Acesso restrito pelo middleware Cloudflare Access.
+- No Dashboard Administrativo, novo quadro **Inscrições da agenda** abaixo do Monitor de e-mails, com ativos, pendentes, semanais e cancelados, independente do filtro temporal; link para gerenciar inscritos. Navegação atualizada nas páginas administrativas.
+- Horário do Monitor de e-mails agora segue o padrão `22/11 às 20h40`, sem vírgula.
+- A agenda pública passa a oferecer solicitação de cancelamento por e-mail, **exibida apenas quando o Worker informar `unsubscribeRequestEnabled:true`**. A confirmação final continua sendo feita pelo destinatário, após abrir o link enviado por e-mail e confirmar na página do Worker.
+- **Worker independente do GitHub:** preparado o arquivo `worker-pazqueilumina-inscritos-cancelamento-20261122.js`, baseado na versão semanal corrigida. Adiciona POST `/api/subscriptions/unsubscribe/request`, `unsubscribeRequestEnabled` no status e resposta HTTP 409 para e-mails já inscritos ou pendentes (sem bloquear atualização legítima mensal→semanal). O arquivo deve ser publicado manualmente no editor do Worker; o deploy Pages não o atualiza. Mantém agendamentos, destinatários e parâmetros de envio existentes.
+- **Atenção à privacidade:** o aviso explícito de e-mail duplicado revela que o endereço está cadastrado. Foi solicitado pelo responsável; a rota mantém limitação de solicitações por IP e e-mail. Cancelamento por e-mail não revela existência do cadastro.
+- Validar em produção: leitura do D1 pela API protegida, confirmação por e-mail, duplicidade 409 e solicitação de cancelamento após deploy manual do Worker.

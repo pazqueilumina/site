@@ -968,6 +968,37 @@ async function ativarInscricaoAgenda() {
     descricao.textContent = 'Receba a agenda mensal e, quando o envio semanal for ativado, a programação da próxima semana aos domingos. Gratuito e sem lembretes adicionais.';
   }
   secao.hidden = false;
+  const abrirCancelamento = document.getElementById('abrirCancelamentoAgenda');
+  const formCancelamento = document.getElementById('formCancelamentoAgenda');
+  if (abrirCancelamento && formCancelamento && dados.unsubscribeRequestEnabled === true) {
+    abrirCancelamento.hidden = false;
+    abrirCancelamento.addEventListener('click', () => {
+      formCancelamento.hidden = !formCancelamento.hidden;
+      abrirCancelamento.setAttribute('aria-expanded', String(!formCancelamento.hidden));
+      if (!formCancelamento.hidden) formCancelamento.elements.email.focus();
+    });
+    formCancelamento.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      if (!formCancelamento.reportValidity()) return;
+      const botao = formCancelamento.querySelector('button[type="submit"]');
+      const retornoCancelamento = document.getElementById('retornoCancelamentoAgenda');
+      botao.disabled = true;
+      retornoCancelamento.textContent = 'Enviando solicitação…';
+      try {
+        const r = await fetch(INSCRICAO_WORKER_URL + '/api/subscriptions/unsubscribe/request', {
+          method:'POST', mode:'cors', credentials:'omit',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({email:formCancelamento.elements.email.value, website:formCancelamento.elements.website.value})
+        });
+        const resposta = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(resposta.erro || 'Não foi possível solicitar o cancelamento.');
+        retornoCancelamento.textContent = resposta.mensagem || 'Confira seu e-mail para confirmar o cancelamento.';
+        formCancelamento.reset();
+      } catch (e) {
+        retornoCancelamento.textContent = e.message || 'Não foi possível solicitar o cancelamento.';
+      } finally { botao.disabled = false; }
+    });
+  }
   const retorno = document.getElementById('retornoInscricaoMensal');
   form.addEventListener('submit', async ev => {
     ev.preventDefault();
@@ -1025,6 +1056,10 @@ function renderizarAgenda() {
         '<label class="inscricao-mensal-consentimento"><input type="checkbox" name="consent" required><span>Concordo em receber por e-mail a agenda mensal e a agenda semanal aos domingos. Posso cancelar ambas a qualquer momento pelo link nas mensagens.</span></label>' +
         '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
         '<p id="retornoInscricaoMensal" class="inscricao-mensal-retorno" role="status" aria-live="polite"></p>' +
+        '<div class="inscricao-mensal-cancelar"><button type="button" id="abrirCancelamentoAgenda" aria-expanded="false" aria-controls="formCancelamentoAgenda" hidden>Já recebe as agendas? Cancelar inscrição</button>' +
+        '<form id="formCancelamentoAgenda" hidden><label for="emailCancelamentoAgenda">E-mail cadastrado</label><div class="inscricao-mensal-linha"><input id="emailCancelamentoAgenda" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required maxlength="254"><button type="submit">Enviar confirmação</button></div>' +
+        '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
+        '<p id="retornoCancelamentoAgenda" class="inscricao-mensal-retorno" role="status" aria-live="polite"></p></form></div>' +
       '</form>' +
     '</section>' +
     '<div class="filtro-agenda-publica" role="search" aria-label="Filtrar eventos da agenda">' +

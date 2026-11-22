@@ -336,7 +336,16 @@ function renderPending(palestras,agenda,emails){
 }
 function emailDate(value){
  if(!value||!Number.isFinite(Date.parse(value)))return '—';
- return new Date(value).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(value)).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+ return parts.day+'/'+parts.month+' às '+parts.hour+'h'+(parts.minute==='00'?'':parts.minute);
+}
+function renderSubscriberSummary(data){
+ const ok=data?.status==='ok',s=data?.summary||{};
+ for(const [id,key] of [['subActive','active'],['subPending','pending'],['subWeekly','weekly'],['subCancelled','unsubscribed']])
+  set(id,ok?nf(Number(s[key]||0)):'—');
+ const info=$('subInfo');
+ info.textContent=ok?'Inscrições confirmadas, pendentes e canceladas.':'Não foi possível consultar os inscritos: '+(data?.message||'verifique o D1.');
+ info.classList.toggle('warning',!ok);
 }
 function renderEmailStatus(data){
  const toggle=$('emailFailed'),panel=$('emailFailuresPanel'),info=$('emailMonitorInfo');
@@ -404,7 +413,7 @@ function renderSummary(palestras,shorts){
 }
 function render(){set('chartRangeText',isCustom()?'Apresentações acumuladas de '+fmtDate(appliedCustomStart)+' até '+fmtDate(appliedCustomEnd):isMonth()?'Apresentações acumuladas em '+new Date(appliedYear,appliedMonth,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}):isYear()?'Apresentações acumuladas em '+appliedYear:'Apresentações acumuladas no período selecionado');const palestras=Array.isArray(current.p?.dados?.palestras)?current.p.dados.palestras.filter(p=>p.ativo!==false):null,agenda=Array.isArray(current.a?.agenda)?current.a.agenda:null,locais=Array.isArray(current.l?.locais)?current.l.locais:null,shorts=Array.isArray(current.shorts?.shorts)?current.shorts.shorts.filter(s=>s.ativo!==false):null;
  set('kVideos',shorts===null?'—':nf(shorts.length));set('sVideos','Vídeos curtos cadastrados');set('kPalestras',palestras?nf(palestras.length):'—');set('kAudios',palestras?nf(palestras.filter(p=>p.audio).length):'—');set('kPdfs',palestras?nf(palestras.filter(p=>p.pdf).length):'—');set('sPalestras',palestras?'+'+nf(palestras.filter(p=>inRange(p.data)).length)+' no período':'Cadastro indisponível');
- drawChart(palestras);renderAudience();renderVisitsTrend();renderDonut(palestras);renderRecent(palestras,shorts);renderActivities(current.activities?.commits);renderPending(palestras,agenda,current.emails);renderEmailStatus(current.emails);renderEvents(agenda);renderSummary(palestras,shorts);
+ drawChart(palestras);renderAudience();renderVisitsTrend();renderDonut(palestras);renderRecent(palestras,shorts);renderActivities(current.activities?.commits);renderPending(palestras,agenda,current.emails);renderEmailStatus(current.emails);renderSubscriberSummary(current.subscribers);renderEvents(agenda);renderSummary(palestras,shorts);
  set('siteStatus',palestras&&agenda?'Dados conectados':'Verificar conexão');
 }
 let refreshTimer=null;
@@ -421,12 +430,12 @@ async function update(){
  const button=$('atualizar');if(button.disabled)return;
  if(refreshTimer){clearTimeout(refreshTimer);refreshTimer=null;}
  button.disabled=true;refreshState('loading');$('dashMainContent').classList.add('is-updating');
- const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade','/api/admin/email-status?year='+encodeURIComponent($('emailYear').value),'/data/shorts.json'];
+ const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade','/api/admin/email-status?year='+encodeURIComponent($('emailYear').value),'/data/shorts.json','/api/admin/inscritos?summary=1'];
  try{
   const results=await Promise.allSettled(urls.map(read));
-  ['p','a','l','activities','emails','shorts'].forEach((key,i)=>{current[key]=results[i].status==='fulfilled'?results[i].value:null;});
+  ['p','a','l','activities','emails','shorts','subscribers'].forEach((key,i)=>{current[key]=results[i].status==='fulfilled'?results[i].value:null;});
   if(typeof DADOS!=='undefined')DADOS.shorts=results[5].status==='fulfilled'&&Array.isArray(results[5].value.shorts)?results[5].value.shorts.filter(s=>s.ativo!==false):[];
-  const errors=results.map((r,i)=>r.status==='rejected'?['Acervo','Agenda','Locais','Atividades','E-mails','Shorts'][i]+': '+r.reason.message:null).filter(Boolean);
+  const errors=results.map((r,i)=>r.status==='rejected'?['Acervo','Agenda','Locais','Atividades','E-mails','Shorts','Inscrições'][i]+': '+r.reason.message:null).filter(Boolean);
   render();
   const [audienceOk,trendOk]=await Promise.all([loadAudience(),loadVisitsTrend()]);
   if(!audienceOk)errors.push('Audiência: '+(current.audience?.erro||'consulta indisponível'));

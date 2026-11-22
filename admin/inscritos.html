@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
+<title>Inscritos por e-mail | Paz que Ilumina</title>
+<link rel="stylesheet" href="/admin/admin.css?v=inscritos20261122">
+<link rel="stylesheet" href="/admin/inscritos.css?v=inscritos20261122">
+<script defer src="/admin/inscritos.js?v=inscritos20261122"></script></head>
+<body><header class="topo"><div class="topo-conteudo">
+<div class="marca"><span class="marca-icone" aria-hidden="true">✦</span><div><span class="marca-nome">Estudos e Reflexões Espíritas</span><span class="marca-sub">Área administrativa · Inscritos por e-mail</span></div></div>
+<nav class="navegacao" aria-label="Navegação administrativa"><a href="/admin/dashboard.html">Dashboard</a><a href="/admin/agenda.html">Agenda</a><a href="/admin/inscritos.html" aria-current="page">Inscritos</a><a href="/admin/locais.html">Locais</a><a href="/admin/palestras.html">Palestras</a><a href="/admin/shorts.html">Shorts</a><a href="/">Voltar ao site</a></nav>
+</div></header>
+<main class="container">
+<div class="intro"><div><p class="sobretitulo">AGENDA POR E-MAIL</p><h1>Inscritos por e-mail</h1><p>Consulte confirmações, consentimento semanal e cancelamentos. Os endereços são exibidos apenas nesta área protegida.</p></div><button type="button" class="botao secundario" id="atualizarInscritos">Atualizar</button></div>
+<div class="indicadores" aria-label="Resumo das inscrições">
+<div class="indicador"><span>Inscritos ativos</span><strong id="inscritosAtivos">—</strong></div>
+<div class="indicador"><span>Aguardando confirmação</span><strong id="inscritosPendentes">—</strong></div>
+<div class="indicador"><span>Agenda semanal</span><strong id="inscritosSemanais">—</strong></div>
+<div class="indicador"><span>Cancelados</span><strong id="inscritosCancelados">—</strong></div></div>
+<p id="mensagemInscritos" class="mensagem" role="status" aria-live="polite" hidden></p>
+<section class="cartao inscritos-cartao" aria-label="Lista de inscritos">
+<div class="inscritos-barra"><div><h2>Assinaturas</h2><p>Lista atualizada diretamente do banco de dados.</p></div><button type="button" id="exportarInscritos" class="botao secundario">Exportar CSV</button></div>
+<div class="inscritos-filtros"><label>Buscar por e-mail<input id="buscarInscritos" type="search" maxlength="120" placeholder="Digite parte do endereço" autocomplete="off"></label>
+<label>Situação<select id="filtroInscritos"><option value="todos">Todas</option><option value="active">Confirmados</option><option value="pending">Pendentes</option><option value="unsubscribed">Cancelados</option></select></label></div>
+<div class="inscritos-tabela-wrap"><table class="inscritos-tabela"><thead><tr><th>E-mail</th><th>Situação</th><th>Semanal</th><th>Cadastro</th><th>Confirmação</th><th>Cancelamento</th><th>Ação</th></tr></thead><tbody id="listaInscritos"><tr><td colspan="7">Carregando inscrições…</td></tr></tbody></table></div>
+<div class="inscritos-paginacao"><span id="totalFiltrado">—</span><div><button type="button" id="paginaAnterior" class="botao discreto" disabled>Anterior</button><span id="numeroPagina">—</span><button type="button" id="proximaPagina" class="botao discreto" disabled>Próxima</button></div></div>
+</section><p class="ajuda">O cancelamento administrativo interrompe o recebimento das agendas mensal e semanal. Não exclui o histórico da inscrição.</p>
+</main></body></html>

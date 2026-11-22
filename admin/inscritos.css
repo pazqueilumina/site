@@ -1,0 +1,21 @@
+.inscritos-cartao{margin-top:6px}
+.inscritos-barra{padding:22px 24px 16px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.inscritos-barra h2{margin:0 0 6px}.inscritos-barra p{margin:0;color:var(--muted);font-size:12px}
+.inscritos-filtros{display:flex;gap:13px;align-items:flex-end;padding:0 24px 20px;flex-wrap:wrap}
+.inscritos-filtros label{display:grid;gap:7px;font-size:12px;font-weight:700;color:var(--ink);flex:1;min-width:210px}
+.inscritos-filtros label:last-child{flex:0 0 200px;min-width:160px}
+.inscritos-filtros input,.inscritos-filtros select{height:41px;border:1px solid #d7dfe4;border-radius:8px;background:white;color:var(--ink);padding:0 11px}
+.inscritos-tabela-wrap{width:100%;overflow-x:auto;border-top:1px solid var(--line)}
+.inscritos-tabela{border-collapse:collapse;width:100%;min-width:960px;font-size:12px}
+.inscritos-tabela th{background:#f6f8f9;text-align:left;padding:13px 15px;color:#5a6977;white-space:nowrap;font-weight:750}
+.inscritos-tabela td{padding:14px 15px;border-top:1px solid #edf0f2;color:#52616e;white-space:nowrap}
+.inscritos-tabela tr:hover td{background:#fbfcfd}
+.inscritos-tabela .inscritos-email{color:#1b3851;font-weight:700;overflow-wrap:anywhere;white-space:normal;min-width:210px}
+.inscritos-status{font-weight:700}
+.inscritos-status.status-active{color:#27734f}.inscritos-status.status-pending{color:#98651f}.inscritos-status.status-unsubscribed{color:#8a6e6e}
+.inscritos-cancelar{border:1px solid #e7b9b3;color:#a93b35;background:#fff7f6;border-radius:7px;padding:7px 11px;font-weight:700;font-size:11px}
+.inscritos-cancelar:hover{background:#fbe8e5}
+.inscritos-paginacao{padding:15px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--muted)}
+.inscritos-paginacao>div{display:flex;align-items:center;gap:12px}
+.inscritos-paginacao .botao{padding:8px 11px}
+@media(max-width:650px){.inscritos-barra,.inscritos-filtros,.inscritos-paginacao{padding-left:15px;padding-right:15px}.inscritos-filtros label:last-child{flex:1}.inscritos-paginacao{flex-wrap:wrap}}

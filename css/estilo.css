@@ -1636,3 +1636,14 @@ body[data-page="videos"] .cartao-short .etiqueta-short {
 .inscricao-mensal-anti-spam{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media(max-width:780px){.inscricao-mensal{grid-template-columns:1fr;gap:18px;padding:21px 18px}.inscricao-mensal h2{font-size:23px}}
 @media(max-width:420px){.inscricao-mensal-linha{flex-direction:column}.inscricao-mensal-linha button{height:44px}}
+
+/* Cancelamento por e-mail na própria agenda; só aparece com suporte do Worker. */
+.inscricao-mensal-cancelar{grid-column:1/-1;padding-top:11px;margin-top:4px;border-top:1px solid #e5e6df}
+.inscricao-mensal-cancelar>button{background:none;border:0;padding:0;color:#2d6c56;text-decoration:underline;text-underline-offset:3px;font-size:12px;font-weight:650;cursor:pointer}
+.inscricao-mensal-cancelar>button[hidden],.inscricao-mensal-cancelar form[hidden]{display:none!important}
+.inscricao-mensal-cancelar form{max-width:510px;margin-top:16px}
+.inscricao-mensal-cancelar form>label{display:block;font-size:12px;font-weight:650;color:#253d36;margin-bottom:7px}
+.inscricao-mensal-cancelar .inscricao-mensal-linha input{flex:1;min-width:0;height:44px;padding:0 12px;border:1px solid #cbd5cd;border-radius:9px;background:#fff;font:14px Arial,sans-serif}
+.inscricao-mensal-cancelar .inscricao-mensal-linha button{border:0;border-radius:9px;padding:0 17px;background:#253d36;color:#fff;font-weight:650;cursor:pointer}
+.inscricao-mensal-cancelar .inscricao-mensal-linha button:disabled{opacity:.6}
+@media(max-width:420px){.inscricao-mensal-cancelar .inscricao-mensal-linha button{height:44px}}

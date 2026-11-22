@@ -4,9 +4,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard | Paz que Ilumina</title>
-<link rel="stylesheet" href="/admin/dashboard.css?v=short-crop-20261122">
+<link rel="stylesheet" href="/admin/dashboard.css?v=inscritos20261122">
 <script defer src="/js/dados.js?v=dashboardvisual2"></script>
-<script defer src="/admin/dashboard.js?v=short-crop-20261122"></script>
+<script defer src="/admin/dashboard.js?v=inscritos20261122"></script>
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -52,6 +52,7 @@
    <a href="/livro.html"><svg><use href="#i-book"/></svg>Livro</a>
   </div>
   <a class="nav-link" href="/admin/agenda.html"><svg><use href="#i-calendar"/></svg>Agenda</a>
+  <a class="nav-link" href="/admin/inscritos.html"><svg><use href="#i-users"/></svg>Inscritos por e-mail</a>
   <a class="nav-link" href="/admin/locais.html"><svg><use href="#i-map-pin"/></svg>Locais</a>
   <a class="nav-link" href="/admin/palestras.html"><svg><use href="#i-presentation"/></svg>Palestras</a>
   <a class="nav-link" href="/admin/shorts.html"><svg><use href="#i-play"/></svg>Shorts</a>
@@ -116,6 +117,18 @@
     </div>
     <p id="emailMonitorInfo" class="email-monitor-info" role="status">Consultando histórico de e-mails…</p>
     <div id="emailFailuresPanel" class="email-failures-panel" hidden aria-live="polite"></div>
+   </article>
+  </section>
+  <section class="dashboard-grid email-monitor-grid" id="inscricoes" aria-label="Inscrições da agenda">
+   <article class="widget widget-email-monitor">
+    <div class="email-monitor-heading"><h2><svg><use href="#i-users"/></svg>Inscrições da agenda</h2><span class="email-year-label">Total acumulado</span></div>
+    <div class="email-monitor-metrics">
+     <div class="email-monitor-metric"><span>Inscritos ativos</span><strong id="subActive">—</strong></div>
+     <div class="email-monitor-metric"><span>Aguardando confirmação</span><strong id="subPending">—</strong></div>
+     <div class="email-monitor-metric"><span>Agenda semanal</span><strong id="subWeekly">—</strong></div>
+     <div class="email-monitor-metric"><span>Cancelados</span><strong id="subCancelled">—</strong></div>
+    </div>
+    <div class="inscricoes-rodape"><p id="subInfo" role="status">Consultando inscrições…</p><a href="/admin/inscritos.html">Gerenciar inscritos →</a></div>
    </article>
   </section>
   <section class="dashboard-grid bottom-grid" id="relatorios" aria-label="Agenda, relatórios e ações">
