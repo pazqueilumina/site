@@ -17,7 +17,8 @@
 .pagina-shorts .preview-short{margin:0 0 14px;padding:14px;background:#f7f9fb;border:1px solid #dce6ee;border-radius:10px}
 .pagina-shorts .preview-short>span{display:block;font-size:12px;font-weight:700;margin-bottom:9px}
 .pagina-shorts .preview-short a{display:flex;align-items:center;gap:15px;text-decoration:none;color:#245b8c;font-size:12px;font-weight:700}
-.pagina-shorts .preview-short img{display:block;width:112px;height:156px;object-fit:cover;border-radius:8px;background:#e6ecf0}
+.pagina-shorts .preview-short-circulo{display:block;width:112px;height:112px;flex:0 0 112px;overflow:hidden;border-radius:50%;border:3px solid #fff;outline:1px solid #d9e2ec;background:#192437;box-shadow:0 4px 12px rgba(21,35,58,.16)}
+.pagina-shorts .preview-short img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(1.72);transform-origin:center center}
 .pagina-shorts .editor .acoes{margin-top:18px}
 .pagina-shorts .mensagem{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .pagina-shorts .fechar-mensagem{border:0;background:transparent;color:inherit;font-size:21px;line-height:1;cursor:pointer}
@@ -26,7 +27,7 @@
 .pagina-shorts .situacao{font-size:15px}
 .pagina-shorts .lista .filtros select{width:120px}
 .pagina-shorts .short-escolher:focus-visible,.pagina-shorts .short-ordem button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-@media(max-width:590px){.pagina-shorts .short-registro{padding:9px 10px;gap:6px}.pagina-shorts .short-thumb-circulo{width:52px;height:52px;flex-basis:52px}.pagina-shorts .short-dados strong{font-size:12px}.pagina-shorts .lista .filtros select{width:100px}.pagina-shorts .preview-short img{width:92px;height:128px}}
+@media(max-width:590px){.pagina-shorts .short-registro{padding:9px 10px;gap:6px}.pagina-shorts .short-thumb-circulo{width:52px;height:52px;flex-basis:52px}.pagina-shorts .short-dados strong{font-size:12px}.pagina-shorts .lista .filtros select{width:100px}.pagina-shorts .preview-short-circulo{width:92px;height:92px;flex-basis:92px}}
 
 /* Mensagens ocultas não devem reservar espaço na página. */
 .pagina-shorts .mensagem[hidden]{display:none}

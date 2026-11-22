@@ -351,3 +351,10 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - Na ação **Salvar na lista**, títulos digitados inteiramente em caixa alta são convertidos para capitalização normal, com início de frase em maiúscula e preservação de nomes especiais (Jesus, Deus, Chico Xavier, Allan Kardec, Brasil, YouTube e siglas conhecidas). Títulos já em caixa mista são preservados.
 - Miniaturas da lista administrativa de Shorts passam a ser circulares, seguindo a página pública de vídeos, com enquadramento central e ampliação da imagem.
 - Não há renumeração de IDs existentes nem alteração de títulos do acervo anterior: a conversão ocorre ao salvar o formulário de cada Short.
+
+## 2026-11-22 — Prévia circular no formulário de Shorts
+
+- Alteração autorizada e publicada na branch `main`.
+- A miniatura exibida na seção **Prévia da miniatura** do formulário de cadastro/edição também passa a ser circular, com o mesmo enquadramento central da lista de Shorts cadastrados.
+- Mantidos o link **Assistir no YouTube**, os botões e os demais comportamentos do cadastro.
+- Atualização restrita aos arquivos `admin/shorts.html` e `admin/shorts.css`; os dados dos Shorts já publicados não foram modificados.
