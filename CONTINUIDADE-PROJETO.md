@@ -1,11 +1,11 @@
 # Continuidade do projeto — Paz que Ilumina
 
-> **Atualizado em:** 22/11/2026 — continuidade atualizada após testes reais dos lembretes por e-mail  
-> **Último HEAD de código auditado antes desta atualização documental:** `1c66122381924bac1b1b3005586dccf5f52fa531`  
+> **Atualizado em:** 23/11/2026 — passagem de contexto após o deploy da segunda revisão de impressão do Relatório Administrativo  
+> **Último commit de código verificado antes desta atualização documental:** `973e0bab6dcc855b4c93a51eb9bf59e2c34b8e5c` (**Cloudflare Pages: sucesso**). O commit de atualização deste próprio documento será posterior.  
 > **Repositório:** https://github.com/pazqueilumina/site  
 > **Branch de trabalho autorizada:** `main`  
 > **Site:** https://pazqueilumina.com.br  
-> **Referência técnica auditada antes deste documento:** commit `24a2fcf2b74236e50abba027215ad3fe63755537`.  
+> **Referência técnica recente:** `973e0bab` (impressão administrativa). Os números e registros das seções históricas são fotografias de commits anteriores; revalidar antes de usar.  
 > **Natureza deste arquivo:** registro de contexto e decisões para retomada em outro chat; não é autorização para alterar código, dados, versões ou publicar.
 
 ## 1. Regras obrigatórias combinadas com o responsável
@@ -17,6 +17,7 @@
 5. Preservar dados existentes, IDs, cadastros e comportamentos aprovados. Não reestruturar Agenda/Palestras/Locais por conta própria.
 6. Respostas objetivas, em português, com análise de causas e riscos. Investigar a origem de falhas repetidas em vez de fazer correções cosméticas.
 7. **Programa Windows:** não gerar executável, versão, pacote ou instalador sem autorização específica.
+8. **Regra expressa de preservação:** **NUNCA retirar, ocultar, substituir, apagar ou reduzir informações, indicadores, menus, dados ou funcionalidades sem confirmar previamente com o responsável.** Mesmo uma correção visual deve preservar o conteúdo integral. Não reintroduzir componentes retirados a pedido do usuário (ex.: seletor “Outros períodos…”).
 
 ## 2. Arquitetura atual verificada no repositório
 
@@ -30,6 +31,8 @@ O site público é predominantemente estático (HTML, CSS e JavaScript). O paine
 | Cadastro de centros/locais | `admin/locais.html`, `admin/locais.js`, `functions/api/admin/locais.js`, `server_lib/locais.js` |
 | Dashboard administrativo | `admin/dashboard.html`, `admin/dashboard.js`, `admin/dashboard.css`, `functions/api/admin/audiencia.js`, `functions/api/admin/evolucao-visitas.js`, `functions/api/admin/atividade.js` |
 | Dashboard do palestrante | `admin/palestrante.html`, `admin/palestrante.js`, `admin/palestrante.css`, `functions/api/admin/rotas.js`, `functions/api/admin/mapa-centros.js` |
+| Relatórios e impressão | `admin/relatorios.html`, `admin/report-view.js`, `admin/report-print.css`, `admin/dashboard.html`, `admin/palestrante.html` |
+| Inscrições e monitor de e-mails | `admin/inscritos.html`, `functions/api/admin/inscritos.js`, `admin/dashboard.js`, `admin/dashboard.html`; Worker de e-mails **separado** do deploy do site |
 | Mapa | Leaflet 1.9.4 em `vendor/leaflet/`; mosaicos Esri World Street Map; geocodificação/rotas em `server_lib/geocode.js` |
 | Arquivos de mídia | `pdf/` no GitHub; `audio/` legado no site; novos áudios via `functions/api/admin/audio-r2.js` |
 | Segurança/ambiente | `functions/admin/_middleware.js`, `functions/api/admin/_middleware.js`, `server_lib/access.js`, `server_lib/branch.js` |
@@ -124,7 +127,15 @@ Versão **planejada como sucessora da v3.0**: dois modos de PPTX→PDF, seleçã
 
 ### Texto para iniciar outro chat
 
-> Estamos continuando o projeto **Paz que Ilumina** no repositório `pazqueilumina/site`. Leia primeiro `CONTINUIDADE-PROJETO.md` na branch `main`, confira o HEAD atual e os arquivos relevantes. Respeite as regras de não modificar, gerar versão, publicar ou fazer rollback sem minha autorização explícita; não use a branch `teste-admin`. A otimização estrutural do mapa está adiada. Vou informar a próxima tarefa.
+> Estamos continuando o projeto **Paz que Ilumina**. Repositório GitHub: `pazqueilumina/site`, branch **`main`**, site **https://pazqueilumina.com.br**. **Antes de qualquer proposta ou alteração, leia integralmente o arquivo `CONTINUIDADE-PROJETO.md` no GitHub e confira o HEAD atual da `main` e os arquivos relacionados à minha próxima solicitação.**
+>
+> **Regras obrigatórias:** nunca retirar, ocultar, substituir ou eliminar informações, indicadores, dados, menus ou funções sem minha confirmação prévia; não reintroduzir recursos que pedi para retirar; não modificar código, gerar versões, fazer commit, deploy ou rollback sem minha autorização explícita. Quando eu autorizar, trabalhar diretamente na `main` (não usar `teste-admin`), validar a alteração, verificar o deploy Cloudflare Pages e registrar a decisão no documento de continuidade. Não alterar o Worker de e-mails sem ordem específica.
+>
+> **Último trabalho concluído:** segunda revisão da impressão do Relatório Administrativo, commit `973e0ba`, deploy Cloudflare Pages confirmado como **sucesso**. O relatório imprime em A4 retrato com cópia exclusiva para impressão, KPIs compactos, gráficos e quadros em duas colunas. **A prévia com dados reais dessa última revisão ainda precisa ser conferida**; não afirmar que ficou definitivamente em 2 páginas sem essa confirmação. O Relatório do Palestrante manteve a revisão anterior.
+>
+> **Estado importante:** Dashboard Administrativo e do Palestrante, menus Gestão/Acervo, Relatórios, filtros Mensal/Ano inteiro, Inscrições da agenda, Monitor de e-mails e Atividades recentes já foram implementados; o seletor “Outros períodos…” foi retirado por solicitação expressa e não deve voltar. A área **Estatísticas** como análise detalhada está somente planejada. O envio semanal de agendas continua **desativado** (`weeklyEnabled=false`) até minha autorização. A otimização estrutural do mapa foi adiada. O programa Windows v3.1 é projeto separado e não deve ser gerado sem ordem específica.
+>
+> **Não implemente nada apenas por ler este prompt.** Primeiro confirme o estado do repositório e aguarde minha próxima tarefa.
 
 ## 7. Histórico de referência
 
@@ -512,3 +523,33 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - A cópia é removida no `afterprint`. Se a preparação falhar, o layout anterior continua disponível (não imprimir página em branco). O relatório do Palestrante mantém a implementação anterior, sem alterações funcionais.
 - **Teste local de paginação:** uma simulação representativa em Chromium produziu **2 páginas**, com largura útil aproveitada; o total na produção dependerá da quantidade real de registros e do navegador. Não afirmar validação visual do dashboard autenticado sem conferir sua prévia real.
 - Cache-busting atualizado nos dois dashboards. Nenhuma alteração em Worker, D1, métricas, filtros ou envio semanal.
+
+
+## 11. Passagem de contexto para novo chat — 23/11/2026 (documento atualizado)
+
+### 11.1 Estado de publicação verificado
+- **Repositório:** `pazqueilumina/site`; branch `main`; publicação automática do site via **Cloudflare Pages**.
+- **Último commit de código:** `973e0bab6dcc855b4c93a51eb9bf59e2c34b8e5c` — *Compact administrative PDF report into print-only two-column layout*; check **Cloudflare Pages concluído com sucesso** em 23/11/2026 às 01:11:21 UTC. Uma atualização **somente deste documento** pode criar um HEAD posterior; conferir o HEAD real na retomada.
+- **Arquivos alterados nesse commit de código:** `admin/report-view.js`, `admin/report-print.css`, `admin/dashboard.html`, `admin/palestrante.html` (cache-busting), `CONTINUIDADE-PROJETO.md`. Não houve modificação de Worker, D1 ou dados de palestras/eventos.
+- **Implementação de impressão:** ao imprimir o relatório Administrativo, `beforeprint` monta um clone de elementos e dados em `#reportPrintRoot`; o dashboard original permanece intacto; `afterprint` remove o clone. A4 retrato, 190 mm de largura útil, KPIs em três colunas, gráficos de acervo/visitas em largura total, rosca/países lado a lado e quadros restantes em duas colunas verticais. **Meta:** reduzir a impressão real, que antes tinha 10 páginas e, após primeira correção, 6 páginas. O registro anterior menciona simulação local de 2 páginas, mas **não houve confirmação pelo usuário de que a versão publicada imprime em 2 páginas com seus dados reais**.
+- **Relatório do Palestrante:** não alterado funcionalmente pela segunda revisão; a primeira revisão o colocou em A4 retrato. Não presumir que está perfeito; verificar somente se o usuário solicitar.
+
+### 11.2 Funcionalidades aprovadas que devem permanecer
+- Menu lateral dos dois Dashboards: **Dashboard** e **Gestão** abertos por padrão e recolhíveis; Gestão fica **acima de Acervo** e contém Agenda, Inscritos, Locais, Palestras e Shorts. **Acervo**, Estatísticas, Relatórios e Voltar ao site permanecem disponíveis.
+- Dashboard Administrativo: seletor de período com setas, escolha de mês/ano, botões **Mensal** e **Ano inteiro**; **não** reintroduzir **“Outros períodos…”**. Indicadores, gráficos, acervo, origem e evolução de visitas, conteúdos e atividades recentes, pendências, monitor de e-mails, inscrições, próximos eventos e resumo do acervo devem ser preservados.
+- **Atividades recentes:** até 20 commits reais consultados pela API GitHub, com quantidade exibida adaptada à altura disponível; não inventar atividades.
+- **Inscrições da agenda:** quatro indicadores do período (**Novos inscritos**, **Confirmados**, **Agenda semanal**, **Cancelamentos**) e dois indicadores independentes do **Acumulado geral** (**Inscritos ativos**, **Aguardando confirmação**). Filtros mensais e anuais; limites históricos do consentimento semanal documentados. O **Resumo do acervo** conserva a linha **E-mails**.
+- **Relatórios:** página `/admin/relatorios.html` com seleção Administrativo/Palestrante, mês/ano ou ano inteiro, prévia e impressão/PDF. **Estatísticas** ainda é proposta de área analítica, não funcionalidade completa; não implementar sem nova autorização.
+- Agenda pública: formulário de inscrição para agendas mensal e semanal, confirmação por e-mail, cancelamento e avisos flutuantes; toast de e-mail duplicado mais abaixo e com âmbar reforçado. **Envio semanal desativado** no Worker; não ativar automaticamente. O Worker de e-mails é independente do GitHub e requer publicação específica.
+
+### 11.3 Pendências e riscos abertos
+1. **Prioridade imediata, se o usuário trouxer uma nova captura:** conferir a **prévia real de impressão** da segunda revisão. Avaliar número de páginas, tamanho da fonte, cortes, ordem de quadros e espaços em branco; não assumir que a meta de 2–3 páginas foi atingida só pela simulação. Pedir autorização antes de qualquer nova correção/deploy.
+2. **Relatório do Palestrante:** aguardar feedback, sem alterar por iniciativa própria.
+3. **Área Estatísticas:** planejamento registrado na seção anterior; não implementada.
+4. **Mapa do palestrante:** melhoria estrutural adiada pelo usuário; não iniciar sem autorização.
+5. **E-mails:** não ativar envio semanal; não confundir deploy do site com deploy do Worker; preservar destinatários e rotinas já existentes.
+6. **Programa Windows v3.1:** separado do site e ainda não autorizado para nova geração/instalação.
+7. **Histórico deste arquivo:** as seções antigas registram estados e números válidos em datas anteriores, inclusive ideias que depois foram implementadas. Em caso de conflito, prevalece o estado **verificado no HEAD atual**, seguido das decisões mais recentes, sem apagar o histórico.
+
+### 11.4 Prompt recomendado
+O texto atualizado para copiar no início do próximo chat está na seção **6 — “Texto para iniciar outro chat”**. Ele instrui a ler este arquivo e **não autoriza alterações** por si só.
