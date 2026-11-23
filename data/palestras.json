@@ -787,12 +787,14 @@
       "dataAproximada": true,
       "serie": "ministerio",
       "duracao": "01:01:06",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0028.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T20:56:07.054Z"}
     },
     {
       "pid": "PAL-0029",
