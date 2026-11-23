@@ -22,7 +22,9 @@
       "endereco": "Rua Martins Ferreira, 57",
       "bairro": "Botafogo",
       "cidade": "Rio de Janeiro",
-      "uf": "RJ"
+      "uf": "RJ",
+      "latitude": "-22.9535572",
+      "longitude": "-43.1949614"
     },
     {
       "id": "consolador-comunidade-espirita-crista",
@@ -62,7 +64,9 @@
       "endereco": "Estrada da Boiúna, 1367",
       "bairro": "Taquara",
       "cidade": "Rio de Janeiro",
-      "uf": "RJ"
+      "uf": "RJ",
+      "latitude": "-22.911885",
+      "longitude": "-43.4065717"
     },
     {
       "id": "lar-paulo-de-tarso",
