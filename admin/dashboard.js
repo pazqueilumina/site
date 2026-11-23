@@ -19,7 +19,7 @@ const rangeEnd=()=>{const end=new Date();end.setHours(23,59,59,999);if(isCustom(
 const rangeDays=()=>{const start=rangeStart(),end=rangeEnd();if(end<start)return 0;const utc=d=>Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());return Math.round((utc(end)-utc(start))/86400000)+1;};
 const inRange=s=>{const d=isoToDate(s);return !!d&&d>=rangeStart()&&d<=rangeEnd();};
 let current={p:null,a:null,l:null,activities:null,audience:null,visitsTrend:null,emails:null,shorts:null};
-let audienceSerial=0,trendSerial=0;
+let audienceSerial=0,trendSerial=0,subscriberSerial=0;
 function notice(msg){$('avisoTexto').textContent=msg;$('aviso').hidden=false;}
 async function read(url){const r=await fetch(url,{credentials:'same-origin',cache:'no-store'});const data=await r.json().catch(()=>({}));if(!r.ok)throw Error(data.erro||'HTTP '+r.status);return data;}
 function drawChart(palestras){const host=clear('chartAcervo');if(!palestras){host.append(txt('p','Dados do acervo indisponíveis.','empty-text'));return;}
@@ -340,12 +340,40 @@ function emailDate(value){
  return parts.day+'/'+parts.month+' às '+parts.hour+'h'+(parts.minute==='00'?'':parts.minute);
 }
 function renderSubscriberSummary(data){
- const ok=data?.status==='ok',s=data?.summary||{};
- for(const [id,key] of [['subActive','active'],['subPending','pending'],['subWeekly','weekly'],['subCancelled','unsubscribed']])
-  set(id,ok?nf(Number(s[key]||0)):'—');
+ const ok=data?.status==='ok'&&data.monthly,monthly=data?.monthly||{};
+ for(const [id,key] of [['subNew','new'],['subConfirmed','confirmed'],['subWeekly','weekly'],['subCancelled','cancelled']])
+  set(id,ok?nf(Number(monthly[key]||0)):'—');
+ set('subCumulative',ok?nf(Number(monthly.activeAtEnd||0)):'—');
+ const monthName=$('subMonth').selectedOptions[0]?.textContent||'';
+ set('subCumulativeLabel','Acumulado até '+monthName.toLowerCase()+' de '+$('subYear').value);
  const info=$('subInfo');
- info.textContent=ok?'Inscrições confirmadas, pendentes e canceladas.':'Não foi possível consultar os inscritos: '+(data?.message||'verifique o D1.');
- info.classList.toggle('warning',!ok);
+ info.textContent=ok
+  ?'Agenda semanal: consentimento atual dos confirmados no mês; ativações posteriores não possuem data registrada.'+(data.historicalEstimated?' Saldo histórico estimado: reinscrições podem alterar registros anteriores.':'')
+  :data?.message||'Não foi possível consultar os inscritos.';
+ info.classList.toggle('warning',!ok||data?.historicalEstimated);
+}
+const dateKey=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+function subscriberStatsUrl(){
+ return '/api/admin/inscritos?stats=1&month='+encodeURIComponent($('subYear').value+'-'+$('subMonth').value)
+  +'&from='+encodeURIComponent(dateKey(rangeStart()))+'&to='+encodeURIComponent(dateKey(rangeEnd()));
+}
+async function loadSubscriberStats(){
+ const serial=++subscriberSerial;
+ try{
+  const data=await read(subscriberStatsUrl());
+  if(serial!==subscriberSerial)return true;
+  if(data?.status!=='ok'||!data.monthly)throw Error(data?.message||'Dados mensais indisponíveis.');
+  current.subscribers=data;renderSubscriberSummary(data);
+  const palestras=Array.isArray(current.p?.dados?.palestras)?current.p.dados.palestras.filter(p=>p.ativo!==false):null;
+  const shorts=Array.isArray(current.shorts?.shorts)?current.shorts.shorts.filter(s=>s.ativo!==false):null;
+  renderSummary(palestras,shorts);return true;
+ }catch(error){
+  if(serial!==subscriberSerial)return true;
+  current.subscribers={status:'error',message:error.message};renderSubscriberSummary(current.subscribers);
+  const palestras=Array.isArray(current.p?.dados?.palestras)?current.p.dados.palestras.filter(p=>p.ativo!==false):null;
+  const shorts=Array.isArray(current.shorts?.shorts)?current.shorts.shorts.filter(s=>s.ativo!==false):null;
+  renderSummary(palestras,shorts);return false;
+ }
 }
 function renderEmailStatus(data){
  const toggle=$('emailFailed'),panel=$('emailFailuresPanel'),info=$('emailMonitorInfo');
@@ -395,14 +423,15 @@ function renderEmailStatus(data){
 function renderEvents(agenda){const host=clear('eventos');if(!agenda){host.append(txt('p','Agenda indisponível.','empty-text'));return;}const upcoming=agenda.filter(e=>e.data>=todayISO()).sort((a,b)=>a.data.localeCompare(b.data)||(a.horario||'').localeCompare(b.horario||'')).slice(0,2);if(!upcoming.length){host.append(txt('p','Nenhum evento futuro cadastrado.','empty-text'));return;}upcoming.forEach(e=>{const row=txt('div','','event-row'),date=txt('span','','event-date');date.append(txt('strong',e.data.slice(8,10)),txt('span',new Date(e.data+'T12:00:00').toLocaleDateString('pt-BR',{month:'short'}).replace('.','').toUpperCase()));const info=txt('span','','event-text');info.append(txt('strong',e.titulo),txt('small',e.local||'Local não informado'));row.append(date,info,txt('span',e.horario||'—','event-time'));host.append(row);});}
 function renderSummary(palestras,shorts){
  const host=clear('resumo');
- if(!palestras){const row=txt('tr',''),td=txt('td','Dados indisponíveis');td.colSpan=3;row.append(td);host.append(row);return;}
  const totalShorts=Array.isArray(shorts)?shorts.length:null;
  const novosShorts=Array.isArray(shorts)?shorts.filter(s=>publicadoNoPeriodo(s.publicadoEm)).length:null;
+ const emails=current.subscribers?.status==='ok'?current.subscribers:null;
  const types=[
   ['Vídeos (Shorts)',totalShorts,novosShorts,'#2f8bff'],
-  ['Apresentações',palestras.length,palestras.filter(p=>inRange(p.data)).length,'#35c95d'],
-  ['Áudios',palestras.filter(p=>p.audio).length,palestras.filter(p=>p.audio&&publicadoNoPeriodo(p.publicacoes?.audio)).length,'#9550e7'],
-  ['Slides (PDF)',palestras.filter(p=>p.pdf).length,palestras.filter(p=>p.pdf&&publicadoNoPeriodo(p.publicacoes?.pdf)).length,'#ffad30']
+  ['Apresentações',palestras?palestras.length:null,palestras?palestras.filter(p=>inRange(p.data)).length:null,'#35c95d'],
+  ['Áudios',palestras?palestras.filter(p=>p.audio).length:null,palestras?palestras.filter(p=>p.audio&&publicadoNoPeriodo(p.publicacoes?.audio)).length:null,'#9550e7'],
+  ['Slides (PDF)',palestras?palestras.filter(p=>p.pdf).length:null,palestras?palestras.filter(p=>p.pdf&&publicadoNoPeriodo(p.publicacoes?.pdf)).length:null,'#ffad30'],
+  ['E-mails',emails?emails.summary.active:null,emails?emails.periodNew:null,'#0c8995']
  ];
  for(const [name,count,newCount,color] of types){
   const tr=txt('tr',''),td=txt('td',''),dot=txt('span','','type-dot');dot.style.background=color;
@@ -430,16 +459,17 @@ async function update(){
  const button=$('atualizar');if(button.disabled)return;
  if(refreshTimer){clearTimeout(refreshTimer);refreshTimer=null;}
  button.disabled=true;refreshState('loading');$('dashMainContent').classList.add('is-updating');
- const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade','/api/admin/email-status?year='+encodeURIComponent($('emailYear').value),'/data/shorts.json','/api/admin/inscritos?summary=1'];
+ const urls=['/api/admin/palestras','/api/admin/agenda','/api/admin/locais','/api/admin/atividade','/api/admin/email-status?year='+encodeURIComponent($('emailYear').value),'/data/shorts.json'];
  try{
   const results=await Promise.allSettled(urls.map(read));
-  ['p','a','l','activities','emails','shorts','subscribers'].forEach((key,i)=>{current[key]=results[i].status==='fulfilled'?results[i].value:null;});
+  ['p','a','l','activities','emails','shorts'].forEach((key,i)=>{current[key]=results[i].status==='fulfilled'?results[i].value:null;});
   if(typeof DADOS!=='undefined')DADOS.shorts=results[5].status==='fulfilled'&&Array.isArray(results[5].value.shorts)?results[5].value.shorts.filter(s=>s.ativo!==false):[];
-  const errors=results.map((r,i)=>r.status==='rejected'?['Acervo','Agenda','Locais','Atividades','E-mails','Shorts','Inscrições'][i]+': '+r.reason.message:null).filter(Boolean);
+  const errors=results.map((r,i)=>r.status==='rejected'?['Acervo','Agenda','Locais','Atividades','E-mails','Shorts'][i]+': '+r.reason.message:null).filter(Boolean);
   render();
-  const [audienceOk,trendOk]=await Promise.all([loadAudience(),loadVisitsTrend()]);
+  const [audienceOk,trendOk,subscriberOk]=await Promise.all([loadAudience(),loadVisitsTrend(),loadSubscriberStats()]);
   if(!audienceOk)errors.push('Audiência: '+(current.audience?.erro||'consulta indisponível'));
   if(!trendOk)errors.push('Evolução das visitas: '+(current.visitsTrend?.erro||'consulta indisponível'));
+   if(!subscriberOk)errors.push('Inscrições: '+(current.subscribers?.message||'consulta indisponível'));
   if(errors.length){notice('Alguns dados não foram carregados: '+errors.join(' · '));refreshState('error');}
   else{
    $('aviso').hidden=true;
@@ -475,7 +505,7 @@ function adminPeriodUI(){
  $('customRangePanel').hidden=!isCustom();
 }
 function adminClosePicker(){$('adminPeriodPicker').hidden=true;$('adminPeriodLabel').setAttribute('aria-expanded','false');}
-function adminRefreshPeriod(){render();loadAudience();loadVisitsTrend();}
+function adminRefreshPeriod(){current.subscribers=null;render();loadAudience();loadVisitsTrend();loadSubscriberStats();}
 function adminSelectMode(mode){periodMode=mode;adminPickerYear=appliedYear;adminClosePicker();$('periodoErro').hidden=true;adminPeriodUI();adminRefreshPeriod();}
 function adminChangePeriod(step){
  if(isYear())appliedYear+=step;
@@ -512,7 +542,7 @@ function applyCustomPeriod(){
  if(message){error.textContent=message;error.hidden=false;return;}
  error.hidden=true;
  appliedCustomStart=start;appliedCustomEnd=end;
- render();loadAudience();loadVisitsTrend();
+ adminRefreshPeriod();
 }
 function initEmailYear(){
  const select=$('emailYear');
@@ -523,9 +553,25 @@ function initEmailYear(){
  select.value=String(currentYear);
  select.addEventListener('change',()=>update());
 }
+function initSubscriptionPeriod(){
+ const monthSelect=$('subMonth'),yearSelect=$('subYear');
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+ const currentYear=Number(parts.year),currentMonth=Number(parts.month);
+ for(let i=0;i<12;i++){const opt=document.createElement('option');opt.value=String(i+1).padStart(2,'0');opt.textContent=adminMonths[i];monthSelect.append(opt);}
+ for(let year=currentYear;year>=2026;year--){const opt=document.createElement('option');opt.value=String(year);opt.textContent=String(year);yearSelect.append(opt);}
+ yearSelect.value=String(currentYear);monthSelect.value=String(currentMonth).padStart(2,'0');
+ function refreshMonthOptions(){
+  const thisYear=Number(yearSelect.value)===currentYear;
+  for(const option of monthSelect.options)option.disabled=thisYear&&Number(option.value)>currentMonth;
+  if(thisYear&&Number(monthSelect.value)>currentMonth)monthSelect.value=String(currentMonth).padStart(2,'0');
+ }
+ yearSelect.addEventListener('change',()=>{refreshMonthOptions();loadSubscriberStats();});
+ monthSelect.addEventListener('change',()=>loadSubscriberStats());
+ refreshMonthOptions();
+}
 $('acervoToggle').addEventListener('click',()=>{const expanded=$('acervoToggle').getAttribute('aria-expanded')==='true';$('acervoToggle').setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});
 $('aplicarPeriodo').addEventListener('click',applyCustomPeriod);
 $('atualizar').addEventListener('click',update);
 $('emailFailed').addEventListener('click',()=>{const button=$('emailFailed'),expanded=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!expanded));$('emailFailuresPanel').hidden=expanded;});
 $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
-initCustomFilter();initPeriodControls();initEmailYear();update();
+initCustomFilter();initPeriodControls();initEmailYear();initSubscriptionPeriod();update();
