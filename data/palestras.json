@@ -1191,7 +1191,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:27:00.000Z"
+      }
     }
   ]
 }
