@@ -535,7 +535,6 @@ function adminPeriodUI(){
   if(adminPickerYear===appliedYear&&i===appliedMonth&&monthly)btn.classList.add('active');
   btn.addEventListener('click',()=>{appliedYear=adminPickerYear;appliedMonth=i;adminSelectMode('month');});host.append(btn);
  });
- $('periodo').value=regular?'':periodMode;
  $('customRangePanel').hidden=!isCustom();
 }
 function adminClosePicker(){$('adminPeriodPicker').hidden=true;$('adminPeriodLabel').setAttribute('aria-expanded','false');}
@@ -554,7 +553,6 @@ function initPeriodControls(){
  $('adminPeriodLabel').addEventListener('click',()=>{const show=$('adminPeriodPicker').hidden;adminPickerYear=appliedYear;adminPeriodUI();$('adminPeriodPicker').hidden=!show;$('adminPeriodLabel').setAttribute('aria-expanded',String(show));});
  $('adminPickerPrev').addEventListener('click',()=>{adminPickerYear--;adminPeriodUI();});
  $('adminPickerNext').addEventListener('click',()=>{if(adminPickerYear<new Date().getFullYear()){adminPickerYear++;adminPeriodUI();}});
- $('periodo').addEventListener('change',()=>{if(!$('periodo').value)return;periodMode=$('periodo').value;adminClosePicker();adminPeriodUI();adminRefreshPeriod();});
  document.addEventListener('click',e=>{if(!e.target.closest('.admin-period-controls'))adminClosePicker();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')adminClosePicker();});
  adminPeriodUI();

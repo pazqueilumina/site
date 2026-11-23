@@ -34,3 +34,121 @@ body.report-view .dash-sidebar{display:none}body.report-view .dash-shell{display
  body.report-view .dash-footer{margin-top:12px!important}
  body.report-view .dash-content.is-updating .dashboard-grid,body.report-view .dash-content.is-updating .kpi-strip{opacity:1!important}
 }
+
+/* Revisão da impressão: A4 retrato, quadros compactos e sem rolagem horizontal.
+   As regras são exclusivas do modo de relatório e não mudam o Dashboard normal. */
+@page{size:A4 portrait;margin:11mm 10mm}
+@media print{
+ html,body,body.report-view{width:auto!important;min-width:0!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important;background:#fff!important;color:#152f50!important;font:9pt/1.28 Arial,"Segoe UI",sans-serif!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ *,*::before,*::after{animation:none!important;transition:none!important}
+ .report-toolbar,.dash-sidebar,.admin-period-controls,.speaker-period-controls,.dash-footer button,.widget-bottom-link,.widget-bottom-links,.quick-actions,.widget-actions,.speaker-map-expand,.custom-range-panel{display:none!important}
+ body.report-view .dash-shell,body.report-view .dash-main,body.report-view .dash-content{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;min-height:0!important;height:auto!important;margin:0!important;padding:0!important;overflow:visible!important;box-shadow:none!important;background:#fff!important}
+ body.report-view .dash-banner{display:block!important;position:relative!important;height:auto!important;min-height:0!important;margin:0 0 2mm!important;padding:0 0 3mm!important;border-bottom:2px solid #24486e!important;background:#fff!important;color:#17365d!important;overflow:visible!important;break-after:avoid}
+ body.report-view .dash-banner .mountains,body.report-view .dash-banner .sunlight{display:none!important}
+ body.report-view .dash-welcome{position:static!important;color:#17365d!important}
+ body.report-view .dash-welcome h1{font:700 18pt/1.1 Georgia,serif!important;color:#17365d!important;text-shadow:none!important;margin:0 0 1mm!important}
+ body.report-view .dash-welcome p{font-size:9pt!important;color:#4e647d!important;text-shadow:none!important;margin:0!important}
+ body.report-view .report-meta{font-size:7.5pt!important;line-height:1.3!important;color:#536781!important;background:#f2f6fb!important;border:1px solid #dce5f1!important;padding:2mm 3mm!important;margin:0 0 2mm!important;break-after:avoid}
+ body.report-view .kpi-strip,body.report-view .speaker-kpis{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:2mm!important;min-width:0!important;margin:2mm 0 0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;break-inside:avoid}
+ body.report-view .kpi,body.report-view .speaker-kpis .kpi{min-width:0!important;min-height:0!important;height:auto!important;gap:5px!important;padding:6px 8px!important;border:1px solid #d8e4ef!important;border-radius:5px!important;box-shadow:none!important;break-inside:avoid}
+ body.report-view .kpi-icon{width:26px!important;height:26px!important;min-width:26px!important;box-shadow:none!important}
+ body.report-view .kpi-icon svg{width:16px!important;height:16px!important}
+ body.report-view .kpi h2{font-size:8pt!important;line-height:1.2!important;margin:0 0 1mm!important}
+ body.report-view .kpi strong{font-size:15pt!important;line-height:1.1!important;letter-spacing:0!important;white-space:normal!important}
+ body.report-view .kpi small{font-size:7pt!important;line-height:1.2!important;margin-top:1mm!important}
+ body.report-view .dashboard-grid,body.report-view .speaker-row{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:2mm!important;margin:2mm 0 0!important;align-items:start!important;min-width:0!important;break-inside:auto!important}
+ body.report-view .top-grid,body.report-view .middle-grid,body.report-view .bottom-grid,body.report-view .speaker-row.two-col,body.report-view .speaker-row.three-col{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.report-view .top-grid .widget-countries{grid-column:1/-1!important}
+ body.report-view .middle-grid{grid-template-areas:'contents alerts' 'activities activities'!important}
+ body.report-view .middle-grid>.widget:nth-child(1){grid-area:contents!important}
+ body.report-view .middle-grid>.widget:nth-child(2){grid-area:activities!important}
+ body.report-view .middle-grid>.widget:nth-child(3){grid-area:alerts!important;grid-column:auto!important}
+ body.report-view .activity-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;column-gap:12px!important;align-items:start!important}
+ body.report-view .widget,body.report-view .speaker-row .widget{display:block!important;min-width:0!important;min-height:0!important;height:auto!important;margin:0!important;padding:7px 9px!important;border:1px solid #d4deea!important;border-radius:5px!important;box-shadow:none!important;background:#fff!important;overflow:visible!important;break-inside:avoid;page-break-inside:avoid}
+ body.report-view .widget h2{font-size:9.5pt!important;line-height:1.2!important;margin:0 0 2mm!important;break-after:avoid}
+ body.report-view .widget h2 svg{width:14px!important;height:14px!important}
+ body.report-view .widget-subtitle{font-size:7.5pt!important;line-height:1.25!important;margin:0 0 2mm!important}
+ body.report-view .chart-container,body.report-view .speaker-chart{width:100%!important;max-width:100%!important;min-height:0!important;height:142px!important;overflow:visible!important}
+ body.report-view .chart-container svg,body.report-view .speaker-chart svg{width:100%!important;max-width:100%!important;height:100%!important;min-width:0!important;display:block!important}
+ body.report-view .visits-chart-container{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:0!important;height:162px!important;overflow:visible!important;scrollbar-width:none!important}
+ body.report-view .visits-chart-container svg.visits-chart-svg{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;height:162px!important;overflow:visible!important}
+ body.report-view .visits-chart-message{min-height:0!important;padding:20px!important}
+ body.report-view .donut-layout{min-height:0!important;gap:8px!important}
+ body.report-view .donut{width:98px!important;height:98px!important}
+ body.report-view .donut-hole{width:56px!important;height:56px!important}
+ body.report-view .donut-legend{gap:4px!important}
+ body.report-view .countries-list,body.report-view .countries-empty{min-height:0!important;gap:4px!important;padding:3px!important}
+ body.report-view .content-row,body.report-view .activity-row,body.report-view .alert-row,body.report-view .event-row{padding:3px 0!important;gap:6px!important;break-inside:avoid}
+ body.report-view .row-text strong{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;font-size:8pt!important}
+ body.report-view .row-text small{font-size:7pt!important}
+ body.report-view .content-row img{width:45px!important;height:28px!important}
+ body.report-view .email-monitor-metrics{gap:5px!important}
+ body.report-view .email-monitor-metric{min-width:0!important;padding:7px!important}
+ body.report-view .inscricoes-total-grid{gap:5px!important}
+ body.report-view .summary-table{font-size:8pt!important}
+ body.report-view .summary-table th,body.report-view .summary-table td{padding:4px!important}
+ body.report-view .table-scroll,body.report-view .speaker-table-wrap,body.report-view .speaker-calendar-scroll{overflow:visible!important;max-height:none!important;min-width:0!important}
+ body.report-view .dash-footer{display:block!important;font-size:7pt!important;color:#63758b!important;margin:2mm 0 0!important;break-before:avoid}
+ /* Conteúdos longos podem continuar em outra página; quadros menores permanecem inteiros. */
+ body.report-view .middle-grid .widget:nth-child(2){break-inside:avoid!important;page-break-inside:avoid!important}
+ body.report-view .widget-email-monitor,body.report-view .speaker-journeys-widget,body.report-view .speaker-row:last-of-type .widget{break-inside:auto!important;page-break-inside:auto!important}
+ body.report-view .speaker-row .widget{min-height:0!important}
+ body.report-view .speaker-journey-metrics{gap:4px!important}
+ body.report-view .speaker-journey-metric{padding:6px!important}
+ body.report-view .speaker-journey-metric strong{font-size:12pt!important;white-space:normal!important}
+ body.report-view .speaker-journey-map-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)!important;gap:5px!important;align-items:start!important}
+ body.report-view .speaker-journey-map-frame{height:175px!important;min-height:175px!important;overflow:hidden!important}
+ body.report-view #journeyMap{height:175px!important}
+ body.report-view .speaker-journey-map-message{min-height:175px!important;padding:8px!important}
+ body.report-view .speaker-journey-centres-panel{min-width:0!important;min-height:0!important;overflow:visible!important}
+ body.report-view .speaker-journey-centres-panel h4{font-size:9pt!important;padding:6px!important}
+ body.report-view .speaker-journey-centres-list{max-height:none!important;overflow:visible!important}
+ body.report-view .speaker-map-centre{padding:5px!important;gap:5px!important;break-inside:avoid}
+ body.report-view .speaker-map-centre-copy strong{font-size:8pt!important}
+ body.report-view .speaker-map-centre-copy small{font-size:7pt!important}
+ body.report-view .speaker-annual-list{gap:6px!important}
+ body.report-view .speaker-year-card{padding:8px!important;border-radius:6px!important;break-inside:avoid}
+ body.report-view .speaker-year-heading{margin-bottom:6px!important}
+ body.report-view .speaker-year-metrics{gap:5px!important}
+ body.report-view .speaker-year-metric{padding:6px!important}
+ body.report-view .speaker-highlights-grid{gap:5px!important}
+ body.report-view .speaker-highlight-tile{min-height:0!important;padding:7px!important;border-radius:6px!important}
+ body.report-view .speaker-donut-layout{grid-template-columns:105px minmax(0,1fr)!important;gap:7px!important}
+ body.report-view .speaker-donut-chart{max-width:105px!important}
+ body.report-view .speaker-donut-center strong{font-size:17pt!important}
+ body.report-view .speaker-donut-legend{gap:4px!important}
+ body.report-view .speaker-calendar-widget{break-inside:avoid!important;page-break-inside:avoid!important}
+ body.report-view .speaker-calendar{min-width:0!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:2px!important}
+ body.report-view .speaker-calendar-blank{min-height:25px!important}
+ body.report-view .speaker-calendar-day{min-height:35px!important;padding:3px!important;gap:2px!important;border-radius:4px!important}
+ body.report-view .speaker-calendar-weekday{font-size:7pt!important;padding:2px!important}
+ body.report-view .speaker-calendar-day-number,body.report-view .speaker-calendar-day-count{font-size:7pt!important}
+ body.report-view .speaker-calendar-talk{padding:2px!important;gap:1px!important}
+ body.report-view .speaker-calendar-talk-time,body.report-view .speaker-calendar-talk-place{font-size:6.5pt!important;line-height:1.2!important;overflow-wrap:anywhere!important;white-space:normal!important;word-break:normal!important}
+ body.report-view .speaker-table{min-width:0!important;width:100%!important;table-layout:fixed!important;font-size:7.5pt!important;overflow-wrap:anywhere!important}
+ body.report-view .speaker-table th,body.report-view .speaker-table td{padding:4px!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ body.report-view .speaker-table th:first-child,body.report-view .speaker-table td:first-child{width:12%!important}
+ body.report-view .speaker-table th:last-child,body.report-view .speaker-table td:last-child{width:12%!important;text-align:right!important}
+ body.report-view .speaker-table thead{display:table-header-group}
+ body.report-view .speaker-table tr{break-inside:avoid;page-break-inside:avoid}
+ body.report-view .compare-widget{padding:9px!important}
+ body.report-view .compare-heading{margin-bottom:7px!important;gap:6px!important}
+ body.report-view .compare-heading h2{font-size:10pt!important}
+ body.report-view .compare-period{padding:4px 7px!important;font-size:8pt!important}
+ body.report-view .compare-kpis,body.report-view .compare-charts{gap:6px!important}
+ body.report-view .compare-kpi{min-height:0!important;padding:7px!important;border-radius:6px!important}
+ body.report-view .compare-kpi-title{font-size:8pt!important}
+ body.report-view .compare-change{font-size:17pt!important}
+ body.report-view .compare-kpi-row{margin-top:4px!important;gap:6px!important}
+ body.report-view .compare-kpi-row small{font-size:7pt!important;margin-top:2px!important}
+ body.report-view .compare-totals{min-width:0!important;padding-left:6px!important}
+ body.report-view .compare-totals b{font-size:10pt!important}
+ body.report-view .compare-chart{padding:7px!important}
+ body.report-view .compare-chart h3{font-size:8.5pt!important}
+ body.report-view .compare-plot{height:110px!important;margin:6px 2px 0!important}
+ body.report-view .compare-summary{padding:7px!important;gap:7px!important}
+ body.report-view .compare-summary>svg{width:20px!important;height:20px!important}
+ body.report-view .speaker-journey-map-section{margin-top:8px!important;padding-top:7px!important}
+ body.report-view .speaker-journey-map-heading{margin-bottom:5px!important}
+ body.report-view .speaker-calendar-legend{margin:5px 0!important}
+}

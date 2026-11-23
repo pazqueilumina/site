@@ -495,3 +495,11 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - **Atividades recentes:** API GitHub busca até 20 commits reais; o quadro calcula a quantidade que cabe no espaço disponível, em ordem cronológica, sem inventar registros.
 - **Avisos de inscrição:** toast mais abaixo; alerta de e-mail duplicado em âmbar mais visível. **Worker, D1, envios e `weeklyEnabled=false` não alterados.**
 - **Regra obrigatória:** nunca retirar, ocultar, substituir ou eliminar informação/indicador/função existente sem confirmação explícita. Não publicar mudanças futuras sem autorização expressa.
+
+
+## 23/11/2026 — Correção da impressão e retirada do seletor antigo (autorizada)
+- **Relatórios Administrativo e Palestrante:** revisão da folha `admin/report-print.css` para impressão **A4 retrato**, em vez do A4 paisagem da implementação inicial. Layout de impressão independente do dashboard de tela, com cabeçalho limpo, KPIs compactos, quadros em colunas adequadas, gráficos ajustados à largura, barras de rolagem removidas, tabela com cabeçalho repetido e quebras de página apropriadas. O calendário e o mapa do palestrante receberam ajustes específicos. Conteúdo informativo preservado; controles de ação interativos não são impressos.
+- **Validação pré-deploy:** simulação local de impressão em Chromium com quadros e conteúdo representativos, obtendo **2 páginas no Administrativo e 4 no Palestrante** no cenário simulado; quantidade real depende do número de atividades, eventos e linhas de histórico. Não confundir com teste de produção autenticada.
+- **Dashboard Administrativo:** retirada do seletor visível **“Outros períodos…”** a pedido do responsável. Permanecem as setas, seletor de mês/ano, modos **Mensal** e **Ano inteiro**. Removidas as referências JavaScript ao seletor eliminado para evitar erro em tempo de execução. Dashboard do Palestrante já não possuía esse seletor.
+- Atualizados parâmetros de versão dos arquivos CSS/JS afetados para invalidar cache. Mantidas as demais métricas, menus, filtros mensais/anuais, integrações e a configuração **`weeklyEnabled=false`**.
+- **Regra permanente:** não retirar informações ou funções sem autorização explícita; publicar somente após autorização do responsável.

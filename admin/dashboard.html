@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="/admin/dashboard.css?v=relatorios-gestao-20261123">
 <script defer src="/js/dados.js?v=dashboardvisual2"></script>
 <script defer src="/admin/report-view.js?v=relatorios-gestao-20261123"></script>
-<script defer src="/admin/dashboard.js?v=relatorios-gestao-20261123"></script>
-<link rel="stylesheet" href="/admin/report-print.css?v=relatorios-gestao-20261123">
+<script defer src="/admin/dashboard.js?v=impressao-a4-retrato-20261123"></script>
+<link rel="stylesheet" href="/admin/report-print.css?v=impressao-a4-retrato-20261123">
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -74,7 +74,7 @@
   <div class="admin-period-controls" aria-label="Navegação do período">
 <div class="admin-period-navigation"><button type="button" id="adminPrev" aria-label="Período anterior">‹</button><button type="button" id="adminPeriodLabel" aria-label="Escolher mês ou ano" aria-expanded="false" aria-controls="adminPeriodPicker">Novembro de 2026</button><button type="button" id="adminNext" aria-label="Próximo período">›</button></div>
 <div class="admin-period-modes" role="group" aria-label="Visualização"><button type="button" id="adminModeMonth" class="active" aria-pressed="true">Mensal</button><button type="button" id="adminModeYear" aria-pressed="false">Ano inteiro</button></div>
-<div class="admin-period-extra"><label class="sr-only" for="periodo">Outros períodos</label><select id="periodo" aria-label="Outros períodos"><option value="" selected>Outros períodos…</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="365">Últimos 12 meses</option><option value="custom">Personalizado…</option></select></div>
+
 <div id="adminPeriodPicker" class="admin-period-picker" hidden><div class="admin-picker-year"><button type="button" id="adminPickerPrev" aria-label="Ano anterior">‹</button><strong id="adminPickerYear">2026</strong><button type="button" id="adminPickerNext" aria-label="Ano seguinte">›</button></div><div id="adminPickerMonths" class="admin-picker-months"></div></div></div>
  </header>
  <main class="dash-content" id="dashMainContent">
