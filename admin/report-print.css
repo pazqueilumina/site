@@ -1,0 +1,36 @@
+/* Relatórios: visualização e impressão sem alterar dashboards normais. */
+body.report-view{background:#edf3fb}.report-toolbar{position:fixed;top:0;left:0;right:0;z-index:10000;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px 22px;background:#102d52;color:#fff;box-shadow:0 3px 12px #112c4b44;font:600 13px Inter,"Segoe UI",Arial,sans-serif}.report-toolbar>div{display:flex;gap:10px;align-items:center}.report-toolbar a,.report-toolbar button{display:inline-block;padding:8px 12px;border-radius:7px;border:1px solid #9abbe2;color:#fff;background:transparent;text-decoration:none;font:600 12px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer}.report-toolbar button{background:#e5f0ff;color:#103560;border-color:#e5f0ff}.report-toolbar a:hover,.report-toolbar button:hover{filter:brightness(.92)}
+body.report-view .dash-sidebar{display:none}body.report-view .dash-shell{display:block;width:calc(100% - 32px);max-width:1360px;min-height:0;margin:78px auto 30px}body.report-view .dash-main{min-width:0}body.report-view .admin-period-controls,body.report-view .speaker-period-controls{display:none}body.report-view .dash-banner{min-height:82px;height:auto;padding-bottom:13px}body.report-view .report-meta{margin:0;padding:10px 17px;background:#fff8e9;border-bottom:1px solid #eadfc7;color:#5c5960;font-size:11px;line-height:1.5}body.report-view .dash-content{padding:10px 12px 20px}
+@media(max-width:700px){.report-toolbar{position:static;flex-direction:column;align-items:flex-start}.report-toolbar>div{flex-wrap:wrap}body.report-view .dash-shell{width:100%;margin:0}body.report-view .dash-banner{padding:15px}}
+@page{size:A4 landscape;margin:10mm}
+@media print{
+ html,body,body.report-view{margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .report-toolbar,.dash-sidebar,.admin-period-controls,.speaker-period-controls,.dash-footer button,.widget-bottom-link,.widget-bottom-links,.quick-actions,.speaker-map-expand{display:none!important}
+ body.report-view .dash-shell{display:block!important;width:100%!important;max-width:none!important;min-height:0!important;margin:0!important;box-shadow:none!important}
+ body.report-view .dash-main{background:#fff!important;overflow:visible!important}
+ body.report-view .dash-banner{height:auto!important;min-height:65px!important;padding:10px 16px 13px!important;break-after:avoid}
+ body.report-view .dash-content{padding:5px 0!important;overflow:visible!important}
+ body.report-view .report-meta{padding:7px 10px!important;font-size:9px!important}
+ body.report-view .kpi-strip{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;break-inside:avoid;box-shadow:none!important}
+ body.report-view .kpi{min-height:62px!important;padding:7px!important;break-inside:avoid}
+ body.report-view .kpi-icon{width:30px!important;height:30px!important}
+ body.report-view .kpi strong{font-size:19px!important}
+ body.report-view .dashboard-grid,body.report-view .speaker-row{break-inside:auto;gap:7px!important;margin-top:8px!important}
+ body.report-view .top-grid{grid-template-columns:1.2fr 1fr!important}
+ body.report-view .top-grid .widget-countries{grid-column:1/-1!important}
+ body.report-view .middle-grid,body.report-view .bottom-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ body.report-view .speaker-row.two-col{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.report-view .speaker-row.one-col{grid-template-columns:1fr!important}
+ body.report-view .widget{min-height:0!important;break-inside:avoid;page-break-inside:avoid;box-shadow:none!important;border-color:#cad5e4!important;overflow:visible!important}
+ body.report-view .speaker-journeys-widget{break-inside:auto!important;page-break-inside:auto!important}
+ body.report-view .chart-container,body.report-view .speaker-chart{height:175px!important}
+ body.report-view .speaker-table-wrap,body.report-view .speaker-calendar-scroll,body.report-view .table-scroll{overflow:visible!important;max-height:none!important}
+ body.report-view .speaker-table{min-width:0!important;width:100%!important;font-size:10px!important}
+ body.report-view .speaker-table th,body.report-view .speaker-table td{padding:5px!important}
+ body.report-view .speaker-table tr{break-inside:avoid}
+ body.report-view .speaker-journey-map-frame{min-height:240px!important}
+ body.report-view #journeyMap{height:240px!important}
+ body.report-view .speaker-journey-map-frame.is-expanded{position:relative!important;inset:auto!important}
+ body.report-view .dash-footer{margin-top:12px!important}
+ body.report-view .dash-content.is-updating .dashboard-grid,body.report-view .dash-content.is-updating .kpi-strip{opacity:1!important}
+}

@@ -26,15 +26,24 @@ function validDateKey(s){
 }
 function nextDateKey(s){const [y,m,d]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,d+1)).toISOString().slice(0,10);}
 function subscriberPeriodParams(url){
- const month=url.searchParams.get('month')||'',from=url.searchParams.get('from')||'',to=url.searchParams.get('to')||'';
- if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)||!validDateKey(month+'-01')||!validDateKey(from)||!validDateKey(to)||from>to)return null;
+ const month=url.searchParams.get('month')||'',year=url.searchParams.get('year')||'';
+ const from=url.searchParams.get('from')||'',to=url.searchParams.get('to')||'';
+ const annual=!!year&&!month;
+ if((!annual&&!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))||(annual&&!/^\d{4}$/.test(year))||(year&&month)
+   ||!validDateKey(from)||!validDateKey(to)||from>to)return null;
  if((Date.parse(to+'T00:00:00Z')-Date.parse(from+'T00:00:00Z'))/86400000>400)return null;
- const [y,m]=month.split('-').map(Number);
- const nextMonth=new Date(Date.UTC(y,m,1)).toISOString().slice(0,10);
  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
- const currentMonth=parts.year+'-'+parts.month;
- if(month>currentMonth)return null;
- return {month,monthStart:saoPauloMidnight(month+'-01'),monthEnd:saoPauloMidnight(nextMonth),
+ const currentMonth=parts.year+'-'+parts.month,currentYear=Number(parts.year);
+ if(annual){
+  const y=Number(year);if(y<2020||y>currentYear)return null;
+  const start=year+'-01-01',end=String(y+1)+'-01-01',current=y===currentYear;
+  return {month:null,year,monthStart:saoPauloMidnight(start),monthEnd:saoPauloMidnight(end),
+   cutoff:current?new Date().toISOString():saoPauloMidnight(end),
+   currentMonth:current,periodStart:saoPauloMidnight(from),periodEnd:saoPauloMidnight(nextDateKey(to))};
+ }
+ if(!validDateKey(month+'-01')||month>currentMonth)return null;
+ const [y,m]=month.split('-').map(Number),nextMonth=new Date(Date.UTC(y,m,1)).toISOString().slice(0,10);
+ return {month,year:null,monthStart:saoPauloMidnight(month+'-01'),monthEnd:saoPauloMidnight(nextMonth),
   cutoff:month===currentMonth?new Date().toISOString():saoPauloMidnight(nextMonth),
   currentMonth:month===currentMonth,periodStart:saoPauloMidnight(from),periodEnd:saoPauloMidnight(nextDateKey(to))};
 }
@@ -68,12 +77,12 @@ export async function onRequestGet({env,request}){
   if(!filter)return json({erro:'Filtro de situação inválido.'},400);
   const wantsStats=url.searchParams.get('stats')==='1';
   const period=wantsStats?subscriberPeriodParams(url):null;
-  if(wantsStats&&!period)return json({erro:'Mês ou intervalo de datas inválido.'},400);
+  if(wantsStats&&!period)return json({erro:'Mês, ano ou intervalo de datas inválido.'},400);
   const rawPage=Number(url.searchParams.get('page')||1);
   if(!Number.isInteger(rawPage)||rawPage<1||rawPage>100000)return json({erro:'Página inválida.'},400);
   try{
     if(!await hasTable(db)){
-      if(wantsStats)return json({status:'ok',summary:zero,monthly:zeroMonthly,periodNew:0,month:period.month,historicalEstimated:!period.currentMonth,weeklyHistoricalExact:false});
+      if(wantsStats)return json({status:'ok',summary:zero,monthly:zeroMonthly,periodNew:0,month:period.month,year:period.year,historicalEstimated:!period.currentMonth,weeklyHistoricalExact:false});
       if(url.searchParams.get('format')==='csv')return csvResponse([]);
       return json({status:'ok',summary:zero,items:[],total:0,page:1,pageSize:50});
     }
@@ -102,7 +111,7 @@ export async function onRequestGet({env,request}){
       if(period.currentMonth)monthly.activeAtEnd=summary.active;
       const periodRow=await db.prepare('SELECT COUNT(*) AS total FROM monthly_subscribers WHERE created_at>=? AND created_at<?')
         .bind(period.periodStart,period.periodEnd).first();
-      return json({status:'ok',summary,monthly,periodNew:number(periodRow?.total),month:period.month,
+      return json({status:'ok',summary,monthly,periodNew:number(periodRow?.total),month:period.month,year:period.year,
         historicalEstimated:!period.currentMonth,weeklyHistoricalExact:false});
     }
     if(url.searchParams.get('summary')==='1')return json({status:'ok',summary});

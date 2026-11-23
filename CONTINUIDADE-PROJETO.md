@@ -485,3 +485,13 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - **Possíveis ampliações posteriores:** estatísticas da agenda (eventos por mês, centros mais ativos) e engajamento (pesquisas/conteúdos procurados), **somente após validar disponibilidade e qualidade dos dados**.
 - **Princípios de implementação:** filtros de período e comparações úteis; métricas verificáveis; sinalizar dados ausentes, estimativas e limitações; aproveitar fontes existentes antes de criar nova coleta. Preservar integralmente o Dashboard e suas funcionalidades atuais, salvo aprovação explícita para mudanças.
 - **Próxima ação:** apresentar proposta visual/funcional e confirmar escopo com o responsável **antes** de programar ou publicar. A mudança de navegação para a área Estatísticas também exige confirmação específica.
+
+
+## 23/11/2026 — Menus, relatórios, inscrições anuais, atividades e avisos (implementação autorizada)
+- **Menus dos Dashboards Administrativo e Palestrante:** Dashboard e Gestão abertos por padrão e recolhíveis. **Gestão acima de Acervo**, com Agenda, Inscritos, Locais, Palestras e Shorts. Acervo e demais opções preservados.
+- **Relatórios:** `/admin/relatorios.html` permite escolher Dashboard Administrativo ou Palestrante, período **mensal (mês/ano)** ou **anual (somente ano)**, prévia e impressão/salvamento em PDF. Abre o dashboard com o período pré-aplicado, data de emissão, nota sobre métricas de situação atual e CSS de impressão **A4 paisagem**. Não altera a visualização normal dos dashboards.
+- **Estatísticas:** segue como implementação futura de análises detalhadas, conforme seção de planejamento. Não substituir nem remover os gráficos atuais do Dashboard.
+- **Inscrições da agenda:** seleção anual passa a consultar os números do ano inteiro via `/api/admin/inscritos?stats=1&year=YYYY`; seleção mensal continua disponível. Mantidos os quatro indicadores do período e os dois cartões de **Acumulado geral** com a situação atual. A limitação histórica do consentimento semanal permanece explicitada.
+- **Atividades recentes:** API GitHub busca até 20 commits reais; o quadro calcula a quantidade que cabe no espaço disponível, em ordem cronológica, sem inventar registros.
+- **Avisos de inscrição:** toast mais abaixo; alerta de e-mail duplicado em âmbar mais visível. **Worker, D1, envios e `weeklyEnabled=false` não alterados.**
+- **Regra obrigatória:** nunca retirar, ocultar, substituir ou eliminar informação/indicador/função existente sem confirmação explícita. Não publicar mudanças futuras sem autorização expressa.

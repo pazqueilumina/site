@@ -309,7 +309,28 @@ function renderRecent(palestras,shorts){
   link.append(media,wrap);host.append(link);
  }
 }
-function renderActivities(items){const host=clear('atividades');if(!Array.isArray(items)||!items.length){host.append(txt('p','Histórico do GitHub indisponível no momento.','empty-text'));return;}items.slice(0,5).forEach(item=>{const row=txt('div','','activity-row'),icon=txt('span','','activity-icon');icon.append(svg('refresh'));const wrap=txt('span','','row-text');wrap.append(txt('strong',item.message||'Atualização do site'),txt('small',item.date?new Date(item.date).toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'GitHub'));row.append(icon,wrap);host.append(row);});}
+function renderActivities(items){
+ const host=clear('atividades');
+ if(!Array.isArray(items)||!items.length){host.append(txt('p','Histórico do GitHub indisponível no momento.','empty-text'));return;}
+ const append=count=>{
+  host.replaceChildren();
+  items.slice(0,count).forEach(item=>{
+   const row=txt('div','','activity-row'),icon=txt('span','','activity-icon');icon.append(svg('refresh'));
+   const wrap=txt('span','','row-text'),message=txt('strong',item.message||'Atualização do site');message.title=item.message||'Atualização do site';
+   wrap.append(message,txt('small',item.date?new Date(item.date).toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'GitHub'));
+   row.append(icon,wrap);host.append(row);
+  });
+ };
+ const initial=Math.min(5,items.length);append(initial);
+ requestAnimationFrame(()=>{
+  if(!host.isConnected)return;
+  const widget=host.closest('.widget');if(!widget)return;
+  const available=widget.getBoundingClientRect().bottom-host.getBoundingClientRect().top-12;
+  const rowHeight=Math.max(32,host.firstElementChild?.getBoundingClientRect().height||38);
+  const count=Math.min(items.length,Math.max(initial,Math.floor((available+1)/rowHeight)));
+  if(count>initial)append(count);
+ });
+}
 function renderPending(palestras,agenda,emails){
  const host=clear('pendencias'),rows=[];
  if(palestras){
@@ -346,14 +367,15 @@ function renderSubscriberSummary(data){
  // Os totais acumulados são a situação atual, independentemente do mês consultado.
  for(const [id,key] of [['subActive','active'],['subPending','pending']])
   set(id,ok?nf(Number(summary[key]||0)):'—');
- if(ok&&/^\d{4}-(0[1-9]|1[0-2])$/.test(data.month||'')){
+ if(ok&&/^\d{4}$/.test(data.year||''))set('subPeriodLabel','Ano de '+data.year);
+  else if(ok&&/^\d{4}-(0[1-9]|1[0-2])$/.test(data.month||'')){
   const [year,month]=data.month.split('-').map(Number);
   const label=new Intl.DateTimeFormat('pt-BR',{timeZone:'UTC',month:'long',year:'numeric'}).format(new Date(Date.UTC(year,month-1,15)));
   set('subPeriodLabel',label.charAt(0).toUpperCase()+label.slice(1));
  }else set('subPeriodLabel','Mês de referência');
  const info=$('subInfo');
  info.textContent=ok
-  ?'Agenda semanal: consentimento atual dos confirmados no mês; ativações posteriores não possuem data registrada.'
+  ?'Agenda semanal: consentimento atual dos confirmados no '+(data.year?'ano':'mês')+'; ativações posteriores não possuem data registrada.'
   :data?.message||'Não foi possível consultar os inscritos.';
  info.classList.toggle('warning',!ok);
 }
@@ -365,7 +387,8 @@ function subscriberReferenceMonth(){
  return parts.year+'-'+parts.month;
 }
 function subscriberStatsUrl(){
- return '/api/admin/inscritos?stats=1&month='+encodeURIComponent(subscriberReferenceMonth())
+ const selection=isYear()?'&year='+encodeURIComponent(String(appliedYear)):'&month='+encodeURIComponent(subscriberReferenceMonth());
+ return '/api/admin/inscritos?stats=1'+selection
   +'&from='+encodeURIComponent(dateKey(rangeStart()))+'&to='+encodeURIComponent(dateKey(rangeEnd()));
 }
 async function loadSubscriberStats(){
@@ -564,9 +587,22 @@ function initEmailYear(){
  select.value=String(currentYear);
  select.addEventListener('change',()=>update());
 }
+function initSidebarGroups(){
+ for(const [buttonId,subId] of [['dashboardToggle','subDashboard'],['gestaoToggle','subGestao']]){
+  const button=$(buttonId),sub=$(subId);
+  button.addEventListener('click',()=>{const open=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!open));sub.hidden=open;});
+ }
+}
 $('acervoToggle').addEventListener('click',()=>{const expanded=$('acervoToggle').getAttribute('aria-expanded')==='true';$('acervoToggle').setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});
 $('aplicarPeriodo').addEventListener('click',applyCustomPeriod);
 $('atualizar').addEventListener('click',update);
 $('emailFailed').addEventListener('click',()=>{const button=$('emailFailed'),expanded=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!expanded));$('emailFailuresPanel').hidden=expanded;});
 $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
-initCustomFilter();initPeriodControls();initEmailYear();update();
+const reportConfig=window.PazRelatorio?.config()||null;
+if(reportConfig){
+ periodMode=reportConfig.mode;appliedYear=reportConfig.year;appliedMonth=reportConfig.month-1;
+ window.PazRelatorio.activate('administrativo',reportConfig);
+}
+initSidebarGroups();initCustomFilter();initPeriodControls();initEmailYear();
+if(reportConfig&&$('emailYear').querySelector('option[value="'+reportConfig.year+'"]'))$('emailYear').value=String(reportConfig.year);
+update().then(()=>window.PazRelatorio?.maybePrint(reportConfig));

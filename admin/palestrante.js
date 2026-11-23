@@ -118,6 +118,10 @@ function initFilters(){
  document.addEventListener('click',e=>{if(!e.target.closest('.speaker-period-controls'))speakerClosePicker();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')speakerClosePicker();});
  $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
+ for(const [buttonId,subId] of [['dashboardToggle','subDashboard'],['gestaoToggle','subGestao']]){
+  const button=$(buttonId),sub=$(subId);
+  button.addEventListener('click',()=>{const open=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!open));sub.hidden=open;});
+ }
  $('acervoToggle').addEventListener('click',()=>{const btn=$('acervoToggle'),expanded=btn.getAttribute('aria-expanded')==='true';btn.setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});
  $('atualizar').addEventListener('click',load);
  $('journeyMapExpand').addEventListener('click',()=>{
@@ -1007,4 +1011,9 @@ async function load(){
  }catch(e){error=e;setNotice('Não foi possível carregar as palestras: '+e.message);set('siteStatus','Falha na conexão');set('refreshLabel','Falha ao atualizar');set('refreshFeedback','Falha ao atualizar os dados.');}
  finally{button.disabled=false;button.classList.remove('is-loading');setTimeout(()=>{if(!button.disabled)set('refreshLabel','Atualizar');},1800);}
 }
-initFilters();load();
+const reportConfig=window.PazRelatorio?.config()||null;
+if(reportConfig){
+ range.kind=reportConfig.mode;applied.year=reportConfig.year;applied.month=reportConfig.month-1;
+ window.PazRelatorio.activate('palestrante',reportConfig);
+}
+initFilters();load().then(()=>window.PazRelatorio?.maybePrint(reportConfig));

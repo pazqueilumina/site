@@ -3,7 +3,7 @@ function resp(obj,status=200){return new Response(JSON.stringify(obj),{status,he
 export async function onRequestGet({request,env}){
  if(!env.GITHUB_TOKEN)return resp({erro:'Token GitHub não configurado.'},503);
  const branch=branchDaRequisicao(request,env);
- const url='https://api.github.com/repos/pazqueilumina/site/commits?sha='+encodeURIComponent(branch)+'&per_page=5';
+ const url='https://api.github.com/repos/pazqueilumina/site/commits?sha='+encodeURIComponent(branch)+'&per_page=20';
  try{
   const r=await fetch(url,{headers:{Authorization:'Bearer '+env.GITHUB_TOKEN,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'pazqueilumina-admin'},cache:'no-store'});
   if(!r.ok)throw Error('GitHub HTTP '+r.status);
