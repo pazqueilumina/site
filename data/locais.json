@@ -69,7 +69,8 @@
       "uf": "RJ",
       "latitude": "-22.911885",
       "longitude": "-43.4065717",
-      "verificacaoCoordenadas": "osm"
+      "verificacaoCoordenadas": "osm",
+      "verificacaoEndereco": "responsavel"
     },
     {
       "id": "lar-paulo-de-tarso",
