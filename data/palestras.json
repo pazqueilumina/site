@@ -904,12 +904,14 @@
       "dataAproximada": true,
       "serie": "ministerio",
       "duracao": "00:53:50",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0018.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:00:16.577Z"}
     },
     {
       "pid": "PAL-0019",
