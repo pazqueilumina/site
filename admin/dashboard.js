@@ -265,7 +265,8 @@ function renderRecent(palestras,shorts){
  const items=construirRecentes(palestras,shorts);
  if(!items.length){host.append(txt('p','Nenhum conteúdo cadastrado.','empty-text'));return;}
  for(const item of items){
-  const link=txt('a','','content-row');link.href=item.url;link.title=item.titulo;
+  const tituloExibido=/^PAL-\d+$/.test(item.id)?formatarTituloSite(item.titulo):item.titulo;
+  const link=txt('a','','content-row');link.href=item.url;link.title=tituloExibido;
   if(/^https:\/\//.test(item.url)){link.target='_blank';link.rel='noopener noreferrer';}
   const media=txt('span','','content-media content-media--'+item.chave);
   media.setAttribute('aria-hidden','true');
@@ -305,7 +306,7 @@ function renderRecent(palestras,shorts){
    ?shorts?.find(s=>s.sid===item.id)?.publicadoEm
    :palestras?.find(p=>p.pid===item.id)?.publicacoes?.[item.chave];
   if(novoNosUltimos7Dias(published))header.append(txt('span','NOVO','content-fresh'));
-  wrap.append(header,txt('strong',item.titulo),txt('small',item.id+' · '+item.legenda));
+  wrap.append(header,txt('strong',tituloExibido),txt('small',item.id+' · '+item.legenda));
   link.append(media,wrap);host.append(link);
  }
 }

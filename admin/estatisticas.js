@@ -126,7 +126,9 @@ function rankingAgrupado() {
   }
   return [...mapa.values()].map(item => {
     const cadastro = estado.catalogo && estado.catalogo.get(item.id);
-    item.titulo = cadastro && cadastro.titulo || item.titulo || item.id;
+    const tituloOriginal = cadastro && cadastro.titulo || item.titulo || item.id;
+    // Shorts mantêm a grafia do cadastro; palestras seguem o padrão público.
+    item.titulo = /^PAL-\d+$/.test(item.id) ? formatarTituloSite(tituloOriginal) : tituloOriginal;
     item.total = estado.tipo === 'todos' ? tipos.reduce((s, tipo) => s + item[tipo], 0) : item[estado.tipo];
     return item;
   }).filter(item => item.total > 0 && (!estado.busca || (item.titulo + ' ' + item.id).toLocaleLowerCase('pt-BR').includes(estado.busca)))
