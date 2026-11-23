@@ -170,24 +170,40 @@ function prepararCoordenadasConfirmadas(){
 }
 function atualizarResumoVerificacao(){
  const resultados=estado.locais.map(resultadoLocal);
- const verificados=resultados.filter(r=>r&&r.status!=='pendente').length;
+ // Conferência humana de coordenadas não comprova, por si só, o endereço.
+ const avaliados=resultados.filter(r=>r&&r.status!=='pendente'&&r.status!=='conferido').length;
  const erros=resultados.filter(r=>['erro','divergente'].includes(r?.status)).length;
  const aproximados=resultados.filter(r=>r?.status==='aproximado').length;
- const manuais=resultados.filter(r=>r?.status==='manual').length;
- const conferidos=resultados.filter(r=>r?.status==='conferido').length;
- const links=resultados.filter(r=>r?.status==='link').length;
- const pendentes=estado.locais.length-verificados;
- $('errosLocais').textContent=verificados?String(erros):(estado.locais.length===0?'0':'—');
+ const pendentes=estado.locais.length-avaliados;
+ $('errosLocais').textContent=avaliados?String(erros):(estado.locais.length===0?'0':'—');
  const ultima=Math.max(0,...resultados.map(r=>r?.verificadoEm||0));
  const quando=ultima?' · Última: '+new Date(ultima).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
  $('statusVerificacaoLocais').textContent=estado.verificando
-  ?'Verificando… '+estado.verificadosNaRodada+' de '+estado.locais.length+' · '+verificados+' resultado(s) salvo(s)'
+  ?'Verificando… '+estado.verificadosNaRodada+' de '+estado.locais.length+' · '+avaliados+' resultado(s) de endereço'
   :!estado.locais.length?'Nenhum local cadastrado'
-  :!verificados?'Sem verificação salva neste navegador'
-  :pendentes?verificados+' de '+estado.locais.length+' avaliados · '+pendentes+' pendente(s)'+quando
-  :verificados+' de '+estado.locais.length+' avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+(manuais?' · '+manuais+' com coordenadas sem conferência':'')+(conferidos?' · '+conferidos+' conferido(s) pelo responsável':'')+(links?' · '+links+' com link do mapa':'')+quando;
+  :!avaliados?'Sem verificação de endereço registrada'
+  :pendentes?avaliados+' de '+estado.locais.length+' endereços avaliados · '+pendentes+' pendente(s)'+quando
+  :avaliados+' de '+estado.locais.length+' endereços avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+quando;
+ const comCoordenadas=estado.locais.filter(l=>l.latitude&&l.longitude);
+ const confirmadas=comCoordenadas.filter(l=>l.verificacaoCoordenadas==='osm'||l.verificacaoCoordenadas==='conferido').length;
+ const semRegistro=comCoordenadas.length-confirmadas;
+ const preparaveis=locaisComCoordenadasConfirmadas().length;
+ $('totalCoordenadasLocais').textContent=String(comCoordenadas.length);
+ $('statusCoordenadasLocais').textContent=!comCoordenadas.length
+  ?'Nenhuma coordenada cadastrada'
+  :confirmadas+' confirmada(s) · '+semRegistro+' sem confirmação registrada'+(preparaveis?' · '+preparaveis+' pronta(s) para preparar':'');
+ const local=estado.locais.find(l=>l.id===estado.selecionado);
+ const status=$('statusCoordenadasLocal');
+ const resultado=local&&resultadoLocal(local);
+ status.className='status-coordenadas-local'+(local?.verificacaoCoordenadas?' confirmada':'');
+ status.textContent=!local?'Selecione um local para consultar a confirmação das coordenadas.'
+  :!local.latitude||!local.longitude?'Sem coordenadas cadastradas neste local.'
+  :local.verificacaoCoordenadas==='conferido'?'Coordenadas conferidas pelo responsável e registradas no cadastro.'
+  :local.verificacaoCoordenadas==='osm'?'Coordenadas verificadas pelo OpenStreetMap e registradas no cadastro.'
+  :resultado?.status==='ok'&&resultado.fonte==='OpenStreetMap'?'Verificação exata disponível nesta sessão. Use “Preparar coordenadas verificadas” e publique para registrar.'
+  :'Coordenadas cadastradas, mas sem confirmação permanente registrada.';
  $('verificarLocais').disabled=estado.verificando||!estado.sha||!estado.locais.length;
- $('guardarCoordenadas').hidden=!locaisComCoordenadasConfirmadas().length;
+ $('guardarCoordenadas').hidden=!preparaveis;
  $('guardarCoordenadas').disabled=estado.verificando||!estado.sha;
  $('verificarLocais').textContent=estado.verificando?'Verificando…':'Verificar endereços';
  $('cartaoErrosLocais').classList.toggle('tem-erros',erros>0);
@@ -290,8 +306,9 @@ function renderizar() {
       aviso.textContent='Endereço alterado; verificar novamente';
       corpo.append(aviso);
     }
-    if(resultado&&(['erro','aproximado','manual','link','pendente','conferido','divergente'].includes(resultado.status)||
-      (resultado.status==='ok'&&l.verificacaoCoordenadas==='osm'))){
+    // Confirmações positivas ficam no box de Coordenadas e no editor.
+    // Avisos de erro ou de verificação incompleta continuam na lista.
+    if(resultado&&['erro','aproximado','manual','link','pendente','divergente'].includes(resultado.status)){
       const aviso=document.createElement('span');
       aviso.className='local-aviso '+resultado.status;
       aviso.textContent=resultado.status==='erro'?'Endereço não localizado':

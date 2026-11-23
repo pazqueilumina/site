@@ -109,7 +109,7 @@
 .pagina-agenda .indicadores .indicador:nth-child(3) strong{color:#287b5c}
 .pagina-agenda .indicadores .indicador:nth-child(4) strong{color:#256b49}
 .pagina-agenda .indicadores .indicador.pendente{background:#fff;border-color:var(--line)}
-.pagina-locais .indicadores-locais{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pagina-locais .indicadores-locais{grid-template-columns:repeat(4,minmax(0,1fr))}
 .pagina-locais .indicador-verificacao{display:flex;flex-direction:column;align-items:flex-start}
 .pagina-locais .numero-erros{display:inline-flex;align-items:center;justify-content:flex-start;border:0;border-radius:6px;background:transparent;color:var(--navy);padding:0;min-height:31px;cursor:pointer}
 .pagina-locais .numero-erros:hover strong{text-decoration:underline}
@@ -132,7 +132,8 @@
 .pagina-locais .ajuda-coordenadas{font-size:12px;color:var(--muted);line-height:1.55;margin:9px 0 13px}
 .pagina-locais .detalhes-coordenadas .duas-colunas{margin-top:11px}
 .pagina-locais .detalhes-coordenadas>small{margin-bottom:12px}
-@media(max-width:590px){.pagina-locais .indicadores-locais{grid-template-columns:repeat(2,minmax(0,1fr))}.pagina-locais .indicadores-locais .indicador:last-child{grid-column:span 2}}
+@media(max-width:1050px){.pagina-locais .indicadores-locais{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:590px){.pagina-locais .indicadores-locais{grid-template-columns:minmax(0,1fr)}.pagina-locais .indicadores-locais .indicador:last-child{grid-column:auto}}
 
 .pagina-locais .sugestao-coordenadas{margin:12px 0 14px;padding:12px 14px;background:#f5f8fb;border:1px solid #dce6ee;border-radius:9px}
 .pagina-locais .sugestao-coordenadas p{margin:0 0 9px;color:var(--ink);font-size:12px;line-height:1.5}
@@ -156,3 +157,9 @@
 /* Status persistentes das coordenadas conferidas. */
 .pagina-locais .local-aviso.conferido,.pagina-locais .local-aviso.ok{color:#26713c}
 .pagina-locais .local-aviso.divergente{color:#b94343}
+
+/* Coordenadas e endereços são indicadores independentes. */
+.pagina-locais .indicadores-locais .indicador{min-width:0}
+.pagina-locais .indicadores-locais .indicador small{overflow-wrap:anywhere}
+.pagina-locais .status-coordenadas-local{margin:12px 0 8px;padding:9px 11px;border:1px solid #dce6ee;border-radius:8px;background:#f5f8fb;color:#435a70;font-size:12px;line-height:1.45}
+.pagina-locais .status-coordenadas-local.confirmada{border-color:#c9e8d5;background:#ecf7f0;color:#266846}
