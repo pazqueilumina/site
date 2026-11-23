@@ -808,3 +808,11 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Arquivos:** `admin/dashboard.css` e `admin/dashboard.html` (atualização da versão de cache CSS). Nenhum outro arquivo funcional, Worker, serviço de e-mail, filtros ou dashboards alterado.
 - **Validação:** conferidos IDs dos três grupos, regras de ocultação, chaves CSS equilibradas e alteração limitada ao breakpoint móvel. Conferência visual real em celular permanece pendente.
 - **Código publicado na main:** `fab26fcff3ae9011e8b7ec78716ea7c6493e1edf`. O status da implantação Cloudflare Pages deve ser consultado no check deste commit (iniciado após o push).
+
+## 23/11/2026 — Corrigida data de publicação do áudio PAL-0001
+
+- **Problema observado:** após publicação pelo programa Windows v3.1, o site exibiu 39 áudios, mas o indicador **Novos*** do **Resumo do acervo** no Dashboard continuou em 0. O Dashboard considera o campo `publicacoes.audio` para identificar novos MP3 no período; a atualização do programa Windows incluiu o endereço R2, mas não o carimbo de publicação.
+- **Correção autorizada:** somente no cadastro `data/palestras.json`, palestra `PAL-0001` — **As Curas de Jesus** — acrescentado `publicacoes.audio: "2026-11-23T20:27:00.000Z"`, correspondente à data/hora do commit de publicação original `763af516c5b670d802da89854e1c9fa0c012c534`. O áudio existente em `https://audio.pazqueilumina.com.br/PAL-0001.mp3` foi preservado.
+- **Resultado esperado:** no filtro **Novembro de 2026**, o Dashboard deve exibir **Áudios: 39** e **Novos: +1**. Outros períodos continuam seguindo o filtro selecionado.
+- **Validação:** JSON parseado; comparação dos objetos confirma alteração de **um único campo** em PAL-0001, sem mudar os demais cadastros. Commit `bfeb2434b07f63d6b23854bce9c78f83ebb629b4` na `main`. Check **Cloudflare Pages**: **completed/success**, em **2026-11-23T20:32:38Z**. Conferência visual do indicador com os dados reais ainda recomendada.
+- **Pendência separada:** a versão Windows v3.1 não registra automaticamente `publicacoes.audio` em publicações futuras. Corrigir em versão futura somente após autorização explícita; **não gerar nova versão agora**. Não houve alteração no Worker, envios de e-mail, dashboard ou outros registros.
