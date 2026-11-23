@@ -836,12 +836,14 @@
       "dataAproximada": true,
       "serie": "doutrina",
       "duracao": "00:53:25",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0031.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "https://drive.google.com/file/d/1fBA6OhKXeX4wIzmLZdo7SH-LXGOLU7zD/view?usp=sharing",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "existente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T20:57:40.220Z"}
     },
     {
       "pid": "PAL-0032",
