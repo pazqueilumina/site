@@ -972,12 +972,14 @@
       "dataAproximada": true,
       "serie": "temas",
       "duracao": "00:51:40",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0022.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:03:02.751Z"}
     },
     {
       "pid": "PAL-0023",
