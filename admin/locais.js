@@ -185,7 +185,7 @@ function atualizarResumoVerificacao(){
  $('errosLocais').textContent=avaliados?String(erros):(estado.locais.length===0?'0':'—');
  const ultima=Math.max(0,...resultados.map(r=>r?.verificadoEm||0));
  const quando=ultima?' · Última: '+new Date(ultima).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
- const confirmacao=confirmadosEndereco?' · '+confirmadosEndereco+' conferido(s) pelo responsável':'';
+ // A confirmação manual do ponto é mostrada no cartão de coordenadas, sem reduzir a contagem de endereços avaliados.
  const listaPendencias=$('pendenciasEnderecosLocais');
  listaPendencias.replaceChildren();
  listaPendencias.hidden=!pendencias.length;
@@ -206,16 +206,19 @@ function atualizarResumoVerificacao(){
   ?'Verificando… '+estado.verificadosNaRodada+' de '+estado.locais.length+' · '+avaliados+' resultado(s) de endereço'
   :!estado.locais.length?'Nenhum local cadastrado'
   :!avaliados?'Sem verificação de endereço registrada'
-  :pendentes?avaliados+' de '+estado.locais.length+' endereços avaliados · '+pendentes+' pendente(s)'+confirmacao+quando
-  :avaliados+' de '+estado.locais.length+' endereços avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+confirmacao+quando;
+  :pendentes?avaliados+' de '+estado.locais.length+' endereços avaliados · '+pendentes+' pendente(s)'+quando
+  :avaliados+' de '+estado.locais.length+' endereços avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+quando;
  const comCoordenadas=estado.locais.filter(l=>l.latitude&&l.longitude);
+ const semCoordenadas=estado.locais.length-comCoordenadas.length;
  const confirmadas=comCoordenadas.filter(l=>l.verificacaoCoordenadas==='osm'||l.verificacaoCoordenadas==='conferido').length;
  const semRegistro=comCoordenadas.length-confirmadas;
  const preparaveis=locaisComCoordenadasConfirmadas().length;
  $('totalCoordenadasLocais').textContent=String(comCoordenadas.length);
  $('statusCoordenadasLocais').textContent=!comCoordenadas.length
   ?'Nenhuma coordenada cadastrada'
-  :confirmadas+' confirmada(s) · '+semRegistro+' sem confirmação registrada'+(preparaveis?' · '+preparaveis+' pronta(s) para preparar':'');
+  :confirmadas+' confirmada(s) · '+semRegistro+' coordenada(s) pendente(s) de confirmação'+(preparaveis?' · '+preparaveis+' pronta(s) para preparar':'');
+ $('statusSemCoordenadasLocais').textContent=semCoordenadas+' '+(semCoordenadas===1?'local sem coordenadas cadastradas':'locais sem coordenadas cadastradas');
+ $('statusConferenciaManualLocais').textContent=confirmadosEndereco+' '+(confirmadosEndereco===1?'local com endereço e coordenadas conferidos':'locais com endereço e coordenadas conferidos')+' pelo responsável';
  const local=estado.locais.find(l=>l.id===estado.selecionado);
  const enderecoConfirmado=$('statusEnderecoLocal');
  enderecoConfirmado.hidden=!local?.verificacaoEndereco;
