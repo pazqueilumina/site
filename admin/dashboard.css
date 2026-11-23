@@ -233,4 +233,15 @@
 .dash-nav .nav-dashboard-heading[aria-expanded=false] .chev{transform:rotate(-90deg)}
 .dash-nav .nav-dashboard-sub[hidden]{display:none}
 .dash-nav #subGestao{padding-left:19px;gap:2px}
-@media(max-width:760px){.dash-nav .nav-dashboard-heading{min-height:32px;padding:6px 9px;font-size:11px}.dash-nav .nav-dashboard-group{flex:none}.dash-nav .nav-dashboard-sub{display:none}}
+/* Navegação administrativa móvel: manter todos os grupos acessíveis e recolhíveis. */
+@media(max-width:760px){
+ .dash-nav{display:flex;flex-direction:column;align-items:stretch;overflow:visible;gap:4px;padding:6px 12px 12px}
+ .dash-nav .nav-dashboard-group{flex:none;width:100%}
+ .dash-nav .nav-dashboard-heading{min-height:36px;padding:7px 11px;font-size:12px}
+ .dash-nav .nav-expand,.dash-nav .nav-return{display:flex}
+ .dash-nav .nav-sub{display:grid;width:100%;padding-left:18px}
+ .dash-nav .nav-dashboard-sub{display:grid}
+ .dash-nav .nav-sub[hidden],.dash-nav .nav-dashboard-sub[hidden]{display:none}
+ .dash-nav .nav-sub a,.dash-nav .nav-dashboard-sub .nav-link{white-space:normal;min-height:34px;font-size:12px}
+ .dash-nav .nav-return{margin-top:5px;padding-top:10px}
+}
