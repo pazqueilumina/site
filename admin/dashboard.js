@@ -340,21 +340,32 @@ function emailDate(value){
  return parts.day+'/'+parts.month+' às '+parts.hour+'h'+(parts.minute==='00'?'':parts.minute);
 }
 function renderSubscriberSummary(data){
- const ok=data?.status==='ok'&&data.monthly,monthly=data?.monthly||{};
+ const ok=data?.status==='ok'&&data.monthly,monthly=data?.monthly||{},summary=data?.summary||{};
  for(const [id,key] of [['subNew','new'],['subConfirmed','confirmed'],['subWeekly','weekly'],['subCancelled','cancelled']])
   set(id,ok?nf(Number(monthly[key]||0)):'—');
- set('subCumulative',ok?nf(Number(monthly.activeAtEnd||0)):'—');
- const monthName=$('subMonth').selectedOptions[0]?.textContent||'';
- set('subCumulativeLabel','Acumulado até '+monthName.toLowerCase()+' de '+$('subYear').value);
+ // Os totais acumulados são a situação atual, independentemente do mês consultado.
+ for(const [id,key] of [['subActive','active'],['subPending','pending']])
+  set(id,ok?nf(Number(summary[key]||0)):'—');
+ if(ok&&/^\d{4}-(0[1-9]|1[0-2])$/.test(data.month||'')){
+  const [year,month]=data.month.split('-').map(Number);
+  const label=new Intl.DateTimeFormat('pt-BR',{timeZone:'UTC',month:'long',year:'numeric'}).format(new Date(Date.UTC(year,month-1,15)));
+  set('subPeriodLabel',label.charAt(0).toUpperCase()+label.slice(1));
+ }else set('subPeriodLabel','Mês de referência');
  const info=$('subInfo');
  info.textContent=ok
-  ?'Agenda semanal: consentimento atual dos confirmados no mês; ativações posteriores não possuem data registrada.'+(data.historicalEstimated?' Saldo histórico estimado: reinscrições podem alterar registros anteriores.':'')
+  ?'Agenda semanal: consentimento atual dos confirmados no mês; ativações posteriores não possuem data registrada.'
   :data?.message||'Não foi possível consultar os inscritos.';
- info.classList.toggle('warning',!ok||data?.historicalEstimated);
+ info.classList.toggle('warning',!ok);
 }
 const dateKey=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+function subscriberReferenceMonth(){
+ // Usa o seletor geral do Dashboard no modo mensal, sem duplicar controles.
+ if(isMonth())return appliedYear+'-'+String(appliedMonth+1).padStart(2,'0');
+ const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+ return parts.year+'-'+parts.month;
+}
 function subscriberStatsUrl(){
- return '/api/admin/inscritos?stats=1&month='+encodeURIComponent($('subYear').value+'-'+$('subMonth').value)
+ return '/api/admin/inscritos?stats=1&month='+encodeURIComponent(subscriberReferenceMonth())
   +'&from='+encodeURIComponent(dateKey(rangeStart()))+'&to='+encodeURIComponent(dateKey(rangeEnd()));
 }
 async function loadSubscriberStats(){
@@ -553,25 +564,9 @@ function initEmailYear(){
  select.value=String(currentYear);
  select.addEventListener('change',()=>update());
 }
-function initSubscriptionPeriod(){
- const monthSelect=$('subMonth'),yearSelect=$('subYear');
- const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).formatToParts(new Date()).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
- const currentYear=Number(parts.year),currentMonth=Number(parts.month);
- for(let i=0;i<12;i++){const opt=document.createElement('option');opt.value=String(i+1).padStart(2,'0');opt.textContent=adminMonths[i];monthSelect.append(opt);}
- for(let year=currentYear;year>=2026;year--){const opt=document.createElement('option');opt.value=String(year);opt.textContent=String(year);yearSelect.append(opt);}
- yearSelect.value=String(currentYear);monthSelect.value=String(currentMonth).padStart(2,'0');
- function refreshMonthOptions(){
-  const thisYear=Number(yearSelect.value)===currentYear;
-  for(const option of monthSelect.options)option.disabled=thisYear&&Number(option.value)>currentMonth;
-  if(thisYear&&Number(monthSelect.value)>currentMonth)monthSelect.value=String(currentMonth).padStart(2,'0');
- }
- yearSelect.addEventListener('change',()=>{refreshMonthOptions();loadSubscriberStats();});
- monthSelect.addEventListener('change',()=>loadSubscriberStats());
- refreshMonthOptions();
-}
 $('acervoToggle').addEventListener('click',()=>{const expanded=$('acervoToggle').getAttribute('aria-expanded')==='true';$('acervoToggle').setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});
 $('aplicarPeriodo').addEventListener('click',applyCustomPeriod);
 $('atualizar').addEventListener('click',update);
 $('emailFailed').addEventListener('click',()=>{const button=$('emailFailed'),expanded=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!expanded));$('emailFailuresPanel').hidden=expanded;});
 $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
-initCustomFilter();initPeriodControls();initEmailYear();initSubscriptionPeriod();update();
+initCustomFilter();initPeriodControls();initEmailYear();update();

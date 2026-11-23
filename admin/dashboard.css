@@ -201,15 +201,16 @@
 .inscricoes-rodape a{font-size:12px;font-weight:750;color:#1d5b87;text-decoration:none}
 .inscricoes-rodape a:hover{text-decoration:underline}
 
-/* Inscrições da agenda: seleção independente de mês e ano e saldo histórico. */
-.inscricoes-periodo{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:11px;font-weight:700;color:#53697b}
-.inscricoes-periodo label{margin-left:4px}
-.inscricoes-periodo select{height:31px;padding:4px 7px;border:1px solid #d4dfe8;border-radius:7px;background:#fff;color:#183451;font:700 11px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer}
-.inscricoes-periodo #subMonth{min-width:108px}
-.inscricoes-periodo #subYear{min-width:72px}
-.inscricoes-periodo select:focus-visible{outline:2px solid #3c7eb5;outline-offset:2px}
-.inscricoes-saldo{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;color:#526c73;font-size:12px}
-.inscricoes-saldo strong{font-size:19px;color:#153e4a;font-variant-numeric:tabular-nums}
-.inscricoes-nota{margin:9px 2px 0;font-size:10px;line-height:1.5;color:#6d7c8a}
+
+/* Inscrições da agenda: KPIs mensais e acumulado geral separados visualmente. */
+.inscricoes-mes-atual{font-size:11px;font-weight:700;color:#53697b;background:#f0f5f7;border:1px solid #dce6e6;border-radius:6px;padding:6px 10px}
+.inscricoes-acumulado{border-top:1px solid #e1e9eb;margin-top:14px;padding-top:13px}
+.inscricoes-acumulado-cabecalho{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.inscricoes-acumulado-cabecalho h3{font-size:12px;line-height:1.35;font-weight:750;color:#153e4a;margin:0}
+.inscricoes-acumulado-cabecalho>span{font-size:10px;color:#647987}
+.inscricoes-total-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.inscricoes-total-grid .email-monitor-metric{background:#f8fbfc;border-color:#d9e5e9}
+.inscricoes-total-grid .email-monitor-metric small{font-size:10px;font-weight:500;color:#6d7c8a}
+.inscricoes-nota{margin:0;font-size:10px;line-height:1.5;color:#6d7c8a}
 .inscricoes-nota.warning{color:#8d6635}
-@media(max-width:560px){.inscricoes-periodo{width:100%;margin-left:25px}.inscricoes-saldo{font-size:11px}}
+@media(max-width:560px){.inscricoes-total-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.inscricoes-rodape{align-items:flex-start}.inscricoes-mes-atual{margin-left:25px}}

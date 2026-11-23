@@ -4,9 +4,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard | Paz que Ilumina</title>
-<link rel="stylesheet" href="/admin/dashboard.css?v=emails-mensais-20261123">
+<link rel="stylesheet" href="/admin/dashboard.css?v=inscricoes-acumulado-20261123">
 <script defer src="/js/dados.js?v=dashboardvisual2"></script>
-<script defer src="/admin/dashboard.js?v=emails-mensais-20261123"></script>
+<script defer src="/admin/dashboard.js?v=inscricoes-acumulado-20261123"></script>
 </head>
 <body>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -121,15 +121,21 @@
   </section>
   <section class="dashboard-grid email-monitor-grid" id="inscricoes" aria-label="Inscrições da agenda">
    <article class="widget widget-email-monitor">
-    <div class="email-monitor-heading"><h2><svg><use href="#i-users"/></svg>Inscrições da agenda</h2><div class="inscricoes-periodo"><label for="subMonth">Mês</label><select id="subMonth" aria-label="Mês das inscrições"></select><label for="subYear">Ano</label><select id="subYear" aria-label="Ano das inscrições"></select></div></div>
+    <div class="email-monitor-heading"><h2><svg><use href="#i-users"/></svg>Inscrições da agenda</h2><span class="inscricoes-mes-atual" id="subPeriodLabel">Mês de referência</span></div>
     <div class="email-monitor-metrics">
      <div class="email-monitor-metric"><span>Novos inscritos</span><strong id="subNew">—</strong></div>
      <div class="email-monitor-metric"><span>Confirmados</span><strong id="subConfirmed">—</strong></div>
      <div class="email-monitor-metric" title="Consentimento semanal atual dos confirmados neste mês; ativações posteriores não possuem data histórica."><span>Agenda semanal</span><strong id="subWeekly">—</strong></div>
      <div class="email-monitor-metric"><span>Cancelamentos</span><strong id="subCancelled">—</strong></div>
     </div>
-    <div class="inscricoes-rodape"><div class="inscricoes-saldo"><span id="subCumulativeLabel">Acumulado até o mês selecionado</span><strong id="subCumulative">—</strong><span>inscritos ativos</span></div><a href="/admin/inscritos.html">Gerenciar inscritos →</a></div>
-    <p id="subInfo" class="inscricoes-nota" role="status">Consultando inscrições…</p>
+    <div class="inscricoes-acumulado" aria-label="Acumulado geral de inscrições">
+     <div class="inscricoes-acumulado-cabecalho"><h3>Acumulado geral</h3><span>Situação atual</span></div>
+     <div class="inscricoes-total-grid">
+      <div class="email-monitor-metric"><span>Inscritos ativos</span><strong id="subActive">—</strong><small>Total acumulado</small></div>
+      <div class="email-monitor-metric"><span>Aguardando confirmação</span><strong id="subPending">—</strong><small>Situação atual</small></div>
+     </div>
+    </div>
+    <div class="inscricoes-rodape"><p id="subInfo" class="inscricoes-nota" role="status">Consultando inscrições…</p><a href="/admin/inscritos.html">Gerenciar inscritos →</a></div>
    </article>
   </section>
   <section class="dashboard-grid bottom-grid" id="relatorios" aria-label="Agenda, relatórios e ações">

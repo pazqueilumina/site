@@ -1006,11 +1006,6 @@ async function ativarInscricaoAgenda() {
     dados = r.ok ? await r.json() : null;
     if (!dados || dados.available !== true) return;
   } catch { return; } // Não mostrar formulário enquanto o Worker não estiver pronto.
-  // Enquanto o envio semanal estiver desativado, explicar isso antes do consentimento.
-  const descricao = document.getElementById('descricaoInscricaoAgenda');
-  if (descricao && dados.weeklyEnabled !== true) {
-    descricao.textContent = 'Receba a agenda mensal e, quando o envio semanal for ativado, a programação da próxima semana aos domingos. Gratuito e sem lembretes adicionais.';
-  }
   secao.hidden = false;
   const abrirCancelamento = document.getElementById('abrirCancelamentoAgenda');
   const formCancelamento = document.getElementById('formCancelamentoAgenda');
@@ -1096,7 +1091,7 @@ function renderizarAgenda() {
     '<section class="inscricao-mensal" id="inscricaoMensal" aria-labelledby="tituloInscricaoMensal" hidden>' +
       '<div class="inscricao-mensal-intro"><span class="inscricao-mensal-etiqueta">AGENDA POR E-MAIL</span>' +
       '<h2 id="tituloInscricaoMensal">Receba as agendas mensal e semanal</h2>' +
-      '<p id="descricaoInscricaoAgenda">A programação do mês e, todo domingo, os encontros da semana seguinte. Gratuito, sem lembretes adicionais.</p></div>' +
+      '<p id="descricaoInscricaoAgenda">Receba por e-mail a agenda mensal e, aos domingos, a agenda semanal com os próximos encontros, palestras e estudos. Gratuito e sem lembretes adicionais.</p></div>' +
       '<form id="formInscricaoMensal" class="inscricao-mensal-form">' +
         '<label for="emailInscricaoMensal">Seu e-mail</label>' +
         '<div class="inscricao-mensal-linha"><input id="emailInscricaoMensal" type="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" maxlength="254" required>' +
@@ -1104,7 +1099,7 @@ function renderizarAgenda() {
         '<label class="inscricao-mensal-consentimento"><input type="checkbox" name="consent" required><span>Concordo em receber por e-mail a agenda mensal e a agenda semanal aos domingos. Posso cancelar ambas a qualquer momento pelo link nas mensagens.</span></label>' +
         '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
       '</form>' +
-      '<div class="inscricao-mensal-cancelar"><button type="button" id="abrirCancelamentoAgenda" aria-expanded="false" aria-controls="formCancelamentoAgenda" hidden>Já recebe as agendas? Cancelar inscrição</button>' +
+      '<div class="inscricao-mensal-cancelar"><button type="button" id="abrirCancelamentoAgenda" aria-expanded="false" aria-controls="formCancelamentoAgenda" hidden>Cancelar inscrição</button>' +
         '<form id="formCancelamentoAgenda" hidden><label for="emailCancelamentoAgenda">E-mail cadastrado</label><div class="inscricao-mensal-linha"><input id="emailCancelamentoAgenda" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required maxlength="254"><button type="submit">Enviar confirmação</button></div>' +
         '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
         '</form></div>' +
