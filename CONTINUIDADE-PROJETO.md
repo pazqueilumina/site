@@ -722,3 +722,12 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - Eventos medidos: contagens de interação no GoatCounter, não reprodução concluída nem download efetivo. Histórico do novo padrão começou em 23/11/2026; eventos antigos 'assistir: título' não são somados automaticamente.
 - O catálogo data/palestras.json e data/shorts.json é consultado no navegador para títulos e links. Não altera cadastros, Worker de e-mails, D1, R2, ou dashboards já existentes.
 - Estado no commit: código publicado; ativação de dados reais depende da configuração do segredo e teste com o GoatCounter.
+
+
+## 23/11/2026 — Relatórios de Estatísticas e ajuste visual dos indicadores
+
+- **Solicitação:** retirar os textos redundantes "Cliques para assistir/ouvir/baixar" dos cartões Vídeos, Áudios, PDFs e Shorts; no cartão Total manter apenas "No período selecionado" abaixo do valor.
+- **Menu Relatórios:** adicionar terceira opção **Estatísticas do acervo**, preservando Administrativo e Palestrante. Permitir escolher mês/ano ou ano inteiro, pré-visualizar e imprimir/salvar em PDF.
+- **Conteúdo do relatório:** dados reais da mesma API GoatCounter que abastece Estatísticas; cartões de totais, Top 10, comparação por formato, evolução e ranking completo com identificação das palestras. A métrica continua sendo cliques de saída, não reproduções nem downloads concluídos.
+- **Impressão:** modo de relatório sem sidebar e controles, com cabeçalho de período e emissão; folha A4 paisagem, tipografia e gráficos compactos, tabela completa com cabeçalho repetido em páginas adicionais quando necessário. Impressão automática só após carregamento bem-sucedido dos dados; erro de API não gera impressão com valores falsos.
+- **Arquivos:** admin/estatisticas.html, admin/estatisticas.js, admin/estatisticas.css, admin/estatisticas-print.css (novo), admin/relatorios.html, admin/relatorios.js. Demais dashboards, Worker e cadastros não alterados.

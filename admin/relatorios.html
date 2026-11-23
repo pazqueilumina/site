@@ -2,18 +2,18 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Relatórios | Paz que Ilumina</title>
-<link rel="stylesheet" href="/admin/relatorios.css?v=relatorios-gestao-20261123"><script defer src="/admin/relatorios.js?v=relatorios-gestao-20261123"></script>
+<link rel="stylesheet" href="/admin/relatorios.css?v=relatorios-stats-20261123"><script defer src="/admin/relatorios.js?v=relatorios-stats-20261123"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head><body><main class="report-page">
-<header class="report-header"><a href="/admin/dashboard.html" class="report-back">← Dashboard</a><p class="eyebrow">PAZ QUE ILUMINA · ADMINISTRAÇÃO</p><h1>Relatórios</h1><p>Prepare a impressão de um dos dashboards, escolhendo o período.</p></header>
+<header class="report-header"><a href="/admin/dashboard.html" class="report-back">← Dashboard</a><p class="eyebrow">PAZ QUE ILUMINA · ADMINISTRAÇÃO</p><h1>Relatórios</h1><p>Prepare a impressão dos dashboards ou das estatísticas do acervo, escolhendo o período.</p></header>
 <section class="report-panel" aria-labelledby="reportTitle"><h2 id="reportTitle">Configurar relatório</h2>
 <form id="reportForm">
-<fieldset><legend>Dashboard</legend><label class="report-choice"><input type="radio" name="dashboard" value="administrativo" checked> Administrativo</label><label class="report-choice"><input type="radio" name="dashboard" value="palestrante"> Palestrante</label></fieldset>
+<fieldset><legend>Tipo de relatório</legend><label class="report-choice"><input type="radio" name="dashboard" value="administrativo" checked> Administrativo</label><label class="report-choice"><input type="radio" name="dashboard" value="palestrante"> Palestrante</label><label class="report-choice"><input type="radio" name="dashboard" value="estatisticas"> Estatísticas do acervo</label></fieldset>
 <fieldset><legend>Período</legend><label class="report-choice"><input type="radio" name="mode" value="month" checked> Mensal</label><label class="report-choice"><input type="radio" name="mode" value="year"> Anual (ano inteiro)</label></fieldset>
 <div class="report-selects"><label id="monthField">Mês <select id="reportMonth" required></select></label><label>Ano <select id="reportYear" required></select></label></div>
 <div class="report-summary" id="reportSummary" aria-live="polite"></div>
-<p class="report-info">Todos os quadros do dashboard serão incluídos. Indicadores atuais e atividades recentes serão identificados separadamente dos dados do período.</p>
+<p class="report-info" id="reportInfo">Todos os quadros do dashboard serão incluídos. Indicadores atuais e atividades recentes serão identificados separadamente dos dados do período.</p>
 <div class="report-actions"><button type="button" id="reportPreview" class="secondary">Visualizar impressão</button><button type="submit" class="primary">Imprimir / Salvar em PDF</button></div>
-</form></section><footer>Formato A4 (retrato) · A impressão abre em nova aba · Nenhum dado é alterado.</footer>
+</form></section><footer id="reportFooter">Formato A4 · A impressão abre em nova aba · Nenhum dado é alterado.</footer>
 </main></body></html>

@@ -5,7 +5,24 @@ const nomes = { video: 'Vídeos', audio: 'Áudios', pdf: 'PDFs', short: 'Shorts'
 const cores = { video: '#3679ec', audio: '#16a17a', pdf: '#e59a2c', short: '#8b5ce2' };
 const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const agora = new Date();
-const estado = { ano: agora.getFullYear(), mes: agora.getMonth() + 1, modo: 'mes', tipo: 'todos', busca: '', resposta: null, catalogo: null, requisicao: 0 };
+const reportQuery = new URLSearchParams(location.search);
+const reportRequested = reportQuery.get('report') === '1';
+function lerConfigRelatorio() {
+  if (!reportRequested) return null;
+  const mode = reportQuery.get('mode'), anoTexto = reportQuery.get('year'), mesTexto = reportQuery.get('month');
+  const ano = Number(anoTexto), mes = mode === 'month' ? Number(mesTexto) : 1;
+  const valido = ['month','year'].includes(mode) && /^\d{4}$/.test(anoTexto || '') &&
+    Number.isInteger(ano) && ano >= 2024 && ano <= agora.getFullYear() &&
+    Number.isInteger(mes) && mes >= 1 && mes <= 12 &&
+    (mode !== 'month' || (ano < agora.getFullYear() || mes <= agora.getMonth() + 1));
+  return valido ? { mode, ano, mes, autoPrint: reportQuery.get('autoprint') === '1' }
+    : { erro: 'Período inválido. Volte à opção Relatórios e selecione outro período.' };
+}
+const configRelatorio = lerConfigRelatorio();
+const estado = { ano: configRelatorio && !configRelatorio.erro ? configRelatorio.ano : agora.getFullYear(),
+  mes: configRelatorio && !configRelatorio.erro ? configRelatorio.mes : agora.getMonth() + 1,
+  modo: configRelatorio && configRelatorio.mode === 'year' ? 'ano' : 'mes',
+  tipo: 'todos', busca: '', resposta: null, catalogo: null, requisicao: 0 };
 const fmt = n => Number(n || 0).toLocaleString('pt-BR');
 const criar = (tag, texto, classe) => {
   const el = document.createElement(tag);
@@ -119,8 +136,9 @@ function indicadores() {
   const dados = estado.resposta;
   $('statsTotal').textContent = fmt(dados.total);
   for (const tipo of tipos) $('stats' + tipo.charAt(0).toUpperCase() + tipo.slice(1)).textContent = fmt(dados.totais[tipo]);
-  $('statsPeriodo').textContent = estado.modo === 'ano' ? 'Durante o ano' : 'Durante o mês';
-  $('statsRegistros').textContent = fmt((dados.ranking || []).length) + ' formatos com acessos';
+  $('statsPeriodo').textContent = 'No período selecionado';
+  const formatos = (dados.ranking || []).length;
+  $('statsRegistros').textContent = fmt(formatos) + (formatos === 1 ? ' formato com acesso' : ' formatos com acessos');
 }
 function comparacao() {
   const host = limpar('statsComparacao'), totais = estado.resposta.totais;
@@ -236,6 +254,14 @@ async function carregar() {
     try{await obterCatalogo();}catch(e){/* O ranking continua com os títulos do GoatCounter. */}
     if(req!==estado.requisicao)return;
     aviso('','');desenhar();
+    if (configRelatorio && !configRelatorio.erro) {
+      const printButton = $('statsReportPrint');
+      if (printButton) printButton.disabled = false;
+      if (configRelatorio.autoPrint && !document.body.dataset.autoPrinted) {
+        document.body.dataset.autoPrinted = '1';
+        requestAnimationFrame(() => setTimeout(() => window.print(), 300));
+      }
+    }
     $('siteStatus').textContent='GoatCounter conectado';
     $('lastUpdate').textContent=new Date(dados.atualizadoEm).toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
   }catch(err){
@@ -244,8 +270,37 @@ async function carregar() {
     $('siteStatus').textContent='Consulta indisponível';
   }
 }
-iniciarMenu();iniciarPeriodo();
+function iniciarRelatorio() {
+  if (!configRelatorio) return;
+  document.body.classList.add('stats-report-mode');
+  const periodo = configRelatorio.erro ? 'Período inválido'
+    : configRelatorio.mode === 'year' ? 'Ano de ' + configRelatorio.ano
+    : meses[configRelatorio.mes - 1] + ' de ' + configRelatorio.ano;
+  const toolbar = criar('div',undefined,'stats-report-toolbar');
+  const titulo = criar('strong','Relatório de Estatísticas · ' + periodo);
+  const botoes = criar('div',undefined,'stats-report-actions');
+  const voltar = criar('a','Voltar aos relatórios');
+  voltar.href = '/admin/relatorios.html';
+  const imprimir = criar('button','Imprimir / Salvar em PDF');
+  imprimir.type = 'button';
+  imprimir.id = 'statsReportPrint';
+  imprimir.disabled = true;
+  imprimir.addEventListener('click',() => { if (estado.resposta && estado.resposta.status === 'ok') window.print(); });
+  botoes.append(voltar,imprimir);toolbar.append(titulo,botoes);
+  document.body.prepend(toolbar);
+  document.title = 'Relatório de Estatísticas — ' + periodo + ' | Paz que Ilumina';
+  const heading = document.querySelector('.dash-welcome h1');
+  if (heading) heading.textContent = 'Relatório de Estatísticas';
+  const sub = document.querySelector('.dash-welcome p');
+  if (sub) sub.textContent = 'Paz que Ilumina · ' + periodo;
+  const meta = $('statsReportMeta');
+  meta.hidden = false;
+  meta.textContent = 'Emitido em ' + new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}) +
+    ' · Fonte: GoatCounter · Contagem de interações no site';
+}
+iniciarMenu();iniciarPeriodo();iniciarRelatorio();
 $('statsTipo').addEventListener('change',e=>{estado.tipo=e.target.value;desenhar();});
 $('statsBusca').addEventListener('input',e=>{estado.busca=e.target.value.trim().toLocaleLowerCase('pt-BR');desenhar();});
 $('statsAtualizar').addEventListener('click',carregar);
-carregar();
+if (configRelatorio && configRelatorio.erro) aviso(configRelatorio.erro,'warning');
+else carregar();

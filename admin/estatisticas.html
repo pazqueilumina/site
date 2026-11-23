@@ -5,8 +5,9 @@
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Estatísticas de conteúdo | Paz que Ilumina</title>
 <link rel="stylesheet" href="/admin/dashboard.css?v=stats-20261123">
-<link rel="stylesheet" href="/admin/estatisticas.css?v=stats-20261123">
-<script defer src="/admin/estatisticas.js?v=stats-20261123"></script>
+<link rel="stylesheet" href="/admin/estatisticas.css?v=stats-report-20261123">
+<link rel="stylesheet" href="/admin/estatisticas-print.css?v=stats-report-20261123">
+<script defer src="/admin/estatisticas.js?v=stats-report-20261123"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head>
@@ -82,7 +83,7 @@
 </header>
 <main class="stats-main">
  <div class="stats-toolbar">
-  <div class="stats-toolbar-title"><h2>Conteúdos mais populares</h2><p id="periodoExibido">Carregando período…</p><small id="statsRegistros">Aguardando dados do GoatCounter</small></div>
+  <div class="stats-toolbar-title"><h2>Conteúdos mais populares</h2><p id="periodoExibido">Carregando período…</p><small id="statsRegistros">Aguardando dados do GoatCounter</small><p id="statsReportMeta" class="stats-report-meta" hidden></p></div>
   <div class="stats-toolbar-fields">
    <label class="sr-only" for="statsTipo">Tipo de conteúdo</label>
    <select id="statsTipo" aria-label="Tipo de conteúdo"><option value="todos">Todos os formatos</option><option value="video">Vídeos</option><option value="audio">Áudios</option><option value="pdf">PDFs</option><option value="short">Shorts</option></select>
@@ -93,11 +94,11 @@
  </div>
  <div id="statsAviso" class="stats-aviso loading" role="status" aria-live="polite">Consultando o GoatCounter…</div>
  <section class="stats-kpis" aria-label="Indicadores de interação">
-  <article class="stats-kpi"><span>Total de interações</span><strong id="statsTotal">—</strong><small id="statsPeriodo">Durante o mês</small></article>
-  <article class="stats-kpi"><span>Vídeos</span><strong id="statsVideo">—</strong><small>Cliques para assistir</small></article>
-  <article class="stats-kpi"><span>Áudios</span><strong id="statsAudio">—</strong><small>Cliques para ouvir</small></article>
-  <article class="stats-kpi"><span>PDFs</span><strong id="statsPdf">—</strong><small>Cliques para baixar</small></article>
-  <article class="stats-kpi"><span>Shorts</span><strong id="statsShort">—</strong><small>Cliques para assistir</small></article>
+  <article class="stats-kpi"><span>Total de interações</span><strong id="statsTotal">—</strong><small id="statsPeriodo">No período selecionado</small></article>
+  <article class="stats-kpi"><span>Vídeos</span><strong id="statsVideo">—</strong></article>
+  <article class="stats-kpi"><span>Áudios</span><strong id="statsAudio">—</strong></article>
+  <article class="stats-kpi"><span>PDFs</span><strong id="statsPdf">—</strong></article>
+  <article class="stats-kpi"><span>Shorts</span><strong id="statsShort">—</strong></article>
  </section>
  <section class="stats-grid" aria-label="Rankings e comparações">
   <article class="stats-widget"><h2>Ranking — 10 conteúdos mais acessados</h2><p class="stats-widget-subtitle">Ordenado pelo filtro selecionado</p><div id="statsTop" class="stats-top"><p class="stats-empty">Aguardando estatísticas…</p></div></article>
