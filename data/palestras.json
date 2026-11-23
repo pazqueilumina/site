@@ -1143,12 +1143,14 @@
       "dataAproximada": true,
       "serie": "ministerio",
       "duracao": "00:59:23",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0009.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:07:54.166Z"}
     },
     {
       "pid": "PAL-0010",
