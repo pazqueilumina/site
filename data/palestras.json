@@ -1243,12 +1243,14 @@
       "dataAproximada": true,
       "serie": "temas",
       "duracao": "00:29:56",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0015.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:11:33.406Z"}
     },
     {
       "pid": "PAL-0001",
