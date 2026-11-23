@@ -825,3 +825,12 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Implementação:** novo `js/titulos.js`, adaptação de `js/app.js`, `admin/estatisticas.js`, `admin/dashboard.js`, `admin/palestrante.js` e `admin/palestras.js`, com referências de script e cache atualizadas nas nove páginas públicas e nas quatro páginas administrativas envolvidas. Sem mudanças no Worker de e-mails, no envio semanal, em dados ou no programa Windows.
 - **Validação:** seis scripts compilados sem erro de sintaxe, seis casos de teste de formatação aprovados (incluindo hífen separador, meia-risca, travessão e palavras compostas), referências do script conferidas e Shorts preservados. Conferência visual no navegador após o deploy recomendada.
 - **Publicação confirmada:** commit `7dd2d2652b6ff4174ad09cfd7ed95cf62679b067` na `main`, com check **Cloudflare Pages completed/success** em **2026-11-23T21:39:58Z**. A conferência visual no navegador continua recomendada.
+
+## 23/11/2026 — Vínculo do MP3 PAL-0004 após upload R2
+
+- **Autorização:** responsável autorizou o commit da correção específica da PAL-0004 na branch `main`. Não alterar PAL-0013 nem outros registros.
+- **Diagnóstico:** o usuário confirmou `PAL-0004.mp3` no bucket Cloudflare R2, baixou e reproduziu o arquivo, e testou com sucesso o endereço público em janela anônima. O painel havia recebido erro de conflito de SHA ao publicar o vínculo no GitHub; o cadastro permanecia pendente.
+- **Alteração exclusiva em `data/palestras.json`:** PAL-0004 recebeu `audio: "https://audio.pazqueilumina.com.br/PAL-0004.mp3"`, `audioPlataforma: "Cloudflare R2"`, `statusAudio: "existente"` e `publicacoes.audio: "2026-11-23T22:18:10.750Z"`.
+- **Critério da data:** o carimbo de `publicacoes.audio` registra a publicação do **vínculo no catálogo do site** durante este commit; não representa nem afirma o horário exato de upload ao R2, que não foi obtido.
+- **Preservação:** 79 palestras; 78 com vínculo de áudio após o commit; PAL-0013 continua pendente. Nenhum outro dado, título, link, mídia, código, Worker de e-mails, envio semanal, Dashboard ou programa Windows foi modificado.
+- **Validação pré-commit:** JSON válido, contagem dos registros e comparação dos 78 outros objetos sem mudanças. O commit na `main` aciona o fluxo automático do Cloudflare Pages; verificar o check e o site após a publicação.

@@ -1087,15 +1087,18 @@
       "dataAproximada": false,
       "serie": "temas",
       "duracao": "00:02:43",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0004.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "sem-arquivo",
       "ativo": true,
       "eventoId": "",
-      "centroId": ""
+      "centroId": "",
+      "publicacoes": {
+        "audio": "2026-11-23T22:18:10.750Z"
+      }
     },
     {
       "pid": "PAL-0005",
