@@ -1006,12 +1006,14 @@
       "dataAproximada": true,
       "serie": "evangelho",
       "duracao": "01:00:43",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0024.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:04:23.182Z"}
     },
     {
       "pid": "PAL-0002",
