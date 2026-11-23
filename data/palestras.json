@@ -573,9 +573,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:47:50.855Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:47:50.855Z"
+      }
     },
     {
       "pid": "PAL-0034",
@@ -590,9 +591,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:48:35.018Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:48:35.018Z"
+      }
     },
     {
       "pid": "PAL-0035",
@@ -607,9 +609,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:49:04.640Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:49:04.640Z"
+      }
     },
     {
       "pid": "PAL-0036",
@@ -624,9 +627,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:49:37.876Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:49:37.876Z"
+      }
     },
     {
       "pid": "PAL-0037",
@@ -641,9 +645,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:50:23.132Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:50:23.132Z"
+      }
     },
     {
       "pid": "PAL-0038",
@@ -658,9 +663,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:50:54.818Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:50:54.818Z"
+      }
     },
     {
       "pid": "PAL-0039",
@@ -675,9 +681,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:51:46.546Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:51:46.546Z"
+      }
     },
     {
       "pid": "PAL-0040",
@@ -692,9 +699,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:52:20.526Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:52:20.526Z"
+      }
     },
     {
       "pid": "PAL-0041",
@@ -709,9 +717,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:53:02.280Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:53:02.280Z"
+      }
     },
     {
       "pid": "PAL-0042",
@@ -741,9 +750,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:53:48.191Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:53:48.191Z"
+      }
     },
     {
       "pid": "PAL-0026",
@@ -758,9 +768,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:54:10.322Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:54:10.322Z"
+      }
     },
     {
       "pid": "PAL-0027",
@@ -775,9 +786,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:54:49.473Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:54:49.473Z"
+      }
     },
     {
       "pid": "PAL-0028",
@@ -792,9 +804,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:56:07.054Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:56:07.054Z"
+      }
     },
     {
       "pid": "PAL-0029",
@@ -809,9 +822,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:17:38.596Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:17:38.596Z"
+      }
     },
     {
       "pid": "PAL-0030",
@@ -826,9 +840,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:56:58.115Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:56:58.115Z"
+      }
     },
     {
       "pid": "PAL-0031",
@@ -843,9 +858,10 @@
       "pdf": "https://drive.google.com/file/d/1fBA6OhKXeX4wIzmLZdo7SH-LXGOLU7zD/view?usp=sharing",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "existente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:57:40.220Z"}
+      "statusPdf": "existente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:57:40.220Z"
+      }
     },
     {
       "pid": "PAL-0032",
@@ -860,9 +876,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:58:21.432Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:58:21.432Z"
+      }
     },
     {
       "pid": "PAL-0016",
@@ -877,9 +894,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:58:59.479Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:58:59.479Z"
+      }
     },
     {
       "pid": "PAL-0017",
@@ -894,9 +912,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:59:39.443Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:59:39.443Z"
+      }
     },
     {
       "pid": "PAL-0018",
@@ -911,9 +930,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:00:16.577Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:00:16.577Z"
+      }
     },
     {
       "pid": "PAL-0019",
@@ -928,9 +948,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:00:48.024Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:00:48.024Z"
+      }
     },
     {
       "pid": "PAL-0020",
@@ -945,9 +966,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:01:29.187Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:01:29.187Z"
+      }
     },
     {
       "pid": "PAL-0021",
@@ -962,9 +984,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:02:19.638Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:02:19.638Z"
+      }
     },
     {
       "pid": "PAL-0022",
@@ -979,9 +1002,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:03:02.751Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:03:02.751Z"
+      }
     },
     {
       "pid": "PAL-0023",
@@ -996,9 +1020,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:03:41.917Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:03:41.917Z"
+      }
     },
     {
       "pid": "PAL-0024",
@@ -1013,9 +1038,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:04:23.182Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:04:23.182Z"
+      }
     },
     {
       "pid": "PAL-0002",
@@ -1030,9 +1056,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T20:45:42.559Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T20:45:42.559Z"
+      }
     },
     {
       "pid": "PAL-0003",
@@ -1047,16 +1074,17 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:04:32.930Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:04:32.930Z"
+      }
     },
     {
       "pid": "PAL-0004",
       "youtubeId": "yvwRHfnsR54",
       "titulo": "Essa não é uma história sobre balões",
-      "data": "2026-05-07",
-      "dataAproximada": true,
+      "data": "2026-05-04",
+      "dataAproximada": false,
       "serie": "temas",
       "duracao": "00:02:43",
       "audio": "",
@@ -1064,7 +1092,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "pendente",
-      "statusPdf": "pendente"
+      "statusPdf": "sem-arquivo",
+      "ativo": true,
+      "eventoId": "",
+      "centroId": ""
     },
     {
       "pid": "PAL-0005",
@@ -1082,9 +1113,10 @@
       "statusPdf": "sem-arquivo",
       "ativo": true,
       "horario": "",
-      "centroId": "youtube"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:04:47.246Z"}
+      "centroId": "youtube",
+      "publicacoes": {
+        "audio": "2026-11-23T21:04:47.246Z"
+      }
     },
     {
       "pid": "PAL-0006",
@@ -1099,9 +1131,10 @@
       "pdf": "https://pazqueilumina.com.br/pdf/PAL-0006-EURIPEDES-BARSANULFO.pdf",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "existente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:05:46.160Z"}
+      "statusPdf": "existente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:05:46.160Z"
+      }
     },
     {
       "pid": "PAL-0007",
@@ -1116,9 +1149,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:06:27.065Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:06:27.065Z"
+      }
     },
     {
       "pid": "PAL-0008",
@@ -1133,9 +1167,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:07:11.962Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:07:11.962Z"
+      }
     },
     {
       "pid": "PAL-0009",
@@ -1150,9 +1185,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:07:54.166Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:07:54.166Z"
+      }
     },
     {
       "pid": "PAL-0010",
@@ -1167,9 +1203,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:08:52.738Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:08:52.738Z"
+      }
     },
     {
       "pid": "PAL-0011",
@@ -1184,9 +1221,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:09:37.576Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:09:37.576Z"
+      }
     },
     {
       "pid": "PAL-0012",
@@ -1201,9 +1239,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:10:25.616Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:10:25.616Z"
+      }
     },
     {
       "pid": "PAL-0013",
@@ -1233,9 +1272,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:11:06.600Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:11:06.600Z"
+      }
     },
     {
       "pid": "PAL-0015",
@@ -1250,9 +1290,10 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente"
-    ,
-      "publicacoes": {"audio":"2026-11-23T21:11:33.406Z"}
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T21:11:33.406Z"
+      }
     },
     {
       "pid": "PAL-0001",
