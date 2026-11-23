@@ -67,7 +67,8 @@
       "cidade": "Rio de Janeiro",
       "uf": "RJ",
       "latitude": "-22.911885",
-      "longitude": "-43.4065717"
+      "longitude": "-43.4065717",
+      "verificacaoCoordenadas": "osm"
     },
     {
       "id": "lar-paulo-de-tarso",
