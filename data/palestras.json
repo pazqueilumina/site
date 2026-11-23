@@ -1160,12 +1160,14 @@
       "dataAproximada": true,
       "serie": "temas",
       "duracao": "01:04:30",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0010.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:08:52.738Z"}
     },
     {
       "pid": "PAL-0011",
