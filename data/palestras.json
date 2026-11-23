@@ -602,12 +602,14 @@
       "dataAproximada": true,
       "serie": "parabolas",
       "duracao": "00:31:22",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0035.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T20:49:04.640Z"}
     },
     {
       "pid": "PAL-0036",
