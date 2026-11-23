@@ -1092,12 +1092,14 @@
       "dataAproximada": true,
       "serie": "doutrina",
       "duracao": "01:10:06",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0006.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "https://pazqueilumina.com.br/pdf/PAL-0006-EURIPEDES-BARSANULFO.pdf",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "existente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:05:46.160Z"}
     },
     {
       "pid": "PAL-0007",
