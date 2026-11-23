@@ -1226,12 +1226,14 @@
       "dataAproximada": true,
       "serie": "parabolas",
       "duracao": "00:57:39",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0014.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:11:06.600Z"}
     },
     {
       "pid": "PAL-0015",
