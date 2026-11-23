@@ -448,3 +448,10 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - O Monitor de e-mails também passa a contabilizar entregas da agenda semanal quando existir a tabela D1 `weekly_deliveries`, mantendo compatibilidade com a tabela ainda não criada; falhas e histórico de execução semanal são incluídos. Corrigida a persistência da mensagem de sucesso após cancelamento administrativo.
 
 - Cancelamento administrativo suporta também uma tabela antiga sem as colunas semanais, detectando as colunas presentes antes do UPDATE.
+
+
+## 23/11/2026 — notificações flutuantes e menu de inscritos
+
+- Agenda pública: mensagens de cadastro e solicitação de cancelamento migradas do rodapé do formulário para **notificações flutuantes (toast)** no canto superior direito. Uma notificação por vez; sucesso verde, duplicidade HTTP 409 em âmbar com título "E-mail já cadastrado", erros em vermelho; desaparecem após 6 segundos ou pelo botão X. Sem pop-up modal; `role=status/alert`, animação desativada com `prefers-reduced-motion`. Durante a requisição, o botão exibe "Enviando…" e fica desabilitado.
+- Menu lateral dos Dashboards Administrativo e Palestrante: "Inscritos por e-mail" reduzido para **"Inscritos"**, em uma linha. Título da tela administrativa atualizado para **"Inscrições da agenda"**.
+- Atualizados os parâmetros de versão de CSS e JS em `agenda.html` para evitar cache. Não há mudança no Worker, D1 ou rotinas de envio.

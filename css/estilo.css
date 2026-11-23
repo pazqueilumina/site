@@ -1647,3 +1647,22 @@ body[data-page="videos"] .cartao-short .etiqueta-short {
 .inscricao-mensal-cancelar .inscricao-mensal-linha button{border:0;border-radius:9px;padding:0 17px;background:#253d36;color:#fff;font-weight:650;cursor:pointer}
 .inscricao-mensal-cancelar .inscricao-mensal-linha button:disabled{opacity:.6}
 @media(max-width:420px){.inscricao-mensal-cancelar .inscricao-mensal-linha button{height:44px}}
+
+/* Avisos flutuantes de inscrição/cancelamento, acessíveis e sem bloquear a página. */
+.avisos-agenda{position:fixed;z-index:20000;top:20px;right:20px;width:min(410px,calc(100vw - 32px));pointer-events:none}
+.aviso-agenda{display:flex;align-items:flex-start;gap:12px;padding:17px 14px;border:1px solid #d7e3d9;border-left:4px solid #36795c;border-radius:12px;background:#fff;color:#253d36;box-shadow:0 10px 32px rgba(17,38,33,.18);pointer-events:auto;animation:avisoAgendaEntrada .2s ease-out}
+.aviso-agenda--sucesso{border-left-color:#3b8060;background:#f6fbf7}
+.aviso-agenda--alerta{border-left-color:#b78432;background:#fffaf0}
+.aviso-agenda--erro{border-left-color:#b64747;background:#fff7f6}
+.aviso-agenda-simbolo{display:flex;align-items:center;justify-content:center;flex:0 0 25px;width:25px;height:25px;border-radius:50%;background:#dcefe2;color:#2c7451;font-size:16px;font-weight:800;line-height:1}
+.aviso-agenda--alerta .aviso-agenda-simbolo{background:#f8e8c8;color:#93601d}
+.aviso-agenda--erro .aviso-agenda-simbolo{background:#f8dcdc;color:#a63939}
+.aviso-agenda-conteudo{flex:1;min-width:0}
+.aviso-agenda-conteudo strong{display:block;font:700 14px/1.4 var(--fonte-sans,Arial,sans-serif)}
+.aviso-agenda-conteudo p{margin:4px 0 0;font:12px/1.55 var(--fonte-sans,Arial,sans-serif);color:#55655b;overflow-wrap:anywhere}
+.aviso-agenda-fechar{flex:0 0 26px;width:26px;height:26px;border:0;border-radius:6px;background:transparent;color:#627169;font:22px/1 Arial,sans-serif;cursor:pointer}
+.aviso-agenda-fechar:hover{background:rgba(20,40,30,.08)}
+.aviso-agenda-fechar:focus-visible{outline:2px solid #2d6c56;outline-offset:2px}
+@keyframes avisoAgendaEntrada{from{opacity:0;transform:translateY(-9px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.avisos-agenda{top:12px;right:12px;width:calc(100vw - 24px)}}
+@media(prefers-reduced-motion:reduce){.aviso-agenda{animation:none}}
