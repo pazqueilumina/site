@@ -331,7 +331,23 @@ function renderActivities(items){
   if(count>initial)append(count);
  });
 }
-function renderPending(palestras,agenda,emails){
+// Mesma assinatura de endereço e chave de histórico local do Cadastro de Locais.
+const CHAVE_VERIFICACAO_LOCAIS='pazqueilumina-locais-verificacao-v1';
+const normalizarEnderecoLocal=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g,' ');
+const assinaturaEnderecoLocal=l=>[l.nome,l.endereco,l.bairro,l.cidade,l.uf,l.maps,l.latitude,l.longitude].map(normalizarEnderecoLocal).join('|');
+function contarErrosEnderecos(locais){
+ try{
+  const salvo=JSON.parse(localStorage.getItem(CHAVE_VERIFICACAO_LOCAIS)||'null');
+  if(!Array.isArray(salvo?.itens))return 0;
+  const historico=new Map(salvo.itens.slice(0,500).filter(r=>r&&typeof r.id==='string').map(r=>[r.id,r]));
+  return locais.filter(l=>{
+   if(l.verificacaoEndereco||l.verificacaoCoordenadas)return false;
+   const r=historico.get(l.id);
+   return r&&r.assinatura===assinaturaEnderecoLocal(l)&&['erro','divergente'].includes(r.status);
+  }).length;
+ }catch{return 0;}
+}
+function renderPending(palestras,agenda,emails,locais){
  const host=clear('pendencias'),rows=[];
  if(palestras){
   const missingPdf=palestras.filter(p=>!p.pdf).length,missingAudio=palestras.filter(p=>!p.audio).length,missingVideo=palestras.filter(p=>!p.youtubeId).length;
@@ -339,6 +355,12 @@ function renderPending(palestras,agenda,emails){
   if(missingAudio)rows.push([missingAudio+' apresentações sem MP3','warn','/admin/palestras.html']);
   if(missingVideo)rows.push([missingVideo+' apresentações sem vídeo','warn','/admin/palestras.html']);
  }else rows.push(['Acervo indisponível no momento','warn','/admin/palestras.html']);
+ if(locais){
+  const semCoordenadas=locais.filter(l=>!l.latitude||!l.longitude).length;
+  if(semCoordenadas)rows.push([semCoordenadas+' '+(semCoordenadas===1?'local sem coordenadas cadastradas':'locais sem coordenadas cadastradas'),'warn','/admin/locais.html']);
+  const erros=contarErrosEnderecos(locais);
+  if(erros)rows.push([erros+' '+(erros===1?'endereço com erro':'endereços com erro')+' (verificação neste navegador)','warn','/admin/locais.html']);
+ }
  if(agenda){const incomplete=agenda.filter(e=>!e.titulo||!e.local||!e.data||!e.horario).length;if(incomplete)rows.push([incomplete+' eventos com informações incompletas','warn','/admin/agenda.html']);}
  if(!emails||emails.status!=='ok'){
   rows.unshift(['Monitor de e-mails '+(emails?.status==='not_configured'?'não conectado':'indisponível'),'warn','#emails']);
@@ -353,7 +375,7 @@ function renderPending(palestras,agenda,emails){
   else if(emails.monitor?.pending)rows.unshift(['Worker de e-mails aguardando primeira execução','warn','#emails']);
  }
  if(!rows.length){host.append(txt('p','Nenhuma pendência identificada.','empty-text'));return;}
- rows.slice(0,5).forEach(([label,type,url])=>{const link=txt('a','','alert-row '+type);link.href=url;const icon=txt('span','','alert-icon');icon.append(svg('alert'));const wrap=txt('span','','row-text');wrap.append(txt('strong',label));link.append(icon,wrap,txt('span','›','arrow'));host.append(link);});
+ rows.forEach(([label,type,url])=>{const link=txt('a','','alert-row '+type);link.href=url;const icon=txt('span','','alert-icon');icon.append(svg('alert'));const wrap=txt('span','','row-text');wrap.append(txt('strong',label));link.append(icon,wrap,txt('span','›','arrow'));host.append(link);});
 }
 function emailDate(value){
  if(!value||!Number.isFinite(Date.parse(value)))return '—';
@@ -475,8 +497,8 @@ function renderSummary(palestras,shorts){
  }
 }
 function render(){set('chartRangeText',isCustom()?'Apresentações acumuladas de '+fmtDate(appliedCustomStart)+' até '+fmtDate(appliedCustomEnd):isMonth()?'Apresentações acumuladas em '+new Date(appliedYear,appliedMonth,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}):isYear()?'Apresentações acumuladas em '+appliedYear:'Apresentações acumuladas no período selecionado');const palestras=Array.isArray(current.p?.dados?.palestras)?current.p.dados.palestras.filter(p=>p.ativo!==false):null,agenda=Array.isArray(current.a?.agenda)?current.a.agenda:null,locais=Array.isArray(current.l?.locais)?current.l.locais:null,shorts=Array.isArray(current.shorts?.shorts)?current.shorts.shorts.filter(s=>s.ativo!==false):null;
- set('kVideos',shorts===null?'—':nf(shorts.length));set('sVideos','Vídeos curtos cadastrados');set('kPalestras',palestras?nf(palestras.length):'—');set('kAudios',palestras?nf(palestras.filter(p=>p.audio).length):'—');set('kPdfs',palestras?nf(palestras.filter(p=>p.pdf).length):'—');set('sPalestras',palestras?'+'+nf(palestras.filter(p=>inRange(p.data)).length)+' no período':'Cadastro indisponível');
- drawChart(palestras);renderAudience();renderVisitsTrend();renderDonut(palestras);renderRecent(palestras,shorts);renderActivities(current.activities?.commits);renderPending(palestras,agenda,current.emails);renderEmailStatus(current.emails);renderSubscriberSummary(current.subscribers);renderEvents(agenda);renderSummary(palestras,shorts);
+ set('kCentrosCadastrados',locais===null?'—':nf(locais.length));set('kVideos',shorts===null?'—':nf(shorts.length));set('sVideos','Vídeos curtos cadastrados');set('kPalestras',palestras?nf(palestras.length):'—');set('kAudios',palestras?nf(palestras.filter(p=>p.audio).length):'—');set('kPdfs',palestras?nf(palestras.filter(p=>p.pdf).length):'—');set('sPalestras',palestras?'+'+nf(palestras.filter(p=>inRange(p.data)).length)+' no período':'Cadastro indisponível');
+ drawChart(palestras);renderAudience();renderVisitsTrend();renderDonut(palestras);renderRecent(palestras,shorts);renderActivities(current.activities?.commits);renderPending(palestras,agenda,current.emails,locais);renderEmailStatus(current.emails);renderSubscriberSummary(current.subscribers);renderEvents(agenda);renderSummary(palestras,shorts);
  set('siteStatus',palestras&&agenda?'Dados conectados':'Verificar conexão');
 }
 let refreshTimer=null;
