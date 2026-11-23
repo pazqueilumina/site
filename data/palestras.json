@@ -938,12 +938,14 @@
       "dataAproximada": true,
       "serie": "temas",
       "duracao": "00:48:05",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0020.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:01:29.187Z"}
     },
     {
       "pid": "PAL-0021",
