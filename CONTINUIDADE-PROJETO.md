@@ -834,3 +834,12 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Critério da data:** o carimbo de `publicacoes.audio` registra a publicação do **vínculo no catálogo do site** durante este commit; não representa nem afirma o horário exato de upload ao R2, que não foi obtido.
 - **Preservação:** 79 palestras; 78 com vínculo de áudio após o commit; PAL-0013 continua pendente. Nenhum outro dado, título, link, mídia, código, Worker de e-mails, envio semanal, Dashboard ou programa Windows foi modificado.
 - **Validação pré-commit:** JSON válido, contagem dos registros e comparação dos 78 outros objetos sem mudanças. O commit na `main` aciona o fluxo automático do Cloudflare Pages; verificar o check e o site após a publicação.
+
+## 23/11/2026 — Vínculo do MP3 PAL-0013 após upload R2
+
+- **Autorização:** responsável solicitou repetir para PAL-0013 a correção aprovada e realizada em PAL-0004, com commit na `main`.
+- **Diagnóstico:** PAL-0013 — **Nas Terras de Chico - Parte 1 - Pedro Leopoldo** — permanecia com `audio` vazio e `statusAudio: "pendente"`, embora o responsável tenha confirmado que o MP3 correspondente já estava enviado e reproduzível no domínio público do R2.
+- **Alteração exclusiva em `data/palestras.json`:** PAL-0013 recebeu `audio: "https://audio.pazqueilumina.com.br/PAL-0013.mp3"`, `audioPlataforma: "Cloudflare R2"`, `statusAudio: "existente"` e `publicacoes.audio: "2026-11-23T22:20:53.784Z"`.
+- **Data:** `publicacoes.audio` indica o momento do registro do vínculo no catálogo, não o horário original de upload ao R2.
+- **Preservação:** 79 palestras, agora 79 com vínculo de áudio; PAL-0004 e todos os outros registros mantidos integralmente. Nenhuma mudança em código, Worker de e-mails, envio semanal, R2, Dashboard ou aplicativo Windows.
+- **Validação pré-commit:** JSON válido, contagens conferidas, comparação dos outros 78 objetos sem alterações. O commit na `main` aciona o deploy automático do Cloudflare Pages; verificar o check e o site após a publicação.

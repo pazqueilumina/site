@@ -1255,12 +1255,15 @@
       "dataAproximada": true,
       "serie": "doutrina",
       "duracao": "00:58:28",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0013.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
-      "statusPdf": "pendente"
+      "statusAudio": "existente",
+      "statusPdf": "pendente",
+      "publicacoes": {
+        "audio": "2026-11-23T22:20:53.784Z"
+      }
     },
     {
       "pid": "PAL-0014",
