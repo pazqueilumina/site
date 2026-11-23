@@ -770,12 +770,14 @@
       "dataAproximada": true,
       "serie": "doutrina",
       "duracao": "00:59:36",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0027.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T20:54:49.473Z"}
     },
     {
       "pid": "PAL-0028",
