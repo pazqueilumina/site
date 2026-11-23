@@ -564,3 +564,12 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Controle:** HEAD de partida `90d3882b43a3b3cc0b36747e0ac8a26b87d85fc1`; alteração na `main` autorizada. Confirmar separadamente o deploy Cloudflare Pages.
 
 - **Publicação verificada:** commit de código `5a272494e5282067ef74050744fe2c0433bbef64` — check **Cloudflare Pages: completed / success** em **23/11/2026 às 01:28:32 UTC**. URL de preview fornecida pelo check: `https://275e1d75.pazqueilumina.pages.dev`. Isto confirma o deploy do código, **não** substitui a conferência da prévia autenticada com os dados reais.
+
+## 23/11/2026 — Quarta revisão: impressão Administrativa colorida (aprovada para deploy)
+
+- **Aprovação:** o responsável conferiu e aprovou a prévia colorida de duas páginas A4 (`PREVIA-Relatorio-Administrativo-v4.pdf`) e autorizou explicitamente a publicação na `main`.
+- **Implementação:** a função `buildAdminPrint` em `admin/report-view.js` foi substituída pela versão v4 aprovada. Ela cria um relatório independente da grade visual do Dashboard: seis indicadores, evolução do acervo, evolução das visitas, gráfico de rosca, origem das visitas, conteúdos recentes, atividades recentes, pendências, monitor de e-mails, inscrições da agenda, próximos eventos e resumo do acervo. Valores são lidos dos widgets atuais no momento da impressão; o Dashboard original permanece intacto.
+- **Layout:** o CSS da v4 foi acrescentado ao final de `admin/report-print.css` com regras `#reportPrintRoot` restritas a `body.report-view.report-admin`. A4 retrato, textos e gráficos coloridos, cartões compactos, duas seções, sem colunas automáticas herdadas. `admin/dashboard.html` teve apenas o identificador de cache dos dois recursos atualizado.
+- **Preservação:** não foram removidos dados, indicadores, filtros Mensal/Ano inteiro, menus ou funcionalidades do Dashboard. Nenhuma alteração no Worker de e-mails, D1, envio semanal, mapa, programa Windows ou código específico do Relatório do Palestrante.
+- **Testes pré-publicação:** `node --check` da função v4 passou. Prévia local em Chromium com dados representativos foi validada: **2 páginas A4 coloridas**, 12 seções presentes, sem transbordamento horizontal; cenário com 20 atividades passou sem cortes horizontais, usando 4 páginas. Os testes não representam autenticação nem garantem sempre 2 páginas com volumes maiores.
+- **Acompanhamento:** confirmar a conclusão do deploy Cloudflare Pages deste commit e a impressão com os dados reais no navegador do usuário.
