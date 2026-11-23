@@ -24,6 +24,10 @@ export async function onRequestPost({request}){
  // A conferência persistida tem origem explícita. Não chamar de "manual não verificado"
  // o que já foi conferido pelo responsável ou pelo verificador OSM.
  const cadastradas=!!local.latitude&&!!local.longitude;
+ if(cadastradas&&local.verificacaoEndereco==='responsavel')
+  return json({id:local.id,status:'endereco-conferido',fonte:'Responsável',
+   motivo:'Correspondência entre endereço e coordenadas conferida no mapa pelo responsável.',
+   latitude:Number(local.latitude),longitude:Number(local.longitude)});
  if(cadastradas&&local.verificacaoCoordenadas==='conferido')
   return json({id:local.id,status:'conferido',fonte:'Responsável',
    motivo:'Coordenadas conferidas no mapa pelo responsável.',latitude:Number(local.latitude),longitude:Number(local.longitude)});

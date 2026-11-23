@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
   <title>Cadastro de Locais | Estudos e Reflexões Espíritas</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=separar-enderecos-coordenadas-20261123"><script defer src="/admin/locais.js?v=separar-enderecos-coordenadas-20261123"></script>
+  <link rel="stylesheet" href="/admin/admin.css?v=endereco-conferido-20261123"><script defer src="/admin/locais.js?v=endereco-conferido-20261123"></script>
 </head>
 <body class="pagina-locais">
   <header class="topo"><div class="topo-conteudo">
@@ -20,6 +20,7 @@
         <span>Endereços com erro</span>
         <button type="button" id="filtrarErrosLocais" class="numero-erros" aria-pressed="false" title="Mostrar somente os endereços com erro"><strong id="errosLocais">—</strong></button>
         <small id="statusVerificacaoLocais" aria-live="polite">Aguardando verificação</small>
+        <div id="pendenciasEnderecosLocais" class="pendencias-enderecos" aria-live="polite" hidden></div>
         <button type="button" id="verificarLocais" class="botao-verificar" disabled>Verificar endereços</button>
       </div>
       <div class="indicador indicador-verificacao" id="cartaoCoordenadasLocais">
@@ -36,6 +37,7 @@
         <form id="formLocal">
           <label>Nome do Centro / Local *<input id="nomeLocal" maxlength="180" required placeholder="Ex.: Consolador – Comunidade Espírita Cristã"></label>
           <label>Endereço completo *<input id="enderecoLocal" maxlength="500" required placeholder="Rua, número e complemento"></label>
+          <p id="statusEnderecoLocal" class="status-endereco-local" aria-live="polite" hidden></p>
           <label>Bairro<input id="bairroLocal" maxlength="180" placeholder="Opcional"></label>
           <div class="duas-colunas">
             <label>Estado (UF) *<select id="ufLocal" required><option value="">Selecione o estado</option><option value="AC">Acre (AC)</option><option value="AL">Alagoas (AL)</option><option value="AP">Amapá (AP)</option><option value="AM">Amazonas (AM)</option><option value="BA">Bahia (BA)</option><option value="CE">Ceará (CE)</option><option value="DF">Distrito Federal (DF)</option><option value="ES">Espírito Santo (ES)</option><option value="GO">Goiás (GO)</option><option value="MA">Maranhão (MA)</option><option value="MT">Mato Grosso (MT)</option><option value="MS">Mato Grosso do Sul (MS)</option><option value="MG">Minas Gerais (MG)</option><option value="PA">Pará (PA)</option><option value="PB">Paraíba (PB)</option><option value="PR">Paraná (PR)</option><option value="PE">Pernambuco (PE)</option><option value="PI">Piauí (PI)</option><option value="RJ">Rio de Janeiro (RJ)</option><option value="RN">Rio Grande do Norte (RN)</option><option value="RS">Rio Grande do Sul (RS)</option><option value="RO">Rondônia (RO)</option><option value="RR">Roraima (RR)</option><option value="SC">Santa Catarina (SC)</option><option value="SP">São Paulo (SP)</option><option value="SE">Sergipe (SE)</option><option value="TO">Tocantins (TO)</option></select></label>

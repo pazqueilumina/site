@@ -78,6 +78,11 @@ function atualizarResumo() {
 
 const assinaturaLocal=l=>[l.nome,l.endereco,l.bairro,l.cidade,l.uf,l.maps,l.latitude,l.longitude].map(normalizar).join('|');
 function resultadoLocal(l){
+ // A confirmação do endereço é distinta da origem das coordenadas.
+ if(l.latitude&&l.longitude&&l.verificacaoEndereco==='responsavel')
+  return {assinatura:assinaturaLocal(l),status:'endereco-conferido',fonte:'Responsável',
+   motivo:'Correspondência entre endereço e coordenadas conferida no mapa pelo responsável.',
+   latitude:Number(l.latitude),longitude:Number(l.longitude),verificadoEm:0};
  // A origem publicada prevalece sobre o histórico local anterior.
  if(l.latitude&&l.longitude&&l.verificacaoCoordenadas){
   const osm=l.verificacaoCoordenadas==='osm';
@@ -96,7 +101,7 @@ function salvarHistoricoVerificacao(){
  try{
   const itens=estado.locais.map(l=>{
    const r=resultadoLocal(l);
-   if(l.verificacaoCoordenadas||!r||r.status==='pendente')return null;
+   if(l.verificacaoCoordenadas||l.verificacaoEndereco||!r||r.status==='pendente')return null;
    const item={id:l.id,assinatura:r.assinatura,status:r.status,motivo:r.motivo||'',
     fonte:r.fonte||'',verificadoEm:r.verificadoEm||Date.now(),nomeLocalizado:!!r.nomeLocalizado};
    if(['OpenStreetMap','Google Maps','Cadastro'].includes(r.fonte)&&
@@ -117,7 +122,7 @@ function restaurarHistoricoVerificacao(){
   for(const r of salvo.itens.slice(0,500)){
    if(!r||typeof r.id!=='string'||!permitidos.has(r.status))continue;
    const l=estado.locais.find(x=>x.id===r.id);
-   if(!l||l.verificacaoCoordenadas||r.assinatura!==assinaturaLocal(l))continue;
+   if(!l||l.verificacaoCoordenadas||l.verificacaoEndereco||r.assinatura!==assinaturaLocal(l))continue;
    const item={assinatura:r.assinatura,status:r.status,
     motivo:typeof r.motivo==='string'?r.motivo.slice(0,180):'',
     fonte:typeof r.fonte==='string'?r.fonte.slice(0,60):'',
@@ -174,16 +179,35 @@ function atualizarResumoVerificacao(){
  const avaliados=resultados.filter(r=>r&&r.status!=='pendente'&&r.status!=='conferido').length;
  const erros=resultados.filter(r=>['erro','divergente'].includes(r?.status)).length;
  const aproximados=resultados.filter(r=>r?.status==='aproximado').length;
- const pendentes=estado.locais.length-avaliados;
+ const confirmadosEndereco=resultados.filter(r=>r?.status==='endereco-conferido').length;
+ const pendencias=estado.locais.filter((l,i)=>!resultados[i]||['pendente','conferido'].includes(resultados[i].status));
+ const pendentes=pendencias.length;
  $('errosLocais').textContent=avaliados?String(erros):(estado.locais.length===0?'0':'—');
  const ultima=Math.max(0,...resultados.map(r=>r?.verificadoEm||0));
  const quando=ultima?' · Última: '+new Date(ultima).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
+ const confirmacao=confirmadosEndereco?' · '+confirmadosEndereco+' conferido(s) pelo responsável':'';
+ const listaPendencias=$('pendenciasEnderecosLocais');
+ listaPendencias.replaceChildren();
+ listaPendencias.hidden=!pendencias.length;
+ if(pendencias.length){
+  const titulo=document.createElement('strong');titulo.textContent='Pendências por local:';
+  const lista=document.createElement('ul');
+  for(const l of pendencias){
+   const r=resultadoLocal(l),item=document.createElement('li');
+   const motivo=r?.status==='conferido'?'Endereço sem confirmação; coordenadas já conferidas.'
+    :r?.status==='pendente'?(r.motivo||'Consulta não concluída.')
+    :'Endereço ainda não verificado.';
+   item.textContent=l.nome+' — '+motivo;
+   lista.append(item);
+  }
+  listaPendencias.append(titulo,lista);
+ }
  $('statusVerificacaoLocais').textContent=estado.verificando
   ?'Verificando… '+estado.verificadosNaRodada+' de '+estado.locais.length+' · '+avaliados+' resultado(s) de endereço'
   :!estado.locais.length?'Nenhum local cadastrado'
   :!avaliados?'Sem verificação de endereço registrada'
-  :pendentes?avaliados+' de '+estado.locais.length+' endereços avaliados · '+pendentes+' pendente(s)'+quando
-  :avaliados+' de '+estado.locais.length+' endereços avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+quando;
+  :pendentes?avaliados+' de '+estado.locais.length+' endereços avaliados · '+pendentes+' pendente(s)'+confirmacao+quando
+  :avaliados+' de '+estado.locais.length+' endereços avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+confirmacao+quando;
  const comCoordenadas=estado.locais.filter(l=>l.latitude&&l.longitude);
  const confirmadas=comCoordenadas.filter(l=>l.verificacaoCoordenadas==='osm'||l.verificacaoCoordenadas==='conferido').length;
  const semRegistro=comCoordenadas.length-confirmadas;
@@ -193,6 +217,10 @@ function atualizarResumoVerificacao(){
   ?'Nenhuma coordenada cadastrada'
   :confirmadas+' confirmada(s) · '+semRegistro+' sem confirmação registrada'+(preparaveis?' · '+preparaveis+' pronta(s) para preparar':'');
  const local=estado.locais.find(l=>l.id===estado.selecionado);
+ const enderecoConfirmado=$('statusEnderecoLocal');
+ enderecoConfirmado.hidden=!local?.verificacaoEndereco;
+ enderecoConfirmado.textContent=local?.verificacaoEndereco==='responsavel'
+  ?'Endereço e coordenadas conferidos no mapa pelo responsável. Confirmação registrada no cadastro.':'';
  const status=$('statusCoordenadasLocal');
  const resultado=local&&resultadoLocal(local);
  status.className='status-coordenadas-local'+(local?.verificacaoCoordenadas?' confirmada':'');
@@ -225,7 +253,7 @@ async function verificarEnderecos(){
    });
    const d=await r.json();
    if(!r.ok)throw Error(d.erro||'Falha na consulta.');
-   if(d.id!==l.id||!['ok','aproximado','manual','link','erro','pendente','conferido','divergente'].includes(d.status))throw Error('Resposta inesperada.');
+   if(d.id!==l.id||!['ok','aproximado','manual','link','erro','pendente','conferido','divergente','endereco-conferido'].includes(d.status))throw Error('Resposta inesperada.');
    estado.verificacao.set(l.id,{assinatura,status:d.status,motivo:d.motivo||'',fonte:d.fonte||'',
     latitude:d.latitude,longitude:d.longitude,nomeLocalizado:!!d.nomeLocalizado,verificadoEm:Date.now()});
    estado.pendentesNovos.delete(l.id);
@@ -349,6 +377,8 @@ function salvar(){
     // A conferência é invalidada quando qualquer dado do ponto muda.
     if(anterior.verificacaoCoordenadas&&assinaturaLocal(anterior)===assinaturaLocal(atual))
      atual.verificacaoCoordenadas=anterior.verificacaoCoordenadas;
+    if(anterior.verificacaoEndereco&&assinaturaLocal(anterior)===assinaturaLocal(atual))
+     atual.verificacaoEndereco=anterior.verificacaoEndereco;
     const sugestao=estado.sugestaoCoordenadas;
     if(sugestao?.id===atual.id&&sugestao.assinatura===assinaturaLocal(anterior)&&
       sugestao.latitude===atual.latitude&&sugestao.longitude===atual.longitude&&

@@ -115,8 +115,8 @@
 .speaker-centre-section-empty{padding:15px 13px;color:#6b7d94;font-size:11px;line-height:1.5}
 @media(max-width:1250px){.speaker-centres-columns{grid-template-columns:1fr}}
 @media(min-width:1251px) and (max-width:1450px){.speaker-centre-item-heading{flex-wrap:wrap}}
-.speaker-donut-widget{display:flex;flex-direction:column}.speaker-donut-panel{padding:12px 0 0;display:flex;flex-direction:column;flex:1;min-height:0}
-.speaker-donut-layout{display:grid;grid-template-columns:minmax(155px,210px) minmax(0,1fr);align-items:center;gap:18px}
+.speaker-row .speaker-donut-widget{display:flex;flex-direction:column;min-height:370px}.speaker-donut-panel{padding:12px 0 0;display:flex;flex-direction:column;gap:18px;flex:1;min-height:0}
+.speaker-donut-layout{display:grid;grid-template-columns:minmax(155px,210px) minmax(0,1fr);align-items:center;gap:18px;flex-shrink:0}
 .speaker-donut-chart{aspect-ratio:1;width:100%;max-width:210px;display:grid;place-items:center;border-radius:50%;position:relative}
 .speaker-donut-center{width:57%;height:57%;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
 .speaker-donut-center strong{font-size:35px;line-height:1.1;color:#183e71;letter-spacing:-1px}
@@ -126,7 +126,7 @@
 .speaker-donut-dot{height:10px;width:10px;border-radius:50%;flex:0 0 10px}
 .speaker-donut-topic{display:flex;align-items:center;gap:7px;color:#345172;line-height:1.25;min-width:0;overflow-wrap:anywhere}
 .speaker-donut-count,.speaker-donut-percentage{font-size:11px;color:#274b7b;white-space:nowrap;text-align:right;font-weight:750}
-.speaker-donut-summary{background:#eef4ff;border-radius:10px;padding:11px 12px;margin-top:auto;margin-bottom:5px;font-size:12px;line-height:1.45;color:#345477}
+.speaker-donut-summary{background:#eef4ff;border-radius:10px;padding:11px 12px;margin-top:auto;margin-bottom:5px;font-size:12px;line-height:1.45;color:#345477;flex-shrink:0}
 .speaker-donut-summary strong{color:#244f9e}
 @media(max-width:1170px){.speaker-donut-layout{grid-template-columns:150px minmax(0,1fr)}}
 @media(max-width:850px){.speaker-donut-layout{grid-template-columns:minmax(145px,190px) minmax(0,1fr)}}

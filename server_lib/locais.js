@@ -1,5 +1,5 @@
 /* Validação do cadastro de locais; os dados nunca são executados como JavaScript. */
-const campos = ['id', 'nome', 'endereco', 'bairro', 'cidade', 'uf', 'maps', 'latitude', 'longitude', 'kmIdaVolta', 'verificacaoCoordenadas'];
+const campos = ['id', 'nome', 'endereco', 'bairro', 'cidade', 'uf', 'maps', 'latitude', 'longitude', 'kmIdaVolta', 'verificacaoCoordenadas', 'verificacaoEndereco'];
 const normalizar = valor => String(valor).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLocaleLowerCase('pt-BR').replace(/\s+/g, ' ');
 export function validarLocais(input) {
   if (!Array.isArray(input) || input.length > 500) throw new Error('O cadastro aceita até 500 locais.');
@@ -28,6 +28,11 @@ export function validarLocais(input) {
       throw new Error(`Origem da conferência inválida no local ${i + 1}.`);
     if (obj.verificacaoCoordenadas && !obj.latitude)
       throw new Error(`Conferência sem coordenadas no local ${i + 1}.`);
+    // Confirmação humana da correspondência entre endereço e ponto: distinta da origem das coordenadas.
+    if (obj.verificacaoEndereco && obj.verificacaoEndereco !== 'responsavel')
+      throw new Error(`Confirmação do endereço inválida no local ${i + 1}.`);
+    if (obj.verificacaoEndereco && (!obj.latitude || !obj.longitude))
+      throw new Error(`Confirmação do endereço sem coordenadas no local ${i + 1}.`);
     if (obj.kmIdaVolta) {
       const km = Number(obj.kmIdaVolta);
       if (!/^(?:[0-9]{1,4})(?:\.[0-9])?$/.test(obj.kmIdaVolta) || !Number.isFinite(km) || km <= 0 || km > 2000) throw new Error(`Distância de ida e volta inválida no local ${i + 1}.`);
