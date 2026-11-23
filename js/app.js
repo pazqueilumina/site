@@ -1273,6 +1273,7 @@ function renderizarContato() {
     "<h1 class=\"titulo-pagina\">Contato</h1>" +
     '<p class="subtitulo-pagina">' + escapar(DADOS.contato.mensagem) + "</p>" +
     '<div class="pagina-texto">' +
+    '<span class="inscricao-mensal-etiqueta">CANAIS DE CONTATO</span>' +
     '<div class="contato-lista">' +
     '<div class="contato-item">' + icone("email") + "<span>E-mail: <a href=\"mailto:" + escapar(DADOS.site.email) + "\">" + escapar(DADOS.site.email) + "</a></span></div>" +
     '<div class="contato-item">' + icone("video") + "<span>You Tube: <a href=\"" + escapar(DADOS.site.canalYoutube) + '" target="_blank" rel="noopener">' + escapar(DADOS.site.canalNome) + "</a></span></div>" +

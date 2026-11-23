@@ -1693,7 +1693,7 @@ body[data-page="contato"] .inscricao-mensal-cancelar>button{color:#243b5a}
 @media(max-width:560px){.agenda-convite-email{gap:11px;padding:14px}.agenda-convite-botao{width:100%;flex:1 1 100%}}
 
 /* Quadro de contatos compacto, exclusivamente na página Contato; não altera Sobre. */
-body[data-page="contato"] .pagina-texto{max-width:540px;padding:18px 24px;background:#f7f4ee;border-color:#e5ddd0}
+body[data-page="contato"] .pagina-texto{max-width:540px;padding:18px 24px;background:#f7f0e7;border-color:#e5ddd0}
 body[data-page="contato"] .contato-lista{margin-top:0}
 
 /* Fundos dos quadros principais em Sobre e Livro: mesmo bege dos filtros da Agenda. */
