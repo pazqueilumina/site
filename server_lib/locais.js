@@ -1,5 +1,5 @@
 /* Validação do cadastro de locais; os dados nunca são executados como JavaScript. */
-const campos = ['id', 'nome', 'endereco', 'bairro', 'cidade', 'uf', 'maps', 'latitude', 'longitude', 'kmIdaVolta'];
+const campos = ['id', 'nome', 'endereco', 'bairro', 'cidade', 'uf', 'maps', 'latitude', 'longitude', 'kmIdaVolta', 'verificacaoCoordenadas'];
 const normalizar = valor => String(valor).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLocaleLowerCase('pt-BR').replace(/\s+/g, ' ');
 export function validarLocais(input) {
   if (!Array.isArray(input) || input.length > 500) throw new Error('O cadastro aceita até 500 locais.');
@@ -23,6 +23,11 @@ export function validarLocais(input) {
       const valid = (v, min, max) => /^-?\d{1,2}(?:\.\d{1,7})?$/.test(v) && Number.isFinite(Number(v)) && Number(v) >= min && Number(v) <= max;
       if (!valid(obj.latitude, -34, 6) || !valid(obj.longitude, -75, -33)) throw new Error(`Coordenadas fora do Brasil ou inválidas no local ${i + 1}.`);
     }
+    // Origem de conferência persistente, sem alterar latitude/longitude.
+    if (obj.verificacaoCoordenadas && !['osm', 'conferido'].includes(obj.verificacaoCoordenadas))
+      throw new Error(`Origem da conferência inválida no local ${i + 1}.`);
+    if (obj.verificacaoCoordenadas && !obj.latitude)
+      throw new Error(`Conferência sem coordenadas no local ${i + 1}.`);
     if (obj.kmIdaVolta) {
       const km = Number(obj.kmIdaVolta);
       if (!/^(?:[0-9]{1,4})(?:\.[0-9])?$/.test(obj.kmIdaVolta) || !Number.isFinite(km) || km <= 0 || km > 2000) throw new Error(`Distância de ida e volta inválida no local ${i + 1}.`);

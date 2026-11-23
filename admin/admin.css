@@ -152,3 +152,7 @@
 .pagina-locais .editor label select{display:block;margin-top:8px;width:100%;height:43px;border:1px solid #d7dfe4;border-radius:8px;padding:0 12px;color:var(--ink);font-size:13px;background:white}
 .pagina-locais .editor label select:focus{outline:2px solid #afc6d5;outline-offset:1px;border-color:var(--navy2)}
 .pagina-locais .editor label input[hidden]{display:none}
+
+/* Status persistentes das coordenadas conferidas. */
+.pagina-locais .local-aviso.conferido,.pagina-locais .local-aviso.ok{color:#26713c}
+.pagina-locais .local-aviso.divergente{color:#b94343}

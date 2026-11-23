@@ -1,7 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const API = '/api/admin/locais';
-const estado = { locais: [], sha: null, selecionado: null, alterado: false, formularioAlterado: false, verificacao: new Map(), verificando: false, verificadosNaRodada: 0, pendentesNovos: new Set(), filtroErros: false };
+const estado = { locais: [], sha: null, selecionado: null, alterado: false, formularioAlterado: false, verificacao: new Map(), verificando: false, verificadosNaRodada: 0, pendentesNovos: new Set(), filtroErros: false, sugestaoCoordenadas: null };
 const CHAVE_VERIFICACAO='pazqueilumina-locais-verificacao-v1';
 const campos = { nome:'nomeLocal', endereco:'enderecoLocal', bairro:'bairroLocal', cidade:'cidadeLocal', uf:'ufLocal', maps:'mapsLocal', latitude:'latitudeLocal', longitude:'longitudeLocal', kmIdaVolta:'kmIdaVoltaLocal' };
 const normalizar = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
@@ -78,6 +78,14 @@ function atualizarResumo() {
 
 const assinaturaLocal=l=>[l.nome,l.endereco,l.bairro,l.cidade,l.uf,l.maps,l.latitude,l.longitude].map(normalizar).join('|');
 function resultadoLocal(l){
+ // A origem publicada prevalece sobre o histórico local anterior.
+ if(l.latitude&&l.longitude&&l.verificacaoCoordenadas){
+  const osm=l.verificacaoCoordenadas==='osm';
+  return {assinatura:assinaturaLocal(l),status:osm?'ok':'conferido',
+   fonte:osm?'OpenStreetMap':'Responsável',
+   motivo:osm?'Coordenadas obtidas por verificação exata do OpenStreetMap.':'Coordenadas conferidas no mapa pelo responsável.',
+   latitude:Number(l.latitude),longitude:Number(l.longitude),verificadoEm:0};
+ }
  const r=estado.verificacao.get(l.id);
  return r&&r.assinatura===assinaturaLocal(l)?r:null;
 }
@@ -88,7 +96,7 @@ function salvarHistoricoVerificacao(){
  try{
   const itens=estado.locais.map(l=>{
    const r=resultadoLocal(l);
-   if(!r||r.status==='pendente')return null;
+   if(l.verificacaoCoordenadas||!r||r.status==='pendente')return null;
    const item={id:l.id,assinatura:r.assinatura,status:r.status,motivo:r.motivo||'',
     fonte:r.fonte||'',verificadoEm:r.verificadoEm||Date.now(),nomeLocalizado:!!r.nomeLocalizado};
    if(['OpenStreetMap','Google Maps','Cadastro'].includes(r.fonte)&&
@@ -105,11 +113,11 @@ function restaurarHistoricoVerificacao(){
  try{
   const salvo=JSON.parse(localStorage.getItem(CHAVE_VERIFICACAO)||'null');
   if(!Array.isArray(salvo?.itens))return;
-  const permitidos=new Set(['ok','aproximado','manual','link','erro']);
+  const permitidos=new Set(['ok','aproximado','manual','link','erro','conferido','divergente']);
   for(const r of salvo.itens.slice(0,500)){
    if(!r||typeof r.id!=='string'||!permitidos.has(r.status))continue;
    const l=estado.locais.find(x=>x.id===r.id);
-   if(!l||r.assinatura!==assinaturaLocal(l))continue;
+   if(!l||l.verificacaoCoordenadas||r.assinatura!==assinaturaLocal(l))continue;
    const item={assinatura:r.assinatura,status:r.status,
     motivo:typeof r.motivo==='string'?r.motivo.slice(0,180):'',
     fonte:typeof r.fonte==='string'?r.fonte.slice(0,60):'',
@@ -129,9 +137,11 @@ function restaurarHistoricoVerificacao(){
 function locaisComCoordenadasConfirmadas(){
  return estado.locais.filter(l=>{
   const r=resultadoLocal(l);
-  return !l.latitude&&!l.longitude&&r?.status==='ok'&&r.fonte==='OpenStreetMap'&&
+  return !l.verificacaoCoordenadas&&r?.status==='ok'&&r.fonte==='OpenStreetMap'&&
    Number.isFinite(r.latitude)&&Number.isFinite(r.longitude)&&
-   r.latitude>=-34&&r.latitude<=6&&r.longitude>=-75&&r.longitude<=-33;
+   r.latitude>=-34&&r.latitude<=6&&r.longitude>=-75&&r.longitude<=-33&&
+   ((!l.latitude&&!l.longitude)||
+    (Number(l.latitude)===r.latitude&&Number(l.longitude)===r.longitude));
  });
 }
 function prepararCoordenadasConfirmadas(){
@@ -141,12 +151,14 @@ function prepararCoordenadasConfirmadas(){
  }
  const candidatos=locaisComCoordenadasConfirmadas();
  if(!candidatos.length)return;
- if(!confirm('Preparar as coordenadas de '+candidatos.length+' local(is) verificado(s) no OpenStreetMap? Confira os pontos antes de publicar. Nenhuma alteração será publicada automaticamente.'))return;
+ if(!confirm('Preparar as coordenadas ou confirmação de '+candidatos.length+' local(is) verificado(s) no OpenStreetMap? Confira os pontos antes de publicar. Nenhuma alteração será publicada automaticamente.'))return;
  const fmt=n=>Number(n).toFixed(7).replace(/0+$/,'').replace(/\.$/,'');
  for(const l of candidatos){
   const r=resultadoLocal(l);
-  l.latitude=fmt(r.latitude);l.longitude=fmt(r.longitude);
+  if(!l.latitude&&!l.longitude){l.latitude=fmt(r.latitude);l.longitude=fmt(r.longitude);}
+  l.verificacaoCoordenadas='osm';
   estado.verificacao.delete(l.id);
+  estado.pendentesNovos.delete(l.id);
   if(estado.selecionado===l.id){
    $('latitudeLocal').value=l.latitude;$('longitudeLocal').value=l.longitude;
   }
@@ -154,14 +166,15 @@ function prepararCoordenadasConfirmadas(){
  estado.alterado=true;
  salvarHistoricoVerificacao();
  renderizar();
- mensagem(candidatos.length+' local(is) com coordenadas preparados. Confira os endereços e clique em “Publicar alterações” para gravar no Cadastro.','alerta');
+ mensagem(candidatos.length+' local(is) com coordenadas ou confirmação preparados. Confira os endereços e clique em “Publicar alterações” para gravar no Cadastro.','alerta');
 }
 function atualizarResumoVerificacao(){
  const resultados=estado.locais.map(resultadoLocal);
  const verificados=resultados.filter(r=>r&&r.status!=='pendente').length;
- const erros=resultados.filter(r=>r?.status==='erro').length;
+ const erros=resultados.filter(r=>['erro','divergente'].includes(r?.status)).length;
  const aproximados=resultados.filter(r=>r?.status==='aproximado').length;
  const manuais=resultados.filter(r=>r?.status==='manual').length;
+ const conferidos=resultados.filter(r=>r?.status==='conferido').length;
  const links=resultados.filter(r=>r?.status==='link').length;
  const pendentes=estado.locais.length-verificados;
  $('errosLocais').textContent=verificados?String(erros):(estado.locais.length===0?'0':'—');
@@ -172,7 +185,7 @@ function atualizarResumoVerificacao(){
   :!estado.locais.length?'Nenhum local cadastrado'
   :!verificados?'Sem verificação salva neste navegador'
   :pendentes?verificados+' de '+estado.locais.length+' avaliados · '+pendentes+' pendente(s)'+quando
-  :verificados+' de '+estado.locais.length+' avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+(manuais?' · '+manuais+' com coordenadas manuais':'')+(links?' · '+links+' com link do mapa':'')+quando;
+  :verificados+' de '+estado.locais.length+' avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+(manuais?' · '+manuais+' com coordenadas sem conferência':'')+(conferidos?' · '+conferidos+' conferido(s) pelo responsável':'')+(links?' · '+links+' com link do mapa':'')+quando;
  $('verificarLocais').disabled=estado.verificando||!estado.sha||!estado.locais.length;
  $('guardarCoordenadas').hidden=!locaisComCoordenadasConfirmadas().length;
  $('guardarCoordenadas').disabled=estado.verificando||!estado.sha;
@@ -196,7 +209,7 @@ async function verificarEnderecos(){
    });
    const d=await r.json();
    if(!r.ok)throw Error(d.erro||'Falha na consulta.');
-   if(d.id!==l.id||!['ok','aproximado','manual','link','erro','pendente'].includes(d.status))throw Error('Resposta inesperada.');
+   if(d.id!==l.id||!['ok','aproximado','manual','link','erro','pendente','conferido','divergente'].includes(d.status))throw Error('Resposta inesperada.');
    estado.verificacao.set(l.id,{assinatura,status:d.status,motivo:d.motivo||'',fonte:d.fonte||'',
     latitude:d.latitude,longitude:d.longitude,nomeLocalizado:!!d.nomeLocalizado,verificadoEm:Date.now()});
    estado.pendentesNovos.delete(l.id);
@@ -237,6 +250,9 @@ function aplicarCoordenadasSugeridas(){
  const fmt=n=>Number(n).toFixed(7).replace(/0+$/,'').replace(/\.$/,'');
  $('latitudeLocal').value=fmt(r.latitude);
  $('longitudeLocal').value=fmt(r.longitude);
+ estado.sugestaoCoordenadas={id:l.id,assinatura:assinaturaLocal(l),
+  latitude:fmt(r.latitude),longitude:fmt(r.longitude),
+  origem:r.status==='ok'&&r.fonte==='OpenStreetMap'?'osm':'conferido'};
  $('detalhesCoordenadas').open=true;
  estado.formularioAlterado=true;
  mensagem('Coordenadas preenchidas no formulário. Confira no mapa, salve na lista e publique para armazená-las.','alerta');
@@ -255,13 +271,13 @@ function renderizar() {
   atualizarSugestaoCoordenadas();
   const busca=normalizar($('buscaLocal').value);
   const lista=$('listaLocais'); lista.replaceChildren();
-  const locais=estado.locais.filter(l=>(!estado.filtroErros||resultadoLocal(l)?.status==='erro')&&(!busca||normalizar([l.nome,l.endereco,l.bairro,l.cidade,l.uf].join(' ')).includes(busca)))
+  const locais=estado.locais.filter(l=>(!estado.filtroErros||['erro','divergente'].includes(resultadoLocal(l)?.status))&&(!busca||normalizar([l.nome,l.endereco,l.bairro,l.cidade,l.uf].join(' ')).includes(busca)))
     .sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
   if (!locais.length) { const p=document.createElement('p');p.className='vazio';p.textContent=estado.filtroErros?'Nenhum endereço com erro identificado.':'Nenhum local encontrado.';lista.append(p);return; }
   for(const l of locais){
     const b=document.createElement('button');b.type='button';b.className='evento'+(l.id===estado.selecionado?' ativo':'');
     const resultado=resultadoLocal(l);
-    if(resultado?.status==='erro')b.classList.add('local-com-erro');
+    if(['erro','divergente'].includes(resultado?.status))b.classList.add('local-com-erro');
     if(resultado?.status==='aproximado')b.classList.add('local-aproximado');
     if(!resultado&&estado.pendentesNovos.has(l.id))b.classList.add('local-aproximado');
     const corpo=document.createElement('span');corpo.className='evento-corpo';
@@ -274,18 +290,25 @@ function renderizar() {
       aviso.textContent='Endereço alterado; verificar novamente';
       corpo.append(aviso);
     }
-    if(resultado?.status==='erro'||resultado?.status==='aproximado'||resultado?.status==='manual'||resultado?.status==='link'||resultado?.status==='pendente'){
+    if(resultado&&(['erro','aproximado','manual','link','pendente','conferido','divergente'].includes(resultado.status)||
+      (resultado.status==='ok'&&l.verificacaoCoordenadas==='osm'))){
       const aviso=document.createElement('span');
       aviso.className='local-aviso '+resultado.status;
-      aviso.textContent=resultado.status==='erro'?'Endereço não localizado':resultado.status==='aproximado'?(resultado.motivo||'Localização aproximada'):resultado.status==='manual'?'Coordenadas manuais (endereço não verificado)':resultado.status==='link'?'Ponto do Google Maps (conferir)':'Verificação pendente';
+      aviso.textContent=resultado.status==='erro'?'Endereço não localizado':
+       resultado.status==='divergente'?(resultado.motivo||'Coordenadas divergentes; conferir no mapa'):
+       resultado.status==='aproximado'?(resultado.motivo||'Localização aproximada'):
+       resultado.status==='manual'?'Coordenadas cadastradas (endereço não confirmado pelo serviço)':
+       resultado.status==='conferido'?'Coordenadas conferidas pelo responsável':
+       resultado.status==='ok'?'Endereço verificado (OpenStreetMap)':
+       resultado.status==='link'?'Ponto do Google Maps (conferir)':'Verificação pendente';
       corpo.append(aviso);
     }
     b.append(corpo);b.addEventListener('click',()=>selecionar(l.id));lista.append(b);
   }
 }
 function confirmarDescarte(){return !estado.formularioAlterado||confirm('Descartar alterações não salvas do formulário?');}
-function limpar(){estado.selecionado=null;estado.formularioAlterado=false;$('formLocal').reset();reiniciarCidades();$('tituloEditorLocal').textContent='Novo local';$('salvarLocal').textContent='Adicionar à lista';$('excluirLocal').hidden=true;renderizar();}
-function selecionar(id){if(!confirmarDescarte())return;const l=estado.locais.find(x=>x.id===id);if(!l)return;estado.selecionado=id;estado.formularioAlterado=false;for(const [campo,input] of Object.entries(campos))if(campo!=='cidade')$(input).value=l[campo]||'';carregarCidadesUF(l.uf||'',l.cidade||'');$('tituloEditorLocal').textContent='Editar local';$('salvarLocal').textContent='Salvar na lista';$('excluirLocal').hidden=false;renderizar();}
+function limpar(){estado.selecionado=null;estado.sugestaoCoordenadas=null;estado.formularioAlterado=false;$('formLocal').reset();reiniciarCidades();$('tituloEditorLocal').textContent='Novo local';$('salvarLocal').textContent='Adicionar à lista';$('excluirLocal').hidden=true;renderizar();}
+function selecionar(id){if(!confirmarDescarte())return;const l=estado.locais.find(x=>x.id===id);if(!l)return;estado.selecionado=id;estado.sugestaoCoordenadas=null;estado.formularioAlterado=false;for(const [campo,input] of Object.entries(campos))if(campo!=='cidade')$(input).value=l[campo]||'';carregarCidadesUF(l.uf||'',l.cidade||'');$('tituloEditorLocal').textContent='Editar local';$('salvarLocal').textContent='Salvar na lista';$('excluirLocal').hidden=false;renderizar();}
 function lerFormulario(){
   if(!$('formLocal').reportValidity())return null;
   const obj={};for(const [campo,input] of Object.entries(campos)){const v=(campo==='cidade'?cidadeDoFormulario():$(input).value).trim();if(v)obj[campo]=['latitude','longitude'].includes(campo)?v.replace(',','.'):v;}
@@ -306,6 +329,16 @@ function salvar(){
   if(estado.selecionado){
     const i=estado.locais.findIndex(x=>x.id===estado.selecionado);if(i<0)return;
     const anterior=estado.locais[i],atual={...obj,id:estado.selecionado};
+    // A conferência é invalidada quando qualquer dado do ponto muda.
+    if(anterior.verificacaoCoordenadas&&assinaturaLocal(anterior)===assinaturaLocal(atual))
+     atual.verificacaoCoordenadas=anterior.verificacaoCoordenadas;
+    const sugestao=estado.sugestaoCoordenadas;
+    if(sugestao?.id===atual.id&&sugestao.assinatura===assinaturaLocal(anterior)&&
+      sugestao.latitude===atual.latitude&&sugestao.longitude===atual.longitude&&
+      [atual.nome,atual.endereco,atual.bairro,atual.cidade,atual.uf,atual.maps].map(normalizar).join('|')===
+      [anterior.nome,anterior.endereco,anterior.bairro,anterior.cidade,anterior.uf,anterior.maps].map(normalizar).join('|'))
+     atual.verificacaoCoordenadas=sugestao.origem;
+    estado.sugestaoCoordenadas=null;
     estado.locais[i]=atual;
     if(assinaturaLocal(anterior)!==assinaturaLocal(atual)){
       estado.verificacao.delete(atual.id);
@@ -317,6 +350,7 @@ function salvar(){
     estado.pendentesNovos.add(id);
   }
   salvarHistoricoVerificacao();
+  estado.sugestaoCoordenadas=null;
   estado.alterado=true;estado.formularioAlterado=false;
   $('tituloEditorLocal').textContent='Editar local';$('salvarLocal').textContent='Salvar na lista';$('excluirLocal').hidden=false;
   renderizar();mensagem('Local salvo na lista. Clique em “Publicar alterações” para atualizar o cadastro.','alerta');
