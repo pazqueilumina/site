@@ -585,12 +585,14 @@
       "dataAproximada": true,
       "serie": "ministerio",
       "duracao": "01:01:28",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0034.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T20:48:35.018Z"}
     },
     {
       "pid": "PAL-0035",
