@@ -214,11 +214,11 @@ window.PazRelatorio={
   const bar=document.createElement('div');bar.className='report-toolbar';
   const label=document.createElement('strong');label.textContent=name+' · '+period;
   const actions=document.createElement('div'),back=document.createElement('a');back.href='/admin/relatorios.html';back.textContent='Voltar aos relatórios';
-  const print=document.createElement('button');print.type='button';print.textContent='Imprimir / Salvar em PDF';print.addEventListener('click',()=>window.print());
+  const print=document.createElement('button');print.type='button';print.textContent='Imprimir / Salvar em PDF';print.addEventListener('click',()=>kind==='administrativo'&&window.PazAdminStandalonePrint?window.PazAdminStandalonePrint.open(false):window.print());
   actions.append(back,print);bar.append(label,actions);document.body.prepend(bar);
   const note=document.createElement('p');note.className='report-meta';
   note.textContent='Emitido em '+new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})+' · Indicadores acumulados, atividades recentes, pendências e próximos eventos refletem a situação atual; os demais seguem o período selecionado.';
   const main=document.querySelector('.dash-main'),content=main?.querySelector('.dash-content');if(main&&content)main.insertBefore(note,content);
  },
- maybePrint(cfg){if(cfg?.autoPrint)setTimeout(()=>window.print(),1400);}
+ maybePrint(cfg){if(cfg?.autoPrint)setTimeout(()=>document.body.classList.contains('report-admin')&&window.PazAdminStandalonePrint?window.PazAdminStandalonePrint.open(true):window.print(),1400);}
 };

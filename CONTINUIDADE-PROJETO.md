@@ -575,3 +575,12 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Acompanhamento:** confirmar a conclusão do deploy Cloudflare Pages deste commit e a impressão com os dados reais no navegador do usuário.
 
 - **Deploy confirmado:** commit de código `1495f41ac4e4f60f271b5f0cf66ae9b092322d7c` — check `Cloudflare Pages` **completed/success** em `2026-11-23T01:40:56Z`. Preview Cloudflare: `https://87abbbca.pazqueilumina.pages.dev`. Publicação automática confirmada; prévia autenticada com dados reais continua sujeita à conferência do usuário.
+
+## 23/11/2026 — Impressão administrativa v5 isolada (deploy autorizado)
+
+- **Autorização:** após conferir a prévia `VALIDACAO-Relatorio-Administrativo-v5.pdf`, o responsável autorizou explicitamente o deploy da v5 na `main`.
+- **Causa identificada:** o arquivo legado `admin/report-print.css` acumulava cinco blocos `@media print` e quatro regras `@page`, gerando conflitos com a impressão v4 embutida no DOM do Dashboard (PDF real chegou a sete páginas).
+- **Solução:** adicionados `admin/report-admin-standalone.js` e `admin/report-admin-isolated.css`. O botão Imprimir do Relatório Administrativo gera documento HTML separado, sem carregar o CSS antigo, com visualização A4 colorida, gráficos, indicadores, listas e tabelas. Para a opção de impressão automática, a nova rotina também é utilizada. A extração dos dados continua sendo feita por `buildAdminPrint()` existente, sem mudanças nos widgets do Dashboard.
+- **Integração mínima:** `admin/dashboard.html` carrega o novo script entre `report-view.js` e `dashboard.js`; `admin/report-view.js` redireciona apenas a impressão administrativa para `PazAdminStandalonePrint.open()`. O relatório do palestrante continua utilizando a rotina anterior. Nenhuma mudança no CSS legado, Worker, envio semanal, D1, filtros Mensal/Ano inteiro, menus, mapa ou aplicativo Windows.
+- **Validação local:** Chromium confirmou 2 páginas A4, 6 KPIs, 11 quadros, textos e gráficos coloridos, sem sobreposição, cortes ou páginas vazias. Com 20 atividades, 3 páginas sem perda de linhas. A abertura em nova aba preservou o Dashboard original. `node --check` do novo JS passou. Os dados dos testes foram reconstruídos do PDF do usuário e **não** são dados autenticados ao vivo.
+- **Operação:** no diálogo de impressão, usar A4, Cor e Gráficos de segundo plano; a opção Preto e branco da impressora pode suprimir cores. **A confirmar após o deploy:** check Cloudflare Pages e impressão autenticada com dados reais.
