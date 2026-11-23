@@ -870,12 +870,14 @@
       "dataAproximada": true,
       "serie": "ministerio",
       "duracao": "01:00:52",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0016.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T20:58:59.479Z"}
     },
     {
       "pid": "PAL-0017",
