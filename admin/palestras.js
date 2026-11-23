@@ -316,6 +316,9 @@ function mesclarMudancas(local,base,remoto){
 }
 function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled=state.autoSaving||state.statusSaving;const rows=state.dados.palestras; $('totalP').textContent=rows.length;$('videosP').textContent=rows.filter(p=>p.youtubeId).length;$('audiosP').textContent=rows.filter(p=>p.audio).length;$('pdfsP').textContent=rows.filter(p=>p.pdf).length;
  $('publicarP').disabled=!state.sha||!state.dirty||state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving;
+ // ORDEM é a posição cronológica no acervo completo, independentemente de busca, filtro e inversão.
+ const ordemCronologica=[...rows].sort((a,b)=>(dataEfetivaPalestra(a)||'9999').localeCompare(dataEfetivaPalestra(b)||'9999')||a.pid.localeCompare(b.pid));
+ const numerosOrdem=new Map(ordemCronologica.map((p,i)=>[p.pid,i+1]));
  const filtered=palestrasVisiveis();
  $('exportarFiltradoP').disabled=!filtered.length;
  const list=$('listaP');list.replaceChildren();if(!filtered.length){const e=document.createElement('p');e.className='vazio';e.textContent='Nenhuma palestra encontrada.';list.append(e);return;}

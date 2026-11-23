@@ -853,3 +853,11 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Conflitos:** quando uma publicação automática encontra conflito de SHA do cadastro, o painel relê o JSON e tenta uma única conciliação **por campo alterado**, preservando alterações remotas independentes e recusando sobreposição no mesmo campo ou IDs conflitantes. Se o vínculo não puder ser publicado, o usuário é avisado para não reenviar o arquivo já armazenado.
 - **Arquivos:** `admin/palestras.js`, `admin/palestras.html`, `admin/palestras.css` e este documento. Não modificar dados de palestras, arquivos MP3/PDF, endpoints, Worker de e-mails, envio semanal, dashboards ou aplicativo Windows.
 - **Validação:** sintaxe JS, seletores/IDs do HTML, integridade do CSS, testes de filtros e conciliação de alterações independentes/conflitantes. Testes reais autenticados de upload R2 e GitHub dependem de conferência no navegador após o deploy.
+
+## 23/11/2026 — Correção imediata do Acervo após deploy CSV
+
+- **Autorização:** usuário reportou erro `numerosOrdem is not defined`, botão CSV com aparência diferente de **+ Nova** e remoção indevida de texto; autorizou corrigir e publicar na `main`.
+- **Falha e correção:** ao refatorar o filtro de palestras para a exportação CSV, a declaração de `numerosOrdem` foi excluída do `render()`. Restaurada a numeração cronológica **do catálogo completo**, mantendo o número original mesmo ao buscar, filtrar ou inverter a lista.
+- **Interface:** botão **↓ CSV** passa a usar exatamente as classes `botao secundario` do **+ Nova**; estilos específicos removidos. Mantido **“Ordem cronológica.”** abaixo de Acervo; removido apenas **“Selecione uma palestra para editar.”**. A anotação anterior que indicava remoção do texto inteiro foi substituída por esta correção.
+- **Escopo:** somente `admin/palestras.js`, `admin/palestras.html`, `admin/palestras.css` e `CONTINUIDADE-PROJETO.md`. Nenhuma alteração de dados, links, arquivos, upload R2/GitHub, dashboards, Worker ou aplicativo Windows.
+- **Validação:** execução real da função `render()` em DOM simulado com busca, filtros, inversão e numeração cronológica; validação de sintaxe, classes dos botões e atualização de cache-busting. Verificar publicação Cloudflare Pages após commit.
