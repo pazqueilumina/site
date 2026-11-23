@@ -738,3 +738,13 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - O item da página ativa continua destacado, e o Dashboard abre expandido por padrão. O botão de recolher/expandir mantém o comportamento, aproveitando a regra CSS de `[hidden]` já existente para ocultar os quatro itens quando fechado.
 - **Gestão** (Agenda, Inscritos, Locais, Palestras, Shorts) e **Acervo** mantidos; itens do Acervo harmonizados entre os três painéis. A página de seleção de Relatórios conserva sua navegação de retorno e não teve layout alterado.
 - Arquivos: admin/dashboard.html, admin/palestrante.html, admin/estatisticas.html, admin/dashboard.css. Sem alteração de API, Worker ou dados.
+
+
+## 23/11/2026 — Formulário de inscrição transferido para Contato e convite discreto na Agenda
+
+- **Autorização:** o responsável aprovou mover o formulário completo de inscrição por e-mail para o menu público **Contato**, deixando na Agenda somente uma faixa compacta de convite após os três primeiros eventos futuros, com link **Inscrever-se** para `/contato.html#inscricaoMensal`. Publicação diretamente na `main`.
+- **Agenda:** título, filtros e eventos agora aparecem antes da chamada de inscrição. O convite é inserido depois do terceiro evento futuro visível (ou depois dos disponíveis, se forem menos de três), respeita os filtros de Centro, período e busca e não aparece se não houver próximos eventos. Só é exibido após confirmação de disponibilidade do Worker de inscrições, evitando direcionar a formulário desativado.
+- **Contato:** preservados e-mail, YouTube e Instagram. Abaixo, inserido o formulário completo existente com e-mail, consentimento expresso, inscrição nas agendas mensal e semanal e solicitação de cancelamento. Os mesmos endpoints e payloads do Worker foram preservados; não houve alteração em envio, opt-in, cadência, banco de inscritos ou Worker. O link com âncora rola para a seção após a renderização dinâmica e a checagem de disponibilidade.
+- **Estilo:** faixa discreta e responsiva na Agenda; formulário completo com estilo atual em Contato. Cache atualizado apenas em `agenda.html` e `contato.html`.
+- **Arquivos:** `js/app.js`, `css/estilo.css`, `agenda.html`, `contato.html`, `CONTINUIDADE-PROJETO.md`. Não alterar outras páginas, dados, Cloudflare Worker, dashboards ou programa Windows.
+- **Validação:** sintaxe JS, presença dos IDs e endpoints originais, exibição condicionada à disponibilidade do Worker, posicionamento do convite após três eventos, filtro e âncora dinâmica. Testes de envio/cancelamento reais exigem conferência do responsável no navegador; não disparar e-mails de teste sem autorização.

@@ -1007,17 +1007,47 @@ function mostrarAvisoAgenda(tipo, titulo, mensagem) {
   regiao.appendChild(aviso);
   temporizadorAvisoAgenda = setTimeout(dispensar, 6000);
 }
+/* O formulário completo pertence à página Contato. Mantém os IDs e o fluxo existente do Worker. */
+function htmlFormularioInscricaoAgenda() {
+  return '<section class="inscricao-mensal" id="inscricaoMensal" aria-labelledby="tituloInscricaoMensal" hidden>' +
+      '<div class="inscricao-mensal-intro"><span class="inscricao-mensal-etiqueta">AGENDA POR E-MAIL</span>' +
+      '<h2 id="tituloInscricaoMensal">Receba as agendas mensal e semanal</h2>' +
+      '<p id="descricaoInscricaoAgenda">Receba por e-mail a agenda mensal e, aos domingos, a agenda semanal com os próximos encontros, palestras e estudos. Gratuito e sem lembretes adicionais.</p></div>' +
+      '<form id="formInscricaoMensal" class="inscricao-mensal-form">' +
+        '<label for="emailInscricaoMensal">Seu e-mail</label>' +
+        '<div class="inscricao-mensal-linha"><input id="emailInscricaoMensal" type="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" maxlength="254" required>' +
+        '<button type="submit">Quero receber</button></div>' +
+        '<label class="inscricao-mensal-consentimento"><input type="checkbox" name="consent" required><span>Concordo em receber por e-mail a agenda mensal e a agenda semanal aos domingos. Posso cancelar ambas a qualquer momento pelo link nas mensagens.</span></label>' +
+        '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
+      '</form>' +
+      '<div class="inscricao-mensal-cancelar"><button type="button" id="abrirCancelamentoAgenda" aria-expanded="false" aria-controls="formCancelamentoAgenda" hidden>Cancelar inscrição</button>' +
+        '<form id="formCancelamentoAgenda" hidden><label for="emailCancelamentoAgenda">E-mail cadastrado</label><div class="inscricao-mensal-linha"><input id="emailCancelamentoAgenda" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required maxlength="254"><button type="submit">Enviar confirmação</button></div>' +
+        '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
+        '</form></div>' +
+    '</section>';
+}
+async function consultarStatusInscricaoAgenda() {
+  try {
+    const resposta = await fetch(INSCRICAO_WORKER_URL + '/api/subscriptions/status', {mode:'cors', cache:'no-store'});
+    return resposta.ok ? await resposta.json() : null;
+  } catch { return null; }
+}
+
 async function ativarInscricaoAgenda() {
   const secao = document.getElementById('inscricaoMensal');
   const form = document.getElementById('formInscricaoMensal');
   if (!secao || !form) return;
-  let dados = null;
-  try {
-    const r = await fetch(INSCRICAO_WORKER_URL + '/api/subscriptions/status', {mode:'cors', cache:'no-store'});
-    dados = r.ok ? await r.json() : null;
-    if (!dados || dados.available !== true) return;
-  } catch { return; } // Não mostrar formulário enquanto o Worker não estiver pronto.
+  const dados = await consultarStatusInscricaoAgenda();
+  if (!dados || dados.available !== true) return; // Não mostrar formulário enquanto o Worker não estiver pronto.
   secao.hidden = false;
+  if (location.hash === '#inscricaoMensal') {
+    // A seção é criada via JS; o navegador não encontra a âncora durante o carregamento inicial.
+    requestAnimationFrame(() => {
+      secao.scrollIntoView({block:'start',behavior:'auto'});
+      const titulo = document.getElementById('tituloInscricaoMensal');
+      if (titulo) { titulo.setAttribute('tabindex','-1'); titulo.focus({preventScroll:true}); }
+    });
+  }
   const abrirCancelamento = document.getElementById('abrirCancelamentoAgenda');
   const formCancelamento = document.getElementById('formCancelamentoAgenda');
   if (abrirCancelamento && formCancelamento && dados.unsubscribeRequestEnabled === true) {
@@ -1099,22 +1129,6 @@ function renderizarAgenda() {
   principal.innerHTML =
     '<h1 class="titulo-pagina">Agenda de apresentações</h1>' +
     '<p class="subtitulo-pagina">Próximos encontros, palestras e estudos abertos. Participe — a entrada é gratuita.</p>' +
-    '<section class="inscricao-mensal" id="inscricaoMensal" aria-labelledby="tituloInscricaoMensal" hidden>' +
-      '<div class="inscricao-mensal-intro"><span class="inscricao-mensal-etiqueta">AGENDA POR E-MAIL</span>' +
-      '<h2 id="tituloInscricaoMensal">Receba as agendas mensal e semanal</h2>' +
-      '<p id="descricaoInscricaoAgenda">Receba por e-mail a agenda mensal e, aos domingos, a agenda semanal com os próximos encontros, palestras e estudos. Gratuito e sem lembretes adicionais.</p></div>' +
-      '<form id="formInscricaoMensal" class="inscricao-mensal-form">' +
-        '<label for="emailInscricaoMensal">Seu e-mail</label>' +
-        '<div class="inscricao-mensal-linha"><input id="emailInscricaoMensal" type="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" maxlength="254" required>' +
-        '<button type="submit">Quero receber</button></div>' +
-        '<label class="inscricao-mensal-consentimento"><input type="checkbox" name="consent" required><span>Concordo em receber por e-mail a agenda mensal e a agenda semanal aos domingos. Posso cancelar ambas a qualquer momento pelo link nas mensagens.</span></label>' +
-        '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
-      '</form>' +
-      '<div class="inscricao-mensal-cancelar"><button type="button" id="abrirCancelamentoAgenda" aria-expanded="false" aria-controls="formCancelamentoAgenda" hidden>Cancelar inscrição</button>' +
-        '<form id="formCancelamentoAgenda" hidden><label for="emailCancelamentoAgenda">E-mail cadastrado</label><div class="inscricao-mensal-linha"><input id="emailCancelamentoAgenda" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required maxlength="254"><button type="submit">Enviar confirmação</button></div>' +
-        '<div class="inscricao-mensal-anti-spam" aria-hidden="true"><label>Deixe em branco<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>' +
-        '</form></div>' +
-    '</section>' +
     '<div class="filtro-agenda-publica" role="search" aria-label="Filtrar eventos da agenda">' +
       '<label>Filtrar por Centro / Local<input id="filtroCentroAgenda" type="search" list="opcoesCentroAgenda" placeholder="Todos os Centros e locais" maxlength="180" autocomplete="off" title="Digite o nome do Centro ou selecione na lista">' +
       '<datalist id="opcoesCentroAgenda">' +
@@ -1139,6 +1153,15 @@ function renderizarAgenda() {
   periodo.value = periodoInicial;
   busca.value = buscaInicial;
   let buscaGlobal = '';
+  let conviteDisponivel = false;
+  async function ativarConviteInscricaoAgenda() {
+    const status = await consultarStatusInscricaoAgenda();
+    if (status && status.available === true) {
+      conviteDisponivel = true;
+      const convite = document.getElementById('conviteInscricaoAgenda');
+      if (convite) convite.hidden = false;
+    }
+  }
   function pintar(termoGlobal) {
     if (termoGlobal !== undefined) buscaGlobal = termoGlobal;
     const c = normalizarLocalAgenda(centro.value), centroId = centroSelecionado(), p = periodo.value;
@@ -1147,7 +1170,15 @@ function renderizarAgenda() {
     const futuros = (p==='passados' ? [] : eventos).filter(corresponde);
     const antigos = (p==='futuros' ? [] : passados).filter(corresponde);
     const alvo = document.getElementById('listaAgenda');
-    alvo.innerHTML = futuros.length ? futuros.map(e=>itemAgenda(e,false)).join('') : '<div class="vazio">Nenhum evento futuro corresponde aos filtros.</div>';
+    const itens = futuros.map(e => itemAgenda(e,false));
+    const convite = '<aside class="agenda-convite-email" id="conviteInscricaoAgenda" aria-label="Receber a agenda por e-mail"' + (conviteDisponivel ? '' : ' hidden') + '>' +
+      '<span class="agenda-convite-icone" aria-hidden="true">' + icone('email') + '</span>' +
+      '<div class="agenda-convite-texto"><strong>Receba a agenda por e-mail</strong><p>Programação mensal e semanal, gratuitamente.</p></div>' +
+      '<a class="agenda-convite-botao" href="/contato.html#inscricaoMensal">Inscrever-se</a>' +
+      '</aside>';
+    alvo.innerHTML = futuros.length
+      ? itens.slice(0,3).join('') + convite + itens.slice(3).join('')
+      : '<div class="vazio">Nenhum evento futuro corresponde aos filtros.</div>';
     // Ao selecionar apenas realizados, ocultar a lista de próximos eventos.
     alvo.style.display = p==='passados' ? 'none' : '';
     const historico = document.getElementById('secaoPassados');
@@ -1188,7 +1219,7 @@ function renderizarAgenda() {
   });
   pintar('');
   window.__filtroLista = pintar;
-  ativarInscricaoAgenda();
+  ativarConviteInscricaoAgenda();
 }
 
 /* ---------------- PÁGINA: LIVRO ---------------- */
@@ -1242,7 +1273,9 @@ function renderizarContato() {
     '<div class="contato-item">' + icone("email") + "<span>E-mail: <a href=\"mailto:" + escapar(DADOS.site.email) + "\">" + escapar(DADOS.site.email) + "</a></span></div>" +
     '<div class="contato-item">' + icone("video") + "<span>You Tube: <a href=\"" + escapar(DADOS.site.canalYoutube) + '" target="_blank" rel="noopener">' + escapar(DADOS.site.canalNome) + "</a></span></div>" +
     '<div class="contato-item">' + icone("instagram") + "<span>Instagram: <a href=\"https://www.instagram.com/pazqueilumina/\" target=\"_blank\" rel=\"noopener\">Paz que Ilumina</a></span></div>" +
-    "</div></div>";
+    "</div></div>" +
+    htmlFormularioInscricaoAgenda();
+  ativarInscricaoAgenda();
 }
 
 /* ---------------- BUSCA GLOBAL EM TODO O ACERVO ---------------- */

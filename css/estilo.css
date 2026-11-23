@@ -1666,3 +1666,16 @@ body[data-page="videos"] .cartao-short .etiqueta-short {
 @keyframes avisoAgendaEntrada{from{opacity:0;transform:translateY(-9px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.avisos-agenda{top:72px;right:12px;width:calc(100vw - 24px)}}
 @media(prefers-reduced-motion:reduce){.aviso-agenda{animation:none}}
+
+/* Convite compacto após os três primeiros eventos; formulário completo na página Contato. */
+.agenda-convite-email[hidden]{display:none!important}
+.agenda-convite-email{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin:7px 0;padding:15px 18px;background:#f7f6f1;border:1px solid #e4dfd3;border-radius:12px;box-shadow:0 2px 9px rgba(22,40,35,.035)}
+.agenda-convite-icone{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:11px;background:#e6eee7;color:#2d6c56}
+.agenda-convite-icone .icone{width:20px;height:20px}
+.agenda-convite-texto{flex:1 1 220px;min-width:0}
+.agenda-convite-texto strong{display:block;color:#253d36;font:650 14px var(--fonte-sans,Arial,sans-serif)}
+.agenda-convite-texto p{margin:4px 0 0;color:#627168;font:12px/1.5 var(--fonte-sans,Arial,sans-serif)}
+.agenda-convite-botao{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-height:39px;padding:9px 16px;border-radius:9px;background:#253d36;color:#fff!important;text-decoration:none!important;font:650 12px var(--fonte-sans,Arial,sans-serif)}
+.agenda-convite-botao:hover,.agenda-convite-botao:focus-visible{background:#35634e}
+body[data-page="contato"] .inscricao-mensal{margin-top:26px;scroll-margin-top:92px}
+@media(max-width:560px){.agenda-convite-email{gap:11px;padding:14px}.agenda-convite-botao{width:100%;flex:1 1 100%}}
