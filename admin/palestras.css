@@ -15,7 +15,8 @@
 .importacao h2{font:600 23px Georgia,serif;margin:0 0 8px;color:var(--navy)}
 .importacao p{font-size:13px;line-height:1.6;color:var(--muted)}
 .importacao textarea{width:100%;padding:12px;margin-top:8px;border:1px solid var(--line);border-radius:8px;resize:vertical}
-.importacao input[type=file]{max-width:100%;display:block;margin:10px 0 14px}
+.importacao input[type=file]{display:block;width:100%;max-width:100%;height:auto;min-height:43px;margin:8px 0 14px;padding:10px;border:1px solid #d7dfe4;border-radius:8px;background:#fff;color:var(--ink);font-size:12px}
+.importacao input[type=file]:focus-visible{outline:2px solid #afc6d5;outline-offset:1px;border-color:var(--navy2)}
 .importacao .rotulo-importacao{font-size:12px;font-weight:700;display:block;margin-top:18px}
 .importacao .acoes{margin:15px 0}
 .importacao button{margin-top:5px}

@@ -179,13 +179,11 @@ function atualizarResumoVerificacao(){
  const avaliados=resultados.filter(r=>r&&r.status!=='pendente'&&r.status!=='conferido').length;
  const erros=resultados.filter(r=>['erro','divergente'].includes(r?.status)).length;
  const aproximados=resultados.filter(r=>r?.status==='aproximado').length;
- const confirmadosEndereco=resultados.filter(r=>r?.status==='endereco-conferido').length;
  const pendencias=estado.locais.filter((l,i)=>!resultados[i]||['pendente','conferido'].includes(resultados[i].status));
  const pendentes=pendencias.length;
  $('errosLocais').textContent=avaliados?String(erros):(estado.locais.length===0?'0':'—');
  const ultima=Math.max(0,...resultados.map(r=>r?.verificadoEm||0));
  const quando=ultima?' · Última: '+new Date(ultima).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
- // A confirmação manual do ponto é mostrada no cartão de coordenadas, sem reduzir a contagem de endereços avaliados.
  const listaPendencias=$('pendenciasEnderecosLocais');
  listaPendencias.replaceChildren();
  listaPendencias.hidden=!pendencias.length;
@@ -214,11 +212,12 @@ function atualizarResumoVerificacao(){
  const semRegistro=comCoordenadas.length-confirmadas;
  const preparaveis=locaisComCoordenadasConfirmadas().length;
  $('totalCoordenadasLocais').textContent=String(comCoordenadas.length);
- $('statusCoordenadasLocais').textContent=!comCoordenadas.length
-  ?'Nenhuma coordenada cadastrada'
-  :confirmadas+' confirmada(s) · '+semRegistro+' coordenada(s) pendente(s) de confirmação'+(preparaveis?' · '+preparaveis+' pronta(s) para preparar':'');
- $('statusSemCoordenadasLocais').textContent=semCoordenadas+' '+(semCoordenadas===1?'local sem coordenadas cadastradas':'locais sem coordenadas cadastradas');
- $('statusConferenciaManualLocais').textContent=confirmadosEndereco+' '+(confirmadosEndereco===1?'local com endereço e coordenadas conferidos':'locais com endereço e coordenadas conferidos')+' pelo responsável';
+ // Síntese em uma única linha; pendências de confirmação só aparecem quando existem.
+ const textoConfirmadas=confirmadas+' '+(confirmadas===1?'confirmada':'confirmadas');
+ const textoSemCoordenadas=semCoordenadas+' '+(semCoordenadas===1?'local sem coordenadas cadastradas':'locais sem coordenadas cadastradas');
+ const textoPendentes=semRegistro?' · '+semRegistro+' '+(semRegistro===1?'coordenada aguardando confirmação':'coordenadas aguardando confirmação'):'';
+ const textoPreparaveis=preparaveis?' · '+preparaveis+' '+(preparaveis===1?'pronta para preparar':'prontas para preparar'):'';
+ $('statusCoordenadasLocais').textContent=textoConfirmadas+' · '+textoSemCoordenadas+textoPendentes+textoPreparaveis;
  const local=estado.locais.find(l=>l.id===estado.selecionado);
  const enderecoConfirmado=$('statusEnderecoLocal');
  enderecoConfirmado.hidden=!local?.verificacaoEndereco;
