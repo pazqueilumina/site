@@ -799,3 +799,12 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Arquivos de código:** `js/app.js` (etiqueta), `css/estilo.css` (cor), oito HTML públicos listados acima (rodapés; `contato.html` também com referências de cache atualizadas). `index.html` permaneceu intacto.
 - **Validação:** sintaxe de `js/app.js` aprovada, CSS com chaves equilibradas, etiqueta usando estilo existente, nove rodapés públicos conferidos como idênticos, comparação de diffs restrita aos elementos solicitados. Sem alterações em APIs, Worker, envios de e-mails, filtros, dashboards ou conteúdo de acervo.
 - **Publicação:** commit de código `45bac626d8a0cad6b1807d9d081daaa9f846f7f4` na `main`; check **Cloudflare Pages completed/success** em **2026-11-23T19:14:42Z**. A conferência visual no navegador do responsável continua recomendada.
+
+## 23/11/2026 — Correção do menu administrativo no celular
+
+- **Problema:** na visualização móvel (largura até 760px), o Dashboard mostrava somente o botão principal; o CSS ocultava os submenus e os botões Gestão/Acervo, impedindo acesso às outras páginas.
+- **Autorização:** o responsável autorizou explicitamente o deploy da correção mobile.
+- **Solução:** em `admin/dashboard.css`, o menu móvel passa a organizar os grupos verticalmente, exibe os botões Dashboard, Gestão, Acervo e Voltar ao site, e mostra os links internos somente quando o respectivo grupo está expandido. As regras `[hidden]` continuam respeitadas. Desktop e lógica JavaScript dos botões não foram alterados.
+- **Arquivos:** `admin/dashboard.css` e `admin/dashboard.html` (atualização da versão de cache CSS). Nenhum outro arquivo funcional, Worker, serviço de e-mail, filtros ou dashboards alterado.
+- **Validação:** conferidos IDs dos três grupos, regras de ocultação, chaves CSS equilibradas e alteração limitada ao breakpoint móvel. Conferência visual real em celular permanece pendente.
+- **Código publicado na main:** `fab26fcff3ae9011e8b7ec78716ea7c6493e1edf`. O status da implantação Cloudflare Pages deve ser consultado no check deste commit (iniciado após o push).
