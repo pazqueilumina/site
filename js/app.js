@@ -1245,10 +1245,14 @@ function renderizarLivro() {
 
 function renderizarSobre() {
   const principal = document.getElementById("principal");
-  // Converte [texto](https://url) em link após escapar o texto (com segurança)
-  const comLinks = (t) =>
-    escapar(t).replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
+  // Converte links externos após escapar o texto; cria link interno só no título do livro.
+  const comLinks = (t) => {
+    const textoSeguro = escapar(t).replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
       '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return t === "Autor do Livro A Bênção da Dor, Editora Viseu."
+      ? textoSeguro.replace("A Bênção da Dor", '<a href="livro.html">A Bênção da Dor</a>')
+      : textoSeguro;
+  };
   const paragrafos = (DADOS.sobre.texto || [])
     .map((t) => "<p" + (t.startsWith("\"") || t.startsWith("“") ? ' class="serif-citacao"' : "") + ">" + comLinks(t) + "</p>")
     .join("");

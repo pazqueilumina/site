@@ -1678,7 +1678,7 @@ body[data-page="videos"] .cartao-short .etiqueta-short {
 .agenda-convite-botao{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-height:39px;padding:9px 16px;border-radius:9px;background:#243b5a;color:#fff!important;text-decoration:none!important;font:650 12px var(--fonte-sans,Arial,sans-serif)}
 .agenda-convite-botao:hover,.agenda-convite-botao:focus-visible{background:#36577a}
 /* Formulário de inscrição na página Contato: primeira revisão (creme e botão azul-marinho). */
-body[data-page="contato"] .inscricao-mensal{margin-top:26px;scroll-margin-top:92px;background:#f8f5ef;border-color:#e5ddd0;box-shadow:0 3px 12px rgba(36,59,90,.04)}
+body[data-page="contato"] .inscricao-mensal{margin-top:26px;scroll-margin-top:92px;background:#f7f0e7;border-color:#e5ddd0;box-shadow:0 3px 12px rgba(36,59,90,.04)}
 body[data-page="contato"] .inscricao-mensal h2,
 body[data-page="contato"] .inscricao-mensal-form>label:first-child,
 body[data-page="contato"] .inscricao-mensal-cancelar form>label{color:#243b5a}
@@ -1695,3 +1695,7 @@ body[data-page="contato"] .inscricao-mensal-cancelar>button{color:#243b5a}
 /* Quadro de contatos compacto, exclusivamente na página Contato; não altera Sobre. */
 body[data-page="contato"] .pagina-texto{max-width:540px;padding:18px 24px;background:#f7f4ee;border-color:#e5ddd0}
 body[data-page="contato"] .contato-lista{margin-top:0}
+
+/* Fundos dos quadros principais em Sobre e Livro: mesmo bege dos filtros da Agenda. */
+body[data-page="sobre"] .pagina-texto,
+body[data-page="livro"] .pagina-texto{background:#f7f0e7}
