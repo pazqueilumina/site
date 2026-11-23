@@ -1044,8 +1044,8 @@ async function ativarInscricaoAgenda() {
     // A seção é criada via JS; o navegador não encontra a âncora durante o carregamento inicial.
     requestAnimationFrame(() => {
       secao.scrollIntoView({block:'start',behavior:'auto'});
-      const titulo = document.getElementById('tituloInscricaoMensal');
-      if (titulo) { titulo.setAttribute('tabindex','-1'); titulo.focus({preventScroll:true}); }
+      const campoEmail = document.getElementById('emailInscricaoMensal');
+      if (campoEmail) campoEmail.focus({preventScroll:true});
     });
   }
   const abrirCancelamento = document.getElementById('abrirCancelamentoAgenda');
@@ -1177,7 +1177,7 @@ function renderizarAgenda() {
       '<a class="agenda-convite-botao" href="/contato.html#inscricaoMensal">Inscrever-se</a>' +
       '</aside>';
     alvo.innerHTML = futuros.length
-      ? itens.slice(0,3).join('') + convite + itens.slice(3).join('')
+      ? convite + itens.join('')
       : '<div class="vazio">Nenhum evento futuro corresponde aos filtros.</div>';
     // Ao selecionar apenas realizados, ocultar a lista de próximos eventos.
     alvo.style.display = p==='passados' ? 'none' : '';
