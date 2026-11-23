@@ -553,3 +553,12 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 
 ### 11.4 Prompt recomendado
 O texto atualizado para copiar no início do próximo chat está na seção **6 — “Texto para iniciar outro chat”**. Ele instrui a ler este arquivo e **não autoriza alterações** por si só.
+
+## 23/11/2026 — Terceira revisão da impressão Administrativa (autorizada)
+
+- **Motivo:** a prévia real apresentada pelo usuário tinha 2 páginas, porém com **cortes à direita, indicadores truncados, texto pequeno e grandes áreas em branco**. A segunda revisão reduziu páginas, mas não resolveu a legibilidade.
+- **Correção:** `admin/report-view.js` monta duas seções próprias para impressão: (1) visão geral com cabeçalho, seis KPIs, evolução do acervo, rosca, origem e evolução das visitas; (2) acompanhamento administrativo com conteúdos recentes, atividades, pendências, monitor de e-mails, inscrições, próximos eventos e resumo do acervo. Os quadros são clonados do Dashboard carregado, sem alterar o original.
+- **Paginação e largura:** `admin/report-print.css` usa **largura fluida de 100% da área imprimível**, em vez dos 190 mm rígidos; elimina o fluxo `columns:2` da nova seção de detalhes e cria duas colunas explícitas com quebra de página entre as seções. Gráficos e fontes foram ajustados para leitura em A4 retrato. O CSS específico do Relatório do Palestrante não foi modificado.
+- **Preservação:** nenhum indicador, dado, gráfico ou cadastro foi removido. Ações rápidas continuam no Dashboard, mas não são dados de impressão. Menus, filtros Mensal/Ano inteiro, Estatísticas planejada, Worker, D1, envios e programa Windows não foram alterados. Atualizado apenas o cache-busting dos recursos de impressão nos dois dashboards.
+- **Validação antes de publicar:** simulação local em Chromium com conteúdo **representativo, não autenticado**: **2 páginas** com sete atividades e **3 páginas** com vinte atividades, sem cortes horizontais na composição simulada. **Ainda falta conferir a prévia de impressão com os dados reais e as configurações do navegador do usuário**.
+- **Controle:** HEAD de partida `90d3882b43a3b3cc0b36747e0ac8a26b87d85fc1`; alteração na `main` autorizada. Confirmar separadamente o deploy Cloudflare Pages.

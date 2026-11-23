@@ -257,3 +257,103 @@ body.report-view .dash-sidebar{display:none}body.report-view .dash-shell{display
  body.report-view.report-admin .report-print-details .inscricoes-rodape a,
  body.report-view.report-admin .report-print-details .email-year-label{display:none!important}
 }
+
+/* 23/11/2026 — Revisão 3: duas páginas editoriais, largura fluida e sem multicol.
+   Exclusiva do relatório Administrativo; não modifica Dashboard nem Palestrante. */
+@media print {
+ body.report-view.report-admin.report-print-prepared .report-print-root {
+  display:block!important;position:static!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  margin:0!important;padding:0!important;overflow:visible!important;
+  font:9pt/1.32 Arial,"Segoe UI",sans-serif!important;
+ }
+ body.report-view.report-admin .report-print-root,
+ body.report-view.report-admin .report-print-root * {box-sizing:border-box!important;}
+ body.report-view.report-admin .report-print-root .widget,
+ body.report-view.report-admin .report-print-root .kpi,
+ body.report-view.report-admin .report-print-root .report-print-heading {max-width:100%!important;min-width:0!important;}
+ body.report-view.report-admin .report-print-root .widget {overflow-wrap:anywhere!important;}
+ body.report-view.report-admin .report-print-root .widget svg {max-width:100%!important;}
+ body.report-view.report-admin .report-print-page {display:block!important;width:100%!important;min-width:0!important;margin:0!important;padding:0!important;}
+ body.report-view.report-admin .report-print-detail-page {break-before:page!important;page-break-before:always!important;}
+ body.report-view.report-admin .report-print-heading {margin:0 0 3mm!important;padding:0 0 2.5mm!important;border-bottom:2px solid #254b78!important;}
+ body.report-view.report-admin .report-print-heading h1 {font-size:19pt!important;}
+ body.report-view.report-admin .report-print-heading .report-print-note {overflow-wrap:anywhere!important;font-size:7.7pt!important;line-height:1.35!important;}
+ body.report-view.report-admin .report-print-kpis {
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  width:100%!important;gap:2mm!important;margin:0 0 3mm!important;padding:0!important;
+  break-inside:avoid!important;
+ }
+ body.report-view.report-admin .report-print-kpis .kpi {
+  display:flex!important;align-items:center!important;gap:7px!important;
+  width:auto!important;min-height:20mm!important;padding:8px 10px!important;
+  border-radius:5px!important;
+ }
+ body.report-view.report-admin .report-print-kpis .kpi-info {min-width:0!important;}
+ body.report-view.report-admin .report-print-kpis .kpi-info h2 {font-size:8.5pt!important;}
+ body.report-view.report-admin .report-print-kpis .kpi-info strong {font-size:16pt!important;}
+ body.report-view.report-admin .report-print-kpis .kpi-info small {font-size:7.2pt!important;}
+ body.report-view.report-admin .report-print-charts {
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:100%!important;gap:2.5mm!important;margin:0!important;padding:0!important;
+  align-items:start!important;
+ }
+ body.report-view.report-admin .report-print-charts>.widget {
+  display:block!important;grid-column:auto;min-width:0!important;min-height:0!important;
+  width:100%!important;height:auto!important;padding:10px 12px!important;
+  border:1px solid #d4deea!important;border-radius:5px!important;
+  box-shadow:none!important;break-inside:avoid!important;
+ }
+ body.report-view.report-admin .report-print-charts>.widget-chart,
+ body.report-view.report-admin .report-print-charts>.widget-visits-evolution {grid-column:1/-1!important;}
+ body.report-view.report-admin .report-print-charts .chart-container,
+ body.report-view.report-admin .report-print-charts .visits-chart-container {width:100%!important;height:170px!important;min-height:0!important;max-width:100%!important;overflow:hidden!important;}
+ body.report-view.report-admin .report-print-charts .chart-container svg,
+ body.report-view.report-admin .report-print-charts .visits-chart-svg {display:block!important;width:100%!important;height:100%!important;max-width:100%!important;min-width:0!important;}
+ body.report-view.report-admin .report-print-charts .widget-donut,
+ body.report-view.report-admin .report-print-charts .widget-countries {min-height:145px!important;}
+ body.report-view.report-admin .report-print-charts .donut {width:110px!important;height:110px!important;}
+ body.report-view.report-admin .report-print-charts .donut-hole {width:62px!important;height:62px!important;}
+ body.report-view.report-admin .report-print-charts .donut-layout {gap:12px!important;}
+ body.report-view.report-admin .report-print-charts .countries-list {gap:6px!important;}
+ body.report-view.report-admin .report-print-detail-heading {margin:0 0 4mm!important;padding:0 0 2.5mm!important;border-bottom:2px solid #254b78!important;break-after:avoid!important;}
+ body.report-view.report-admin .report-print-detail-heading h2 {font:700 16pt/1.2 Georgia,serif!important;color:#18385e!important;margin:0 0 1mm!important;}
+ body.report-view.report-admin .report-print-detail-heading p {font-size:8.5pt!important;color:#536781!important;margin:0!important;}
+ body.report-view.report-admin .report-print-detail-columns {
+  display:grid!important;grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr)!important;
+  gap:3mm!important;width:100%!important;align-items:start!important;min-width:0!important;
+ }
+ body.report-view.report-admin .report-print-detail-column {
+  display:flex!important;flex-direction:column!important;gap:2.5mm!important;
+  width:100%!important;min-width:0!important;
+ }
+ body.report-view.report-admin .report-print-detail-column>.widget {
+  display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;
+  height:auto!important;min-height:0!important;margin:0!important;
+  padding:10px 12px!important;border:1px solid #d4deea!important;
+  border-radius:5px!important;box-shadow:none!important;background:#fff!important;
+  overflow:visible!important;break-inside:avoid!important;page-break-inside:avoid!important;
+ }
+ body.report-view.report-admin .report-print-detail-column>.report-print-activity {break-inside:auto!important;page-break-inside:auto!important;}
+ body.report-view.report-admin .report-print-detail-column .activity-list {display:block!important;}
+ body.report-view.report-admin .report-print-root .widget h2 {font-size:10pt!important;line-height:1.2!important;margin:0 0 2mm!important;}
+ body.report-view.report-admin .report-print-root .widget-subtitle {font-size:8pt!important;line-height:1.3!important;margin:0 0 2mm!important;}
+ body.report-view.report-admin .report-print-detail-column .row-text strong {font-size:8.4pt!important;line-height:1.3!important;}
+ body.report-view.report-admin .report-print-detail-column .row-text small {font-size:7.3pt!important;line-height:1.3!important;}
+ body.report-view.report-admin .report-print-detail-column .content-row,
+ body.report-view.report-admin .report-print-detail-column .activity-row,
+ body.report-view.report-admin .report-print-detail-column .alert-row,
+ body.report-view.report-admin .report-print-detail-column .event-row {padding:5px 0!important;gap:7px!important;}
+ body.report-view.report-admin .report-print-detail-column .content-row img {width:48px!important;height:32px!important;}
+ body.report-view.report-admin .report-print-detail-column .email-monitor-metrics {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;}
+ body.report-view.report-admin .report-print-detail-column .email-monitor-metric {min-width:0!important;padding:8px!important;}
+ body.report-view.report-admin .report-print-detail-column .email-monitor-metric strong {font-size:14pt!important;}
+ body.report-view.report-admin .report-print-detail-column .inscricoes-total-grid {gap:6px!important;}
+ body.report-view.report-admin .report-print-detail-column .summary-table {width:100%!important;font-size:8pt!important;}
+ body.report-view.report-admin .report-print-detail-column .summary-table th,
+ body.report-view.report-admin .report-print-detail-column .summary-table td {padding:4px!important;}
+ body.report-view.report-admin .report-print-detail-column .table-scroll {max-height:none!important;overflow:visible!important;}
+ body.report-view.report-admin .report-print-root .widget-bottom-link,
+ body.report-view.report-admin .report-print-root .widget-bottom-links,
+ body.report-view.report-admin .report-print-root .inscricoes-rodape a {display:none!important;}
+}

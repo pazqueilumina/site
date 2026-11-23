@@ -7,8 +7,9 @@ function buildAdminPrint(){
  document.getElementById('reportPrintRoot')?.remove();
  const content=document.querySelector('.dash-content'),welcome=document.querySelector('.dash-welcome');
  if(!content||!welcome)return;
- const root=document.createElement('div');
- root.id='reportPrintRoot';root.className='report-print-root';
+ const root=document.createElement('div');root.id='reportPrintRoot';root.className='report-print-root';
+ const overview=document.createElement('section');overview.className='report-print-page report-print-overview';
+ const details=document.createElement('section');details.className='report-print-page report-print-detail-page';
  const header=document.createElement('header');header.className='report-print-heading';
  const title=document.createElement('h1');title.textContent=welcome.querySelector('h1')?.textContent||'Relatório Administrativo';
  const period=document.createElement('p');period.textContent=welcome.querySelector('p')?.textContent||'';
@@ -17,21 +18,30 @@ function buildAdminPrint(){
  footer?.querySelectorAll('button,.sr-only').forEach(node=>node.remove());
  const source=(footer?.textContent||'').replace(/\s+/g,' ').trim();
  note.textContent=(document.querySelector('.report-meta')?.textContent||'')+(source?' · '+source:'');
- header.append(title,period,note);root.append(header);
+ header.append(title,period,note);overview.append(header);
  const kpis=content.querySelector('.kpi-strip');
- if(kpis){const copy=kpis.cloneNode(true);copy.classList.add('report-print-kpis');root.append(copy);}
- const charts=document.createElement('section');charts.className='report-print-charts';
- const details=document.createElement('section');details.className='report-print-details';
+ if(kpis){const copy=kpis.cloneNode(true);copy.classList.add('report-print-kpis');overview.append(copy);}
+ const charts=document.createElement('div');charts.className='report-print-charts';
+ const detailHeading=document.createElement('header');detailHeading.className='report-print-detail-heading';
+ const detailTitle=document.createElement('h2');detailTitle.textContent='Acompanhamento administrativo';
+ const detailPeriod=document.createElement('p');detailPeriod.textContent=period.textContent;
+ detailHeading.append(detailTitle,detailPeriod);
+ const columns=document.createElement('div');columns.className='report-print-detail-columns';
+ const left=document.createElement('div');left.className='report-print-detail-column';
+ const right=document.createElement('div');right.className='report-print-detail-column';
  for(const widget of content.querySelectorAll('.widget')){
-  // Botões de navegação não fazem parte dos indicadores do relatório impresso.
+  // Ações rápidas são navegação, não indicadores; o Dashboard de tela não muda.
   if(widget.classList.contains('widget-actions'))continue;
   const copy=widget.cloneNode(true);
-  if(widget.querySelector('#atividades'))copy.classList.add('report-print-activity');
   const chart=widget.classList.contains('widget-chart')||widget.classList.contains('widget-donut')
    ||widget.classList.contains('widget-countries')||widget.classList.contains('widget-visits-evolution');
-  (chart?charts:details).append(copy);
+  if(chart){charts.append(copy);continue;}
+  if(widget.querySelector('#atividades'))copy.classList.add('report-print-activity');
+  const leftColumn=widget.querySelector('#recentes,#atividades,#pendencias');
+  (leftColumn?left:right).append(copy);
  }
- root.append(charts,details);document.body.append(root);
+ overview.append(charts);columns.append(left,right);details.append(detailHeading,columns);
+ root.append(overview,details);document.body.append(root);
  document.body.classList.add('report-print-prepared');
 }
 window.PazRelatorio={
