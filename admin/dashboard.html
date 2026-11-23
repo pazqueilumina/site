@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
 <title>Dashboard | Paz que Ilumina</title>
-<link rel="stylesheet" href="/admin/dashboard.css?v=centros-pendencias-20261123">
+<link rel="stylesheet" href="/admin/dashboard.css?v=centros-box-separado-20261123">
 <script defer src="/js/dados.js?v=dashboardvisual2"></script>
 <script defer src="/admin/report-view.js?v=print-approved-v4-20261123"></script>
 <script defer src="/admin/report-admin-standalone.js?v=admin-isolated-v5"></script>
@@ -100,17 +100,20 @@
    <article class="widget widget-donut"><h2><svg><use href="#i-layers"/></svg>Acervo por tipo de conteúdo</h2><div class="donut-layout"><div class="donut" id="donut" role="img" aria-label="Distribuição dos materiais cadastrados"><div class="donut-hole"><strong id="donutTotal">—</strong><span>Itens</span></div></div><div class="donut-legend" id="donutLegend"><span class="loading-text">Carregando…</span></div></div></article>
    <article class="widget widget-countries"><h2><svg><use href="#i-globe"/></svg>Origem das visitas</h2><div id="origemVisitas" class="countries-list"><p class="countries-message">Consultando estatísticas de audiência…</p></div></article>
   </section>
-  <section class="dashboard-grid visits-evolution-grid" aria-label="Evolução das visitas">
+  <section class="dashboard-grid visits-evolution-grid" aria-label="Evolução das visitas e centros cadastrados">
    <article class="widget widget-visits-evolution">
-    <div class="visits-evolution-heading">
-     <div class="visits-evolution-heading-copy"><h2><svg><use href="#i-chart"/></svg>Evolução das visitas</h2><p class="widget-subtitle" id="visitsTrendSubtitle">Visitas por dia no período selecionado</p></div>
-     <a class="visits-centers-card" href="/admin/locais.html" title="Abrir cadastro de centros e locais">
-      <span class="visits-centers-icon" aria-hidden="true"><svg><use href="#i-map-pin"/></svg></span>
-      <span class="visits-centers-content"><span>Centros cadastrados</span><strong id="kCentrosCadastrados">—</strong></span>
-     </a>
-    </div>
+    <h2><svg><use href="#i-chart"/></svg>Evolução das visitas</h2>
+    <p class="widget-subtitle" id="visitsTrendSubtitle">Visitas por dia no período selecionado</p>
     <div id="chartVisitas" class="visits-chart-container"><span class="loading-text">Consultando visitas diárias…</span></div>
    </article>
+   <a class="widget widget-centers-registered" href="/admin/locais.html" title="Abrir cadastro de centros e locais">
+    <h2><svg><use href="#i-map-pin"/></svg>Centros cadastrados</h2>
+    <div class="registered-centers-main">
+     <strong id="kCentrosCadastrados">—</strong>
+     <p>Total de locais cadastrados</p>
+    </div>
+    <span class="registered-centers-link">Ver locais <span aria-hidden="true">→</span></span>
+   </a>
   </section>
   <section class="dashboard-grid middle-grid" aria-label="Conteúdo e acompanhamento">
    <article class="widget"><h2><svg><use href="#i-video"/></svg>Conteúdos recentes</h2><div id="recentes" class="content-list"><span class="loading-text">Carregando…</span></div><div class="widget-bottom-links"><a class="widget-bottom-link" href="/admin/palestras.html">Palestras e arquivos →</a><a class="widget-bottom-link" href="/admin/shorts.html">Shorts →</a></div></article>
