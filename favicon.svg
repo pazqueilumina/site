@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 88" role="img" aria-label="Paz que Ilumina">
+  <title>Paz que Ilumina</title>
+  <rect width="88" height="88" rx="14" fill="#142D53"/>
+  <g transform="translate(-8.8 10.4) scale(1.2)" fill="none" stroke="#F4C563" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11 9c9 5 13 15 24 16C28 17 26 9 27 3c9 6 16 15 18 23 5-5 7-10 8-19 7 9 5 16 1 23 8-3 15-9 23-9-6 9-13 15-26 18-8 6-16 10-26 8 7-3 13-7 16-12-14 1-23-7-30-26Z" stroke-width="3.8"/>
+    <path d="M49 37c8 4 14 2 22-2M45 42c-2 5-5 8-9 11" stroke-width="3.3"/>
+  </g>
+</svg>
