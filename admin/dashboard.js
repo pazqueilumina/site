@@ -385,8 +385,13 @@ function emailDate(value){
 }
 function renderSubscriberSummary(data){
  const ok=data?.status==='ok'&&data.monthly,monthly=data?.monthly||{},summary=data?.summary||{};
- for(const [id,key] of [['subNew','new'],['subConfirmed','confirmed'],['subWeekly','weekly'],['subCancelled','cancelled']])
+ for(const [id,key] of [['subNew','new'],['subConfirmed','confirmed'],['subCancelled','cancelled']])
   set(id,ok?nf(Number(monthly[key]||0)):'—');
+ const inscritos=Number(monthly.new||0),confirmadosDaCoorte=Number(monthly.confirmedFromNew||0);
+ const taxa=ok&&Number.isFinite(inscritos)&&inscritos>0&&Number.isFinite(confirmadosDaCoorte)
+  ?new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1}).format(100*Math.min(inscritos,Math.max(0,confirmadosDaCoorte))/inscritos)+'%'
+  :'—';
+ set('subConfirmationRate',taxa);
  // Os totais acumulados são a situação atual, independentemente do mês consultado.
  for(const [id,key] of [['subActive','active'],['subPending','pending']])
   set(id,ok?nf(Number(summary[key]||0)):'—');
@@ -398,7 +403,7 @@ function renderSubscriberSummary(data){
  }else set('subPeriodLabel','Mês de referência');
  const info=$('subInfo');
  info.textContent=ok
-  ?'Agenda semanal: consentimento atual dos confirmados no '+(data.year?'ano':'mês')+'; ativações posteriores não possuem data registrada.'
+  ?'Taxa de confirmação: '+nf(confirmadosDaCoorte)+' de '+nf(inscritos)+' inscritos no '+(data.year?'ano':'mês')+' selecionado já confirmaram. “Confirmados” conta confirmações ocorridas no período.'
   :data?.message||'Não foi possível consultar os inscritos.';
  info.classList.toggle('warning',!ok);
 }

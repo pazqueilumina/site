@@ -472,7 +472,7 @@ $('formP').addEventListener('submit',e=>{e.preventDefault();salvarEEnviar();});$
  $('fecharStatusAudioR2').addEventListener('click',()=>{$('avisoAudioR2').hidden=true;});
  $('fecharStatusPdfGithub').addEventListener('click',()=>{$('avisoPdfGithub').hidden=true;});
  $('arquivoMp3R2').addEventListener('change',()=>{$('statusAudioR2').className='upload-r2-status';atualizarUploadR2();});
- $('arquivoPdfGithub').addEventListener('change',()=>{$('statusPdfGithub').className='upload-r2-status';atualizarUploadPdf();});$('novoP').addEventListener('click',()=>state.aba==='nova'?limpar():trocarAba('nova'));$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',()=>publicar());$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
+ $('arquivoPdfGithub').addEventListener('change',()=>{$('statusPdfGithub').className='upload-r2-status';atualizarUploadPdf();});$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',()=>publicar());$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
 $('ordenarP').addEventListener('click',()=>{
  state.ordemDesc=!state.ordemDesc;
  const botao=$('ordenarP');

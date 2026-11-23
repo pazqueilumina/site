@@ -47,7 +47,7 @@ function subscriberPeriodParams(url){
   cutoff:month===currentMonth?new Date().toISOString():saoPauloMidnight(nextMonth),
   currentMonth:month===currentMonth,periodStart:saoPauloMidnight(from),periodEnd:saoPauloMidnight(nextDateKey(to))};
 }
-const zeroMonthly={new:0,confirmed:0,weekly:0,cancelled:0,activeAtEnd:0};
+const zeroMonthly={new:0,confirmed:0,confirmedFromNew:0,weekly:0,cancelled:0,activeAtEnd:0};
 function filters(url){
   const q=(url.searchParams.get('q')||'').trim().slice(0,120);
   const status=url.searchParams.get('status')||'todos';
@@ -95,12 +95,14 @@ export async function onRequestGet({env,request}){
       const statement=`SELECT
         COALESCE(SUM(CASE WHEN created_at>=? AND created_at<? THEN 1 ELSE 0 END),0) AS new,
         COALESCE(SUM(CASE WHEN confirmed_at>=? AND confirmed_at<? THEN 1 ELSE 0 END),0) AS confirmed,
+        COALESCE(SUM(CASE WHEN created_at>=? AND created_at<? AND confirmed_at IS NOT NULL THEN 1 ELSE 0 END),0) AS confirmedFromNew,
         COALESCE(SUM(CASE WHEN ${weeklyPredicate} AND confirmed_at>=? AND confirmed_at<? THEN 1 ELSE 0 END),0) AS weekly,
         COALESCE(SUM(CASE WHEN unsubscribed_at>=? AND unsubscribed_at<? THEN 1 ELSE 0 END),0) AS cancelled,
         COALESCE(SUM(CASE WHEN confirmed_at IS NOT NULL AND confirmed_at<? AND (unsubscribed_at IS NULL OR unsubscribed_at>=?)
           AND status IN ('active','unsubscribed') THEN 1 ELSE 0 END),0) AS activeAtEnd
         FROM monthly_subscribers`;
       const row=await db.prepare(statement).bind(
+        period.monthStart,period.monthEnd,
         period.monthStart,period.monthEnd,
         period.monthStart,period.monthEnd,
         period.monthStart,period.monthEnd,
