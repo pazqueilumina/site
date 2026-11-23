@@ -7,9 +7,9 @@
   <meta name="referrer" content="same-origin">
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
-  <link rel="stylesheet" href="/admin/palestras.css?v=seletor-csv-20261123">
+  <link rel="stylesheet" href="/admin/palestras.css?v=salvar-arquivos-20261123">
   <script defer src="/js/titulos.js?v=titulos-20261123"></script>
-  <script defer src="/admin/palestras.js?v=titulos-20261123"></script>
+  <script defer src="/admin/palestras.js?v=salvar-arquivos-20261123"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head>
@@ -34,7 +34,7 @@
     </div>
     <div class="painel">
       <section class="cartao lista" aria-labelledby="tituloAcervo">
-        <div class="cartao-cabecalho"><div><h2 id="tituloAcervo">Acervo</h2><p>Selecione uma palestra para editar. Ordem cronológica.</p></div><button id="novoP" class="botao secundario" type="button">+ Nova</button></div>
+        <div class="cartao-cabecalho"><h2 id="tituloAcervo">Acervo</h2><div class="acoes-acervo"><button id="exportarFiltradoP" class="botao-csv" type="button" title="Baixar CSV das palestras exibidas (filtro, busca e ordem)" aria-label="Baixar CSV das palestras exibidas">↓ CSV</button><button id="novoP" class="botao secundario" type="button">+ Nova</button></div></div>
         <div class="filtros">
           <label class="campo-busca"><span class="sr-only">Buscar palestra</span><input id="buscaP" type="search" placeholder="Título ou ID…"></label>
           <select id="filtroP" aria-label="Filtrar palestras"><option value="todos">Todas</option><option value="ativas">Ativas</option><option value="inativas">Inativas</option><option value="semAudio">Sem áudio</option><option value="semPdf">Sem PDF</option></select>
@@ -74,28 +74,26 @@
             <label>Link do MP3 existente<input id="audio" placeholder="https://... ou /audio/..." maxlength="1500"></label>
             <div class="upload-r2" aria-labelledby="tituloUploadR2">
               <strong id="tituloUploadR2">Enviar MP3 do computador para o R2</strong>
-              <p class="ajuda">O nome no armazenamento será o ID permanente da palestra (ex.: PAL-0080.mp3). Em uma palestra nova, selecione o MP3 e clique em Salvar na lista: o cadastro será publicado e o envio será feito automaticamente.</p>
+              <p class="ajuda">O arquivo será armazenado com o ID permanente da palestra (ex.: PAL-0080.mp3). Selecione o MP3 e clique em Salvar na lista para enviar ao R2 e publicar o vínculo automaticamente.</p>
               <label for="arquivoMp3R2">Arquivo MP3 (até 300 MB)
                 <input id="arquivoMp3R2" type="file" accept=".mp3,audio/mpeg">
               </label>
-              <button id="enviarAudioR2" class="botao secundario" type="button" disabled>↑ Enviar MP3 ao R2</button>
               <progress id="progressoAudioR2" max="100" value="0" hidden></progress>
               <div id="avisoAudioR2" class="upload-aviso" role="status" aria-live="polite"><p id="statusAudioR2" class="upload-r2-status">Verificando integração com o R2…</p><button id="fecharStatusAudioR2" type="button" class="fechar-mensagem" aria-label="Fechar aviso de MP3" title="Fechar aviso">×</button></div>
             </div>
             <label>Link do PDF existente<input id="pdf" placeholder="https://... ou /pdf/..." maxlength="1500"></label>
             <div class="upload-r2 upload-pdf" aria-labelledby="tituloUploadPdf">
               <strong id="tituloUploadPdf">Enviar PDF do computador para o GitHub</strong>
-              <p class="ajuda">O PDF será salvo na pasta <code>/pdf/</code> do site (não no R2). Limite: 20 MiB. Em uma palestra nova, selecione o PDF e clique em Salvar na lista para publicar e enviar automaticamente.</p>
+              <p class="ajuda">O PDF será salvo na pasta <code>/pdf/</code> do site (não no R2). Limite: 20 MiB. Selecione o arquivo e clique em Salvar na lista para enviar ao GitHub e publicar o vínculo automaticamente.</p>
               <label for="arquivoPdfGithub">Arquivo PDF (até 20 MiB)
                 <input id="arquivoPdfGithub" type="file" accept=".pdf,application/pdf">
               </label>
-              <button id="enviarPdfGithub" class="botao secundario" type="button" disabled>↑ Enviar PDF ao GitHub</button>
-              <div id="avisoPdfGithub" class="upload-aviso" role="status" aria-live="polite"><p id="statusPdfGithub" class="upload-r2-status">Selecione uma palestra publicada para enviar um PDF.</p><button id="fecharStatusPdfGithub" type="button" class="fechar-mensagem" aria-label="Fechar aviso de PDF" title="Fechar aviso">×</button></div>
+              <div id="avisoPdfGithub" class="upload-aviso" role="status" aria-live="polite"><p id="statusPdfGithub" class="upload-r2-status">Selecione um PDF e clique em Salvar na lista.</p><button id="fecharStatusPdfGithub" type="button" class="fechar-mensagem" aria-label="Fechar aviso de PDF" title="Fechar aviso">×</button></div>
             </div>
             <label>Nome do arquivo PPTX/PDF para processamento posterior<input id="arquivo" placeholder="Apresentacao.pptx" maxlength="250"></label>
             <label>Série<select id="serie"><option value="temas">Reflexões</option><option value="doutrina">Doutrina e História</option><option value="evangelho">Histórias do Evangelho</option><option value="ministerio">O Ministério de Jesus</option><option value="parabolas">Parábolas</option><option value="ultimos-dias">Os Últimos Dias de Jesus</option></select></label>
             <div class="acoes"><button id="salvarP" type="submit" class="botao principal">Salvar na lista</button><button id="cancelarP" type="button" class="botao discreto">Descartar alterações</button></div>
-            <p class="ajuda">Sem arquivos selecionados, Salvar na lista prepara a alteração e você publica pelo botão <strong>Publicar alterações</strong>. Com arquivos selecionados em uma palestra nova, o cadastro e os arquivos serão publicados automaticamente.</p>
+            <p class="ajuda">Sem arquivos selecionados, Salvar na lista prepara a alteração para o botão <strong>Publicar alterações</strong>. Com MP3 ou PDF selecionado, o envio e a publicação são automáticos, tanto em palestras novas quanto existentes.</p>
           </form>
         </div>
         <div id="painelImportar" class="importacao" role="tabpanel" aria-labelledby="abaImportar" hidden>
@@ -109,7 +107,7 @@
         </div>
       </section>
     </div>
-    <p class="rodape">MP3 é enviado ao R2; PDF é enviado à pasta /pdf/ no GitHub. A conversão PPTX → PDF permanece para uma etapa posterior. Para palestras existentes, após enviar um arquivo, salve o vínculo e publique o cadastro. Para novas palestras com arquivos selecionados, a publicação é automática.</p>
+    <p class="rodape">MP3 é enviado ao R2; PDF é enviado à pasta /pdf/ no GitHub. A conversão PPTX → PDF permanece para uma etapa posterior. Com arquivos selecionados, Salvar na lista envia e publica automaticamente para palestras novas ou existentes.</p>
   </main>
 </body>
 </html>

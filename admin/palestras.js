@@ -1,6 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
-const state={dados:{versao:1,palestras:[]},sha:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false,pdfUploading:false,tituloEditado:false,autoSaving:false,statusSaving:false,agenda:[],agendaDisponivel:false};
+const state={dados:{versao:1,palestras:[]},sha:null,baseDados:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false,pdfUploading:false,tituloEditado:false,autoSaving:false,statusSaving:false,agenda:[],agendaDisponivel:false};
 function msg(s,type=''){ $('mensagemTexto').textContent=s;$('mensagemP').className='mensagem'+(type?' '+type:'');$('mensagemP').hidden=false; }
 // Remove pontuação terminal dos títulos, preservando abreviações como d.C.
 function tituloSemPontoFinal(titulo){
@@ -27,40 +27,36 @@ function confirmarDescarte(){
 }
 function limparSelecaoMp3(){
  $('arquivoMp3R2').value='';$('progressoAudioR2').hidden=true;$('progressoAudioR2').value=0;
- $('statusAudioR2').className='upload-r2-status';$('avisoAudioR2').hidden=false;
+ $('statusAudioR2').className='upload-r2-status';$('statusAudioR2').textContent='';$('avisoAudioR2').hidden=true;
 }
 function limparSelecaoPdf(){
  $('arquivoPdfGithub').value='';$('statusPdfGithub').className='upload-r2-status';
- $('statusPdfGithub').textContent='Selecione uma palestra publicada para enviar um PDF.';
- $('avisoPdfGithub').hidden=false;
+ $('statusPdfGithub').textContent='';$('avisoPdfGithub').hidden=true;
 }
 function atualizarUploadPdf(){
  const existe=state.aba==='editar'&&!!state.selecionado;
- const publicado=existe&&state.publicados.has(state.selecionado);
  const ocupado=state.pdfUploading||state.r2Uploading||state.autoSaving||state.statusSaving;
- const podeSelecionar=(state.aba==='nova'||existe)&&!ocupado;
- $('arquivoPdfGithub').disabled=!podeSelecionar;
- $('enviarPdfGithub').disabled=!publicado||ocupado||!$('arquivoPdfGithub').files.length;
+ const selecionado=$('arquivoPdfGithub').files.length>0;
+ $('arquivoPdfGithub').disabled=!(state.aba==='nova'||existe)||ocupado;
  if(state.pdfUploading||state.autoSaving)return;
  const status=$('statusPdfGithub');
  if(status.className!=='upload-r2-status')return;
- if(!publicado){
-  status.textContent=$('arquivoPdfGithub').files.length?'PDF selecionado. Clique em Salvar na lista para publicar e enviar automaticamente.':'Você já pode escolher um PDF. Ao salvar uma palestra nova, o envio será automático.';
- }else if(!$('arquivoPdfGithub').files.length)status.textContent='Selecione um PDF e clique em Enviar para associá-lo à palestra.';
- else status.textContent='Arquivo selecionado. Clique em Enviar PDF ao GitHub.';
+ $('avisoPdfGithub').hidden=!selecionado;
+ status.textContent=selecionado?'PDF selecionado. Clique em “Salvar na lista” para enviar e publicar automaticamente.':'';
 }
 function atualizarUploadR2(){
  const existe=state.aba==='editar'&&!!state.selecionado;
- const publicado=existe&&state.publicados.has(state.selecionado);
  const ocupado=state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving;
- const podeSelecionar=(state.aba==='nova'||existe)&&!ocupado;
- $('arquivoMp3R2').disabled=!podeSelecionar;
- $('enviarAudioR2').disabled=!state.r2Ativo||!publicado||ocupado||!$('arquivoMp3R2').files.length;
+ const selecionado=$('arquivoMp3R2').files.length>0;
+ $('arquivoMp3R2').disabled=!(state.aba==='nova'||existe)||ocupado;
  if(state.r2Uploading||state.autoSaving)return;
- if(!state.r2Ativo){$('statusAudioR2').textContent=state.r2Erro;return;}
- if(!publicado){
-  $('statusAudioR2').textContent=$('arquivoMp3R2').files.length?'MP3 selecionado. Clique em Salvar na lista para publicar e enviar automaticamente.':'Você já pode escolher um MP3. Ao salvar uma palestra nova, o envio será automático.';
- }else if(!$('arquivoMp3R2').files.length&&$('statusAudioR2').className==='upload-r2-status')$('statusAudioR2').textContent='Selecione um MP3 e clique em Enviar para associá-lo à palestra.';
+ const status=$('statusAudioR2');
+ if(!state.r2Ativo){
+  $('avisoAudioR2').hidden=false;status.className='upload-r2-status erro';status.textContent=state.r2Erro;return;
+ }
+ if(status.className!=='upload-r2-status')return;
+ $('avisoAudioR2').hidden=!selecionado;
+ status.textContent=selecionado?'MP3 selecionado. Clique em “Salvar na lista” para enviar e publicar automaticamente.':'';
 }
 async function consultarR2(){
  try{
@@ -69,7 +65,8 @@ async function consultarR2(){
   state.r2Ativo=!!o.ativo;
   state.r2Erro=o.ativo?'':(o.aviso||'Vincule o bucket R2 ao ambiente de prévia do Cloudflare Pages.');
  }catch(e){state.r2Ativo=false;state.r2Erro='Upload indisponível: '+e.message;}
- $('avisoAudioR2').hidden=false;atualizarUploadR2();
+ if(state.r2Ativo)$('statusAudioR2').className='upload-r2-status';
+ atualizarUploadR2();
 }
 async function enviarJsonR2(payload){
  const r=await fetch('/api/admin/audio-r2',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -108,9 +105,9 @@ async function enviarMp3R2(){
   // O arquivo já está no R2, mas o cadastro ainda depende de Salvar na lista + Publicar alterações.
   $('audio').value=fim.url;state.formDirty=true;
   $('arquivoMp3R2').value='';
-  status.textContent=`MP3 enviado: ${pid}.mp3. Agora clique em “Salvar na lista” e depois em “Publicar alterações”.`;
+  status.textContent=`MP3 ${pid}.mp3 enviado ao R2. Vinculando ao cadastro…`;
   status.className='upload-r2-status sucesso';
-  if(!state.autoSaving)msg('MP3 no R2. O link foi preenchido, mas ainda precisa ser salvo na lista e publicado no GitHub.','sucesso');
+  if(!state.autoSaving)msg('MP3 no R2. O vínculo ainda precisa ser publicado no GitHub.','sucesso');
   return true;
  }catch(e){
   if(uploadId&&!completando){try{await enviarJsonR2({acao:'cancelar',pid,uploadId});}catch{ /* limpeza de melhor esforço */ }}
@@ -141,9 +138,9 @@ async function enviarPdfGithub(){
   $('pdf').value=o.url;state.formDirty=true;
   $('arquivoPdfGithub').value='';
   $('avisoPdfGithub').hidden=false;
-  status.textContent='PDF enviado para '+o.caminho+'. Aguarde o Cloudflare Pages; clique em “Salvar na lista” e depois em “Publicar alterações” para vincular o PDF à palestra.';
+  status.textContent='PDF enviado para '+o.caminho+'. Vinculando ao cadastro…';
   status.className='upload-r2-status sucesso';
-  if(!state.autoSaving)msg('PDF enviado ao GitHub. O link foi preenchido, mas ainda precisa ser salvo e publicado no cadastro.','sucesso');
+  if(!state.autoSaving)msg('PDF enviado ao GitHub. O vínculo ainda precisa ser publicado no cadastro.','sucesso');
    return true;
  }catch(e){
   $('avisoPdfGithub').hidden=false;
@@ -290,14 +287,37 @@ function salvar(preservarArquivos=false,interno=false){if(state.r2Uploading||sta
  const i=state.dados.palestras.findIndex(x=>x.pid===pid);if(i>=0)state.dados.palestras[i]=p;else state.dados.palestras.push(p);
  state.selecionado=pid;state.dirty=true;state.formDirty=false;state.aba='editar';if(preservarArquivos)$('pid').value=pid;else preencher(p);atualizarAbas();render();if(!state.autoSaving)msg('Alteração preparada. Clique em “Publicar alterações” para enviá-la ao GitHub.','alerta');return true;
 }
+function palestrasVisiveis(){
+ const term=$('buscaP').value.trim().toLocaleLowerCase('pt-BR'),filtro=$('filtroP').value;
+ return state.dados.palestras.filter(p=>(!term||(p.pid+' '+p.titulo).toLocaleLowerCase('pt-BR').includes(term))&&(filtro==='todos'||(filtro==='semAudio'&&!p.audio)||(filtro==='semPdf'&&!p.pdf)||(filtro==='ativas'&&p.ativo!==false)||(filtro==='inativas'&&p.ativo===false)))
+ .sort((a,b)=>{const comparacao=(dataEfetivaPalestra(a)||'9999').localeCompare(dataEfetivaPalestra(b)||'9999')||a.pid.localeCompare(b.pid);return state.ordemDesc?-comparacao:comparacao;});
+}
+function mesclarMudancas(local,base,remoto){
+ if(!base||base.versao!==remoto.versao)throw new Error('Versão do cadastro mudou. Recarregue antes de publicar.');
+ const mesclado=structuredClone(remoto),antigos=new Map(base.palestras.map(p=>[p.pid,p]));
+ const atuais=new Map(mesclado.palestras.map(p=>[p.pid,p])),locais=new Map(local.palestras.map(p=>[p.pid,p]));
+ for(const id of antigos.keys())if(!locais.has(id))throw new Error('Remoção concorrente de registro. Recarregue o cadastro.');
+ for(const p of local.palestras){
+  const antes=antigos.get(p.pid),destino=atuais.get(p.pid);
+  if(!antes){
+   if(destino)throw new Error('O ID '+p.pid+' foi criado por outra operação. Recarregue.');
+   mesclado.palestras.push(structuredClone(p));continue;
+  }
+  if(!destino)throw new Error('O registro '+p.pid+' foi removido por outra operação. Recarregue.');
+  for(const campo of new Set([...Object.keys(antes),...Object.keys(p)])){
+   const a=JSON.stringify(antes[campo]),b=JSON.stringify(p[campo]),c=JSON.stringify(destino[campo]);
+   if(a===b)continue;
+   if(c!==a&&c!==b)throw new Error('Conflito no registro '+p.pid+', campo '+campo+'. Recarregue antes de publicar.');
+   if(Object.prototype.hasOwnProperty.call(p,campo))destino[campo]=structuredClone(p[campo]);
+   else delete destino[campo];
+  }
+ }
+ return mesclado;
+}
 function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled=state.autoSaving||state.statusSaving;const rows=state.dados.palestras; $('totalP').textContent=rows.length;$('videosP').textContent=rows.filter(p=>p.youtubeId).length;$('audiosP').textContent=rows.filter(p=>p.audio).length;$('pdfsP').textContent=rows.filter(p=>p.pdf).length;
  $('publicarP').disabled=!state.sha||!state.dirty||state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving;
- const term=$('buscaP').value.trim().toLocaleLowerCase('pt-BR');const filtro=$('filtroP').value;
- // A etiqueta ORDEM representa a posição cronológica no acervo completo, não a posição na lista filtrada/invertida.
- const ordemCronologica=[...rows].sort((a,b)=>(dataEfetivaPalestra(a)||'9999').localeCompare(dataEfetivaPalestra(b)||'9999')||a.pid.localeCompare(b.pid));
- const numerosOrdem=new Map(ordemCronologica.map((p,i)=>[p.pid,i+1]));
- const filtered=rows.filter(p=>(!term||(p.pid+' '+p.titulo).toLocaleLowerCase('pt-BR').includes(term))&&(filtro==='todos'||(filtro==='semAudio'&&!p.audio)||(filtro==='semPdf'&&!p.pdf)||(filtro==='ativas'&&p.ativo!==false)||(filtro==='inativas'&&p.ativo===false)))
- .sort((a,b)=>{const comparacao=(dataEfetivaPalestra(a)||'9999').localeCompare(dataEfetivaPalestra(b)||'9999')||a.pid.localeCompare(b.pid);return state.ordemDesc?-comparacao:comparacao;});
+ const filtered=palestrasVisiveis();
+ $('exportarFiltradoP').disabled=!filtered.length;
  const list=$('listaP');list.replaceChildren();if(!filtered.length){const e=document.createElement('p');e.className='vazio';e.textContent='Nenhuma palestra encontrada.';list.append(e);return;}
  filtered.forEach((p,i)=>{
   const row=document.createElement('div');row.className='evento evento-registro'+(state.selecionado===p.pid?' ativo':'')+(p.ativo===false?' evento-registro--inativa':'');
@@ -312,10 +332,10 @@ function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled
  });
 }
 async function carregar(){$('mensagemP').hidden=true;try{const r=await fetch('/api/admin/palestras',{credentials:'same-origin',cache:'no-store'});const o=await r.json();if(!r.ok)throw new Error(o.erro||`HTTP ${r.status}`);
- if(!o.sha||!Array.isArray(o.dados?.palestras))throw new Error('Resposta incompleta.');state.dados=o.dados;state.sha=o.sha;state.publicados=new Set(o.dados.palestras.map(p=>p.pid));state.dirty=false;const agendaOk=await carregarAgenda();limpar(true);if(agendaOk)$('mensagemP').hidden=true;
+ if(!o.sha||!Array.isArray(o.dados?.palestras))throw new Error('Resposta incompleta.');state.dados=o.dados;state.sha=o.sha;state.baseDados=structuredClone(o.dados);state.publicados=new Set(o.dados.palestras.map(p=>p.pid));state.dirty=false;const agendaOk=await carregarAgenda();limpar(true);if(agendaOk)$('mensagemP').hidden=true;
  }catch(e){msg('Não foi possível carregar: '+e.message,'erro');}}
 async function publicar(semConfirmacao=false,interno=false){
- if(!interno&&(state.aba==='nova'||(state.aba==='editar'&&state.selecionado&&!state.publicados.has(state.selecionado)))&&($('arquivoMp3R2').files.length||$('arquivoPdfGithub').files.length))return salvarEEnviar();
+ if(!interno&&(state.aba==='nova'||(state.aba==='editar'&&state.selecionado))&&($('arquivoMp3R2').files.length||$('arquivoPdfGithub').files.length))return salvarEEnviar();
  if(state.statusSaving||(state.autoSaving&&!interno)||state.r2Uploading||state.pdfUploading){if(!interno)msg('Aguarde o envio do arquivo terminar.','alerta');return false;}
  if(!state.sha){msg('Cadastro ainda não carregado.','erro');return false;}
  if(state.dados.palestras.some(p=>p.titulo.startsWith('Palestra a revisar — '))){msg('Revise os títulos provisórios das URLs importadas antes de publicar.','erro');return false;}
@@ -324,11 +344,26 @@ async function publicar(semConfirmacao=false,interno=false){
  if(!semConfirmacao&&!confirm('Enviar as alterações do cadastro ao GitHub?'))return false;
  $('publicarP').disabled=true;msg('Enviando cadastro ao GitHub…');
  try{
-  const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:state.sha,dados:state.dados})});
-  const o=await r.json().catch(()=>({}));if(!r.ok||!o.sha)throw new Error(o.erro||`HTTP ${r.status}`);
-  state.sha=o.sha;state.dirty=false;state.publicados=new Set(state.dados.palestras.map(p=>p.pid));render();
-  if(!state.autoSaving)msg(o.aviso||'Enviado.','sucesso');
-  return true;
+  let dados=state.dados,sha=state.sha;
+  for(let tentativa=0;tentativa<2;tentativa++){
+   const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha,dados})});
+   const o=await r.json().catch(()=>({}));
+   if(r.status===409&&interno&&state.autoSaving&&tentativa===0){
+    const leitura=await fetch('/api/admin/palestras',{credentials:'same-origin',cache:'no-store'});
+    const atual=await leitura.json().catch(()=>({}));
+    if(!leitura.ok||!atual.sha||!Array.isArray(atual.dados?.palestras))throw new Error('Não foi possível recarregar o cadastro para resolver o conflito.');
+    dados=mesclarMudancas(dados,state.baseDados,atual.dados);
+    sha=atual.sha;
+    msg('O cadastro mudou durante o envio. Conciliando alterações sem sobrescrever outros registros…','alerta');
+    continue;
+   }
+   if(!r.ok||!o.sha)throw new Error(o.erro||`HTTP ${r.status}`);
+   state.dados=dados;state.sha=o.sha;state.baseDados=structuredClone(dados);
+   state.dirty=false;state.publicados=new Set(dados.palestras.map(p=>p.pid));render();
+   if(!state.autoSaving)msg(o.aviso||'Enviado.','sucesso');
+   return true;
+  }
+  throw new Error('Não foi possível concluir a publicação.');
  }catch(e){render();msg('Publicação não concluída: '+e.message,'erro');return false;}
 }
 async function alternarStatus(pid){
@@ -344,7 +379,7 @@ async function alternarStatus(pid){
  try{
   const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:state.sha,dados:novo})});
   const o=await r.json().catch(()=>({}));if(!r.ok||!o.sha)throw new Error(o.erro||`HTTP ${r.status}`);
-  state.dados=novo;state.sha=o.sha;
+  state.dados=novo;state.sha=o.sha;state.baseDados=structuredClone(novo);
   msg((desativar?'Palestra desativada':'Palestra reativada')+' e alteração publicada com sucesso. O site será atualizado pelo Cloudflare Pages.','sucesso');
  }catch(e){msg('Não foi possível alterar o status: '+e.message,'erro');}
  finally{state.statusSaving=false;render();}
@@ -352,37 +387,45 @@ async function alternarStatus(pid){
 async function salvarEEnviar(){
  if(state.autoSaving||state.statusSaving||state.r2Uploading||state.pdfUploading)return;
  const mp3=$('arquivoMp3R2').files[0],pdf=$('arquivoPdfGithub').files[0];
+ if(!mp3&&!pdf){salvar();return;}
  const novoNaoPublicado=state.aba==='nova'||(state.aba==='editar'&&state.selecionado&&!state.publicados.has(state.selecionado));
- if(!novoNaoPublicado||(!mp3&&!pdf)){salvar();return;}
  if(!state.sha){msg('Aguarde o carregamento do cadastro antes de salvar.','erro');return;}
+ if(mp3&&!state.r2Ativo){msg('Envio de MP3 indisponível: '+state.r2Erro,'erro');return;}
  if(mp3&&(!/\.mp3$/i.test(mp3.name)||!mp3.size||mp3.size>300*1024*1024)){msg('Selecione um MP3 válido de até 300 MB.','erro');return;}
  if(pdf&&(!/\.pdf$/i.test(pdf.name)||pdf.size<5||pdf.size>20*1024*1024)){msg('Selecione um PDF válido de até 20 MiB.','erro');return;}
  if(state.dirty&&!confirm('Há outras alterações preparadas no Acervo. Para enviar os arquivos, será necessário publicá-las junto com esta palestra. Continuar?'))return;
  state.autoSaving=true;render();
  try{
   if(!salvar(true,true))return;
-  const registro=state.dados.palestras.find(p=>p.pid===state.selecionado);
-  // Primeiro publicar como inativa: evita exibir uma palestra incompleta durante os uploads.
-  registro.ativo=false;state.dirty=true;
-  msg('Etapa 1/3: publicando o cadastro e reservando o ID permanente…');
-  if(!await publicar(true,true))return;
+  if(novoNaoPublicado){
+   const registro=state.dados.palestras.find(p=>p.pid===state.selecionado);
+   // Apenas palestras novas ficam temporariamente inativas; não ocultar registros já publicados.
+   registro.ativo=false;state.dirty=true;
+   msg('Etapa 1/3: reservando o ID e publicando o cadastro inicial…');
+   if(!await publicar(true,true))return;
+  }
   let mp3Ok=!mp3,pdfOk=!pdf;
-  if(mp3){msg('Etapa 2/3: enviando MP3 ao R2…');mp3Ok=await enviarMp3R2();}
-  if(pdf){msg('Etapa 2/3: enviando PDF ao GitHub…');pdfOk=await enviarPdfGithub();}
-  const algumEnviado=(mp3&&mp3Ok)||(pdf&&pdfOk);
-  if(algumEnviado){
-   if(!salvar(true,true))throw new Error('Arquivos enviados, mas não foi possível preparar os links. Confira o cadastro.');
+  if(mp3){msg('Enviando MP3 ao R2…');mp3Ok=await enviarMp3R2();}
+  if(pdf){msg('Enviando PDF ao GitHub…');pdfOk=await enviarPdfGithub();}
+  const algumEnviado=(mp3&&mp3Ok)||(pdf&&pdfOk),completo=mp3Ok&&pdfOk;
+  if(!algumEnviado){
+   msg(novoNaoPublicado?'Nenhum arquivo foi enviado. A palestra nova permanece inativa; corrija o erro e tente novamente.':'Nenhum arquivo foi enviado. O cadastro não foi publicado; corrija o erro e tente novamente.','erro');
+   return;
   }
-  const completo=mp3Ok&&pdfOk;
-  if(completo){state.dados.palestras.find(p=>p.pid===state.selecionado).ativo=true;state.dirty=true;}
-  if(state.dirty){
-   msg('Etapa 3/3: vinculando arquivos ao cadastro…');
-   if(!await publicar(true,true))throw new Error('Os arquivos foram enviados, mas o vínculo ainda precisa ser publicado. Clique em “Publicar alterações” para concluir.');
+  if(!salvar(true,true))throw new Error('Arquivos enviados, mas não foi possível preparar os vínculos. Não reenvie os arquivos já concluídos.');
+  if(novoNaoPublicado&&completo){
+   state.dados.palestras.find(p=>p.pid===state.selecionado).ativo=true;
+   state.dirty=true;
   }
-  if(completo){
-   msg('Palestra publicada com os arquivos selecionados. Aguarde o deploy do Cloudflare Pages.','sucesso');
+  msg('Vinculando arquivos ao cadastro e publicando no GitHub…');
+  if(!await publicar(true,true))throw new Error('Os arquivos enviados permanecem armazenados. Não os reenvie; use “Publicar alterações” para concluir os vínculos.');
+  const registroFinal=state.dados.palestras.find(p=>p.pid===state.selecionado);
+  if(!completo){
+   msg('Publicação parcial: os arquivos enviados foram vinculados, mas houve falha em outro envio. Confira os avisos e tente novamente apenas o arquivo pendente.'+(registroFinal?.ativo===false?' A palestra permanece inativa.':''),'alerta');
+  }else if(registroFinal?.ativo===false){
+   msg('Arquivos enviados e vinculados. A palestra continua inativa; ative-a no Acervo quando estiver pronta.','alerta');
   }else{
-   msg('Palestra salva como Inativa: um ou mais envios falharam. Os arquivos concluídos foram vinculados. Confira os avisos, reenvie o que faltou e depois clique em “Inativa” para reativar.','alerta');
+   msg('Arquivos enviados e vinculados com sucesso. Aguarde o deploy do Cloudflare Pages.','sucesso');
   }
  }catch(e){msg('Cadastro ou envio não concluído: '+e.message,'erro');}
  finally{state.autoSaving=false;render();}
@@ -410,17 +453,23 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
  if(!confirm(`Prévia da importação (${changes.length} linhas):\n\n${changes.slice(0,18).join('\n')}${changes.length>18?'\n…':''}\n\nAplicar à lista? A publicação no GitHub será separada.`))return;
  state.dados.palestras=working;state.dirty=true;state.formDirty=false;state.selecionado=null;state.aba='importar';$('formP').reset();$('centroId').value='';$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();atualizarAbas();render();msg(`${changes.length} linhas preparadas. Confira e publique quando estiver pronto.`, 'alerta');
 }
-function exportar(){const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];for(const p of state.dados.palestras)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
- const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='palestras-com-ids.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}
+function baixarCSV(rows,nome){
+ if(!rows.length){msg('Nenhuma palestra corresponde aos filtros atuais.','alerta');return;}
+ const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];
+ for(const p of rows)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
+ const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download=nome;a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+function exportar(){baixarCSV(state.dados.palestras,'palestras-com-ids.csv');}
+function exportarFiltrado(){baixarCSV(palestrasVisiveis(),'palestras-'+$('filtroP').value+'.csv');}
 $('fecharMensagemP').addEventListener('click',()=>{ $('mensagemP').hidden=true; });
 $('eventoId').addEventListener('change',atualizarVinculoAgenda);
 $('formP').addEventListener('submit',e=>{e.preventDefault();salvarEEnviar();});$('formP').addEventListener('input',e=>{if(e.target.id==='titulo')state.tituloEditado=true;if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});$('formP').addEventListener('change',e=>{if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});
  $('fecharStatusAudioR2').addEventListener('click',()=>{$('avisoAudioR2').hidden=true;});
  $('fecharStatusPdfGithub').addEventListener('click',()=>{$('avisoPdfGithub').hidden=true;});
- $('arquivoMp3R2').addEventListener('change',()=>{$('avisoAudioR2').hidden=false;atualizarUploadR2();});
- $('enviarAudioR2').addEventListener('click',enviarMp3R2);
- $('arquivoPdfGithub').addEventListener('change',()=>{$('avisoPdfGithub').hidden=false;$('statusPdfGithub').className='upload-r2-status';atualizarUploadPdf();});
- $('enviarPdfGithub').addEventListener('click',enviarPdfGithub);$('novoP').addEventListener('click',()=>state.aba==='nova'?limpar():trocarAba('nova'));$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',()=>publicar());$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
+ $('arquivoMp3R2').addEventListener('change',()=>{$('statusAudioR2').className='upload-r2-status';atualizarUploadR2();});
+ $('arquivoPdfGithub').addEventListener('change',()=>{$('statusPdfGithub').className='upload-r2-status';atualizarUploadPdf();});$('novoP').addEventListener('click',()=>state.aba==='nova'?limpar():trocarAba('nova'));$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',()=>publicar());$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
 $('ordenarP').addEventListener('click',()=>{
  state.ordemDesc=!state.ordemDesc;
  const botao=$('ordenarP');
@@ -430,7 +479,8 @@ $('ordenarP').addEventListener('click',()=>{
  botao.title=descricao;
  render();
 });
-$('csvP').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{importar(parseCSV(await f.text()));}catch(err){msg('CSV inválido: '+err.message,'erro');}e.target.value='';});$('exportarP').addEventListener('click',exportar);
+$('exportarFiltradoP').addEventListener('click',exportarFiltrado);
+ $('csvP').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{importar(parseCSV(await f.text()));}catch(err){msg('CSV inválido: '+err.message,'erro');}e.target.value='';});$('exportarP').addEventListener('click',exportar);
 $('colarP').addEventListener('click',()=>{$('urlsP').hidden=!$('urlsP').hidden;$('aplicarUrlsP').hidden=$('urlsP').hidden;$('rotuloUrlsP').hidden=$('urlsP').hidden;});
 $('aplicarUrlsP').addEventListener('click',()=>{const urls=$('urlsP').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);const items=urls.map((url,i)=>({linha:i+1,id:'',titulo:'',data:'',youtube:url,arquivo:''}));
  // URLs novas precisam de título; gerar rascunho a partir do identificador, para revisão manual obrigatória.
