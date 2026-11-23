@@ -1669,16 +1669,16 @@ body[data-page="videos"] .cartao-short .etiqueta-short {
 
 /* Convite compacto antes do primeiro evento; formulário completo na página Contato. */
 .agenda-convite-email[hidden]{display:none!important}
-.agenda-convite-email{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin:7px 0;padding:15px 18px;background:#fff;border:1px solid #cbd6e4;border-left:3px solid #243b5a;border-radius:12px;box-shadow:0 2px 9px rgba(36,59,90,.045)}
-.agenda-convite-icone{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:11px;background:#edf1f5;color:#243b5a}
+.agenda-convite-email{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin:7px 0;padding:15px 18px;background:#edf3fa;border:1px solid #c8d5e5;border-radius:12px;box-shadow:0 2px 9px rgba(36,59,90,.035)}
+.agenda-convite-icone{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:11px;background:#e0e8f2;color:#243b5a}
 .agenda-convite-icone .icone{width:20px;height:20px}
 .agenda-convite-texto{flex:1 1 220px;min-width:0}
 .agenda-convite-texto strong{display:block;color:#243b5a;font:650 14px var(--fonte-sans,Arial,sans-serif)}
 .agenda-convite-texto p{margin:4px 0 0;color:#596678;font:12px/1.5 var(--fonte-sans,Arial,sans-serif)}
 .agenda-convite-botao{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-height:39px;padding:9px 16px;border-radius:9px;background:#243b5a;color:#fff!important;text-decoration:none!important;font:650 12px var(--fonte-sans,Arial,sans-serif)}
 .agenda-convite-botao:hover,.agenda-convite-botao:focus-visible{background:#36577a}
-/* Formulário da página Contato: fundo branco e acento azul-marinho, sem tons verdes ou dourados. */
-body[data-page="contato"] .inscricao-mensal{margin-top:26px;scroll-margin-top:92px;background:#fff;border-color:#cbd6e4;border-left:3px solid #243b5a;box-shadow:0 3px 12px rgba(36,59,90,.04)}
+/* Formulário de inscrição na página Contato: primeira revisão (creme e botão azul-marinho). */
+body[data-page="contato"] .inscricao-mensal{margin-top:26px;scroll-margin-top:92px;background:#f8f5ef;border-color:#e5ddd0;box-shadow:0 3px 12px rgba(36,59,90,.04)}
 body[data-page="contato"] .inscricao-mensal h2,
 body[data-page="contato"] .inscricao-mensal-form>label:first-child,
 body[data-page="contato"] .inscricao-mensal-cancelar form>label{color:#243b5a}
@@ -1688,6 +1688,10 @@ body[data-page="contato"] .inscricao-mensal-linha input{border-color:#cdd1d6;col
 body[data-page="contato"] .inscricao-mensal-linha button{background:#243b5a}
 body[data-page="contato"] .inscricao-mensal-linha button:hover:not(:disabled){background:#36577a}
 body[data-page="contato"] .inscricao-mensal-consentimento input{accent-color:#243b5a}
-body[data-page="contato"] .inscricao-mensal-cancelar{border-top-color:#dbe2eb}
+body[data-page="contato"] .inscricao-mensal-cancelar{border-top-color:#e5ddd0}
 body[data-page="contato"] .inscricao-mensal-cancelar>button{color:#243b5a}
 @media(max-width:560px){.agenda-convite-email{gap:11px;padding:14px}.agenda-convite-botao{width:100%;flex:1 1 100%}}
+
+/* Quadro de contatos compacto, exclusivamente na página Contato; não altera Sobre. */
+body[data-page="contato"] .pagina-texto{max-width:540px;padding:18px 24px;background:#f7f4ee;border-color:#e5ddd0}
+body[data-page="contato"] .contato-lista{margin-top:0}
