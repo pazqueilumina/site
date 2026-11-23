@@ -736,12 +736,14 @@
       "dataAproximada": true,
       "serie": "ministerio",
       "duracao": "00:55:11",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0025.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T20:53:48.191Z"}
     },
     {
       "pid": "PAL-0026",
