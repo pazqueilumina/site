@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
+<title>Estatísticas de conteúdo | Paz que Ilumina</title>
+<link rel="stylesheet" href="/admin/dashboard.css?v=stats-20261123">
+<link rel="stylesheet" href="/admin/estatisticas.css?v=stats-20261123">
+<script defer src="/admin/estatisticas.js?v=stats-20261123"></script>
+<link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
+<link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
+</head>
+<body>
+<svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-8h6v8"/></symbol>
+ <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"/></symbol>
+ <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></symbol>
+ <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></symbol>
+ <symbol id="i-presentation" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="13" rx="1"/><path d="M12 16v5m-5 0 5-5 5 5m-9-10h8"/></symbol>
+ <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 14v-2a9 9 0 0 1 18 0v2M3 14v5a2 2 0 0 0 2 2h2v-8H5a2 2 0 0 0-2 2Zm18 0v5a2 2 0 0 1-2 2h-2v-8h2a2 2 0 0 1 2 2Z"/></symbol>
+ <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Zm0 0v14"/></symbol>
+ <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></symbol>
+ <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+ <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10m5 10V4m5 16v-8m5 8V7M2 21h20"/></symbol>
+ <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 0v6h5M8 13h8m-8 4h8"/></symbol>
+ <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"/></symbol>
+ <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+ <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2Zm12-15a3 3 0 0 1 0 6m2 3a5 5 0 0 1 4 5v1h-4"/></symbol>
+ <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a16 16 0 0 1 0 20M12 2a16 16 0 0 0 0 20"/></symbol>
+ <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10 3a2 2 0 0 1 4 0l9 16a2 2 0 0 1-2 3H3a2 2 0 0 1-2-3zM12 9v5m0 4h.01"/></symbol>
+ <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+ <symbol id="i-bolt" viewBox="0 0 24 24"><path d="m13 2-9 11h7l-1 9 10-12h-7z"/></symbol>
+ <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 16v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
+ <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M5 9a8 8 0 0 1 14-2l1 5M4 12l1 5a8 8 0 0 0 14-2"/></symbol>
+ <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m7 12 3 3 7-7"/></symbol>
+ <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+ <symbol id="i-external" viewBox="0 0 24 24"><path d="M13 5h6v6m0-6-9 9M19 13v6H5V5h6"/></symbol>
+ <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+</svg>
+<div class="dash-shell">
+<aside class="dash-sidebar" aria-label="Menu administrativo">
+ <a href="/admin/dashboard.html" class="dash-brand" aria-label="Paz que Ilumina — Dashboard">
+  <svg class="dove" viewBox="0 0 88 56" fill="none" aria-hidden="true"><path d="M11 9c9 5 13 15 24 16C28 17 26 9 27 3c9 6 16 15 18 23 5-5 7-10 8-19 7 9 5 16 1 23 8-3 15-9 23-9-6 9-13 15-26 18-8 6-16 10-26 8 7-3 13-7 16-12-14 1-23-7-30-26Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M49 37c8 4 14 2 22-2M45 42c-2 5-5 8-9 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  <span>Paz que<br>Ilumina</span>
+ </a>
+ <nav class="dash-nav">
+  <div class="nav-dashboard-group" aria-label="Dashboard"><button class="nav-dashboard-heading nav-expand" type="button" id="dashboardToggle" aria-expanded="true" aria-controls="subDashboard"><svg><use href="#i-home"/></svg><span>Dashboard</span><svg class="chev"><use href="#i-chevron"/></svg></button><div class="nav-sub nav-dashboard-sub" id="subDashboard"><a class="nav-link" href="/admin/dashboard.html"><svg><use href="#i-chart"/></svg>Administrativo</a><a class="nav-link" href="/admin/palestrante.html"><svg><use href="#i-presentation"/></svg>Palestrante</a></div></div>
+  <button class="nav-link nav-expand" type="button" id="gestaoToggle" aria-expanded="true" aria-controls="subGestao"><svg><use href="#i-settings"/></svg>Gestão<svg class="chev"><use href="#i-chevron"/></svg></button>
+  <div class="nav-sub" id="subGestao">
+  <a class="nav-link" href="/admin/agenda.html"><svg><use href="#i-calendar"/></svg>Agenda</a>
+  <a class="nav-link" href="/admin/inscritos.html"><svg><use href="#i-users"/></svg>Inscritos</a>
+  <a class="nav-link" href="/admin/locais.html"><svg><use href="#i-map-pin"/></svg>Locais</a>
+  <a class="nav-link" href="/admin/palestras.html"><svg><use href="#i-presentation"/></svg>Palestras</a>
+  <a class="nav-link" href="/admin/shorts.html"><svg><use href="#i-play"/></svg>Shorts</a>
+  </div>
+  <button class="nav-link nav-expand" type="button" id="acervoToggle" aria-expanded="false" aria-controls="subAcervo"><svg><use href="#i-layers"/></svg>Acervo<svg class="chev"><use href="#i-chevron"/></svg></button>
+  <div class="nav-sub" id="subAcervo" hidden>
+   <a href="/videos.html"><svg><use href="#i-video"/></svg>Vídeos</a>
+   <a href="/admin/shorts.html"><svg><use href="#i-play"/></svg>Gerenciar Shorts</a>
+   <a href="/admin/palestras.html"><svg><use href="#i-presentation"/></svg>Apresentações</a>
+   <a href="/audios.html"><svg><use href="#i-headphones"/></svg>Áudios</a>
+   <a href="/livro.html"><svg><use href="#i-book"/></svg>Livro</a>
+  </div>
+  <a class="nav-link selected" href="/admin/estatisticas.html" aria-current="page"><svg><use href="#i-chart"/></svg>Estatísticas</a>
+  <a class="nav-link" href="/admin/relatorios.html"><svg><use href="#i-file"/></svg>Relatórios</a>
+  <a class="nav-link nav-return" href="/"><svg><use href="#i-external"/></svg>Voltar ao site</a>
+ </nav>
+ <div class="dash-sidebar-foot"><div class="online"><svg><use href="#i-check"/></svg><span id="siteStatus">Verificando dados</span></div><p>Última atualização<br><span id="lastUpdate">—</span></p></div>
+</aside>
+<div class="dash-main">
+<header class="dash-banner stats-banner">
+ <div class="mountains" aria-hidden="true"></div><div class="sunlight" aria-hidden="true"></div>
+ <div class="dash-welcome"><h1>Estatísticas</h1><p>Popularidade das palestras e do acervo · GoatCounter</p></div>
+ <div class="stats-period" aria-label="Período das estatísticas">
+  <button type="button" id="statPrev" class="stats-arrow" aria-label="Período anterior">‹</button>
+  <select id="statMes" aria-label="Mês"></select>
+  <select id="statAno" aria-label="Ano"></select>
+  <button type="button" id="statNext" class="stats-arrow" aria-label="Próximo período">›</button>
+  <button type="button" id="statModeMonth" class="active" aria-pressed="true">Mensal</button>
+  <button type="button" id="statModeYear" aria-pressed="false">Ano inteiro</button>
+ </div>
+</header>
+<main class="stats-main">
+ <div class="stats-toolbar">
+  <div class="stats-toolbar-title"><h2>Conteúdos mais populares</h2><p id="periodoExibido">Carregando período…</p><small id="statsRegistros">Aguardando dados do GoatCounter</small></div>
+  <div class="stats-toolbar-fields">
+   <label class="sr-only" for="statsTipo">Tipo de conteúdo</label>
+   <select id="statsTipo" aria-label="Tipo de conteúdo"><option value="todos">Todos os formatos</option><option value="video">Vídeos</option><option value="audio">Áudios</option><option value="pdf">PDFs</option><option value="short">Shorts</option></select>
+   <label class="sr-only" for="statsBusca">Buscar palestra</label>
+   <input id="statsBusca" type="search" placeholder="Buscar palestra ou ID" autocomplete="off">
+   <button type="button" id="statsAtualizar">Atualizar</button>
+  </div>
+ </div>
+ <div id="statsAviso" class="stats-aviso loading" role="status" aria-live="polite">Consultando o GoatCounter…</div>
+ <section class="stats-kpis" aria-label="Indicadores de interação">
+  <article class="stats-kpi"><span>Total de interações</span><strong id="statsTotal">—</strong><small id="statsPeriodo">Durante o mês</small></article>
+  <article class="stats-kpi"><span>Vídeos</span><strong id="statsVideo">—</strong><small>Cliques para assistir</small></article>
+  <article class="stats-kpi"><span>Áudios</span><strong id="statsAudio">—</strong><small>Cliques para ouvir</small></article>
+  <article class="stats-kpi"><span>PDFs</span><strong id="statsPdf">—</strong><small>Cliques para baixar</small></article>
+  <article class="stats-kpi"><span>Shorts</span><strong id="statsShort">—</strong><small>Cliques para assistir</small></article>
+ </section>
+ <section class="stats-grid" aria-label="Rankings e comparações">
+  <article class="stats-widget"><h2>Ranking — 10 conteúdos mais acessados</h2><p class="stats-widget-subtitle">Ordenado pelo filtro selecionado</p><div id="statsTop" class="stats-top"><p class="stats-empty">Aguardando estatísticas…</p></div></article>
+  <article class="stats-widget"><h2>Comparação por formato</h2><p class="stats-widget-subtitle">Interações registradas no período</p><div id="statsComparacao" class="stats-comparison"><p class="stats-empty">Aguardando estatísticas…</p></div></article>
+ </section>
+ <section class="stats-widget" style="margin-bottom:10px"><h2>Evolução dos acessos</h2><p class="stats-widget-subtitle">Distribuição diária ou mensal, conforme o período selecionado</p><div id="statsEvolucao" class="stats-evolution"><p class="stats-empty">Aguardando estatísticas…</p></div></section>
+ <section class="stats-widget" aria-label="Ranking completo">
+  <div class="stats-table-header"><h2>Ranking completo das palestras e Shorts</h2><small id="statsQtdResultados">—</small></div>
+  <div class="stats-table-scroll"><table class="stats-table">
+   <thead><tr><th scope="col">#</th><th scope="col">Palestra / conteúdo</th><th scope="col">Vídeos</th><th scope="col">Áudios</th><th scope="col">PDFs</th><th scope="col">Shorts</th><th scope="col">Total</th></tr></thead>
+   <tbody id="statsTabela"><tr><td colspan="7" class="stats-table-empty">Aguardando estatísticas…</td></tr></tbody>
+  </table></div>
+ </section>
+ <p class="stats-footnote"><strong>Como interpretar:</strong> são contagens de eventos do GoatCounter quando alguém clica em um link de mídia no site. Não medem visualizações completas no YouTube, tempo de áudio nem downloads efetivamente concluídos. O histórico começa com os novos eventos de 23/11/2026; eventos antigos com nomes diferentes não são somados automaticamente.</p>
+</main>
+</div></div>
+</body></html>

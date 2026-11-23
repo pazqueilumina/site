@@ -711,3 +711,14 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Histórico:** eventos antigos `assistir: título` permanecem no GoatCounter, mas o novo padrão `midia/...` começa após a publicação; não misturar os dois sem conciliação. Filtrar por `midia/` no GoatCounter para consultar os rankings por período.
 - **Próxima etapa, não implementada:** integrar rankings diretamente ao menu Estatísticas do painel administrativo, após definir acesso seguro à API do GoatCounter. Não criar indicadores fictícios.
 - **Escopo preservado:** nenhuma mudança no Worker de e-mails, D1, R2, cadastros ou funcionalidades dos Dashboards.
+
+## 23/11/2026 — Estatísticas do acervo integradas ao painel
+
+- Autorização: usuário pediu implementar e publicar diretamente na main.
+- Página: /admin/estatisticas.html, protegida pelo middleware Cloudflare Access. Inclui KPIs, Top 10, comparação por formato, evolução por dia/mês, ranking completo e busca; filtros mensal, anual, vídeo, áudio, PDF e Shorts.
+- Menu Estatísticas dos Dashboards Administrativo e Palestrante aponta para a nova página, preservando todos os indicadores existentes.
+- API: functions/api/admin/estatisticas.js consulta o endpoint oficial GoatCounter /api/v0/stats/hits, pagina com exclude_paths, valida período, agrega caminhos midia/{tipo}/{PAL|SHO-ID}, respeita limite de taxa e retorna erros sem expor a chave.
+- Dependência externa obrigatória: gerar chave de API com permissão de leitura de estatísticas no GoatCounter (menu de usuário > API) e cadastrar como secret GOATCOUNTER_API_TOKEN nas variáveis de produção do projeto Cloudflare Pages. Não gravar o segredo no GitHub. Sem o segredo, a página mostra configuração pendente, nunca zeros fictícios.
+- Eventos medidos: contagens de interação no GoatCounter, não reprodução concluída nem download efetivo. Histórico do novo padrão começou em 23/11/2026; eventos antigos 'assistir: título' não são somados automaticamente.
+- O catálogo data/palestras.json e data/shorts.json é consultado no navegador para títulos e links. Não altera cadastros, Worker de e-mails, D1, R2, ou dashboards já existentes.
+- Estado no commit: código publicado; ativação de dados reais depende da configuração do segredo e teste com o GoatCounter.

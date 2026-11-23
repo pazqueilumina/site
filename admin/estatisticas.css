@@ -1,0 +1,72 @@
+.stats-main{padding:15px 20px 30px}
+.stats-banner{height:115px;align-items:center;padding:14px 23px 14px 29px}
+.stats-banner .dash-welcome h1{font-size:30px}
+.stats-banner .dash-welcome p{font-size:13px}
+.stats-period{position:relative;z-index:2;display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.stats-period select,.stats-period button{height:34px;border:1px solid #d9e5f5;border-radius:8px;background:#fff;color:#16365e;padding:0 10px;font-weight:650;cursor:pointer}
+.stats-period button.active{background:#2865b5;color:#fff;border-color:#2865b5}
+.stats-period button:disabled{opacity:.4;cursor:default}
+.stats-period select[hidden]{display:none}
+.stats-period .stats-arrow{font-size:22px;padding:0 11px}
+.stats-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:0 0 10px}
+.stats-kpi{padding:17px 14px;border:1px solid #d4dfef;border-radius:12px;background:#fff;box-shadow:var(--shadow);display:grid;gap:5px}
+.stats-kpi span{font-size:12px;color:#62738d;font-weight:700}
+.stats-kpi strong{font-size:30px;letter-spacing:-.6px}
+.stats-kpi small{font-size:10px;color:#7b8aa1}
+.stats-kpi:nth-child(1){border-top:4px solid #123f7b}
+.stats-kpi:nth-child(2){border-top:4px solid #3679ec}
+.stats-kpi:nth-child(3){border-top:4px solid #16a17a}
+.stats-kpi:nth-child(4){border-top:4px solid #e59a2c}
+.stats-kpi:nth-child(5){border-top:4px solid #8b5ce2}
+.stats-aviso{padding:12px 15px;margin-bottom:10px;border-radius:9px;background:#fff7e5;border:1px solid #ecd6a3;color:#75511b;line-height:1.55;font-size:12px}
+.stats-aviso.loading{background:#eaf3ff;color:#1c518d;border-color:#bfd7f7}
+.stats-aviso[hidden]{display:none}
+.stats-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:14px 0 10px}
+.stats-toolbar-title h2{font:700 22px Georgia,serif;margin:0 0 3px}
+.stats-toolbar-title p{font-size:12px;color:#63758d;margin:0}
+.stats-toolbar-fields{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.stats-toolbar-fields input,.stats-toolbar-fields select{height:36px;padding:0 11px;border-radius:8px;border:1px solid #cbd8eb;background:#fff;color:#203a5c;min-width:150px}
+.stats-toolbar-fields input{width:240px}
+.stats-toolbar-fields button{height:36px;padding:0 13px;border-radius:8px;border:1px solid #bfd3ed;background:#e8f1ff;color:#1553a0;font-weight:700;cursor:pointer}
+.stats-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:10px;margin-bottom:10px}
+.stats-widget{padding:16px 17px;background:#fff;border:1px solid #d5e0ee;border-radius:12px;box-shadow:var(--shadow);min-width:0}
+.stats-widget h2{font-size:15px;margin:0 0 6px}
+.stats-widget-subtitle{color:#71829a;font-size:11px;margin:0 0 18px}
+.stats-top{display:grid;gap:14px}
+.stats-top-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px}
+.stats-top-title{display:flex;align-items:center;gap:9px;min-width:0;font-size:12px}
+.stats-rank-number{color:#7a8da7;font-size:11px;min-width:21px}
+.stats-rank-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:650}
+.stats-rank-count{font-size:12px;color:#1d4374}
+.stats-top-track{grid-column:1/-1;height:8px;background:#eaf0f8;border-radius:8px;overflow:hidden}
+.stats-top-fill{height:100%;background:linear-gradient(90deg,#5a9bf6,#245db4);border-radius:8px}
+.stats-comparison{display:grid;gap:18px;margin-top:24px}
+.stats-comparison-row{display:grid;grid-template-columns:60px minmax(0,1fr) 45px;align-items:center;gap:9px;font-size:11px}
+.stats-comparison-label{color:#465d79;font-weight:700}
+.stats-comparison-track{height:13px;border-radius:7px;background:#edf2f8;overflow:hidden}
+.stats-comparison-fill{height:100%;border-radius:7px}
+.stats-comparison-row strong{text-align:right}
+.stats-evolution{min-height:170px;display:flex;align-items:stretch}
+.stats-evolution-bars{width:100%;height:170px;display:flex;align-items:flex-end;gap:4px;padding:6px 0 0;border-bottom:1px solid #cad9eb}
+.stats-evolution-item{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px}
+.stats-evolution-column{width:min(75%,30px);background:linear-gradient(180deg,#7aacf3,#2e6ac1);border-radius:3px 3px 0 0;min-height:0;flex:none}
+.stats-evolution-item span{font-size:9px;color:#6e809a;line-height:1.1;white-space:nowrap}
+.stats-empty{color:#71819b;font-size:12px;padding:18px 4px;line-height:1.6}
+.stats-table-header{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.stats-table-header small{color:#6a7e98}
+.stats-table-scroll{overflow:auto;max-height:560px}
+.stats-table{width:100%;border-collapse:collapse;font-size:12px}
+.stats-table th{position:sticky;top:0;background:#edf3fb;text-align:right;color:#27446b;z-index:1;padding:10px 9px}
+.stats-table th:nth-child(2){text-align:left}
+.stats-table td{padding:10px 9px;border-bottom:1px solid #e5ecf5;text-align:right;white-space:nowrap}
+.stats-table td:nth-child(2){text-align:left;white-space:normal;min-width:260px}
+.stats-table tr:hover td{background:#f6f9ff}
+.stats-table td a{color:#1e5baf;text-decoration:none;font-weight:650}
+.stats-table td a:hover{text-decoration:underline}
+.stats-table td strong{font-weight:650}
+.stats-table td small{display:block;color:#8593a7;font-size:10px;margin-top:2px}
+.stats-table td.stats-table-total{font-weight:800;color:#1a477f}
+.stats-table .stats-table-empty{text-align:center;padding:30px;color:#7b8798}
+.stats-footnote{margin:14px 3px 0;color:#61738b;font-size:11px;line-height:1.55}
+@media(max-width:1120px){.stats-grid{grid-template-columns:1fr}.stats-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.stats-banner{height:auto;min-height:120px;flex-wrap:wrap;gap:12px}}
+@media(max-width:760px){.stats-main{padding:12px}.stats-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.stats-banner{padding:18px 15px}.stats-period{justify-content:flex-start}.stats-toolbar-fields input{width:100%}.stats-toolbar-fields{width:100%}.stats-toolbar-fields>*{flex:1}.stats-table td:nth-child(2){min-width:180px}}
