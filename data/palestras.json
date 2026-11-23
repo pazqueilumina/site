@@ -568,12 +568,14 @@
       "dataAproximada": true,
       "serie": "temas",
       "duracao": "01:00:04",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0033.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "pendente"
+    ,
+      "publicacoes": {"audio":"2026-11-23T20:47:50.855Z"}
     },
     {
       "pid": "PAL-0034",
