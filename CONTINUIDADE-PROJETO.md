@@ -731,3 +731,10 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Conteúdo do relatório:** dados reais da mesma API GoatCounter que abastece Estatísticas; cartões de totais, Top 10, comparação por formato, evolução e ranking completo com identificação das palestras. A métrica continua sendo cliques de saída, não reproduções nem downloads concluídos.
 - **Impressão:** modo de relatório sem sidebar e controles, com cabeçalho de período e emissão; folha A4 paisagem, tipografia e gráficos compactos, tabela completa com cabeçalho repetido em páginas adicionais quando necessário. Impressão automática só após carregamento bem-sucedido dos dados; erro de API não gera impressão com valores falsos.
 - **Arquivos:** admin/estatisticas.html, admin/estatisticas.js, admin/estatisticas.css, admin/estatisticas-print.css (novo), admin/relatorios.html, admin/relatorios.js. Demais dashboards, Worker e cadastros não alterados.
+
+## 23/11/2026 — Estatísticas e Relatórios dentro do menu Dashboard
+
+- Menu lateral dos três painéis com sidebar (Administrativo, Palestrante e Estatísticas) unificado: **Dashboard** agora contém, nesta ordem, **Administrativo, Palestrante, Estatísticas e Relatórios**. Removidos os dois atalhos soltos no nível principal.
+- O item da página ativa continua destacado, e o Dashboard abre expandido por padrão. O botão de recolher/expandir mantém o comportamento, aproveitando a regra CSS de `[hidden]` já existente para ocultar os quatro itens quando fechado.
+- **Gestão** (Agenda, Inscritos, Locais, Palestras, Shorts) e **Acervo** mantidos; itens do Acervo harmonizados entre os três painéis. A página de seleção de Relatórios conserva sua navegação de retorno e não teve layout alterado.
+- Arquivos: admin/dashboard.html, admin/palestrante.html, admin/estatisticas.html, admin/dashboard.css. Sem alteração de API, Worker ou dados.
