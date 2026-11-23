@@ -1072,15 +1072,17 @@
       "dataAproximada": true,
       "serie": "temas",
       "duracao": "00:05:48",
-      "audio": "",
-      "audioPlataforma": "",
+      "audio": "https://audio.pazqueilumina.com.br/PAL-0005.mp3",
+      "audioPlataforma": "Cloudflare R2",
       "pdf": "",
       "apresentacaoOriginal": "",
-      "statusAudio": "pendente",
+      "statusAudio": "existente",
       "statusPdf": "sem-arquivo",
       "ativo": true,
       "horario": "",
       "centroId": "youtube"
+    ,
+      "publicacoes": {"audio":"2026-11-23T21:04:47.246Z"}
     },
     {
       "pid": "PAL-0006",
