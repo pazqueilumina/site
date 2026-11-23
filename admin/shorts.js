@@ -88,9 +88,9 @@ function render(){
    b.addEventListener('click',()=>mover(s.sid,delta));controles.append(b);
   }
   const acao=document.createElement('button');
-  acao.type='button';acao.className='short-toggle '+(s.ativo===false?'ativar':'desativar');
-  acao.textContent=s.ativo===false?'Ativar':'Desativar';
-  acao.title=(s.ativo===false?'Ativar':'Desativar')+' Short';
+  acao.type='button';acao.className='short-toggle '+(s.ativo===false?'status-short--inativo':'status-short--ativo');
+  acao.textContent=s.ativo===false?'● Inativo':'● Ativo';
+  acao.title=s.ativo===false?'Clique para reativar o Short':'Clique para desativar o Short';
   acao.setAttribute('aria-label',acao.title+': '+s.titulo);
   acao.disabled=estado.publicando;
   acao.addEventListener('click',()=>alternarAtivo(s.sid));

@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
   <title>Cadastro de Locais | Estudos e Reflexões Espíritas</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=mapas20261121"><script defer src="/admin/locais.js?v=cache-mapa20261122"></script>
+  <link rel="stylesheet" href="/admin/admin.css?v=municipios20261123"><script defer src="/admin/locais.js?v=municipios20261123"></script>
 </head>
 <body class="pagina-locais">
   <header class="topo"><div class="topo-conteudo">
@@ -29,10 +29,16 @@
       <section class="cartao lista"><div class="cartao-cabecalho"><div><h2>Centros e locais</h2><p>Selecione um local para editar.</p></div><button type="button" id="novoLocal" class="botao secundario">+ Novo local</button></div><div class="filtros"><label class="campo-busca"><span class="sr-only">Buscar locais</span><input id="buscaLocal" type="search" placeholder="Buscar por nome, bairro ou cidade…"></label></div><div id="listaLocais" class="lista-eventos"><p class="vazio">Carregando…</p></div></section>
       <section class="cartao editor"><div class="cartao-cabecalho"><div><h2 id="tituloEditorLocal">Novo local</h2><p>Campos com * são obrigatórios.</p></div></div>
         <form id="formLocal">
-          <label>Nome do Centro / Local *<input id="nomeLocal" maxlength="180" required placeholder="Ex.: Centro Espírita União Fraterna"></label>
+          <label>Nome do Centro / Local *<input id="nomeLocal" maxlength="180" required placeholder="Ex.: Consolador – Comunidade Espírita Cristã"></label>
           <label>Endereço completo *<input id="enderecoLocal" maxlength="500" required placeholder="Rua, número e complemento"></label>
           <label>Bairro<input id="bairroLocal" maxlength="180" placeholder="Opcional"></label>
-          <div class="duas-colunas"><label>Cidade *<input id="cidadeLocal" maxlength="180" required></label><label>UF *<input id="ufLocal" maxlength="2" minlength="2" pattern="[A-Za-z]{2}" required placeholder="RJ" style="text-transform:uppercase"></label></div>
+          <div class="duas-colunas">
+            <label>Estado (UF) *<select id="ufLocal" required><option value="">Selecione o estado</option><option value="AC">Acre (AC)</option><option value="AL">Alagoas (AL)</option><option value="AP">Amapá (AP)</option><option value="AM">Amazonas (AM)</option><option value="BA">Bahia (BA)</option><option value="CE">Ceará (CE)</option><option value="DF">Distrito Federal (DF)</option><option value="ES">Espírito Santo (ES)</option><option value="GO">Goiás (GO)</option><option value="MA">Maranhão (MA)</option><option value="MT">Mato Grosso (MT)</option><option value="MS">Mato Grosso do Sul (MS)</option><option value="MG">Minas Gerais (MG)</option><option value="PA">Pará (PA)</option><option value="PB">Paraíba (PB)</option><option value="PR">Paraná (PR)</option><option value="PE">Pernambuco (PE)</option><option value="PI">Piauí (PI)</option><option value="RJ">Rio de Janeiro (RJ)</option><option value="RN">Rio Grande do Norte (RN)</option><option value="RS">Rio Grande do Sul (RS)</option><option value="RO">Rondônia (RO)</option><option value="RR">Roraima (RR)</option><option value="SC">Santa Catarina (SC)</option><option value="SP">São Paulo (SP)</option><option value="SE">Sergipe (SE)</option><option value="TO">Tocantins (TO)</option></select></label>
+            <label>Cidade *<select id="cidadeLocal" required disabled><option value="">Selecione o estado primeiro</option></select>
+              <input id="cidadeLocalManual" maxlength="180" placeholder="Digite a cidade" aria-label="Cidade (digitação manual)" hidden disabled>
+              <small id="ajudaCidadeLocal" aria-live="polite">Selecione o estado para carregar as cidades.</small>
+            </label>
+          </div>
           <label>Link do Google Maps<input id="mapsLocal" type="url" maxlength="500" pattern="https://.*" placeholder="https://maps.google.com/…"><small>Opcional. Não é o link de transmissão da palestra.</small></label>
           <details class="detalhes-coordenadas" id="detalhesCoordenadas"><summary id="tituloCoordenadas">Coordenadas geográficas (opcional)</summary>
             <p class="ajuda-coordenadas">Se o mapa não encontrar o número exato, clique com o botão direito no imóvel no Google Maps e copie a latitude e a longitude. Elas serão usadas para calcular os trajetos, mas não comprovam o endereço. <a id="buscarEnderecoNoMapa" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">Pesquisar este local no Google Maps</a>.</p>

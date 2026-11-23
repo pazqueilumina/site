@@ -8,7 +8,7 @@
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
   <link rel="stylesheet" href="/admin/palestras.css?v=vinculo-agenda20261121">
-  <script defer src="/admin/palestras.js?v=vinculo-agenda20261121"></script>
+  <script defer src="/admin/palestras.js?v=centro-sem-padrao-20261123"></script>
 </head>
 <body>
   <header class="topo">
@@ -62,7 +62,7 @@
               <small id="avisoEvento">Para alterar a data, o horário ou o local, edite o evento na Agenda.</small>
             </div>
             <div id="dadosSemAgenda">
-              <label>Centro Espírita ou You Tube (opcional)<select id="centroId"><option value="">Não informado</option><option value="youtube">You Tube</option></select></label>
+              <label>Centro Espírita ou You Tube (opcional)<select id="centroId"><option value="" selected>Selecione um centro ou You Tube (opcional)</option><option value="youtube">You Tube</option></select></label>
               <p class="ajuda">Para palestras antigas sem evento na Agenda, informe o centro onde ocorreram. Para cadastrar um novo centro, utilize <a href="/admin/locais.html">Locais</a>.</p>
               <div class="duas-colunas"><label>Data de referência (sem Agenda)<input id="data" type="date"></label><label>Data aproximada<select id="aproximada"><option value="sim">Sim</option><option value="nao">Não</option></select></label></div>
               <p class="ajuda ajuda-historica">Use apenas para palestras antigas sem evento na Agenda. Se a única data conhecida for a publicação no YouTube, marque como aproximada; não a trate como data exata da apresentação.</p>

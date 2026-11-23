@@ -147,3 +147,8 @@
 .pagina-agenda .resumo-endereco-local>span{display:block;color:var(--muted);font-size:12px;font-weight:700}
 .pagina-agenda .resumo-endereco-local p{margin:7px 0 0;font-size:13px;line-height:1.5;color:var(--navy)}
 .pagina-agenda .resumo-endereco-local a{display:inline-block;margin-top:7px;color:#245b8c;font-size:12px;font-weight:600}
+
+/* Seletores dependentes de Estado e Cidade, restritos ao cadastro de Locais. */
+.pagina-locais .editor label select{display:block;margin-top:8px;width:100%;height:43px;border:1px solid #d7dfe4;border-radius:8px;padding:0 12px;color:var(--ink);font-size:13px;background:white}
+.pagina-locais .editor label select:focus{outline:2px solid #afc6d5;outline-offset:1px;border-color:var(--navy2)}
+.pagina-locais .editor label input[hidden]{display:none}

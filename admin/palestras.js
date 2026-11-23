@@ -194,8 +194,11 @@ async function carregarCentros(){
   for(const local of (Array.isArray(d.locais)?d.locais:[])){
    const opt=document.createElement('option');opt.value=local.id;opt.textContent=local.nome;select.append(opt);
   }
-  select.replaceChildren(...Array.from(select.options).sort((a,b)=>a.textContent.localeCompare(b.textContent,'pt-BR',{sensitivity:'base'})));
-  select.value=selected;
+  const opcoes=Array.from(select.options);
+  const vazio=opcoes.find(o=>o.value==='');
+  const preenchidas=opcoes.filter(o=>o.value!=='').sort((a,b)=>a.textContent.localeCompare(b.textContent,'pt-BR',{sensitivity:'base'}));
+  select.replaceChildren(...(vazio?[vazio]:[]),...preenchidas);
+  select.value=selected||'';
  }catch(e){console.warn('Cadastro de centros indisponível:',e);}
 }
 
@@ -272,7 +275,7 @@ function trocarAba(aba){
  if(!confirmarDescarte())return false;
  state.formDirty=false;state.tituloEditado=false;
  if(aba==='nova'){
-  state.selecionado=null;$('formP').reset();limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
+  state.selecionado=null;$('formP').reset();$('centroId').value='';limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
  }else if(aba==='editar'&&state.selecionado){
   const p=state.dados.palestras.find(x=>x.pid===state.selecionado);
   if(p)preencher(p);
@@ -287,7 +290,7 @@ function selecionar(pid){
 }
 function limpar(force=false){
  if(!force&&!confirmarDescarte())return;
- state.selecionado=null;state.formDirty=false;state.tituloEditado=false;$('formP').reset();limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
+ state.selecionado=null;state.formDirty=false;state.tituloEditado=false;$('formP').reset();$('centroId').value='';limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
  state.aba='nova';atualizarAbas();render();
 }
 function descartarFormulario(){
@@ -295,7 +298,7 @@ function descartarFormulario(){
  state.formDirty=false;state.tituloEditado=false;
  if(state.aba==='editar'&&state.selecionado){
   const p=state.dados.palestras.find(x=>x.pid===state.selecionado);if(p)preencher(p);
- }else{$('formP').reset();$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();}
+ }else{$('formP').reset();$('centroId').value='';$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();}
  msg('Alterações não salvas do formulário descartadas.','alerta');
 }
 function salvar(preservarArquivos=false,interno=false){if(state.r2Uploading||state.pdfUploading||state.statusSaving||(state.autoSaving&&!interno)){msg('Aguarde o envio do arquivo terminar.','alerta');return false;}if(!$('formP').reportValidity())return false;
@@ -434,7 +437,7 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
  if(problems.length){alert('Importação não aplicada. Corrija os problemas:\n'+problems.slice(0,25).join('\n'));return;}
  if(!changes.length){msg('Nenhuma linha válida encontrada.','alerta');return;}
  if(!confirm(`Prévia da importação (${changes.length} linhas):\n\n${changes.slice(0,18).join('\n')}${changes.length>18?'\n…':''}\n\nAplicar à lista? A publicação no GitHub será separada.`))return;
- state.dados.palestras=working;state.dirty=true;state.formDirty=false;state.selecionado=null;state.aba='importar';$('formP').reset();$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();atualizarAbas();render();msg(`${changes.length} linhas preparadas. Confira e publique quando estiver pronto.`, 'alerta');
+ state.dados.palestras=working;state.dirty=true;state.formDirty=false;state.selecionado=null;state.aba='importar';$('formP').reset();$('centroId').value='';$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();atualizarAbas();render();msg(`${changes.length} linhas preparadas. Confira e publique quando estiver pronto.`, 'alerta');
 }
 function exportar(){const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];for(const p of state.dados.palestras)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
  const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='palestras-com-ids.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}

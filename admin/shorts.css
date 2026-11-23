@@ -36,11 +36,11 @@
 .pagina-shorts .rotulo-id{font-size:12px;font-weight:700;color:var(--ink)}
 .pagina-shorts .valor-id{display:block;margin:10px 0 8px;font-size:16px;font-weight:800;letter-spacing:.035em;color:var(--navy)}
 .pagina-shorts .campo-id small{font-size:11px;color:var(--muted)}
-/* Ativação rápida em cada linha. */
-.pagina-shorts .short-toggle{flex-shrink:0;min-width:70px;padding:7px 8px;border-radius:7px;border:1px solid #d3e0e9;background:#fff;color:#2c506a;font-size:11px;font-weight:700;cursor:pointer}
-.pagina-shorts .short-toggle.desativar:hover{background:#fff2ef;border-color:#d99b91;color:#994a3e}
-.pagina-shorts .short-toggle.ativar{background:#ecf7f1;border-color:#9ccbb3;color:#246746}
-.pagina-shorts .short-toggle.ativar:hover{background:#d7f0e1}
+/* Status clicável dos Shorts: mesmo padrão visual do Acervo de Palestras. */
+.pagina-shorts .short-toggle{align-self:center;flex-shrink:0;padding:5px 9px;border:1px solid transparent;border-radius:999px;font-size:11px;font-weight:750;line-height:1.2;white-space:nowrap;cursor:pointer}
+.pagina-shorts .short-toggle.status-short--ativo{background:#e6f6e9;color:#23723a;border-color:#d2ead6}
+.pagina-shorts .short-toggle.status-short--inativo{background:#ffeded;color:#a5242c;border-color:#f6d6d8}
+.pagina-shorts .short-toggle:hover:not(:disabled){filter:brightness(.96)}
 .pagina-shorts .short-toggle:disabled{opacity:.4;cursor:default}
 .pagina-shorts .short-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-@media(max-width:590px){.pagina-shorts .short-toggle{min-width:58px;padding:6px 5px;font-size:10px}}
+@media(max-width:590px){.pagina-shorts .short-toggle{padding:5px 7px;font-size:10px}}

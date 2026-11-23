@@ -6,6 +6,66 @@ const CHAVE_VERIFICACAO='pazqueilumina-locais-verificacao-v1';
 const campos = { nome:'nomeLocal', endereco:'enderecoLocal', bairro:'bairroLocal', cidade:'cidadeLocal', uf:'ufLocal', maps:'mapsLocal', latitude:'latitudeLocal', longitude:'longitudeLocal', kmIdaVolta:'kmIdaVoltaLocal' };
 const normalizar = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
 const slug = s => normalizar(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'local';
+/* Municípios por UF: dados oficiais do IBGE, consultados somente ao selecionar a UF.
+ * A digitação manual preserva cadastros legados e permite trabalhar se a API estiver indisponível. */
+const cidadesPorUF=new Map();
+let consultaCidades=0;
+const CIDADE_MANUAL='__manual__';
+function cidadeDoFormulario(){
+ return $('cidadeLocalManual').disabled ? $('cidadeLocal').value : $('cidadeLocalManual').value.trim();
+}
+function modoCidadeManual(ativar,valor=''){
+ const input=$('cidadeLocalManual');
+ input.hidden=!ativar;
+ input.disabled=!ativar;
+ input.required=ativar;
+ input.value=ativar?valor:'';
+}
+function reiniciarCidades(){
+ ++consultaCidades;
+ $('cidadeLocal').replaceChildren(new Option('Selecione o estado primeiro',''));
+ $('cidadeLocal').disabled=true;
+ modoCidadeManual(false);
+ $('ajudaCidadeLocal').textContent='Selecione o estado para carregar as cidades.';
+}
+async function carregarCidadesUF(uf,cidadeAnterior=''){
+ const consulta=++consultaCidades,select=$('cidadeLocal');
+ select.replaceChildren(new Option(uf?'Carregando cidades…':'Selecione o estado primeiro',''));
+ select.disabled=true;
+ modoCidadeManual(false);
+ $('ajudaCidadeLocal').textContent=uf?'Consultando municípios do IBGE…':'Selecione o estado para carregar as cidades.';
+ if(!uf)return;
+ try{
+  let cidades=cidadesPorUF.get(uf);
+  if(!cidades){
+   const resposta=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+encodeURIComponent(uf)+'/municipios?orderBy=nome',{mode:'cors'});
+   if(!resposta.ok)throw new Error('IBGE indisponível');
+   const dados=await resposta.json();
+   if(!Array.isArray(dados)||!dados.length)throw new Error('Lista de municípios vazia');
+   cidades=[...new Set(dados.map(x=>x?.nome).filter(x=>typeof x==='string'&&x.length>0&&x.length<=180))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+   if(!cidades.length)throw new Error('Nenhum município válido');
+   cidadesPorUF.set(uf,cidades);
+  }
+  if(consulta!==consultaCidades)return;
+  select.replaceChildren(new Option('Selecione a cidade',''));
+  for(const nome of cidades)select.add(new Option(nome,nome));
+  select.add(new Option('Outra cidade (digitar)',CIDADE_MANUAL));
+  select.disabled=false;
+  if(cidadeAnterior){
+   const encontrada=cidades.find(nome=>normalizar(nome)===normalizar(cidadeAnterior));
+   if(encontrada)select.value=encontrada;
+   else{select.value=CIDADE_MANUAL;modoCidadeManual(true,cidadeAnterior);}
+  }
+  $('ajudaCidadeLocal').textContent='Municípios do IBGE. Se necessário, escolha “Outra cidade (digitar)”.';
+ }catch{
+  if(consulta!==consultaCidades)return;
+  select.replaceChildren(new Option('Digitar cidade manualmente',CIDADE_MANUAL));
+  select.disabled=false;
+  select.value=CIDADE_MANUAL;
+  modoCidadeManual(true,cidadeAnterior);
+  $('ajudaCidadeLocal').textContent='Não foi possível consultar o IBGE. Digite a cidade para continuar.';
+ }
+}
 function mensagem(t, classe='') { $('mensagemTexto').textContent=t; $('mensagemLocais').className='mensagem' + (classe?' '+classe:''); $('mensagemLocais').hidden=false; }
 function atualizarResumo() {
   $('totalLocais').textContent=estado.locais.length;
@@ -185,7 +245,7 @@ function aplicarCoordenadasSugeridas(){
 function atualizarBuscaNoMapa(){
  const l=estado.locais.find(x=>x.id===estado.selecionado);
  const camposBusca=l||{nome:$('nomeLocal').value,endereco:$('enderecoLocal').value,
-  bairro:$('bairroLocal').value,cidade:$('cidadeLocal').value,uf:$('ufLocal').value};
+  bairro:$('bairroLocal').value,cidade:cidadeDoFormulario(),uf:$('ufLocal').value};
  const query=[camposBusca.nome,camposBusca.endereco,camposBusca.bairro,camposBusca.cidade,camposBusca.uf].filter(Boolean).join(', ');
  $('buscarEnderecoNoMapa').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query||'Rio de Janeiro');
 }
@@ -224,11 +284,12 @@ function renderizar() {
   }
 }
 function confirmarDescarte(){return !estado.formularioAlterado||confirm('Descartar alterações não salvas do formulário?');}
-function limpar(){estado.selecionado=null;estado.formularioAlterado=false;$('formLocal').reset();$('tituloEditorLocal').textContent='Novo local';$('salvarLocal').textContent='Adicionar à lista';$('excluirLocal').hidden=true;renderizar();}
-function selecionar(id){if(!confirmarDescarte())return;const l=estado.locais.find(x=>x.id===id);if(!l)return;estado.selecionado=id;estado.formularioAlterado=false;for(const [campo,input] of Object.entries(campos))$(input).value=l[campo]||'';$('tituloEditorLocal').textContent='Editar local';$('salvarLocal').textContent='Salvar na lista';$('excluirLocal').hidden=false;renderizar();}
+function limpar(){estado.selecionado=null;estado.formularioAlterado=false;$('formLocal').reset();reiniciarCidades();$('tituloEditorLocal').textContent='Novo local';$('salvarLocal').textContent='Adicionar à lista';$('excluirLocal').hidden=true;renderizar();}
+function selecionar(id){if(!confirmarDescarte())return;const l=estado.locais.find(x=>x.id===id);if(!l)return;estado.selecionado=id;estado.formularioAlterado=false;for(const [campo,input] of Object.entries(campos))if(campo!=='cidade')$(input).value=l[campo]||'';carregarCidadesUF(l.uf||'',l.cidade||'');$('tituloEditorLocal').textContent='Editar local';$('salvarLocal').textContent='Salvar na lista';$('excluirLocal').hidden=false;renderizar();}
 function lerFormulario(){
   if(!$('formLocal').reportValidity())return null;
-  const obj={};for(const [campo,input] of Object.entries(campos)){const v=$(input).value.trim();if(v)obj[campo]=['latitude','longitude'].includes(campo)?v.replace(',','.'):v;}
+  const obj={};for(const [campo,input] of Object.entries(campos)){const v=(campo==='cidade'?cidadeDoFormulario():$(input).value).trim();if(v)obj[campo]=['latitude','longitude'].includes(campo)?v.replace(',','.'):v;}
+  if(!obj.cidade||obj.cidade===CIDADE_MANUAL){mensagem('Selecione uma cidade ou digite o nome manualmente.','erro');return null;}
   if(Boolean(obj.latitude)!==Boolean(obj.longitude)){mensagem('Preencha latitude e longitude juntas, ou deixe ambas vazias.','erro');return null;}
   if(obj.latitude){
    const valid=(v,min,max)=>/^-?\d{1,2}(?:\.\d{1,7})?$/.test(v)&&Number(v)>=min&&Number(v)<=max;
@@ -274,6 +335,18 @@ async function publicar(){
 }
 $('formLocal').addEventListener('submit',e=>{e.preventDefault();salvar();});
 $('formLocal').addEventListener('input',()=>{estado.formularioAlterado=true;atualizarBuscaNoMapa();});
+$('ufLocal').addEventListener('change',()=>{
+ estado.formularioAlterado=true;
+ carregarCidadesUF($('ufLocal').value);
+ atualizarBuscaNoMapa();
+});
+$('cidadeLocal').addEventListener('change',()=>{
+ const manual=$('cidadeLocal').value===CIDADE_MANUAL;
+ modoCidadeManual(manual);
+ estado.formularioAlterado=true;
+ if(manual)$('cidadeLocalManual').focus();
+ atualizarBuscaNoMapa();
+});
 $('novoLocal').addEventListener('click',()=>{if(confirmarDescarte()){limpar();$('nomeLocal').focus();}});
 $('limparLocal').addEventListener('click',()=>{if(confirmarDescarte())limpar();});
 $('excluirLocal').addEventListener('click',()=>{const l=estado.locais.find(x=>x.id===estado.selecionado);if(!l)return;if(!confirm(`Excluir o cadastro de “${l.nome}”? Eventos existentes serão preservados, mas deixarão de receber preenchimento automático por este local.`))return;estado.locais=estado.locais.filter(x=>x.id!==l.id);estado.verificacao.delete(l.id);estado.pendentesNovos.delete(l.id);salvarHistoricoVerificacao();estado.alterado=true;limpar();mensagem('Local excluído da lista. Publique para efetivar.','alerta');});
