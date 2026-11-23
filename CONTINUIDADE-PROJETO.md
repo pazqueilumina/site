@@ -471,3 +471,17 @@ Existe um planejamento separado, com nome **`paz_que_ilumina_planejamento_emails
 - **Dashboard administrativo:** o quadro “Inscrições da agenda” conserva os quatro indicadores **mensais** (Novos inscritos, Confirmados, Agenda semanal e Cancelamentos), sem os seletores Mês/Ano duplicados no próprio quadro. Exibe o mês de referência como texto. Quando o período geral do Dashboard estiver em modo **mês**, usa o mês escolhido ali; em outros modos, mostra o mês corrente. Não foi eliminada a consulta a meses anteriores, que continua possível pelo seletor geral do Dashboard.
 - **Informações restauradas e preservadas:** indicadores **Inscritos ativos** e **Aguardando confirmação** voltam em dois cartões próprios, na seção visualmente separada **Acumulado geral**, mostrando a situação atual de todo o banco, não a contagem histórica estimada. O link **Gerenciar inscritos** e os avisos sobre limites do histórico semanal permanecem.
 - Os indicadores e a linha **E-mails** no Resumo do acervo, com a coluna Novos do período geral, permanecem sem alterações. Não há mudanças no Worker, nos envios ou no D1. Atualizados os parâmetros de versão dos scripts para evitar cache.
+
+
+## Planejamento futuro — separação entre Dashboard e Estatísticas
+**Status: proposta registrada, NÃO IMPLEMENTADA.** Esta seção documenta a orientação para uma futura evolução do painel administrativo. Não autoriza implementação, remoção de informações nem deploy funcional.
+
+- **Dashboard:** manter como **resumo executivo** do site, com visão geral, principais indicadores, gráficos sintéticos, monitoramento e ações rápidas já existentes.
+- **Estatísticas:** transformar em **área de análise detalhada**, destinada a investigar tendências, comparar períodos e identificar oportunidades de melhoria. Não deve ser apenas um atalho para os gráficos do Dashboard nem duplicar sem necessidade a mesma informação.
+- **Possíveis análises para uma primeira etapa (a validar antes de implementar):**
+  - **Audiência:** visitas, visualizações, evolução por dia/mês, países e páginas mais acessadas (somente onde houver dados confiáveis).
+  - **Conteúdos:** evolução do acervo, publicações por período e distribuição entre apresentações, Shorts, áudios e PDFs.
+  - **Inscrições:** evolução mensal de novos inscritos, confirmações, cancelamentos e crescimento acumulado, com ressalvas sobre limitações históricas dos dados.
+- **Possíveis ampliações posteriores:** estatísticas da agenda (eventos por mês, centros mais ativos) e engajamento (pesquisas/conteúdos procurados), **somente após validar disponibilidade e qualidade dos dados**.
+- **Princípios de implementação:** filtros de período e comparações úteis; métricas verificáveis; sinalizar dados ausentes, estimativas e limitações; aproveitar fontes existentes antes de criar nova coleta. Preservar integralmente o Dashboard e suas funcionalidades atuais, salvo aprovação explícita para mudanças.
+- **Próxima ação:** apresentar proposta visual/funcional e confirmar escopo com o responsável **antes** de programar ou publicar. A mudança de navegação para a área Estatísticas também exige confirmação específica.
