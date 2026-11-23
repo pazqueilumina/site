@@ -698,3 +698,16 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 3. **E-mail de resposta ao cadastro de inscritos no site:** revisar a mensagem que a pessoa recebe após solicitar inscrição na Agenda pelo site (atualmente há fluxo de confirmação por e-mail / double opt-in, segundo o histórico). Avaliar clareza, texto, identidade visual, instruções de confirmação, prazo/validade do link, eventual mensagem após confirmação, acessibilidade e experiência de quem se cadastra. Antes de implementar, identificar no Worker qual mensagem é realmente enviada e definir com o responsável se o objetivo é melhorar o e-mail de confirmação existente, acrescentar uma mensagem de boas-vindas ou ambos. **Não confundir com os lembretes 24h/1h nem com o envio mensal/semanal de agendas.** Preservar consentimento, segurança, cancelamento e comportamento atual até nova autorização.
 
 **Restrições preservadas:** o Worker de e-mails é independente do site; **não modificá-lo nem publicá-lo sem autorização específica**. O envio semanal continua desativado (`weeklyEnabled=false`), e este registro **não autoriza ativação**. Nenhuma das três melhorias foi implementada nesta atualização documental.
+
+
+## 23/11/2026 — Eventos de mídia no GoatCounter (coleta implementada)
+
+- **Autorização:** responsável pediu implementar, não apenas discutir. Publicação na `main` autorizada.
+- **Objetivo:** acompanhar cliques em vídeos de palestras, Shorts, áudios/MP3 e PDFs a partir do site público, sem criar um segundo sistema de contagem.
+- **Coleta:** `js/app.js` registra um único evento por clique de link de mídia no GoatCounter (`pazqueilumina.goatcounter.com`), com caminhos estáveis `midia/video/PAL-xxxx`, `midia/audio/PAL-xxxx`, `midia/pdf/PAL-xxxx` e `midia/short/SHO-xxxx`. O nome da palestra é enviado como título legível.
+- **Cobertura:** cartões de apresentações (imagem, título e botão), destaque da página inicial, página de vídeos/Shorts, página de áudios, página de PDFs e resultados da busca global. Links de agenda/transmissões e do canal não entram no ranking de palestras.
+- **IDs:** `prepararApresentacoes()` mantém `pid` e os Shorts mantêm `sid`; registros sem ID válido não geram evento. Atualizado `js/dados.js` para o endereço correto do GoatCounter e parâmetros de versão dos scripts em todas as páginas públicas.
+- **Métrica:** cliques de saída, não tempo de visualização, execução de áudio ou download efetivamente concluído. Não inferir consumo real a partir desses eventos.
+- **Histórico:** eventos antigos `assistir: título` permanecem no GoatCounter, mas o novo padrão `midia/...` começa após a publicação; não misturar os dois sem conciliação. Filtrar por `midia/` no GoatCounter para consultar os rankings por período.
+- **Próxima etapa, não implementada:** integrar rankings diretamente ao menu Estatísticas do painel administrativo, após definir acesso seguro à API do GoatCounter. Não criar indicadores fictícios.
+- **Escopo preservado:** nenhuma mudança no Worker de e-mails, D1, R2, cadastros ou funcionalidades dos Dashboards.

@@ -38,7 +38,7 @@ const DADOS = {
        escolha um nome (ex.: "estudosespiritas") e preencha:
        goatcounter: "https://SEUNOME.goatcounter.com/count"
        Enquanto estiver vazio, nada é carregado. */
-    analytics: { goatcounter: "https://estudosespiritas.goatcounter.com/count" },
+    analytics: { goatcounter: "https://pazqueilumina.goatcounter.com/count" },
     email: "alexmalves352005@gmail.com",
     whatsapp: "(00) 00000-0000",
     endereco: "Rua Exemplo, 123 — Cidade/UF"

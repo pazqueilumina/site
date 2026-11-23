@@ -194,6 +194,7 @@ function prepararApresentacoes() {
     const aparencia = APARENCIA_SERIE[v.s] || APARENCIA_SERIE.temas;
     return {
       id: v.id,
+      pid: v.pid || "",
       titulo: titleCase(v.t),
       tituloOriginal: v.t,
       serie: v.s,
@@ -228,6 +229,16 @@ function escapar(texto) {
   return String(texto == null ? "" : texto)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/* Atributos padronizados para eventos de mídia no GoatCounter.
+   IDs permanentes evitam fragmentar o ranking quando o título muda. */
+function atributosEventoMidia(tipo, item) {
+  const id = tipo === "short" ? item.sid : item.pid;
+  const padrao = tipo === "short" ? /^SHO-[0-9]{4,}$/ : /^PAL-[0-9]{4,}$/;
+  if (!padrao.test(String(id || ""))) return "";
+  return ' data-midia-tipo="' + escapar(tipo) + '" data-midia-id="' + escapar(id) +
+    '" data-midia-titulo="' + escapar(item.titulo || item.t || id) + '"';
 }
 
 /* "A PRISÃO DE JESUS" → "A Prisão de Jesus"
@@ -430,10 +441,10 @@ function cartaoApresentacao(item, formatoFrase = false) {
   const tituloExibido = formatoFrase ? tituloFraseApresentacao(item.tituloOriginal || item.titulo) : item.titulo;
   return (
     '<article class="cartao">' +
-    '<a href="' + escapar(link) + '" target="_blank" rel="noopener" aria-label="' + escapar(tituloExibido) + '">' +
+    '<a href="' + escapar(link) + '"' + atributosEventoMidia("video", item) + ' target="_blank" rel="noopener" aria-label="' + escapar(tituloExibido) + '">' +
     miniatura(item) + "</a>" +
     '<div class="cartao-corpo">' +
-    '<h3><a href="' + escapar(link) + '" target="_blank" rel="noopener">' + escapar(tituloExibido) + "</a></h3>" +
+    '<h3><a href="' + escapar(link) + '"' + atributosEventoMidia("video", item) + ' target="_blank" rel="noopener">' + escapar(tituloExibido) + "</a></h3>" +
     '<div class="cartao-meta">' +
     "<span>" + icone("agenda") + fmtData(item.data) + "</span>" +
     "<span>" + icone("tema") + escapar(item.serieNome) + "</span>" +
@@ -441,7 +452,7 @@ function cartaoApresentacao(item, formatoFrase = false) {
     "</div>" +
     '<div class="cartao-rodape">' +
     '<span class="etiqueta ' + item.etiquetaClasseCss + '">' + item.etiquetaClasse + "</span>" +
-    (item.youtube ? '<a class="link-icone" href="' + escapar(item.youtube) + '" target="_blank" rel="noopener">Assistir ' + icone("externo") + "</a>" : "") +
+    (item.youtube ? '<a class="link-icone" href="' + escapar(item.youtube) + '"' + atributosEventoMidia("video", item) + ' target="_blank" rel="noopener">Assistir ' + icone("externo") + "</a>" : "") +
     "</div></div></article>"
   );
 }
@@ -671,12 +682,12 @@ function renderizarInicio() {
     "</div>" +
     (destaque.descricao ? '<p class="destaque-descricao">' + escapar(destaque.descricao) + "</p>" : "") +
     '<div class="acoes">' +
-    '<a class="botao-acao" href="' + escapar(destaque.youtube) + '" target="_blank" rel="noopener">' + icone("play") + "Assistir</a>" +
+    '<a class="botao-acao" href="' + escapar(destaque.youtube) + '"' + atributosEventoMidia("video", destaque) + ' target="_blank" rel="noopener">' + icone("play") + "Assistir</a>" +
     (destaque.audio
-      ? '<a class="botao-acao" href="' + escapar(destaque.audio) + '" target="_blank" rel="noopener">' + icone("audio") + "Ouvir</a>"
+      ? '<a class="botao-acao" href="' + escapar(destaque.audio) + '"' + atributosEventoMidia("audio", destaque) + ' target="_blank" rel="noopener">' + icone("audio") + "Ouvir</a>"
       : '<span class="botao-acao botao-acao--desabilitado">' + icone("audio") + "Áudio não disponível</span>") +
     (destaque.slides
-      ? '<a class="botao-acao" href="' + escapar(destaque.slides) + '" target="_blank" rel="noopener">' + icone("download") + "Baixar PDF</a>"
+      ? '<a class="botao-acao" href="' + escapar(destaque.slides) + '"' + atributosEventoMidia("pdf", destaque) + ' target="_blank" rel="noopener">' + icone("download") + "Baixar PDF</a>"
       : '<span class="botao-acao botao-acao--desabilitado">' + icone("download") + "Apresentação não disponível</span>") +
     "</div></div></article></section>" +
 
@@ -808,14 +819,14 @@ function cartaoShort(s, i) {
   const link = "https://www.youtube.com/shorts/" + s.id;
   return (
     '<article class="cartao cartao-short">' +
-    '<a class="short-miniatura-link" href="' + escapar(link) + '" target="_blank" rel="noopener" aria-label="Assistir ' + escapar(s.t) + '">' +
+    '<a class="short-miniatura-link" href="' + escapar(link) + '"' + atributosEventoMidia("short", s) + ' target="_blank" rel="noopener" aria-label="Assistir ' + escapar(s.t) + '">' +
     '<div class="miniatura">' + camadaMidia(item) +
     "</div></a>" +
     '<div class="cartao-corpo">' +
     "<h3>" + escapar(s.t) + "</h3>" +
     '<div class="cartao-rodape">' +
     '<span class="etiqueta etiqueta-short">Short</span>' +
-    '<a class="link-icone" href="' + escapar(link) + '" target="_blank" rel="noopener">Assistir ' + icone("externo") + "</a>" +
+    '<a class="link-icone" href="' + escapar(link) + '"' + atributosEventoMidia("short", s) + ' target="_blank" rel="noopener">Assistir ' + icone("externo") + "</a>" +
     "</div></div></article>"
   );
 }
@@ -856,7 +867,7 @@ function renderizarAudios() {
   function itemAudio(a) {
     return (
       '<article class="item-audio">' +
-      '<a class="audio-play" href="' + escapar(a.audio) + '" target="_blank" rel="noopener" aria-label="Ouvir ' + escapar(a.titulo) + '" title="Ouvir em ' + escapar(a.audioPlataforma || "link externo") + '">' + icone("play") + "</a>" +
+      '<a class="audio-play" href="' + escapar(a.audio) + '"' + atributosEventoMidia("audio", a) + ' target="_blank" rel="noopener" aria-label="Ouvir ' + escapar(a.titulo) + '" title="Ouvir em ' + escapar(a.audioPlataforma || "link externo") + '">' + icone("play") + "</a>" +
       '<div class="audio-info"><h3>' + escapar(a.titulo) + "</h3>" +
       '<div class="audio-detalhes">' +
       "<span>" + icone("agenda") + fmtData(a.data) + "</span>" +
@@ -911,7 +922,7 @@ function renderizarSlides() {
       '<div class="cartao-meta"><span>' + icone("agenda") + fmtData(a.data) + "</span></div>" +
       '<div class="cartao-rodape">' +
       '<span class="etiqueta ' + a.etiquetaClasseCss + '">' + a.etiquetaClasse + "</span>" +
-      '<a class="link-icone" href="' + escapar(a.slides) + '" target="_blank" rel="noopener">Baixar PDF ' + icone("download") + "</a>" +
+      '<a class="link-icone" href="' + escapar(a.slides) + '"' + atributosEventoMidia("pdf", a) + ' target="_blank" rel="noopener">Baixar PDF ' + icone("download") + "</a>" +
       "</div></div></article>"
     );
   }
@@ -1246,12 +1257,12 @@ function montarResultadosGlobais(termo) {
   const itens = [];
   ordenarPorDataDesc(prepararApresentacoes()).forEach((a) => {
     if (!corresponde(a.titulo, a.serieNome, a.autor, a.descricao)) return;
-    itens.push({ tipo: "Vídeo", titulo: a.titulo, url: a.youtube, thumb: a.thumb, data: a.data });
-    if (a.audio) itens.push({ tipo: "Áudio", titulo: a.titulo, url: a.audio, data: a.data });
-    if (a.slides) itens.push({ tipo: "PDF", titulo: a.titulo, url: a.slides, data: a.data });
+    itens.push({ tipo: "Vídeo", titulo: a.titulo, url: a.youtube, thumb: a.thumb, data: a.data, pid: a.pid });
+    if (a.audio) itens.push({ tipo: "Áudio", titulo: a.titulo, url: a.audio, data: a.data, pid: a.pid });
+    if (a.slides) itens.push({ tipo: "PDF", titulo: a.titulo, url: a.slides, data: a.data, pid: a.pid });
   });
   (DADOS.shorts || []).forEach((v) => {
-    if (corresponde(v.t)) itens.push({ tipo: "Short", titulo: v.t, url: "https://www.youtube.com/shorts/" + v.id,
+    if (corresponde(v.t)) itens.push({ tipo: "Short", titulo: v.t, sid: v.sid, url: "https://www.youtube.com/shorts/" + v.id,
       thumb: "https://i.ytimg.com/vi/" + v.id + "/mqdefault.jpg" });
   });
   (DADOS.agenda || []).forEach((e) => {
@@ -1308,7 +1319,10 @@ function montarResultadosGlobais(termo) {
           ? '<img class="busca-thumb" src="' + escapar(x.thumb || "") + '" alt="" loading="lazy" onload="__thumbCarregou(this)" onerror="__thumbErro(this)">'
           : '<span class="busca-simbolo">' + icone(icones[tipo]) + '</span>';
         const detalhe = x.detalhe || (x.data ? fmtData(x.data) : (comImagem ? 'Vídeo do canal' : nomes[tipo]));
-        return '<a class="busca-item" href="' + escapar(x.url) + '"' + (externo ? ' target="_blank" rel="noopener"' : '') + '>' +
+        const tipoMidia = {"Vídeo":"video","Áudio":"audio","PDF":"pdf","Short":"short"}[x.tipo];
+        return '<a class="busca-item" href="' + escapar(x.url) + '"' +
+          (tipoMidia ? atributosEventoMidia(tipoMidia, x) : '') +
+          (externo ? ' target="_blank" rel="noopener"' : '') + '>' +
           midia + '<span class="busca-item-corpo"><span class="busca-item-titulo">' + escapar(x.titulo) + '</span>' +
           '<span class="busca-item-meta">' + escapar(detalhe) + '</span>' +
           '<span class="busca-item-acao">' + icone(iconesAcao[tipo]) + ' ' + escapar(acoes[tipo]) + '</span></span>' +
@@ -1360,31 +1374,33 @@ function configurarBuscaGlobalAcervo() {
   if (termoInicial) atualizarBusca();
 }
 
-/* ---------------- ANÁLISE DE VISITAS (GoatCounter) ----------------
-   Ativa quando DADOS.site.analytics.goatcounter estiver preenchido.
-   Registra: visualização da página e cliques em "Assistir" (por vídeo). */
-
-function registrarCliqueVideo(nome) {
+/* ---------------- EVENTOS DE MÍDIA (GoatCounter) ----------------
+   Mede cliques de saída, NÃO reproduções concluídas ou downloads confirmados.
+   Uma ação gera apenas um evento, identificado por PAL/SHO permanente. */
+function registrarCliqueMidia(tipo, id, titulo) {
+  const nomes = {video:"Vídeo", audio:"Áudio", pdf:"PDF", short:"Short"};
+  if (!Object.prototype.hasOwnProperty.call(nomes, tipo)) return;
+  const padrao = tipo === "short" ? /^SHO-[0-9]{4,}$/ : /^PAL-[0-9]{4,}$/;
+  if (!padrao.test(String(id || ""))) return;
   try {
-    if (window.goatcounter && window.goatcounter.count) {
-      window.goatcounter.count({ path: "assistir: " + nome, event: true });
+    if (window.goatcounter && typeof window.goatcounter.count === "function") {
+      window.goatcounter.count({
+        path: "midia/" + tipo + "/" + id,
+        title: nomes[tipo] + ": " + String(titulo || id).slice(0, 160),
+        event: true
+      });
     }
-  } catch (e) { /* silencioso */ }
+  } catch (e) { /* Não impedir a navegação caso a coleta falhe. */ }
 }
 
 function configurarAnalytics() {
   const cfg = DADOS.site && DADOS.site.analytics;
   if (!cfg || !cfg.goatcounter) return;
-
-  // Script GoatCounter já presente uma única vez no HTML; Dashboard usa Cloudflare RUM.
-
-  // Cliques em links de vídeo: identifica o vídeo pelo cartão
+  // Delegação: cobre links criados depois por busca, filtros e atualizações.
   document.addEventListener("click", (ev) => {
-    const a = ev.target.closest && ev.target.closest('a[href*="youtube.com"], a[href*="youtu.be"]');
+    const a = ev.target.closest && ev.target.closest("a[data-midia-tipo][data-midia-id]");
     if (!a) return;
-    const cartao = a.closest("article");
-    const titulo = cartao ? cartao.querySelector("h3") : null;
-    registrarCliqueVideo(titulo ? titulo.textContent.trim().slice(0, 80) : (a.getAttribute("data-video") || "link You Tube"));
+    registrarCliqueMidia(a.dataset.midiaTipo, a.dataset.midiaId, a.dataset.midiaTitulo);
   });
 }
 
@@ -1420,7 +1436,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       DADOS.shorts = catalogoShorts.shorts
         .filter(s => s.ativo !== false && /^[a-zA-Z0-9_-]{11}$/.test(s.youtubeId || ''))
         .sort((a,b) => a.ordem-b.ordem)
-        .map(s => ({id:s.youtubeId,t:s.titulo}));
+        .map(s => ({id:s.youtubeId,sid:s.sid,t:s.titulo}));
     } catch (e) { console.warn('Cadastro de Shorts indisponível:', e); }
   }
   renderizarSidebar();
