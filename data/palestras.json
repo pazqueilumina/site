@@ -444,14 +444,17 @@
       "duracao": "00:54:03",
       "audio": "https://archive.org/details/um-toque-de-esperanca-a-historia-da-mulher-hemorroissa",
       "audioPlataforma": "Internet Archive",
-      "pdf": "",
+      "pdf": "https://pazqueilumina.com.br/pdf/PAL-0047-A-HEMORROISSA.pdf",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "sem-arquivo",
+      "statusPdf": "existente",
       "ativo": true,
       "eventoId": "",
       "centroId": "",
-      "materialApresentacao": "possui"
+      "materialApresentacao": "possui",
+      "publicacoes": {
+        "pdf": "2026-11-24T03:50:54.946Z"
+      }
     },
     {
       "pid": "PAL-0048",
