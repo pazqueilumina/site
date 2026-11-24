@@ -188,7 +188,7 @@ function atualizarResumoVerificacao(){
  listaPendencias.replaceChildren();
  listaPendencias.hidden=!pendencias.length;
  if(pendencias.length){
-  const titulo=document.createElement('strong');titulo.textContent='Pendências por local:';
+  const titulo=document.createElement('strong');titulo.textContent=pendentes===1?'1 endereço pendente de verificação':pendentes+' endereços pendentes de verificação';
   const lista=document.createElement('ul');
   for(const l of pendencias){
    const r=resultadoLocal(l),item=document.createElement('li');
@@ -204,7 +204,7 @@ function atualizarResumoVerificacao(){
   ?'Verificando… '+estado.verificadosNaRodada+' de '+estado.locais.length+' · '+avaliados+' resultado(s) de endereço'
   :!estado.locais.length?'Nenhum local cadastrado'
   :!avaliados?'Sem verificação de endereço registrada'
-  :pendentes?avaliados+' de '+estado.locais.length+' endereços avaliados · '+pendentes+' pendente(s)'+quando
+  :pendentes?avaliados+' de '+estado.locais.length+' endereços avaliados'+quando
   :avaliados+' de '+estado.locais.length+' endereços avaliados'+(aproximados?' · '+aproximados+' aproximado(s)':'')+quando;
  const comCoordenadas=estado.locais.filter(l=>l.latitude&&l.longitude);
  const semCoordenadas=estado.locais.length-comCoordenadas.length;
@@ -355,10 +355,20 @@ function renderizar() {
 }
 function confirmarDescarte(){return !estado.formularioAlterado||confirm('Descartar alterações não salvas do formulário?');}
 function limpar(){estado.selecionado=null;estado.sugestaoCoordenadas=null;estado.formularioAlterado=false;$('formLocal').reset();reiniciarCidades();$('tituloEditorLocal').textContent='Novo local';$('salvarLocal').textContent='Adicionar à lista';$('excluirLocal').hidden=true;renderizar();}
-function selecionar(id){if(!confirmarDescarte())return;const l=estado.locais.find(x=>x.id===id);if(!l)return;estado.selecionado=id;estado.sugestaoCoordenadas=null;estado.formularioAlterado=false;for(const [campo,input] of Object.entries(campos))if(campo!=='cidade')$(input).value=l[campo]||'';carregarCidadesUF(l.uf||'',l.cidade||'');$('tituloEditorLocal').textContent='Editar local';$('salvarLocal').textContent='Salvar na lista';$('excluirLocal').hidden=false;renderizar();}
+function selecionar(id){if(!confirmarDescarte())return;const l=estado.locais.find(x=>x.id===id);if(!l)return;estado.selecionado=id;estado.sugestaoCoordenadas=null;estado.formularioAlterado=false;for(const [campo,input] of Object.entries(campos))if(campo!=='cidade')$(input).value=campo==='kmIdaVolta'?String(l[campo]||'').replace('.',','):(l[campo]||'');carregarCidadesUF(l.uf||'',l.cidade||'');$('tituloEditorLocal').textContent='Editar local';$('salvarLocal').textContent='Salvar na lista';$('excluirLocal').hidden=false;renderizar();}
+function normalizarDistanciaLocal(v){
+ if(!/^\d{1,4}(?:,\d)?$/.test(v))return null;
+ const n=Number(v.replace(',','.'));
+ return n>0&&n<=2000?String(n):null;
+}
 function lerFormulario(){
   if(!$('formLocal').reportValidity())return null;
   const obj={};for(const [campo,input] of Object.entries(campos)){const v=(campo==='cidade'?cidadeDoFormulario():$(input).value).trim();if(v)obj[campo]=['latitude','longitude'].includes(campo)?v.replace(',','.'):v;}
+  if(obj.kmIdaVolta){
+   const km=normalizarDistanciaLocal(obj.kmIdaVolta);
+   if(km===null){mensagem('Informe a distância entre 0,1 e 2000 km, usando vírgula e até uma casa decimal.','erro');return null;}
+   obj.kmIdaVolta=km;
+  }
   if(!obj.cidade||obj.cidade===CIDADE_MANUAL){mensagem('Selecione uma cidade ou digite o nome manualmente.','erro');return null;}
   if(Boolean(obj.latitude)!==Boolean(obj.longitude)){mensagem('Preencha latitude e longitude juntas, ou deixe ambas vazias.','erro');return null;}
   if(obj.latitude){

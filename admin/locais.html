@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="same-origin">
   <title>Cadastro de Locais | Estudos e Reflexões Espíritas</title>
-  <link rel="stylesheet" href="/admin/admin.css?v=endereco-conferido-20261123"><script defer src="/admin/locais.js?v=colar-coordenadas-20261124"></script>
+  <link rel="stylesheet" href="/admin/admin.css?v=pendencias-compactas-20261124"><script defer src="/admin/locais.js?v=distancia-virgula-20261124"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head>
@@ -62,7 +62,7 @@
               </div>
             </div>
           </details>
-          <details><summary>Correção manual de distância (opcional)</summary><label>Ida e volta (km)<input id="kmIdaVoltaLocal" type="number" min="0.1" max="2000" step="0.1" placeholder="Ex.: 12.4"><small>O Dashboard calcula as rotas automaticamente. Preencha somente se quiser substituir uma distância indisponível.</small></label></details>
+          <details><summary>Correção manual de distância (opcional)</summary><label>Ida e volta (km)<input id="kmIdaVoltaLocal" type="text" inputmode="decimal" maxlength="6" pattern="[0-9]{1,4}(,[0-9])?" title="Informe a distância com vírgula, por exemplo 12,4" placeholder="Ex.: 12,4"><small>O Dashboard calcula as rotas automaticamente. Preencha somente se quiser substituir uma distância indisponível.</small></label></details>
           <div class="acoes"><button id="salvarLocal" type="submit" class="botao principal">Adicionar à lista</button><button id="limparLocal" type="button" class="botao discreto">Limpar</button><button id="excluirLocal" type="button" class="botao perigoso" hidden>Excluir local</button></div>
           <p class="ajuda">As alterações só serão enviadas ao GitHub ao clicar em <strong>Publicar alterações</strong>. A exclusão de um local não apaga eventos da Agenda.</p>
         </form>
