@@ -238,7 +238,7 @@ function construirRecentes(palestras,shorts){
   const tipos=[
    {tipo:'Vídeo',chave:'video',campo:'youtubeId',url:p.youtubeId?'https://www.youtube.com/watch?v='+encodeURIComponent(p.youtubeId):''},
    {tipo:'Áudio (MP3)',chave:'audio',campo:'audio',url:p.audio},
-   {tipo:'Slides (PDF)',chave:'pdf',campo:'pdf',url:p.pdf},
+   {tipo:'PDF',chave:'pdf',campo:'pdf',url:p.pdf},
    {tipo:'PPT/PPTX (referência)',chave:'original',campo:'apresentacaoOriginal',url:'/admin/palestras.html'}
   ];
   for(const tipo of tipos){
