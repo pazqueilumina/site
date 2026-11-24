@@ -1123,3 +1123,12 @@ Quando eu pedir uma sugestão, apresente-a sem modificar o sistema.
 Quando eu autorizar uma implementação, execute somente o escopo aprovado, valide cuidadosamente e informe o resultado real.
 
 **Agora, leia os documentos e confira o estado do GitHub. Não execute nenhuma alteração. Confirme o que está publicado, o que está pendente e aguarde minha próxima solicitação.**
+
+
+## 24/11/2026 — Classificação de material, compactação e rodapés (deploy autorizado)
+
+- Autorização explícita para publicar as pendências, inclusive Zé, e as alterações abaixo. Ponto de retorno: `859e9d097af35c2513c9ef3059440af66796e158`.
+- Material de apresentação e Série dividem a mesma linha; classificação independente de modalidade, valores `possui`, `nao-utiliza`, `nao-informado` (padrão para registros sem campo). O campo é opcional no backend. Nenhuma migração do catálogo.
+- URL manual de PDF retirada da interface; valor interno preservado, CSV inalterado. Não utiliza apresentação oculta controles PDF sem apagar vínculos; upload bem-sucedido define possui. MP3 e fluxo automático Salvar na lista preservados.
+- Retirado texto sob Nova palestra; três orientações resumidas mantendo links Agenda e Locais. Rodapés administrativos Agenda, Locais e Shorts substituídos pelo padrão público.
+- A autorização atual substitui a proibição histórica de reintroduzir o seletor, somente no formato acima. Não alterar Worker, programa Windows ou outros dados. Conferência visual e teste autenticado de upload ainda necessários.

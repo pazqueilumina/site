@@ -7,9 +7,9 @@
   <meta name="referrer" content="same-origin">
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
-  <link rel="stylesheet" href="/admin/palestras.css?v=acervo-compacto-20261124">
+  <link rel="stylesheet" href="/admin/palestras.css?v=material-20261124">
   <script defer src="/js/titulos.js?v=titulos-ze-20261124"></script>
-  <script defer src="/admin/palestras.js?v=acervo-compacto-20261124"></script>
+  <script defer src="/admin/palestras.js?v=material-20261124"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head>
@@ -51,14 +51,14 @@
         </div>
         <div id="avisoSelecionar" class="editor-vazio" hidden>Selecione uma palestra no acervo à esquerda para editar seus dados.</div>
         <div id="painelFormulario" role="tabpanel" aria-label="Cadastro e edição de palestra">
-          <div class="cartao-cabecalho"><div><h2 id="tituloP">Nova palestra</h2><p>Campos vazios de material significam que ele ainda não está disponível.</p></div></div>
+          <div class="cartao-cabecalho"><div><h2 id="tituloP">Nova palestra</h2></div></div>
           <form id="formP">
             <label>ID permanente<input id="pid" readonly placeholder="Gerado automaticamente"></label>
             <label>Título *<input id="titulo" maxlength="300" required></label>
             <label>Vincular a um evento da Agenda (opcional)
               <select id="eventoId"><option value="">Sem vínculo com a Agenda</option></select>
             </label>
-            <p class="ajuda ajuda-vinculo">Escolha o evento específico onde a palestra foi apresentada. A data, o horário e o local serão utilizados diretamente da <a href="/admin/agenda.html">Agenda</a>, sem duplicação.</p>
+            <p class="ajuda ajuda-vinculo">Use a data, o horário e o local do evento da <a href="/admin/agenda.html">Agenda</a>.</p>
             <div id="resumoEvento" class="resumo-evento" hidden>
               <strong>Informações do evento na Agenda</strong>
               <p id="dadosEvento"></p>
@@ -66,9 +66,9 @@
             </div>
             <div id="dadosSemAgenda">
               <label>Centro Espírita ou You Tube (opcional)<select id="centroId"><option value="" selected>Selecione um centro ou You Tube (opcional)</option><option value="youtube">You Tube</option></select></label>
-              <p class="ajuda">Para palestras antigas sem evento na Agenda, informe o centro onde ocorreram. Para cadastrar um novo centro, utilize <a href="/admin/locais.html">Locais</a>.</p>
+              <p class="ajuda">Sem evento na Agenda, informe o centro ou cadastre-o em <a href="/admin/locais.html">Locais</a>.</p>
               <div class="duas-colunas"><label>Data de referência (sem Agenda)<input id="data" type="date"></label><label>Data aproximada<select id="aproximada"><option value="sim">Sim</option><option value="nao">Não</option></select></label></div>
-              <p class="ajuda ajuda-historica">Use apenas para palestras antigas sem evento na Agenda. Se a única data conhecida for a publicação no YouTube, marque como aproximada; não a trate como data exata da apresentação.</p>
+              <p class="ajuda ajuda-historica">Sem evento na Agenda, marque como aproximada a data obtida pelo YouTube.</p>
             </div>
             <label>URL do You Tube<input id="youtube" type="url" placeholder="https://www.youtube.com/watch?v=..."></label>
             <label>Link do MP3 existente<input id="audio" placeholder="https://... ou /audio/..." maxlength="1500"></label>
@@ -81,8 +81,8 @@
               <progress id="progressoAudioR2" max="100" value="0" hidden></progress>
               <div id="avisoAudioR2" class="upload-aviso" role="status" aria-live="polite"><p id="statusAudioR2" class="upload-r2-status">Verificando integração com o R2…</p><button id="fecharStatusAudioR2" type="button" class="fechar-mensagem" aria-label="Fechar aviso de MP3" title="Fechar aviso">×</button></div>
             </div>
-            <label>Link do PDF existente<input id="pdf" placeholder="https://... ou /pdf/..." maxlength="1500"></label>
-            <div class="upload-r2 upload-pdf" aria-labelledby="tituloUploadPdf">
+            <input id="pdf" type="hidden">
+            <div id="blocoPdf" class="upload-r2 upload-pdf" aria-labelledby="tituloUploadPdf">
               <strong id="tituloUploadPdf">Enviar PDF do computador para o GitHub</strong>
               <p class="ajuda">PDF salvo em <code>/pdf/</code> no GitHub; publicação automática ao salvar.</p>
               <label for="arquivoPdfGithub">Arquivo PDF (até 20 MiB)
@@ -90,7 +90,7 @@
               </label>
               <div id="avisoPdfGithub" class="upload-aviso" role="status" aria-live="polite"><p id="statusPdfGithub" class="upload-r2-status">Selecione um PDF e clique em Salvar na lista.</p><button id="fecharStatusPdfGithub" type="button" class="fechar-mensagem" aria-label="Fechar aviso de PDF" title="Fechar aviso">×</button></div>
             </div>
-            <label>Série<select id="serie"><option value="temas">Reflexões</option><option value="doutrina">Doutrina e História</option><option value="evangelho">Histórias do Evangelho</option><option value="ministerio">O Ministério de Jesus</option><option value="parabolas">Parábolas</option><option value="ultimos-dias">Os Últimos Dias de Jesus</option></select></label>
+            <div class="duas-colunas"><label>Material de apresentação<select id="materialApresentacao"><option value="nao-informado">Não informado</option><option value="possui">Possui apresentação</option><option value="nao-utiliza">Não utiliza apresentação</option></select></label><label>Série<select id="serie"><option value="temas">Reflexões</option><option value="doutrina">Doutrina e História</option><option value="evangelho">Histórias do Evangelho</option><option value="ministerio">O Ministério de Jesus</option><option value="parabolas">Parábolas</option><option value="ultimos-dias">Os Últimos Dias de Jesus</option></select></label></div>
             <div class="acoes"><button id="salvarP" type="submit" class="botao principal">Salvar na lista</button><button id="cancelarP" type="button" class="botao discreto">Descartar alterações</button></div>
             <p class="ajuda">Sem arquivo: salve e publique; com MP3/PDF: envio e publicação automáticos.</p>
           </form>

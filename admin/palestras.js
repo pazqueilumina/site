@@ -36,8 +36,11 @@ function limparSelecaoPdf(){
 function atualizarUploadPdf(){
  const existe=state.aba==='editar'&&!!state.selecionado;
  const ocupado=state.pdfUploading||state.r2Uploading||state.autoSaving||state.statusSaving;
+ const semMaterial=$('materialApresentacao').value==='nao-utiliza';
+ $('blocoPdf').hidden=semMaterial;
+ $('materialApresentacao').disabled=ocupado;
  const selecionado=$('arquivoPdfGithub').files.length>0;
- $('arquivoPdfGithub').disabled=!(state.aba==='nova'||existe)||ocupado;
+ $('arquivoPdfGithub').disabled=semMaterial||!(state.aba==='nova'||existe)||ocupado;
  if(state.pdfUploading||state.autoSaving)return;
  const status=$('statusPdfGithub');
  if(status.className!=='upload-r2-status')return;
@@ -135,7 +138,7 @@ async function enviarPdfGithub(){
   const o=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(o.erro||'Falha no envio (HTTP '+r.status+').');
   if(!o.ok||!o.url||!o.caminho)throw new Error('Resposta de confirmação do GitHub incompleta.');
-  $('pdf').value=o.url;state.formDirty=true;
+  $('pdf').value=o.url;$('materialApresentacao').value='possui';state.formDirty=true;
   $('arquivoPdfGithub').value='';
   $('avisoPdfGithub').hidden=false;
   status.textContent='PDF enviado para '+o.caminho+'. Vinculando ao cadastro…';
@@ -223,7 +226,7 @@ function preencher(p){
   }
   $('eventoId').value=p.eventoId||'';atualizarVinculoAgenda();
  $('youtube').value=p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'';
- $('audio').value=p.audio||'';$('pdf').value=p.pdf||'';$('serie').value=p.serie||'temas';
+ $('audio').value=p.audio||'';$('pdf').value=p.pdf||'';$('materialApresentacao').value=p.materialApresentacao||'nao-informado';$('serie').value=p.serie||'temas';
  const centro=$('centroId');if(p.centroId&&!Array.from(centro.options).some(o=>o.value===p.centroId)){
   const opt=document.createElement('option');opt.value=p.centroId;opt.textContent='Centro não encontrado: '+p.centroId;centro.append(opt);
  }centro.value=p.centroId||'';
@@ -267,6 +270,7 @@ function descartarFormulario(){
  if(state.aba==='editar'&&state.selecionado){
   const p=state.dados.palestras.find(x=>x.pid===state.selecionado);if(p)preencher(p);
  }else{$('formP').reset();$('centroId').value='';$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();}
+ atualizarUploadPdf();
  msg('Alterações não salvas do formulário descartadas.','alerta');
 }
 function salvar(preservarArquivos=false,interno=false){if(state.r2Uploading||state.pdfUploading||state.statusSaving||(state.autoSaving&&!interno)){msg('Aguarde o envio do arquivo terminar.','alerta');return false;}if(!$('formP').reportValidity())return false;
@@ -281,7 +285,7 @@ function salvar(preservarArquivos=false,interno=false){if(state.r2Uploading||sta
   const arquivo=old.apresentacaoOriginal||'';
  if(arquivo&&(/[\\/]/.test(arquivo)||!/\.(ppt|pptx|pdf)$/i.test(arquivo))){msg('Nome do arquivo importado inválido em '+pid+'. Corrija-o pelo CSV.','erro');return false;}
  const titulo=state.selecionado&&!state.tituloEditado&&old.titulo?old.titulo:tituloSemPontoFinal($('titulo').value);
- const p={...old,pid,titulo,ativo:old.ativo!==false,eventoId:eventoId||'',data:evento?(old.data||''):$('data').value,dataAproximada:evento?(old.dataAproximada??true):$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:evento?(evento.localId||old.centroId||''):$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
+ const p={...old,pid,titulo,ativo:old.ativo!==false,eventoId:eventoId||'',data:evento?(old.data||''):$('data').value,dataAproximada:evento?(old.dataAproximada??true):$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:evento?(evento.localId||old.centroId||''):$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,materialApresentacao:$('materialApresentacao').value,apresentacaoOriginal:arquivo,
   statusAudio:audio?'existente':id?'pendente':'sem-fonte',statusPdf:pdf?'existente':arquivo?'pendente':'sem-arquivo'};
  delete p.horario;
   if(!p.titulo){msg('Título obrigatório.','erro');return false;}
@@ -391,6 +395,7 @@ async function alternarStatus(pid){
 async function salvarEEnviar(){
  if(state.autoSaving||state.statusSaving||state.r2Uploading||state.pdfUploading)return;
  const mp3=$('arquivoMp3R2').files[0],pdf=$('arquivoPdfGithub').files[0];
+ if(pdf&&$('materialApresentacao').value==='nao-utiliza'){msg('Altere a classificação antes de enviar um PDF.','erro');return;}
  if(!mp3&&!pdf){salvar();return;}
  const novoNaoPublicado=state.aba==='nova'||(state.aba==='editar'&&state.selecionado&&!state.publicados.has(state.selecionado));
  if(!state.sha){msg('Aguarde o carregamento do cadastro antes de salvar.','erro');return;}
@@ -473,6 +478,7 @@ $('formP').addEventListener('submit',e=>{e.preventDefault();salvarEEnviar();});$
  $('fecharStatusAudioR2').addEventListener('click',()=>{$('avisoAudioR2').hidden=true;});
  $('fecharStatusPdfGithub').addEventListener('click',()=>{$('avisoPdfGithub').hidden=true;});
  $('arquivoMp3R2').addEventListener('change',()=>{$('statusAudioR2').className='upload-r2-status';atualizarUploadR2();});
+ $('materialApresentacao').addEventListener('change',()=>{if($('materialApresentacao').value==='nao-utiliza'&&$('arquivoPdfGithub').files.length){if(!confirm('Descartar a seleção do PDF ainda não enviado?')){$('materialApresentacao').value='nao-informado';atualizarUploadPdf();return;}limparSelecaoPdf();}atualizarUploadPdf();});
  $('arquivoPdfGithub').addEventListener('change',()=>{$('statusPdfGithub').className='upload-r2-status';atualizarUploadPdf();});$('cancelarP').addEventListener('click',descartarFormulario);$('abaEditar').addEventListener('click',()=>trocarAba('editar'));$('abaNova').addEventListener('click',()=>trocarAba('nova'));$('abaImportar').addEventListener('click',()=>trocarAba('importar'));$('publicarP').addEventListener('click',()=>publicar());$('buscaP').addEventListener('input',render);$('filtroP').addEventListener('change',render);
 $('ordenarP').addEventListener('click',()=>{
  state.ordemDesc=!state.ordemDesc;
