@@ -3,11 +3,6 @@
 .stats-banner .dash-welcome h1{font-size:30px}
 .stats-banner .dash-welcome p{font-size:13px}
 .stats-period{position:relative;z-index:2;display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:7px}
-.stats-period select,.stats-period button{height:34px;border:1px solid #d9e5f5;border-radius:8px;background:#fff;color:#16365e;padding:0 10px;font-weight:650;cursor:pointer}
-.stats-period button.active{background:#2865b5;color:#fff;border-color:#2865b5}
-.stats-period button:disabled{opacity:.4;cursor:default}
-.stats-period select[hidden]{display:none}
-.stats-period .stats-arrow{font-size:22px;padding:0 11px}
 .stats-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:0 0 10px}
 .stats-kpi{padding:17px 14px;border:1px solid #d4dfef;border-radius:12px;background:#fff;box-shadow:var(--shadow);display:grid;gap:5px}
 .stats-kpi span{font-size:12px;color:#62738d;font-weight:700}
@@ -74,3 +69,5 @@
 /* Cartões compactos: legendas redundantes removidas dos quatro formatos. */
 .stats-kpi{gap:7px;min-height:93px}
 .stats-kpi strong{line-height:1.15}
+
+.stats-period.admin-period-controls{z-index:10}.stats-banner{overflow:visible}

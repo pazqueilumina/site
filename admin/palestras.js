@@ -359,7 +359,7 @@ function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled
  const ordemCronologica=[...rows].sort((a,b)=>(dataEfetivaPalestra(a)||'9999').localeCompare(dataEfetivaPalestra(b)||'9999')||a.pid.localeCompare(b.pid));
  const numerosOrdem=new Map(ordemCronologica.map((p,i)=>[p.pid,i+1]));
  const filtered=palestrasVisiveis();
- $('exportarFiltradoP').disabled=!filtered.length;
+ $('exportarFiltradoP').disabled=!filtered.length;$('exportarPdfP').disabled=!filtered.length;
  const list=$('listaP');list.replaceChildren();if(!filtered.length){const e=document.createElement('p');e.className='vazio';e.textContent='Nenhuma palestra encontrada.';list.append(e);return;}
  filtered.forEach((p,i)=>{
   const row=document.createElement('div');row.className='evento evento-registro'+(state.selecionado===p.pid?' ativo':'')+(p.ativo===false?' evento-registro--inativa':'');
@@ -502,15 +502,33 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
  if(!confirm(`Prévia da importação (${changes.length} linhas):\n\n${changes.slice(0,18).join('\n')}${changes.length>18?'\n…':''}\n\nAplicar à lista? A publicação no GitHub será separada.`))return;
  state.dados.palestras=working;state.dirty=true;state.formDirty=false;state.selecionado=null;state.aba='importar';$('formP').reset();$('centroId').value='';$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();atualizarAbas();render();msg(`${changes.length} linhas preparadas. Confira e publique quando estiver pronto.`, 'alerta');
 }
+function valoresExportacao(p){return [p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal,p.materialApresentacao||'nao-informado',p.serie,p.pdf];}
 function baixarCSV(rows,nome){
  if(!rows.length){msg('Nenhuma palestra corresponde aos filtros atuais.','alerta');return;}
  const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
  const lines=[['ID','Titulo','Data','YouTube','Apresentacao','MaterialApresentacao','Serie','LinkPDF'].join(',')];
- for(const p of rows)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal,p.materialApresentacao||'nao-informado',p.serie,p.pdf].map(escape).join(','));
+ for(const p of rows)lines.push(valoresExportacao(p).map(escape).join(','));
  const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));
  const a=document.createElement('a');a.href=url;a.download=nome;a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);
 }
 function exportar(){baixarCSV(state.dados.palestras,'palestras-com-ids.csv');}
+
+function exportarPdf(){
+ const rows=palestrasVisiveis();if(!rows.length)return;
+ const w=window.open('','_blank');if(!w){msg('Permita a abertura da janela de impressão.','alerta');return;}
+ const doc=w.document;doc.title='Paz que Ilumina — Acervo de palestras';doc.documentElement.lang='pt-BR';
+ const style=doc.createElement('style');style.textContent='@page{size:A4 landscape;margin:12mm;@bottom-right{content:"Página " counter(page) " de " counter(pages);font:9pt Arial;color:#526779}}body{font:10pt Arial,sans-serif;color:#17354d;margin:0}h1{font: bold 21pt Georgia;margin:0 0 5px}h2{font-size:13pt;margin:0 0 8px}p{margin:4px 0 12px;color:#526779}header{border-bottom:2px solid #b18a48;margin-bottom:12px}table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:8pt}thead{display:table-header-group}th{text-align:left;background:#eaf0f4}td,th{border-bottom:1px solid #d5dfe6;padding:5px;vertical-align:top;overflow-wrap:anywhere}tr{break-inside:avoid}a{color:inherit}button{margin:0 0 12px;padding:8px 14px}@media print{button{display:none}}';doc.head.append(style);
+ const add=(parent,tag,value)=>{const el=doc.createElement(tag);if(value!==undefined)el.textContent=value;parent.append(el);return el;};
+ const button=add(doc.body,'button','Imprimir / salvar PDF');button.onclick=()=>w.print();
+ const header=add(doc.body,'header');add(header,'h1','Paz que Ilumina');add(header,'h2','Acervo de palestras');
+ add(header,'p','Emitido em '+new Date().toLocaleString('pt-BR')+' · '+rows.length+' palestra(s)');
+ add(header,'p','Filtro: '+$('filtroP').selectedOptions[0].textContent+' · Pesquisa: '+($('buscaP').value||'Todas')+' · Ordem: '+(state.ordemDesc?'Decrescente':'Crescente'));
+ const table=add(doc.body,'table'),cg=add(table,'colgroup');[8,25,9,15,10,12,9,12].forEach(n=>add(cg,'col').style.width=n+'%');
+ const tr=add(add(table,'thead'),'tr');['ID','Título','Data','YouTube','Apresentação','Material de apresentação','Série','Link PDF'].forEach(v=>add(tr,'th',v));
+ const body=add(table,'tbody');for(const p of rows){const tr=add(body,'tr');valoresExportacao(p).forEach(v=>add(tr,'td',String(v??'')));}
+ w.focus();w.print();
+}
+
 function exportarFiltrado(){baixarCSV(palestrasVisiveis(),'palestras-'+$('filtroP').value+'.csv');}
 $('fecharMensagemP').addEventListener('click',()=>{ $('mensagemP').hidden=true; });
 $('eventoId').addEventListener('change',atualizarVinculoAgenda);
@@ -529,7 +547,7 @@ $('ordenarP').addEventListener('click',()=>{
  botao.title=descricao;
  render();
 });
-$('exportarFiltradoP').addEventListener('click',exportarFiltrado);
+$('exportarFiltradoP').addEventListener('click',exportarFiltrado);$('exportarPdfP').addEventListener('click',exportarPdf);
  $('csvP').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{importar(parseCSV(await f.text()));}catch(err){msg('CSV inválido: '+err.message,'erro');}e.target.value='';});$('exportarP').addEventListener('click',exportar);
 $('colarP').addEventListener('click',()=>{$('urlsP').hidden=!$('urlsP').hidden;$('aplicarUrlsP').hidden=$('urlsP').hidden;$('rotuloUrlsP').hidden=$('urlsP').hidden;});
 $('aplicarUrlsP').addEventListener('click',()=>{const urls=$('urlsP').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);const items=urls.map((url,i)=>({linha:i+1,id:'',titulo:'',data:'',youtube:url,arquivo:''}));

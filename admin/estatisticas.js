@@ -41,9 +41,7 @@ function iniciarMenu() {
   }
 }
 function atualizarPeriodo() {
-  $('statMes').value = String(estado.mes);
-  $('statAno').value = String(estado.ano);
-  $('statMes').hidden = estado.modo === 'ano';
+  $('adminPeriodLabel').textContent=estado.modo==='ano'?String(estado.ano):meses[estado.mes-1]+' de '+estado.ano;
   for (const [id,ativo] of [['statModeMonth',estado.modo === 'mes'],['statModeYear',estado.modo === 'ano']]) {
     $(id).classList.toggle('active', ativo);
     $(id).setAttribute('aria-pressed', String(ativo));
@@ -62,28 +60,21 @@ function mudarPeriodo(passo) {
   }
   atualizarPeriodo(); carregar();
 }
-function iniciarPeriodo() {
-  for (let ano = agora.getFullYear(); ano >= 2024; ano--) {
-    const opt = criar('option', String(ano)); opt.value = String(ano); $('statAno').append(opt);
-  }
-  meses.forEach((mes, i) => {
-    const opt = criar('option', mes); opt.value = String(i + 1); $('statMes').append(opt);
-  });
-  $('statPrev').addEventListener('click', () => mudarPeriodo(-1));
-  $('statNext').addEventListener('click', () => mudarPeriodo(1));
-  $('statAno').addEventListener('change', e => {
-    estado.ano = Number(e.target.value);
-    if (estado.ano === agora.getFullYear() && estado.mes > agora.getMonth() + 1) estado.mes = agora.getMonth() + 1;
-    atualizarPeriodo(); carregar();
-  });
-  $('statMes').addEventListener('change', e => {
-    estado.mes = Number(e.target.value);
-    if (estado.ano === agora.getFullYear() && estado.mes > agora.getMonth() + 1) estado.mes = agora.getMonth() + 1;
-    atualizarPeriodo(); carregar();
-  });
-  $('statModeMonth').addEventListener('click', () => { estado.modo = 'mes'; atualizarPeriodo(); carregar(); });
-  $('statModeYear').addEventListener('click', () => { estado.modo = 'ano'; atualizarPeriodo(); carregar(); });
-  atualizarPeriodo();
+let pickerAno=estado.ano;
+function fecharPicker(){ $('statPicker').hidden=true;$('adminPeriodLabel').setAttribute('aria-expanded','false'); }
+function renderPicker(){
+ $('statPickerYear').textContent=pickerAno;$('statPickerPrev').disabled=pickerAno<=2024;$('statPickerNext').disabled=pickerAno>=agora.getFullYear();
+ const host=limpar('statPickerMonths');
+ if(estado.modo==='ano'){const btn=criar('button','Selecionar '+pickerAno,'admin-picker-month');btn.type='button';btn.onclick=()=>{estado.ano=pickerAno;estado.mes=Math.min(estado.mes,estado.ano===agora.getFullYear()?agora.getMonth()+1:12);fecharPicker();atualizarPeriodo();carregar();};host.append(btn);}
+ else meses.forEach((m,i)=>{const btn=criar('button',m.slice(0,3),'admin-picker-month');btn.type='button';btn.disabled=pickerAno===agora.getFullYear()&&i>agora.getMonth();btn.classList.toggle('active',pickerAno===estado.ano&&i+1===estado.mes);btn.onclick=()=>{estado.ano=pickerAno;estado.mes=i+1;fecharPicker();atualizarPeriodo();carregar();};host.append(btn);});
+}
+function iniciarPeriodo(){
+ $('statPrev').onclick=()=>{fecharPicker();mudarPeriodo(-1);};$('statNext').onclick=()=>{fecharPicker();mudarPeriodo(1);};
+ $('adminPeriodLabel').onclick=()=>{if(!$('statPicker').hidden){fecharPicker();return;}pickerAno=estado.ano;renderPicker();$('statPicker').hidden=false;$('adminPeriodLabel').setAttribute('aria-expanded','true');};
+ $('statPickerPrev').onclick=()=>{if(pickerAno>2024){pickerAno--;renderPicker();}};$('statPickerNext').onclick=()=>{if(pickerAno<agora.getFullYear()){pickerAno++;renderPicker();}};
+ $('statModeMonth').onclick=()=>{estado.modo='mes';if(estado.ano===agora.getFullYear())estado.mes=Math.min(estado.mes,agora.getMonth()+1);fecharPicker();atualizarPeriodo();carregar();};
+ $('statModeYear').onclick=()=>{estado.modo='ano';fecharPicker();atualizarPeriodo();carregar();};
+ document.addEventListener('click',e=>{if(!e.target.closest('.stats-period'))fecharPicker();});document.addEventListener('keydown',e=>{if(e.key==='Escape')fecharPicker();});atualizarPeriodo();
 }
 function aviso(mensagem, classe) {
   const host = $('statsAviso');

@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
   <link rel="stylesheet" href="/admin/palestras.css?v=sete-indicadores-20261124">
   <script defer src="/js/titulos.js?v=titulos-ze-20261124"></script>
-  <script defer src="/admin/palestras.js?v=filtro-dashboard-20261124"></script>
+  <script defer src="/admin/palestras.js?v=relatorio-pdf-20261124"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head>
@@ -37,7 +37,7 @@
     </div>
     <div class="painel">
       <section class="cartao lista" aria-labelledby="tituloAcervo">
-        <div class="cartao-cabecalho"><div><h2 id="tituloAcervo">Acervo</h2><p>Selecione uma palestra para editar.</p></div><div class="acoes-acervo"><button id="exportarFiltradoP" class="botao secundario" type="button" title="Baixar CSV das palestras exibidas (filtro, busca e ordem)" aria-label="Baixar CSV das palestras exibidas">↓ CSV</button></div></div>
+        <div class="cartao-cabecalho"><div><h2 id="tituloAcervo">Acervo</h2><p>Selecione uma palestra para editar.</p></div><div class="acoes-acervo"><button id="exportarPdfP" class="botao secundario" type="button" title="Imprimir as palestras exibidas" aria-label="Exportar PDF das palestras exibidas">↓ PDF</button><button id="exportarFiltradoP" class="botao secundario" type="button" title="Baixar CSV das palestras exibidas (filtro, busca e ordem)" aria-label="Baixar CSV das palestras exibidas">↓ CSV</button></div></div>
         <div class="filtros">
           <label class="campo-busca"><span class="sr-only">Buscar palestra</span><input id="buscaP" type="search" placeholder="Título ou ID…"></label>
           <select id="filtroP" aria-label="Filtrar palestras"><option value="todos">Todas</option><option value="ativas">Ativas</option><option value="inativas">Inativas</option><option value="semAudio">Sem áudio</option><option value="semPdf">Sem PDF</option><option value="pdfPendente">PDF pendente</option><option value="naoUtiliza">Não utiliza apresentação</option><option value="materialNaoInformado">Material não informado</option></select>
