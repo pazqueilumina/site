@@ -643,7 +643,8 @@
       },
       "ativo": true,
       "eventoId": "",
-      "centroId": "youtube"
+      "centroId": "youtube",
+      "materialApresentacao": "nao-utiliza"
     },
     {
       "pid": "PAL-0037",
