@@ -21,12 +21,12 @@ function formatarTituloSite(titulo) {
     ["getsêmani", "Getsêmani"], ["césar", "César"], ["miriam", "Miriam"],
     ["saulo", "Saulo"], ["tarso", "Tarso"], ["maria", "Maria"],
     ["nazaré", "Nazaré"], ["frança", "França"], ["brasil", "Brasil"],
-    ["uberaba", "Uberaba"], ["terra", "Terra"]
+    ["uberaba", "Uberaba"], ["terra", "Terra"], ["chico", "Chico"], ["jericó", "Jericó"]
   ];
   let texto = String(titulo || "").toLocaleLowerCase("pt-BR");
   texto = texto.replace(/\bd\.\s*c\./g, "d.C.").replace(/\ba\.\s*c\./g, "a.C.");
   texto = texto.replace(/\braio x\b/g, "raio X");
-  texto = texto.replace(/\b(?:ii|iii|iv|vi|vii|viii|ix|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx)\b/g,
+  texto = texto.replace(/(?<!\p{L})(?:ii|iii|iv|vi|vii|viii|ix|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx)(?!\p{L})/gu,
     numeral => numeral.toUpperCase());
   for (const [nome, grafia] of nomesProprios) {
     texto = texto.replace(new RegExp("(^|[^\\p{L}])(" + nome + ")(?=$|[^\\p{L}])", "giu"),
