@@ -353,7 +353,7 @@ function mesclarMudancas(local,base,remoto){
  return mesclado;
 }
 function pdfPendente(p){return !p.pdf&&p.materialApresentacao==='possui';}
-function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled=state.autoSaving||state.statusSaving;const rows=state.dados.palestras; $('totalP').textContent=rows.length;$('videosP').textContent=rows.filter(p=>p.youtubeId).length;$('audiosP').textContent=rows.filter(p=>p.audio).length;$('pdfsP').textContent=rows.filter(p=>p.pdf).length;$('pdfsPendentesP').textContent=rows.filter(pdfPendente).length;
+function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled=state.autoSaving||state.statusSaving;const rows=state.dados.palestras; $('totalP').textContent=rows.length;$('videosP').textContent=rows.filter(p=>p.youtubeId).length;$('audiosP').textContent=rows.filter(p=>p.audio).length;$('pdfsP').textContent=rows.filter(p=>p.pdf).length;$('pdfsPendentesP').textContent=rows.filter(pdfPendente).length;$('pdfsNaoUtilizaP').textContent=rows.filter(p=>!p.pdf&&p.materialApresentacao==='nao-utiliza').length;$('pdfsNaoInformadoP').textContent=rows.filter(p=>!p.pdf&&(!p.materialApresentacao||p.materialApresentacao==='nao-informado')).length;
  $('publicarP').disabled=!state.sha||!state.dirty||state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving;
  // ORDEM é a posição cronológica no acervo completo, independentemente de busca, filtro e inversão.
  const ordemCronologica=[...rows].sort((a,b)=>(dataEfetivaPalestra(a)||'9999').localeCompare(dataEfetivaPalestra(b)||'9999')||a.pid.localeCompare(b.pid));

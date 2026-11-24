@@ -91,4 +91,4 @@ body > footer.rodape{padding:20px;border-top:1px solid var(--line);margin-top:0;
 
 .pdf-vinculado{font-size:12px;color:var(--muted);margin:0 0 9px;overflow-wrap:anywhere}.pdf-vinculado .vinculado{color:#26703b}.pdf-vinculado a{color:var(--navy);white-space:nowrap}.pdf-vinculado #pdfVinculadoDetalhes{display:flex;gap:8px;align-items:baseline;justify-content:space-between}.pdf-vinculado #pdfVinculadoNome{min-width:0}
 
-@media(min-width:901px){.indicadores.indicadores-palestras{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(min-width:901px){.indicadores.indicadores-palestras{grid-template-columns:repeat(7,minmax(0,1fr))}}
