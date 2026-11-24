@@ -536,4 +536,4 @@ $('aplicarUrlsP').addEventListener('click',()=>{const urls=$('urlsP').value.spli
  // URLs novas precisam de título; gerar rascunho a partir do identificador, para revisão manual obrigatória.
  for(const it of items){const id=idYoutube(it.youtube);it.titulo=id?'Palestra a revisar — '+id:'';}
  importar(items);});
-window.addEventListener('beforeunload',e=>{if(state.dirty||state.formDirty||state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving){e.preventDefault();e.returnValue='';}});carregarCentros().then(carregar);consultarR2();
+window.addEventListener('beforeunload',e=>{if(state.dirty||state.formDirty||state.r2Uploading||state.pdfUploading||state.autoSaving||state.statusSaving){e.preventDefault();e.returnValue='';}});const filtroInicial=new URLSearchParams(location.search).get('filtro');if(['pdfPendente','materialNaoInformado'].includes(filtroInicial))$('filtroP').value=filtroInicial;carregarCentros().then(carregar);consultarR2();

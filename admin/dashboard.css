@@ -245,3 +245,6 @@
  .dash-nav .nav-sub a,.dash-nav .nav-dashboard-sub .nav-link{white-space:normal;min-height:34px;font-size:12px}
  .dash-nav .nav-return{margin-top:5px;padding-top:10px}
 }
+
+/* Quadro independente do acervo, sem alterar os demais widgets. */
+.acervo-metrics{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:9px}.acervo-metrics .email-monitor-metric{min-width:0}.acervo-metrics .email-monitor-metric span{white-space:normal;overflow-wrap:anywhere}@media(max-width:1000px){.acervo-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:560px){.acervo-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}

@@ -177,6 +177,8 @@ function buildAdminPrint(){
     const info=find('#subInfo',w);if(info)c.append(el('p','pq-foot',info.textContent));
   });
   if(subscribers)right.append(subscribers);
+  const acervo=fromWidget('#acervoMetric0','acervo',(c,w)=>metricGrid(c,w.querySelectorAll('.acervo-metrics > .email-monitor-metric')));
+  if(acervo)right.append(acervo);
   const events=makeList('eventos','events');if(events)right.append(events);
   const summary=fromWidget('#resumo','summary',(c,w)=>{
     const table=find('.summary-table',w);if(table){const copy=clone(table);copy.className='pq-table';c.append(copy);}

@@ -348,11 +348,14 @@ function contarErrosEnderecos(locais){
   }).length;
  }catch{return 0;}
 }
-function renderPending(palestras,agenda,emails,locais){
+function situacaoAcervo(rows){return rows?[rows.length,rows.filter(p=>p.youtubeId).length,rows.filter(p=>p.audio).length,rows.filter(p=>p.pdf).length,rows.filter(p=>!p.pdf&&p.materialApresentacao==='possui').length,rows.filter(p=>!p.pdf&&p.materialApresentacao==='nao-utiliza').length,rows.filter(p=>!p.pdf&&(!p.materialApresentacao||p.materialApresentacao==='nao-informado')).length]:Array(7).fill(null);}
+function renderPending(palestras,agenda,emails,locais,acervo){
  const host=clear('pendencias'),rows=[];
  if(palestras){
-  const missingPdf=palestras.filter(p=>!p.pdf).length,missingAudio=palestras.filter(p=>!p.audio).length,missingVideo=palestras.filter(p=>!p.youtubeId).length;
-  if(missingPdf)rows.push([missingPdf+' apresentações sem PDF','warn','/admin/palestras.html']);
+  const missingAudio=palestras.filter(p=>!p.audio).length,missingVideo=palestras.filter(p=>!p.youtubeId).length;
+  const [, , , , pendentes, , naoInformados]=situacaoAcervo(acervo);
+  if(naoInformados)rows.push([naoInformados+' '+(naoInformados===1?'palestra com material não informado':'palestras com material não informado'),'warn','/admin/palestras.html?filtro=materialNaoInformado']);
+  if(pendentes)rows.push([pendentes+' '+(pendentes===1?'palestra com PDF pendente':'palestras com PDF pendente'),'warn','/admin/palestras.html?filtro=pdfPendente']);
   if(missingAudio)rows.push([missingAudio+' apresentações sem MP3','warn','/admin/palestras.html']);
   if(missingVideo)rows.push([missingVideo+' apresentações sem vídeo','warn','/admin/palestras.html']);
  }else rows.push(['Acervo indisponível no momento','warn','/admin/palestras.html']);
@@ -504,7 +507,9 @@ function renderSummary(palestras,shorts){
 }
 function render(){set('chartRangeText',isCustom()?'Apresentações acumuladas de '+fmtDate(appliedCustomStart)+' até '+fmtDate(appliedCustomEnd):isMonth()?'Apresentações acumuladas em '+new Date(appliedYear,appliedMonth,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}):isYear()?'Apresentações acumuladas em '+appliedYear:'Apresentações acumuladas no período selecionado');const palestras=Array.isArray(current.p?.dados?.palestras)?current.p.dados.palestras.filter(p=>p.ativo!==false):null,agenda=Array.isArray(current.a?.agenda)?current.a.agenda:null,locais=Array.isArray(current.l?.locais)?current.l.locais:null,shorts=Array.isArray(current.shorts?.shorts)?current.shorts.shorts.filter(s=>s.ativo!==false):null;
  set('kCentrosCadastrados',locais===null?'—':nf(locais.length));set('kVideos',shorts===null?'—':nf(shorts.length));set('sVideos','Vídeos curtos cadastrados');set('kPalestras',palestras?nf(palestras.length):'—');set('kAudios',palestras?nf(palestras.filter(p=>p.audio).length):'—');set('kPdfs',palestras?nf(palestras.filter(p=>p.pdf).length):'—');set('sPalestras',palestras?'+'+nf(palestras.filter(p=>inRange(p.data)).length)+' no período':'Cadastro indisponível');
- drawChart(palestras);renderAudience();renderVisitsTrend();renderDonut(palestras);renderRecent(palestras,shorts);renderActivities(current.activities?.commits);renderPending(palestras,agenda,current.emails,locais);renderEmailStatus(current.emails);renderSubscriberSummary(current.subscribers);renderEvents(agenda);renderSummary(palestras,shorts);
+ const acervoCompleto=Array.isArray(current.p?.dados?.palestras)?current.p.dados.palestras:null;
+ situacaoAcervo(acervoCompleto).forEach((v,i)=>set('acervoMetric'+i,v===null?'—':nf(v)));
+ drawChart(palestras);renderAudience();renderVisitsTrend();renderDonut(palestras);renderRecent(palestras,shorts);renderActivities(current.activities?.commits);renderPending(palestras,agenda,current.emails,locais,acervoCompleto);renderEmailStatus(current.emails);renderSubscriberSummary(current.subscribers);renderEvents(agenda);renderSummary(palestras,shorts);
  set('siteStatus',palestras&&agenda?'Dados conectados':'Verificar conexão');
 }
 let refreshTimer=null;
