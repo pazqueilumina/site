@@ -91,6 +91,7 @@ function initFilters(){
  $('fecharAviso').addEventListener('click',()=>$('aviso').hidden=true);
  for(const [buttonId,subId] of [['dashboardToggle','subDashboard'],['gestaoToggle','subGestao']]){
   const button=$(buttonId),sub=$(subId);
+  if(window.matchMedia('(max-width: 760px)').matches){button.setAttribute('aria-expanded','false');sub.hidden=true;}
   button.addEventListener('click',()=>{const open=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!open));sub.hidden=open;});
  }
  $('acervoToggle').addEventListener('click',()=>{const btn=$('acervoToggle'),expanded=btn.getAttribute('aria-expanded')==='true';btn.setAttribute('aria-expanded',String(!expanded));$('subAcervo').hidden=expanded;});

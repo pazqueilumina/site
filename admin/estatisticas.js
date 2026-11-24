@@ -33,6 +33,7 @@ const criar = (tag, texto, classe) => {
 const limpar = id => { const el = $(id); el.replaceChildren(); return el; };
 function iniciarMenu() {
   for (const [botao, painel] of [['dashboardToggle','subDashboard'],['gestaoToggle','subGestao'],['acervoToggle','subAcervo']]) {
+    if(window.matchMedia('(max-width: 760px)').matches){$(botao).setAttribute('aria-expanded','false');$(painel).hidden=true;}
     $(botao).addEventListener('click', () => {
       const aberto = $(botao).getAttribute('aria-expanded') === 'true';
       $(botao).setAttribute('aria-expanded', String(!aberto));

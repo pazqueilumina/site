@@ -621,6 +621,7 @@ function initEmailYear(){
 function initSidebarGroups(){
  for(const [buttonId,subId] of [['dashboardToggle','subDashboard'],['gestaoToggle','subGestao']]){
   const button=$(buttonId),sub=$(subId);
+  if(window.matchMedia('(max-width: 760px)').matches){button.setAttribute('aria-expanded','false');sub.hidden=true;}
   button.addEventListener('click',()=>{const open=button.getAttribute('aria-expanded')==='true';button.setAttribute('aria-expanded',String(!open));sub.hidden=open;});
  }
 }
