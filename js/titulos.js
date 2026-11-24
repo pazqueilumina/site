@@ -12,6 +12,7 @@ function formatarTituloSite(titulo) {
     ["eurípides barsanulfo", "Eurípides Barsanulfo"],
     ["setembro amarelo", "Setembro Amarelo"],
     ["francisco de assis", "Francisco de Assis"],
+    ["zé", "Zé"],
     ["jesus", "Jesus"], ["cristo", "Cristo"], ["deus", "Deus"],
     ["consolador", "Consolador"], ["espiritismo", "Espiritismo"],
     ["evangelho", "Evangelho"], ["kardec", "Kardec"],

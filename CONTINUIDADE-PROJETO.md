@@ -902,3 +902,10 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Rodapé:** substituído o texto técnico longo pelo rodapé do site público: `© 2026 Paz Que Ilumina — Divulgação da Doutrina Espírita`, com estilo discreto, linha superior e centralização. Nenhum outro elemento do site público foi modificado.
 - **Fora do escopo e preservado:** as três orientações de Agenda, Locais e Data aproximada, estrutura dos blocos de upload, seção de PDFs, demais campos, filtros, CSV, dashboard, dados das palestras e backend. Não reintroduzir `Material de apresentação` neste deploy.
 - **Arquivos:** `admin/palestras.html`, `admin/palestras.js`, `admin/palestras.css`, `CONTINUIDADE-PROJETO.md`.
+
+## 24/11/2026 — Grafia do nome próprio Zé (preparado, sem deploy)
+
+- Pedido: em todos os títulos do site e painel administrativo, exibir `A história do Zé`, com `Z` maiúsculo e acento.
+- Causa: `js/titulos.js` converte os títulos em minúsculas e restaura nomes próprios por lista; `Zé` faltava na lista. O dado original de `data/palestras.json` já contém `A história do Zé`, portanto não é necessário alterar o cadastro.
+- Correção preparada: adicionar `["zé", "Zé"]` ao normalizador global e renovar o parâmetro de versão do script em todas as 13 páginas HTML que o carregam (públicas e administrativas). Nenhuma alteração de layout ou de conteúdo das palestras.
+- **Não publicado**: a alteração só deve entrar na branch `main` quando o usuário autorizar explicitamente o deploy. Até lá, não mover o ref `main` nem disparar o Cloudflare Pages.
