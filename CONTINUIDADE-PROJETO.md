@@ -887,12 +887,10 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Validação:** todos os `53` timestamps de publicação do cadastro seguem o padrão exigido, sem datas inválidas; 79 registros comparados, somente os 12 campos alterados; Dashboard esperado: PDFs Total 19, Novos novembro 12.
 - **Observação operacional:** a publicação manual de uma página aberta antes do commit ainda pode resultar em conflito 409. Se houver edições locais não publicadas, copiá-las antes de recarregar e aplicar novamente depois.
 
-## 24/11/2026 — Formulário compacto e material de apresentação
+## 24/11/2026 — Reversão autorizada do deploy de material de apresentação
 
-- **Autorização:** usuário solicitou executar o deploy dos ajustes combinados no formulário de palestras.
-- **Ajuda contextual:** três textos (Agenda, Centro/Locais, Data aproximada) resumidos a uma linha cada, com links de Agenda e Locais preservados. Removidos somente os dois parágrafos de instruções longas de envio de MP3/PDF; títulos, limites, campos, avisos e envio automático pelo botão Salvar na lista mantidos.
-- **Material de apresentação:** novo seletor na própria seção de PDF: `Não informado` (padrão), `Possui apresentação`, `Não utiliza apresentação`. Campos de link PDF, envio GitHub e nome PPTX/PDF visíveis apenas em `Possui apresentação`. Se houver link, nome ou PDF selecionado, não permite ocultar os campos até o usuário removê-los explicitamente, evitando perda de dados. Valor persistido em `materialApresentacao` e validado no servidor. `Possui` sem PDF = `statusPdf: pendente`; os demais sem arquivo = `sem-arquivo`.
-- **Compatibilidade:** registros antigos sem o campo são inferidos como `Possui` quando já têm link PDF ou nome de apresentação; caso contrário, `Não informado`. Não presumir ausência de slides por ser uma palestra no YouTube.
-- **Registros explicitamente confirmados:** PAL-0036 (YouTube, sem slides) = `nao`; PAL-0047 (presencial, utiliza slides, PDF ainda não associado) = `possui`. Não enviar ou associar automaticamente HEMORROÍSSA.pdf; os outros 77 registros não são modificados.
-- **Preservado:** 79 palestras, 19 PDFs existentes, MP3/R2, uploads de PDF/GitHub, filtros, busca, CSV, Dashboard, publicações e todas as outras funcionalidades. Sem mudanças de CSS, apenas atualização do cache de JS no HTML.
-- **Arquivos:** `admin/palestras.html`, `admin/palestras.js`, `server_lib/palestras.js`, `data/palestras.json`, `CONTINUIDADE-PROJETO.md`.
+- **Solicitação:** restaurar imediatamente o comportamento e a aparência anteriores do gerenciamento de palestras, sem manter as alterações do commit `b48841f9ba3a73e9793da32aab0961701a3c1cf5`.
+- **Rollback:** os arquivos `admin/palestras.html`, `admin/palestras.js`, `server_lib/palestras.js` e `data/palestras.json` foram restaurados **exatamente** ao conteúdo do commit anterior `de4e61f6022dc6f6e363ed1463f729c125a983d3`.
+- **Efeito:** removidos o novo seletor “Material de apresentação”, a compactação das ajudas e os ajustes do formulário introduzidos no último deploy. As classificações adicionadas a PAL-0036 e PAL-0047 foram revertidas. Retornam os textos e os campos anteriores, inclusive as instruções de envio de MP3 e PDF.
+- **Preservado:** 79 palestras, 19 PDFs, uploads, dashboard, alterações anteriores de dados e todas as funcionalidades fora desse commit.
+- **Motivo:** o usuário considerou o resultado visual inadequado e solicitou restauração imediata; não realizar mudanças adicionais sem aprovação específica.

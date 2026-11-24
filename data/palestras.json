@@ -447,8 +447,7 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente",
-      "materialApresentacao": "possui"
+      "statusPdf": "pendente"
     },
     {
       "pid": "PAL-0048",
@@ -644,8 +643,7 @@
       },
       "ativo": true,
       "eventoId": "",
-      "centroId": "youtube",
-      "materialApresentacao": "nao"
+      "centroId": "youtube"
     },
     {
       "pid": "PAL-0037",
