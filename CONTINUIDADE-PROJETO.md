@@ -909,3 +909,34 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - Causa: `js/titulos.js` converte os títulos em minúsculas e restaura nomes próprios por lista; `Zé` faltava na lista. O dado original de `data/palestras.json` já contém `A história do Zé`, portanto não é necessário alterar o cadastro.
 - Correção preparada: adicionar `["zé", "Zé"]` ao normalizador global e renovar o parâmetro de versão do script em todas as 13 páginas HTML que o carregam (públicas e administrativas). Nenhuma alteração de layout ou de conteúdo das palestras.
 - **Não publicado**: a alteração só deve entrar na branch `main` quando o usuário autorizar explicitamente o deploy. Até lá, não mover o ref `main` nem disparar o Cloudflare Pages.
+
+## 24/11/2026 — Passagem para novo chat: estado confirmado e trabalho pendente
+
+**IMPORTANTE:** Esta seção foi salva em um commit GitHub **não associado à branch main**. Não houve deploy, conforme pedido expresso do usuário. A documentação na `main` só será atualizada junto da próxima publicação autorizada.
+
+### Estado publicado e confirmado
+- Repositório: `pazqueilumina/site`; site `https://pazqueilumina.com.br`; Cloudflare Pages com deploy automático quando `main` muda.
+- HEAD publicado da `main`: `859e9d097af35c2513c9ef3059440af66796e158` — Cloudflare Pages check `success`.
+- Alterações desse último deploy: textos de ajuda MP3/R2 e PDF/GitHub resumidos sem mexer nos cabeçalhos; descrição superior do Gerenciamento de Palestras e ajuda sob Salvar/Descartar compactadas; campo visual “Nome do arquivo PPTX/PDF para processamento posterior” removido mantendo `apresentacaoOriginal` e coluna CSV `Apresentacao`; rodapé técnico trocado por `© 2026 Paz Que Ilumina — Divulgação da Doutrina Espírita`. Preservados cadastros e funcionalidades.
+- Referência de acervo: 79 palestras, 79 vídeos, 79 áudios e 19 PDFs (confirmar contagens ao retomar). Os dados de `data/palestras.json` não foram alterados no último deploy.
+- **Não reintroduzir** o seletor “Material de apresentação”: foi incluído indevidamente em deploy anterior e revertido a pedido do usuário. Não mexer em outras seções sem autorização.
+
+### Única alteração de código pendente, ainda não publicada
+- O usuário apontou que o nome próprio `Zé` aparecia como `zé` na lista do Acervo e pediu corrigir em todo o site, mas **aguardar autorização de deploy**.
+- Diagnóstico: `data/palestras.json` já contém `A história do Zé`. O problema é `js/titulos.js`, que transforma títulos em minúsculas e recupera nomes próprios de uma lista; faltava `["zé", "Zé"]`.
+- Correção preparada e testada: acrescentar `["zé", "Zé"]` em `js/titulos.js` e alterar o parâmetro de cache do script `titulos.js` nas **13 páginas HTML** que o carregam (públicas e administrativas).
+- Commit de código preparado: `cfdc43324dbe6d78627c36a09d115afe082c884a` — contém a correção e documentação; **não está na main e não acionou Cloudflare**. O commit desta seção de passagem é descendente dele. Ao receber autorização futura, conferir que `main` ainda está no commit esperado, então publicar o commit preparado por fast-forward, conferir Cloudflare Pages `success` e conferir visualmente `A história do Zé`.
+- **Não alterar diretamente** `data/palestras.json` para este problema: o título já está correto na origem.
+
+### Regras críticas reafirmadas
+1. Nenhuma alteração adicional, commit na `main`, deploy, rollback, atualização do programa Windows ou Worker de e-mails sem autorização explícita.
+2. A branch de produção é `main`; não usar `teste-admin`. Não criar branch de testes por iniciativa própria.
+3. Trabalhar estritamente no escopo aprovado; não remover textos, campos, indicadores, menus, registros, funções ou reordenar componentes por iniciativa própria.
+4. Antes de publicar: verificar HEAD, validar mudanças e compatibilidade, depois confirmar check do Cloudflare. Distinguir **commit preparado** de **deploy concluído**.
+5. Manter `CONTINUIDADE-PROJETO.md` atualizado a cada publicação autorizada e evitar alegar alterações não verificadas.
+6. Usuário prefere respostas curtas, objetivas e em português, sem alterações surpresas. Problemas recentes ocorreram por mudanças visuais indevidas; privilegiar escopo mínimo e preservação.
+
+### Prompt recomendado para iniciar o próximo chat
+
+> Estou continuando o projeto Paz que Ilumina. Repositório GitHub: `pazqueilumina/site`, branch de produção `main`, site `https://pazqueilumina.com.br`. Leia o arquivo `CONTINUIDADE-PROJETO.md` do GitHub e confira o HEAD e o status do Cloudflare antes de qualquer ação. O último commit publicado com sucesso é `859e9d097af35c2513c9ef3059440af66796e158`. Há uma correção **preparada, mas não publicada**, para mostrar o nome próprio **Zé** com Z maiúsculo em todos os títulos; ela está no commit GitHub preparado, descendente de `cfdc43324dbe6d78627c36a09d115afe082c884a`, sem alteração na `main`. **Não faça deploy nem commit na main sem minha autorização expressa.** Preserve todos os dados, menus, funcionalidades e layouts existentes. Faça somente o que eu pedir, sem mudanças extras. Primeiro confirme o que está publicado e o que está pendente; depois aguarde minhas instruções.
+
