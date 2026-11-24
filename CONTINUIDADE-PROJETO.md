@@ -894,3 +894,11 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Efeito:** removidos o novo seletor “Material de apresentação”, a compactação das ajudas e os ajustes do formulário introduzidos no último deploy. As classificações adicionadas a PAL-0036 e PAL-0047 foram revertidas. Retornam os textos e os campos anteriores, inclusive as instruções de envio de MP3 e PDF.
 - **Preservado:** 79 palestras, 19 PDFs, uploads, dashboard, alterações anteriores de dados e todas as funcionalidades fora desse commit.
 - **Motivo:** o usuário considerou o resultado visual inadequado e solicitou restauração imediata; não realizar mudanças adicionais sem aprovação específica.
+
+## 24/11/2026 — Compactação pontual do Gerenciamento de Palestras (autorizada)
+
+- **Escopo autorizado:** resumir a uma linha cada os textos explicativos sob os títulos de upload MP3/R2 e PDF/GitHub, o texto abaixo dos botões Salvar/Descartar e a descrição do topo da página. Títulos dos uploads, limites de tamanho, seletores, botões, status e funcionalidade de envio automático permanecem intocados.
+- **Campo removido apenas da interface:** `Nome do arquivo PPTX/PDF para processamento posterior`. O valor `apresentacaoOriginal` é preservado no salvamento de registros existentes, e a importação/exportação CSV (coluna `Apresentacao`) continua funcionando normalmente; não remover o campo do modelo de dados ou do servidor.
+- **Rodapé:** substituído o texto técnico longo pelo rodapé do site público: `© 2026 Paz Que Ilumina — Divulgação da Doutrina Espírita`, com estilo discreto, linha superior e centralização. Nenhum outro elemento do site público foi modificado.
+- **Fora do escopo e preservado:** as três orientações de Agenda, Locais e Data aproximada, estrutura dos blocos de upload, seção de PDFs, demais campos, filtros, CSV, dashboard, dados das palestras e backend. Não reintroduzir `Material de apresentação` neste deploy.
+- **Arquivos:** `admin/palestras.html`, `admin/palestras.js`, `admin/palestras.css`, `CONTINUIDADE-PROJETO.md`.

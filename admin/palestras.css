@@ -72,3 +72,6 @@
 
 /* Exportação compacta do conjunto exibido no Acervo. */
 .lista .acoes-acervo{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+
+/* Rodapé igual ao site público, sem afetar outras páginas administrativas. */
+body > footer.rodape{padding:20px;border-top:1px solid var(--line);margin-top:0;font-size:12px}

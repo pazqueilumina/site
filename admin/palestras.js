@@ -223,7 +223,7 @@ function preencher(p){
   }
   $('eventoId').value=p.eventoId||'';atualizarVinculoAgenda();
  $('youtube').value=p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'';
- $('audio').value=p.audio||'';$('pdf').value=p.pdf||'';$('arquivo').value=p.apresentacaoOriginal||'';$('serie').value=p.serie||'temas';
+ $('audio').value=p.audio||'';$('pdf').value=p.pdf||'';$('serie').value=p.serie||'temas';
  const centro=$('centroId');if(p.centroId&&!Array.from(centro.options).some(o=>o.value===p.centroId)){
   const opt=document.createElement('option');opt.value=p.centroId;opt.textContent='Centro não encontrado: '+p.centroId;centro.append(opt);
  }centro.value=p.centroId||'';
@@ -273,12 +273,13 @@ function salvar(preservarArquivos=false,interno=false){if(state.r2Uploading||sta
  const id=idYoutube($('youtube').value);if(id===null){msg('URL do You Tube inválida.','erro');return false;}
  const duplicate=id&&state.dados.palestras.find(p=>p.youtubeId===id&&p.pid!==state.selecionado);
  if(duplicate){msg('Este vídeo já pertence a '+duplicate.pid+'. Abra o registro existente.','erro');return false;}
- const audio=$('audio').value.trim(),pdf=$('pdf').value.trim(),arquivo=$('arquivo').value.trim();
+ const audio=$('audio').value.trim(),pdf=$('pdf').value.trim();
  if([audio,pdf].some(v=>v&&!/^(https:\/\/|\/)/.test(v))){msg('Links de áudio e PDF devem começar com https:// ou /.','erro');return false;}
- if(arquivo&&(/[\\/]/.test(arquivo)||!/\.(ppt|pptx|pdf)$/i.test(arquivo))){msg('Informe apenas o nome do arquivo .ppt, .pptx ou .pdf, sem caminhos.','erro');return false;}
  const eventoId=$('eventoId').value,evento=eventoDaAgenda(eventoId);
   if(eventoId&&!evento){msg('O evento vinculado não foi encontrado na Agenda. Selecione outro ou remova o vínculo.','erro');return false;}
   const pid=state.selecionado||novoId();const old=state.dados.palestras.find(p=>p.pid===pid)||{};
+  const arquivo=old.apresentacaoOriginal||'';
+ if(arquivo&&(/[\\/]/.test(arquivo)||!/\.(ppt|pptx|pdf)$/i.test(arquivo))){msg('Nome do arquivo importado inválido em '+pid+'. Corrija-o pelo CSV.','erro');return false;}
  const titulo=state.selecionado&&!state.tituloEditado&&old.titulo?old.titulo:tituloSemPontoFinal($('titulo').value);
  const p={...old,pid,titulo,ativo:old.ativo!==false,eventoId:eventoId||'',data:evento?(old.data||''):$('data').value,dataAproximada:evento?(old.dataAproximada??true):$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:evento?(evento.localId||old.centroId||''):$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
   statusAudio:audio?'existente':id?'pendente':'sem-fonte',statusPdf:pdf?'existente':arquivo?'pendente':'sem-arquivo'};

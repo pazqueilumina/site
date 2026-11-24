@@ -7,9 +7,9 @@
   <meta name="referrer" content="same-origin">
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
-  <link rel="stylesheet" href="/admin/palestras.css?v=acervo-limpo-20261123">
+  <link rel="stylesheet" href="/admin/palestras.css?v=acervo-compacto-20261124">
   <script defer src="/js/titulos.js?v=titulos-20261123"></script>
-  <script defer src="/admin/palestras.js?v=acervo-limpo-20261123"></script>
+  <script defer src="/admin/palestras.js?v=acervo-compacto-20261124"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head>
@@ -22,7 +22,7 @@
   </header>
   <main class="container">
     <div class="intro">
-      <div><p class="sobretitulo">ACERVO DE PALESTRAS</p><h1>Gerenciar palestras</h1><p>Cadastre vídeos, associe MP3 e PDFs existentes, envie novos PDFs ao GitHub e prepare importações. Os IDs são permanentes e não aparecem no site público.</p></div>
+      <div><p class="sobretitulo">ACERVO DE PALESTRAS</p><h1>Gerenciar palestras</h1><p>Cadastre palestras, associe vídeos e MP3, envie PDFs ao GitHub e importe dados; IDs internos.</p></div>
       <button id="publicarP" class="botao principal" type="button" disabled>Publicar alterações</button>
     </div>
     <div id="mensagemP" class="mensagem" hidden role="status" aria-live="polite"><span id="mensagemTexto">Carregando cadastro…</span><button id="fecharMensagemP" type="button" class="fechar-mensagem" aria-label="Fechar mensagem" title="Fechar mensagem">×</button></div>
@@ -74,7 +74,7 @@
             <label>Link do MP3 existente<input id="audio" placeholder="https://... ou /audio/..." maxlength="1500"></label>
             <div class="upload-r2" aria-labelledby="tituloUploadR2">
               <strong id="tituloUploadR2">Enviar MP3 do computador para o R2</strong>
-              <p class="ajuda">O arquivo será armazenado com o ID permanente da palestra (ex.: PAL-0080.mp3). Selecione o MP3 e clique em Salvar na lista para enviar ao R2 e publicar o vínculo automaticamente.</p>
+              <p class="ajuda">MP3 salvo no R2 com o ID da palestra; publicação automática ao salvar.</p>
               <label for="arquivoMp3R2">Arquivo MP3 (até 300 MB)
                 <input id="arquivoMp3R2" type="file" accept=".mp3,audio/mpeg">
               </label>
@@ -84,16 +84,15 @@
             <label>Link do PDF existente<input id="pdf" placeholder="https://... ou /pdf/..." maxlength="1500"></label>
             <div class="upload-r2 upload-pdf" aria-labelledby="tituloUploadPdf">
               <strong id="tituloUploadPdf">Enviar PDF do computador para o GitHub</strong>
-              <p class="ajuda">O PDF será salvo na pasta <code>/pdf/</code> do site (não no R2). Limite: 20 MiB. Selecione o arquivo e clique em Salvar na lista para enviar ao GitHub e publicar o vínculo automaticamente.</p>
+              <p class="ajuda">PDF salvo em <code>/pdf/</code> no GitHub; publicação automática ao salvar.</p>
               <label for="arquivoPdfGithub">Arquivo PDF (até 20 MiB)
                 <input id="arquivoPdfGithub" type="file" accept=".pdf,application/pdf">
               </label>
               <div id="avisoPdfGithub" class="upload-aviso" role="status" aria-live="polite"><p id="statusPdfGithub" class="upload-r2-status">Selecione um PDF e clique em Salvar na lista.</p><button id="fecharStatusPdfGithub" type="button" class="fechar-mensagem" aria-label="Fechar aviso de PDF" title="Fechar aviso">×</button></div>
             </div>
-            <label>Nome do arquivo PPTX/PDF para processamento posterior<input id="arquivo" placeholder="Apresentacao.pptx" maxlength="250"></label>
             <label>Série<select id="serie"><option value="temas">Reflexões</option><option value="doutrina">Doutrina e História</option><option value="evangelho">Histórias do Evangelho</option><option value="ministerio">O Ministério de Jesus</option><option value="parabolas">Parábolas</option><option value="ultimos-dias">Os Últimos Dias de Jesus</option></select></label>
             <div class="acoes"><button id="salvarP" type="submit" class="botao principal">Salvar na lista</button><button id="cancelarP" type="button" class="botao discreto">Descartar alterações</button></div>
-            <p class="ajuda">Sem arquivos selecionados, Salvar na lista prepara a alteração para o botão <strong>Publicar alterações</strong>. Com MP3 ou PDF selecionado, o envio e a publicação são automáticos, tanto em palestras novas quanto existentes.</p>
+            <p class="ajuda">Sem arquivo: salve e publique; com MP3/PDF: envio e publicação automáticos.</p>
           </form>
         </div>
         <div id="painelImportar" class="importacao" role="tabpanel" aria-labelledby="abaImportar" hidden>
@@ -107,7 +106,7 @@
         </div>
       </section>
     </div>
-    <p class="rodape">MP3 é enviado ao R2; PDF é enviado à pasta /pdf/ no GitHub. A conversão PPTX → PDF permanece para uma etapa posterior. Com arquivos selecionados, Salvar na lista envia e publica automaticamente para palestras novas ou existentes.</p>
   </main>
+  <footer class="rodape">© 2026 Paz Que Ilumina — Divulgação da Doutrina Espírita</footer>
 </body>
 </html>
