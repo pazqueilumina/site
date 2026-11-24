@@ -6,7 +6,9 @@
       "endereco": "Rua Jardim Botânico, 94",
       "bairro": "Jardim Botânico",
       "cidade": "Rio de Janeiro",
-      "uf": "RJ"
+      "uf": "RJ",
+      "latitude": "-22.9599842",
+      "longitude": "-43.2053666"
     },
     {
       "id": "associacao-espirita-uniao-fraterna",
