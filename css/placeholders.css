@@ -1,0 +1,2 @@
+/* Padrão visual de exemplos de preenchimento. */
+input::placeholder, textarea::placeholder { color: #8995a0 !important; font-weight: 400 !important; opacity: 1 !important; }
