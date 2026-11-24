@@ -870,3 +870,12 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Acervo:** removidos o botão redundante **+ Nova** ao lado de **↓ CSV** e seu listener; mantida a aba **+ Nova palestra** no painel direito. CSV permanece à direita e com estilo `botao secundario`. Texto abaixo de Acervo alterado para **“Selecione uma palestra para editar.”**; removido **“Ordem cronológica.”**. Filtros, ordenação, exportação, upload e cadastro preservados.
 - **Arquivos:** `admin/dashboard.js`, `admin/dashboard.html`, `functions/api/admin/inscritos.js`, `admin/palestras.js`, `admin/palestras.html`, `CONTINUIDADE-PROJETO.md`.
 - **Validação:** sintaxe JS, teste da renderização do percentual, correspondência de IDs, placeholders SQL e argumentos, checagem da aba Nova preservada e do botão CSV; upload real não testado nesta alteração.
+
+## 23/11/2026 — Corrigir contagem de novos PDFs no Dashboard (12 PDFs seguros)
+
+- **Autorização:** usuário aprovou corrigir a coluna **Novos** dos Slides (PDF) após publicação dos 12 PDFs seguros.
+- **Diagnóstico:** os arquivos e os vínculos já estavam publicados no commit `4436adc16bfe8810d5f104114c877443a1162177`, mas os 12 cadastros não tinham `publicacoes.pdf`. O Dashboard usa esse campo para contar PDFs novos no período.
+- **Correção pontual:** definir `publicacoes.pdf = "2026-11-24T02:42:38Z"` nos IDs `PAL-0033`, `PAL-0029`, `PAL-0020`, `PAL-0062`, `PAL-0019`, `PAL-0013`, `PAL-0011`, `PAL-0026`, `PAL-0010`, `PAL-0038`, `PAL-0045`, `PAL-0069`, com base no horário do commit de publicação original (23/11/2026, 23h42, horário de Brasília).
+- **Resultado esperado no filtro novembro/2026:** **Slides (PDF) Total = 19; Novos = +12**. O indicador **Apresentações Novos** permanece **+5**, pois segue a data da palestra.
+- **Preservação:** sem alterações de PDF binário, links, títulos, datas das palestras, outros 67 registros, PDFs históricos, Dashboard, Worker, API, aplicativo Windows ou outras funcionalidades.
+- **Validação:** comparação estrutural dos 79 registros, confirmando alteração exclusivamente no campo `publicacoes.pdf` dos 12 IDs, e cálculo do total de 19 PDFs e 12 novos em novembro.
