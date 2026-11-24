@@ -1147,3 +1147,5 @@ Quando eu autorizar uma implementação, execute somente o escopo aprovado, vali
 - Ponto de retorno: `a938ac0847e3f7fc316733b66c6188b380aeed4b`. Catálogo preservado (79 palestras, 20 PDFs). Teste autenticado do monitor pendente.
 
 - Correção autorizada: indicador PDF inline, sem margem própria, na mesma linha de Vídeo e MP3; cores preservadas. Causa: regra global `.evento-corpo span` aplicava display block. Nenhum outro ajuste visual ou de dados.
+
+- Correção autorizada: retirar exclusivamente o negrito do indicador PDF, herdando o peso de Vídeo e MP3. Manter linha, cores e símbolos.
