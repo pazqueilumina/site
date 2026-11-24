@@ -940,3 +940,186 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 
 > Estou continuando o projeto Paz que Ilumina. Repositório GitHub: `pazqueilumina/site`, branch de produção `main`, site `https://pazqueilumina.com.br`. Leia o arquivo `CONTINUIDADE-PROJETO.md` do GitHub e confira o HEAD e o status do Cloudflare antes de qualquer ação. O último commit publicado com sucesso é `859e9d097af35c2513c9ef3059440af66796e158`. Há uma correção **preparada, mas não publicada**, para mostrar o nome próprio **Zé** com Z maiúsculo em todos os títulos; ela está no commit GitHub preparado, descendente de `cfdc43324dbe6d78627c36a09d115afe082c884a`, sem alteração na `main`. **Não faça deploy nem commit na main sem minha autorização expressa.** Preserve todos os dados, menus, funcionalidades e layouts existentes. Faça somente o que eu pedir, sem mudanças extras. Primeiro confirme o que está publicado e o que está pendente; depois aguarde minhas instruções.
 
+
+---
+
+# PROMPT CONSOLIDADO PARA INICIAR UM NOVO CHAT — 24/11/2026
+
+**Este é o texto completo solicitado pelo usuário para reutilizar em chats futuros.** Ao retomar, ler a versão integral deste arquivo no commit indicado pelo usuário, além da versão publicada na `main`. Não tratar este registro como autorização de deploy.
+
+## Continuidade do projeto Paz que Ilumina
+
+Estamos continuando o desenvolvimento do projeto **Paz que Ilumina**, que envolve um site público, um painel administrativo e, separadamente, um programa Windows.
+
+### 1. Informações do projeto
+
+- **Repositório GitHub:** `pazqueilumina/site`
+- **Branch de produção:** `main`
+- **Site:** https://pazqueilumina.com.br
+- **Painel de palestras:** https://pazqueilumina.com.br/admin/palestras.html
+- **Hospedagem e deploy:** Cloudflare Pages
+- **Documento principal:** `CONTINUIDADE-PROJETO.md`
+
+### 2. Primeira tarefa obrigatória
+
+Antes de propor ou executar qualquer alteração:
+
+1. Acesse o GitHub e leia **integralmente** o arquivo `CONTINUIDADE-PROJETO.md` na branch `main`.
+2. Leia também a atualização mais recente desse documento, disponível no commit `79619f255de1ee5e503a6814852650db47d1ae76`, que ainda não foi incorporado à `main`.
+3. Confira o HEAD atual da branch `main`.
+4. Consulte os arquivos relevantes para compreender o funcionamento do site e das funcionalidades envolvidas.
+5. Identifique quais alterações estão publicadas e quais permanecem pendentes.
+6. Confirme o estado do projeto antes de iniciar qualquer trabalho.
+
+**Não execute alterações neste primeiro momento. Aguarde minhas instruções.**
+
+### 3. Regras obrigatórias
+
+- **Nunca retire, oculte, substitua ou elimine informações, indicadores, dados, menus, campos ou funcionalidades sem minha confirmação prévia.**
+- Não reintroduza recursos que solicitei retirar.
+- Não faça alterações adicionais por iniciativa própria, mesmo que pareçam melhorias.
+- Não modifique código, faça commits, deploys, rollbacks ou gere versões sem minha autorização explícita.
+- Trabalhe diretamente na branch `main`, nunca na antiga branch `teste-admin`.
+- Antes de cada alteração autorizada, confira o estado atual do código e preserve um ponto de retorno.
+- Após uma alteração autorizada, valide o código, confira o resultado do deploy no Cloudflare Pages e atualize o documento de continuidade.
+- Não confunda commit no GitHub com deploy concluído: confirme efetivamente o resultado da publicação.
+- Não altere o Worker de e-mails nem ative o envio semanal sem autorização específica.
+- Preserve integralmente os cadastros, identificadores permanentes, arquivos e vínculos existentes.
+- Não altere o programa Windows sem autorização específica. Ele é um projeto separado.
+- Evite modificações extensas quando uma correção pontual resolver o problema.
+- Responda em português, de maneira objetiva, identificando riscos e problemas reais.
+
+**Regra fundamental: faça somente o que eu solicitar. Não aproveite uma alteração para modificar outras partes do sistema.**
+
+### 4. Estado mais recente do projeto
+
+#### Último deploy publicado
+
+Na última verificação, o HEAD publicado na `main` era:
+
+`859e9d097af35c2513c9ef3059440af66796e158`
+
+O deploy correspondente no Cloudflare Pages foi confirmado como bem-sucedido.
+
+Esse commit é posterior ao `973e0ba`, que implementou a segunda revisão da impressão do Relatório Administrativo.
+
+**É obrigatório verificar novamente o HEAD antes de qualquer trabalho.**
+
+#### Últimas alterações publicadas no Gerenciamento de Palestras
+
+- Os textos explicativos de envio de MP3 ao Cloudflare R2 e PDF ao GitHub foram resumidos para ocupar uma linha.
+- Os cabeçalhos das seções de envio permaneceram inalterados.
+- O texto abaixo dos botões **Salvar na lista** e **Descartar alterações** foi resumido.
+- A descrição abaixo de **Gerenciar palestras** foi reduzida.
+- O campo **Nome do arquivo PPTX/PDF para processamento posterior** foi retirado da interface.
+- A informação interna `apresentacaoOriginal` foi preservada, inclusive sua compatibilidade com a importação e exportação CSV.
+- O rodapé técnico foi substituído pelo rodapé do site público.
+- As demais funcionalidades, campos, dados e orientações foram preservados.
+
+#### Correção preparada, mas ainda não publicada
+
+Existe uma correção pendente para que o nome próprio **Zé** apareça sempre com Z maiúsculo, inclusive no título **A história do Zé**.
+
+A causa foi identificada no arquivo `js/titulos.js`, responsável pela formatação dos títulos.
+
+O cadastro original já possui a grafia correta. Portanto, não é necessário modificar `data/palestras.json`.
+
+A correção foi preparada e testada:
+
+- Inclusão de `["zé", "Zé"]` na lista de nomes próprios.
+- Atualização da referência do script em 13 páginas HTML públicas e administrativas.
+- Nenhuma alteração de layout ou dos dados das palestras.
+
+**Commit preparado:** `79619f255de1ee5e503a6814852650db47d1ae76`
+
+Esse commit contém também a documentação de continuidade atualizada. Ele **não foi incorporado à branch `main`** e não acionou o deploy.
+
+**Aguarde minha autorização expressa antes de publicar essa correção.**
+
+### 5. Acervo de palestras
+
+Na última conferência, o sistema apresentava:
+
+- 79 palestras cadastradas.
+- 79 vídeos vinculados.
+- 79 áudios MP3 vinculados.
+- 19 PDFs vinculados.
+
+Esses números são referências históricas e devem ser revalidados antes de qualquer intervenção.
+
+O sistema permite:
+
+- Gerenciar palestras e seus identificadores permanentes.
+- Associar vídeos do YouTube.
+- Enviar arquivos MP3 ao Cloudflare R2.
+- Enviar PDFs ao GitHub.
+- Vincular palestras aos eventos da Agenda e aos locais.
+- Importar e exportar cadastros por CSV.
+- Filtrar, pesquisar e ordenar o acervo.
+
+O envio de MP3 e PDF é integrado ao botão **Salvar na lista**, com publicação automática quando há arquivos selecionados.
+
+Não reintroduza botões separados de upload sem minha autorização.
+
+O seletor **Material de apresentação**, introduzido anteriormente, foi revertido a meu pedido. Não deve retornar automaticamente.
+
+### 6. Dashboard administrativo e relatórios
+
+- Os menus **Dashboard** e **Gestão** são recolhíveis.
+- **Gestão** fica acima de **Acervo**.
+- Os filtros **Mensal** e **Ano inteiro** devem permanecer.
+- O seletor **Outros períodos…** foi retirado a meu pedido e não deve voltar.
+- O Dashboard possui indicadores de inscrições, palestras, vídeos, áudios, PDFs e monitoramento de e-mails.
+- A área **Estatísticas** possui funcionalidades analíticas planejadas para evolução, incluindo análise de tendências e comparações.
+- A integração com GoatCounter faz parte do acompanhamento de acessos e interações.
+- O relatório administrativo teve sua impressão reformulada para **A4 retrato**, com layout mais compacto e reorganização de gráficos e indicadores.
+- Ainda é necessário conferir a prévia de impressão com dados reais para verificar a quantidade de páginas e a qualidade final.
+- Não altere indicadores, filtros ou cálculos sem investigar e confirmar sua finalidade.
+
+### 7. Agenda, inscrições e e-mails
+
+- Preserve o funcionamento da Agenda e das inscrições.
+- O envio semanal de agendas permanece desativado.
+- Não altere o Worker de e-mails, suas configurações, agendamentos ou automações sem autorização específica.
+- Preserve o monitor de e-mails e seus indicadores.
+- Não altere o banco de dados ou os critérios de confirmação sem solicitação.
+
+### 8. Mapa e locais
+
+A otimização estrutural do mapa foi adiada.
+
+Não implemente mudanças no mapa por iniciativa própria. Preserve os locais cadastrados, os endereços, as bandeiras dos países e as funcionalidades existentes.
+
+### 9. Programa Windows
+
+O programa Windows **Paz que Ilumina v3.1** é um projeto separado do site.
+
+Possui funcionalidades relacionadas a processamento de vídeos, conversão de áudio, MP3, PDFs e integração com os serviços utilizados pelo site.
+
+Não gere executáveis, instaladores, pacotes ou novas versões sem minha autorização específica.
+
+### 10. Documento de continuidade
+
+O documento `CONTINUIDADE-PROJETO.md` é a referência principal para retomada do trabalho.
+
+Consulte a versão publicada na `main` e a atualização complementar do commit:
+
+`79619f255de1ee5e503a6814852650db47d1ae76`
+
+**Link da atualização complementar:**
+
+https://github.com/pazqueilumina/site/blob/79619f255de1ee5e503a6814852650db47d1ae76/CONTINUIDADE-PROJETO.md
+
+Quando houver uma nova publicação autorizada, mantenha esse documento atualizado com as decisões, alterações, testes, commits e pendências.
+
+### 11. Como devemos trabalhar
+
+Quero um assistente que atue como colaborador técnico e conselheiro estratégico, não apenas como executor automático.
+
+Antes de implementar, identifique riscos, inconsistências e consequências das mudanças. Não altere outras funcionalidades para resolver um problema localizado.
+
+Quando eu pedir uma sugestão, apresente-a sem modificar o sistema.
+
+Quando eu autorizar uma implementação, execute somente o escopo aprovado, valide cuidadosamente e informe o resultado real.
+
+**Agora, leia os documentos e confira o estado do GitHub. Não execute nenhuma alteração. Confirme o que está publicado, o que está pendente e aguarde minha próxima solicitação.**
