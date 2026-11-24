@@ -7,9 +7,9 @@
   <meta name="referrer" content="same-origin">
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
-  <link rel="stylesheet" href="/admin/palestras.css?v=pdf-vinculado-20261124">
+  <link rel="stylesheet" href="/admin/palestras.css?v=filtros-pdf-20261124">
   <script defer src="/js/titulos.js?v=titulos-ze-20261124"></script>
-  <script defer src="/admin/palestras.js?v=pdf-vinculado-20261124"></script>
+  <script defer src="/admin/palestras.js?v=filtros-pdf-20261124"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head>
@@ -26,18 +26,19 @@
       <button id="publicarP" class="botao principal" type="button" disabled>Publicar alterações</button>
     </div>
     <div id="mensagemP" class="mensagem" hidden role="status" aria-live="polite"><span id="mensagemTexto">Carregando cadastro…</span><button id="fecharMensagemP" type="button" class="fechar-mensagem" aria-label="Fechar mensagem" title="Fechar mensagem">×</button></div>
-    <div class="indicadores">
+    <div class="indicadores indicadores-palestras">
       <div class="indicador"><span>Palestras</span><strong id="totalP">—</strong></div>
       <div class="indicador"><span>Com vídeo</span><strong id="videosP">—</strong></div>
       <div class="indicador"><span>Com áudio</span><strong id="audiosP">—</strong></div>
       <div class="indicador"><span>Com PDF</span><strong id="pdfsP">—</strong></div>
+      <div class="indicador"><span>PDFs pendentes</span><strong id="pdfsPendentesP">—</strong></div>
     </div>
     <div class="painel">
       <section class="cartao lista" aria-labelledby="tituloAcervo">
         <div class="cartao-cabecalho"><div><h2 id="tituloAcervo">Acervo</h2><p>Selecione uma palestra para editar.</p></div><div class="acoes-acervo"><button id="exportarFiltradoP" class="botao secundario" type="button" title="Baixar CSV das palestras exibidas (filtro, busca e ordem)" aria-label="Baixar CSV das palestras exibidas">↓ CSV</button></div></div>
         <div class="filtros">
           <label class="campo-busca"><span class="sr-only">Buscar palestra</span><input id="buscaP" type="search" placeholder="Título ou ID…"></label>
-          <select id="filtroP" aria-label="Filtrar palestras"><option value="todos">Todas</option><option value="ativas">Ativas</option><option value="inativas">Inativas</option><option value="semAudio">Sem áudio</option><option value="semPdf">Sem PDF</option></select>
+          <select id="filtroP" aria-label="Filtrar palestras"><option value="todos">Todas</option><option value="ativas">Ativas</option><option value="inativas">Inativas</option><option value="semAudio">Sem áudio</option><option value="semPdf">Sem PDF</option><option value="pdfPendente">PDF pendente</option><option value="naoUtiliza">Não utiliza apresentação</option><option value="materialNaoInformado">Material não informado</option></select>
           <button id="ordenarP" class="botao-ordenacao" type="button" aria-pressed="false" aria-label="Mais antigas primeiro. Clique para mostrar as mais recentes primeiro." title="Mais antigas primeiro. Clique para mostrar as mais recentes primeiro.">↑↓</button>
         </div>
         <div id="listaP" class="lista-eventos" aria-label="Lista de palestras"></div>
