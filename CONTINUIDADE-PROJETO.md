@@ -1145,3 +1145,5 @@ Quando eu autorizar uma implementação, execute somente o escopo aprovado, vali
 - Acervo: PDF ✓ disponível, ! pendente, — não utiliza, ? não informado; link existente tem precedência; descrição ao passar o mouse.
 - API de palestras retorna SHA do commit e consulta autenticada do check Cloudflare Pages; painel acompanha a cada 5 segundos por até 5 minutos, atualiza dados sem recarregar a página nem perder seleção/filtros ou alterações não salvas. Falha e timeout informados sem reenviar arquivos. Fluxo de upload preservado.
 - Ponto de retorno: `a938ac0847e3f7fc316733b66c6188b380aeed4b`. Catálogo preservado (79 palestras, 20 PDFs). Teste autenticado do monitor pendente.
+
+- Correção autorizada: indicador PDF inline, sem margem própria, na mesma linha de Vídeo e MP3; cores preservadas. Causa: regra global `.evento-corpo span` aplicava display block. Nenhum outro ajuste visual ou de dados.
