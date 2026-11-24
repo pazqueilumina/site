@@ -4,6 +4,11 @@ import { registrarPublicacoesPalestras } from '../../../server_lib/publicacoes.j
 function resp(obj,status=200){return new Response(JSON.stringify(obj),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});}
 export async function onRequestGet({request,env}){
  if(!env.GITHUB_TOKEN)return resp({erro:'Token do GitHub não configurado.'},503);
+ const commit=new URL(request.url).searchParams.get('deploy');
+ if(commit!==null){
+  if(!/^[a-f0-9]{40}$/.test(commit))return resp({erro:'Commit inválido.'},400);
+  try{const r=await fetch('https://api.github.com/repos/pazqueilumina/site/commits/'+commit+'/check-runs',{headers:{Authorization:'Bearer '+env.GITHUB_TOKEN,Accept:'application/vnd.github+json','User-Agent':'palestras-admin'},cache:'no-store'});if(!r.ok)return resp({erro:'Consulta de deploy indisponível.'},502);const o=await r.json();const check=o.check_runs?.find(c=>c.name==='Cloudflare Pages');return resp({status:!check||check.status!=='completed'?'pending':check.conclusion==='success'?'success':'failure'});}catch{return resp({erro:'Consulta de deploy indisponível.'},502);}
+ }
  try{return resp(await lerArquivo(env.GITHUB_TOKEN,branchDaRequisicao(request,env)));}catch(e){return resp({erro:e.message},502);}
 }
 export async function onRequestPut({request,env}){
@@ -17,6 +22,6 @@ export async function onRequestPut({request,env}){
  try{const atual=await lerArquivo(env.GITHUB_TOKEN,branchDaRequisicao(request,env));if(atual.sha!==payload.sha)return resp({erro:'Cadastro alterado por outra operação. Recarregue.'},409);
  registrarPublicacoesPalestras(payload.dados,atual.dados);
  validarCadastro(payload.dados);
- const sha=await gravarArquivo(env.GITHUB_TOKEN,payload.dados,atual.sha,branchDaRequisicao(request,env));return resp({ok:true,sha,aviso:'Cadastro enviado ao GitHub. Aguarde o deploy do Cloudflare.'});
+ const resultado=await gravarArquivo(env.GITHUB_TOKEN,payload.dados,atual.sha,branchDaRequisicao(request,env));return resp({ok:true,...resultado,aviso:'Cadastro enviado ao GitHub. Aguarde o deploy do Cloudflare.'});
  }catch(e){return resp({erro:e.message},e.message.startsWith('CONFLITO:')?409:502);}
 }

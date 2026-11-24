@@ -1,6 +1,30 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const state={dados:{versao:1,palestras:[]},sha:null,baseDados:null,selecionado:null,aba:'nova',dirty:false,formDirty:false,ordemDesc:false,publicados:new Set(),r2Ativo:false,r2Erro:'Verificando integração com o R2…',r2Uploading:false,pdfUploading:false,tituloEditado:false,autoSaving:false,statusSaving:false,agenda:[],agendaDisponivel:false};
+let monitorPublicacao=0,ultimoCommit='';
+async function acompanharPublicacao(commit){
+ const monitor=++monitorPublicacao;
+ if(!commit){msg('Cadastro enviado ao GitHub; status do deploy indisponível nesta versão.','alerta');return;}
+ msg('Publicando alterações no Cloudflare Pages…');
+ for(let i=0;i<60;i++){
+  if(monitor!==monitorPublicacao)return;
+  try{
+   const r=await fetch('/api/admin/palestras?deploy='+encodeURIComponent(commit),{credentials:'same-origin',cache:'no-store'});const o=await r.json();
+   if(monitor!==monitorPublicacao)return;
+   if(r.ok&&o.status==='success'){
+    if(!state.dirty&&!state.formDirty&&!state.autoSaving&&!state.statusSaving&&!state.r2Uploading&&!state.pdfUploading){
+     const leitura=await fetch('/api/admin/palestras',{credentials:'same-origin',cache:'no-store'});const atual=await leitura.json();
+     if(monitor!==monitorPublicacao)return;
+     if(leitura.ok&&atual.sha&&Array.isArray(atual.dados?.palestras)&&!state.dirty&&!state.formDirty&&!state.autoSaving&&!state.statusSaving&&!state.r2Uploading&&!state.pdfUploading&&!$('arquivoMp3R2').files.length&&!$('arquivoPdfGithub').files.length){state.dados=atual.dados;state.sha=atual.sha;state.baseDados=structuredClone(atual.dados);state.publicados=new Set(atual.dados.palestras.map(p=>p.pid));const p=state.dados.palestras.find(p=>p.pid===state.selecionado);if(p&&state.aba==='editar')preencher(p);render();}
+    }
+    msg('Publicação concluída com sucesso.','sucesso');return;
+   }
+   if(r.ok&&o.status==='failure'){msg('O cadastro está no GitHub, mas o deploy do Cloudflare falhou. Não reenvie os arquivos.','erro');return;}
+  }catch(e){/* falhas transitórias: tentar novamente */}
+  await new Promise(resolve=>setTimeout(resolve,5000));
+ }
+ if(monitor===monitorPublicacao)msg('Cadastro salvo no GitHub; não foi possível confirmar o deploy em cinco minutos.','alerta');
+}
 function msg(s,type=''){ $('mensagemTexto').textContent=s;$('mensagemP').className='mensagem'+(type?' '+type:'');$('mensagemP').hidden=false; }
 // Remove pontuação terminal dos títulos, preservando abreviações como d.C.
 function tituloSemPontoFinal(titulo){
@@ -332,7 +356,7 @@ function render(){atualizarUploadR2();atualizarUploadPdf();$('salvarP').disabled
   const b=document.createElement('button');b.type='button';b.className='evento-selecionar';b.setAttribute('aria-label','Editar '+p.titulo);
   const n=document.createElement('span');n.className='evento-data';const strong=document.createElement('strong');strong.textContent=String(numerosOrdem.get(p.pid)??(i+1)).padStart(3,'0');const small=document.createElement('span');small.textContent='ORDEM';n.append(strong,small);
   const body=document.createElement('span');body.className='evento-corpo';const t=document.createElement('strong');t.textContent=tituloFraseAdmin(p.titulo);const meta=document.createElement('span');meta.textContent=`${p.pid} · ${dataEfetivaPalestra(p)||'Sem data'}${p.eventoId?' (Agenda)':p.dataAproximada?' (aprox.)':''}`;
-  const flags=document.createElement('small');flags.textContent=`Vídeo ${p.youtubeId?'✓':'—'}   MP3 ${p.audio?'✓':'—'}   PDF ${p.pdf?'✓':'—'}`;body.append(t,meta,flags);b.append(n,body);b.addEventListener('click',()=>selecionar(p.pid));
+  const flags=document.createElement('small');flags.textContent=`Vídeo ${p.youtubeId?'✓':'—'}   MP3 ${p.audio?'✓':'—'}   `;const indicador=document.createElement('span');const [simbolo,descricao,classe]=p.pdf?['✓','PDF disponível','disponivel']:p.materialApresentacao==='possui'?['!','Possui apresentação, PDF pendente','pendente']:p.materialApresentacao==='nao-utiliza'?['—','Não utiliza apresentação','sem']:['?','Material não informado','desconhecido'];indicador.textContent='PDF '+simbolo;indicador.title=descricao;indicador.setAttribute('aria-label',descricao);indicador.className='pdf-indicador pdf-'+classe;flags.append(indicador);body.append(t,meta,flags);b.append(n,body);b.addEventListener('click',()=>selecionar(p.pid));
   const status=document.createElement('button');status.type='button';status.className='status-palestra '+(p.ativo===false?'status-palestra--inativa':'status-palestra--ativa');
   status.textContent=p.ativo===false?'● Inativa':'● Ativa';status.title=p.ativo===false?'Clique para reativar a palestra':'Clique para desativar a palestra e seus materiais';
   status.setAttribute('aria-label',status.title+': '+p.titulo);status.disabled=state.autoSaving||state.statusSaving||state.r2Uploading||state.pdfUploading;
@@ -368,7 +392,7 @@ async function publicar(semConfirmacao=false,interno=false){
    if(!r.ok||!o.sha)throw new Error(o.erro||`HTTP ${r.status}`);
    state.dados=dados;state.sha=o.sha;state.baseDados=structuredClone(dados);
    state.dirty=false;state.publicados=new Set(dados.palestras.map(p=>p.pid));render();
-   if(!state.autoSaving)msg(o.aviso||'Enviado.','sucesso');
+   ultimoCommit=o.commit||'';if(!state.autoSaving)acompanharPublicacao(ultimoCommit);
    return true;
   }
   throw new Error('Não foi possível concluir a publicação.');
@@ -388,7 +412,7 @@ async function alternarStatus(pid){
   const r=await fetch('/api/admin/palestras',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:state.sha,dados:novo})});
   const o=await r.json().catch(()=>({}));if(!r.ok||!o.sha)throw new Error(o.erro||`HTTP ${r.status}`);
   state.dados=novo;state.sha=o.sha;state.baseDados=structuredClone(novo);
-  msg((desativar?'Palestra desativada':'Palestra reativada')+' e alteração publicada com sucesso. O site será atualizado pelo Cloudflare Pages.','sucesso');
+  acompanharPublicacao(o.commit);
  }catch(e){msg('Não foi possível alterar o status: '+e.message,'erro');}
  finally{state.statusSaving=false;render();}
 }
@@ -434,7 +458,7 @@ async function salvarEEnviar(){
   }else if(registroFinal?.ativo===false){
    msg('Arquivos enviados e vinculados. A palestra continua inativa; ative-a no Acervo quando estiver pronta.','alerta');
   }else{
-   msg('Arquivos enviados e vinculados com sucesso. Aguarde o deploy do Cloudflare Pages.','sucesso');
+   acompanharPublicacao(ultimoCommit);
   }
  }catch(e){msg('Cadastro ou envio não concluído: '+e.message,'erro');}
  finally{state.autoSaving=false;render();}

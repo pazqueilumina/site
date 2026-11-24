@@ -15,7 +15,7 @@ export async function gravarArquivo(token,dados,sha,branch) {
  const res=await fetch(URL,{method:'PUT',headers:headers(token),body:JSON.stringify({message:'Atualizar cadastro de palestras pelo painel',content:encode(JSON.stringify(dados,null,2)+'\n'),sha,branch:branch})});
  if(res.status===409||res.status===422)throw new Error('CONFLITO: cadastro alterado no GitHub. Recarregue antes de publicar.');
  if(!res.ok)throw new Error('Falha ao gravar cadastro no GitHub (HTTP '+res.status+').');
- const obj=await res.json();return obj.content.sha;
+ const obj=await res.json();return {sha:obj.content.sha,commit:obj.commit?.sha||''};
 }
 
 /* Normaliza os tempos antigos MM:SS ou H:MM:SS antes de gravar o catálogo. */

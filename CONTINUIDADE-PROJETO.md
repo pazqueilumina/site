@@ -1138,3 +1138,10 @@ Quando eu autorizar uma implementação, execute somente o escopo aprovado, vali
 - Reduzidos espaços do título Nova palestra, orientação Agenda e blocos MP3/PDF; removidas somente as duas explicações de upload solicitadas. Espaço entre orientação de Locais e Data de referência ampliado.
 - CSV integral e filtrado compartilham colunas ID,Titulo,Data,YouTube,Apresentacao,MaterialApresentacao,Serie,LinkPDF. Importação aceita colunas antigas e novas, valida classificação, série e URL; vazios preservam valores existentes. Mantidos os dois botões e aba de importação, sem autorização de remoção.
 - Catálogo e uploads não modificados. Ponto de retorno: `009654f4eb58a4e1c9b17e18d352ae56057ba6eb`. Conferência visual e teste de importação autenticado pendentes.
+
+
+## 24/11/2026 — Indicadores PDF, rodapés e acompanhamento de deploy
+- Rodapé padrão acrescentado aos dashboards administrativo e palestrante e Inscritos, preservando controles Atualizar e informações existentes.
+- Acervo: PDF ✓ disponível, ! pendente, — não utiliza, ? não informado; link existente tem precedência; descrição ao passar o mouse.
+- API de palestras retorna SHA do commit e consulta autenticada do check Cloudflare Pages; painel acompanha a cada 5 segundos por até 5 minutos, atualiza dados sem recarregar a página nem perder seleção/filtros ou alterações não salvas. Falha e timeout informados sem reenviar arquivos. Fluxo de upload preservado.
+- Ponto de retorno: `a938ac0847e3f7fc316733b66c6188b380aeed4b`. Catálogo preservado (79 palestras, 20 PDFs). Teste autenticado do monitor pendente.

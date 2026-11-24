@@ -83,3 +83,5 @@ body > footer.rodape{padding:20px;border-top:1px solid var(--line);margin-top:0;
 #formP .upload-r2{padding:12px 15px}
 #formP .upload-r2 > strong{margin-bottom:7px}
 #formP .upload-r2 label{margin-bottom:3px}
+
+.pdf-indicador{font-weight:650;white-space:nowrap}.pdf-disponivel{color:#26703b}.pdf-pendente{color:#9b640c}.pdf-sem{color:var(--muted)}.pdf-desconhecido{color:var(--ink)}
