@@ -416,6 +416,22 @@ async function publicar(){
   try{const r=await fetch(API,{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:estado.sha,locais:estado.locais})});const d=await r.json();if(!r.ok)throw new Error(d.erro||`HTTP ${r.status}`);estado.sha=d.sha;estado.alterado=false;renderizar();mensagem(d.aviso||'Cadastro publicado.','sucesso');}
   catch(e){mensagem('Erro ao publicar: '+e.message,'erro');atualizarResumo();}
 }
+function separarCoordenadasColadas(texto){
+ const m=texto.trim().match(/^([+-]?\d+(?:\.\d+)?)\s*,\s*([+-]?\d+(?:\.\d+)?)$/);
+ if(!m)return null;
+ const lat=Number(m[1]),lon=Number(m[2]);
+ if(!Number.isFinite(lat)||!Number.isFinite(lon)||lat < -34||lat > 6||lon < -75||lon > -33)return null;
+ return [String(Number(lat.toFixed(7))),String(Number(lon.toFixed(7)))];
+}
+for(const id of ['latitudeLocal','longitudeLocal']){
+ $(id).addEventListener('paste',e=>{
+  const par=separarCoordenadasColadas(e.clipboardData?.getData('text/plain')||'');
+  if(!par)return;
+  e.preventDefault();
+  $('latitudeLocal').value=par[0];$('longitudeLocal').value=par[1];
+  $(id).dispatchEvent(new Event('input',{bubbles:true}));
+ });
+}
 $('formLocal').addEventListener('submit',e=>{e.preventDefault();salvar();});
 $('formLocal').addEventListener('input',()=>{estado.formularioAlterado=true;atualizarBuscaNoMapa();});
 $('ufLocal').addEventListener('change',()=>{
