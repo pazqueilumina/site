@@ -34,7 +34,9 @@
       "endereco": "Rua Cinco de Julho, 276",
       "bairro": "Copacabana",
       "cidade": "Rio de Janeiro",
-      "uf": "RJ"
+      "uf": "RJ",
+      "latitude": "-22.9713295",
+      "longitude": "-43.1908104"
     },
     {
       "id": "cruzada-dos-militares-espiritas",
