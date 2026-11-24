@@ -1132,3 +1132,9 @@ Quando eu autorizar uma implementação, execute somente o escopo aprovado, vali
 - URL manual de PDF retirada da interface; valor interno preservado, CSV inalterado. Não utiliza apresentação oculta controles PDF sem apagar vínculos; upload bem-sucedido define possui. MP3 e fluxo automático Salvar na lista preservados.
 - Retirado texto sob Nova palestra; três orientações resumidas mantendo links Agenda e Locais. Rodapés administrativos Agenda, Locais e Shorts substituídos pelo padrão público.
 - A autorização atual substitui a proibição histórica de reintroduzir o seletor, somente no formato acima. Não alterar Worker, programa Windows ou outros dados. Conferência visual e teste autenticado de upload ainda necessários.
+
+
+## 24/11/2026 — Compactação adicional e CSV atualizado (autorizado)
+- Reduzidos espaços do título Nova palestra, orientação Agenda e blocos MP3/PDF; removidas somente as duas explicações de upload solicitadas. Espaço entre orientação de Locais e Data de referência ampliado.
+- CSV integral e filtrado compartilham colunas ID,Titulo,Data,YouTube,Apresentacao,MaterialApresentacao,Serie,LinkPDF. Importação aceita colunas antigas e novas, valida classificação, série e URL; vazios preservam valores existentes. Mantidos os dois botões e aba de importação, sem autorização de remoção.
+- Catálogo e uploads não modificados. Ponto de retorno: `009654f4eb58a4e1c9b17e18d352ae56057ba6eb`. Conferência visual e teste de importação autenticado pendentes.

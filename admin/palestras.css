@@ -75,3 +75,11 @@
 
 /* Rodapé igual ao site público, sem afetar outras páginas administrativas. */
 body > footer.rodape{padding:20px;border-top:1px solid var(--line);margin-top:0;font-size:12px}
+
+/* Compactação pontual do formulário de palestras. */
+#painelFormulario > .cartao-cabecalho{padding-top:10px;padding-bottom:8px}
+#formP .ajuda-vinculo{margin-bottom:8px}
+#dadosSemAgenda > .ajuda:not(.ajuda-historica){margin-top:4px;margin-bottom:10px}
+#formP .upload-r2{padding:12px 15px}
+#formP .upload-r2 > strong{margin-bottom:7px}
+#formP .upload-r2 label{margin-bottom:3px}

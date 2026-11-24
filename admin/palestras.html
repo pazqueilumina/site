@@ -7,9 +7,9 @@
   <meta name="referrer" content="same-origin">
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
-  <link rel="stylesheet" href="/admin/palestras.css?v=material-20261124">
+  <link rel="stylesheet" href="/admin/palestras.css?v=csv-compacto-20261124">
   <script defer src="/js/titulos.js?v=titulos-ze-20261124"></script>
-  <script defer src="/admin/palestras.js?v=material-20261124"></script>
+  <script defer src="/admin/palestras.js?v=csv-compacto-20261124"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head>
@@ -74,7 +74,7 @@
             <label>Link do MP3 existente<input id="audio" placeholder="https://... ou /audio/..." maxlength="1500"></label>
             <div class="upload-r2" aria-labelledby="tituloUploadR2">
               <strong id="tituloUploadR2">Enviar MP3 do computador para o R2</strong>
-              <p class="ajuda">MP3 salvo no R2 com o ID da palestra; publicação automática ao salvar.</p>
+              
               <label for="arquivoMp3R2">Arquivo MP3 (até 300 MB)
                 <input id="arquivoMp3R2" type="file" accept=".mp3,audio/mpeg">
               </label>
@@ -84,7 +84,7 @@
             <input id="pdf" type="hidden">
             <div id="blocoPdf" class="upload-r2 upload-pdf" aria-labelledby="tituloUploadPdf">
               <strong id="tituloUploadPdf">Enviar PDF do computador para o GitHub</strong>
-              <p class="ajuda">PDF salvo em <code>/pdf/</code> no GitHub; publicação automática ao salvar.</p>
+              
               <label for="arquivoPdfGithub">Arquivo PDF (até 20 MiB)
                 <input id="arquivoPdfGithub" type="file" accept=".pdf,application/pdf">
               </label>
@@ -97,7 +97,7 @@
         </div>
         <div id="painelImportar" class="importacao" role="tabpanel" aria-labelledby="abaImportar" hidden>
           <h2>Importar em lote</h2>
-          <p>Importe um CSV com as colunas <code>ID,Titulo,Data,YouTube,Apresentacao</code>. Linhas existentes são atualizadas sem apagar campos vazios. Revise o resultado antes de publicar.</p>
+          <p>Importe um CSV com as colunas <code>ID,Titulo,Data,YouTube,Apresentacao,MaterialApresentacao,Serie,LinkPDF</code>. CSVs antigos continuam aceitos; campos vazios não apagam dados. LinkPDF preserva vínculos existentes. Revise o resultado antes de publicar.</p>
           <label for="csvP" class="rotulo-importacao">Arquivo CSV</label><input type="file" id="csvP" accept=".csv,text/csv">
           <div class="acoes"><button id="colarP" type="button" class="botao secundario">Adicionar URLs em lote</button><button id="exportarP" type="button" class="botao discreto">Exportar CSV com IDs</button></div>
           <label for="urlsP" class="rotulo-importacao" id="rotuloUrlsP" hidden>URLs do You Tube</label><textarea id="urlsP" rows="5" placeholder="Cole uma URL do You Tube por linha" hidden></textarea>

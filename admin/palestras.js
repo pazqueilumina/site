@@ -440,13 +440,17 @@ async function salvarEEnviar(){
  finally{state.autoSaving=false;render();}
 }
 function csvRows(text){const out=[];let row=[],val='',q=false;for(let i=0;i<text.length;i++){const c=text[i];if(q){if(c==='"'&&text[i+1]==='"'){val+='"';i++;}else if(c==='"')q=false;else val+=c;}else if(c==='"')q=true;else if(c===', '){val+=c;}else if(c===','||c===';' ){row.push(val);val='';}else if(c==='\n'){row.push(val.replace(/\r$/,''));out.push(row);row=[];val='';}else val+=c;}if(q)throw Error('Aspas não fechadas no CSV.');if(val||row.length){row.push(val);out.push(row);}return out;}
-function parseCSV(text){const lines=csvRows(text.replace(/^\uFEFF/,''));if(lines.length<2)throw Error('CSV sem registros.');const normalize=s=>s.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();const cols=lines.shift().map(normalize);const aliases={id:['id'],titulo:['titulo','title'],data:['data','date'],youtube:['youtube','url','url do youtube'],apresentacao:['apresentacao','arquivo','pdf','pptx']};
+function parseCSV(text){const lines=csvRows(text.replace(/^\uFEFF/,''));if(lines.length<2)throw Error('CSV sem registros.');const normalize=s=>s.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();const cols=lines.shift().map(normalize);const aliases={id:['id'],titulo:['titulo','title'],data:['data','date'],youtube:['youtube','url','url do youtube'],apresentacao:['apresentacao','arquivo','pdf','pptx'],material:['materialapresentacao','material de apresentacao'],serie:['serie'],linkpdf:['linkpdf','link do pdf','urlpdf']};
  const idx=Object.fromEntries(Object.entries(aliases).map(([k,a])=>[k,cols.findIndex(c=>a.includes(c))]));if(idx.titulo<0||idx.youtube<0&&idx.apresentacao<0)throw Error('Cabeçalho precisa de Titulo e YouTube ou Apresentacao.');
- return lines.filter(x=>x.some(v=>v.trim())).map((x,i)=>{const get=k=>idx[k]<0?'':(x[idx[k]]||'').trim();return {linha:i+2,id:get('id'),titulo:get('titulo'),data:get('data'),youtube:get('youtube'),arquivo:get('apresentacao')};});}
+ return lines.filter(x=>x.some(v=>v.trim())).map((x,i)=>{const get=k=>idx[k]<0?'':(x[idx[k]]||'').trim();return {linha:i+2,id:get('id'),titulo:get('titulo'),data:get('data'),youtube:get('youtube'),arquivo:get('apresentacao'),material:get('material'),serie:get('serie'),linkpdf:get('linkpdf')};});}
 function importar(items){if(!confirmarDescarte())return;const working=structuredClone(state.dados.palestras);const problems=[],changes=[];let next=Math.max(0,...working.map(p=>Number((p.pid||'').slice(4))||0));
  for(const item of items){const y=idYoutube(item.youtube||'');if(y===null){problems.push(`Linha ${item.linha}: URL inválida`);continue;}
  if(item.data&&!/^\d{4}-\d{2}-\d{2}$/.test(item.data)){problems.push(`Linha ${item.linha}: data inválida`);continue;}
  if(item.arquivo&&(/[\\/]/.test(item.arquivo)||!/\.(ppt|pptx|pdf)$/i.test(item.arquivo))){problems.push(`Linha ${item.linha}: arquivo inválido`);continue;}
+ const material=item.material||'',serie=item.serie||'',linkpdf=item.linkpdf||'';
+ if(material&&!['possui','nao-utiliza','nao-informado'].includes(material)){problems.push(`Linha ${item.linha}: material de apresentação inválido`);continue;}
+ if(serie&&!['temas','doutrina','evangelho','ministerio','parabolas','ultimos-dias'].includes(serie)){problems.push(`Linha ${item.linha}: série inválida`);continue;}
+ if(linkpdf&&(linkpdf.length>1500||! /^(https:\/\/|\/)/.test(linkpdf))){problems.push(`Linha ${item.linha}: link PDF inválido`);continue;}
  let p=item.id?working.find(x=>x.pid===item.id):y?working.find(x=>x.youtubeId===y):null;
  if(item.id&&!p){problems.push(`Linha ${item.linha}: ID ${item.id} não existe`);continue;}
  if(p&&y&&p.youtubeId&&p.youtubeId!==y){problems.push(`Linha ${item.linha}: ID e YouTube diferentes`);continue;}
@@ -454,6 +458,8 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
  if(!p&&!item.titulo){problems.push(`Linha ${item.linha}: título obrigatório para novo registro`);continue;}
  const isNew=!p;if(isNew){p={pid:'PAL-'+String(++next).padStart(4,'0'),titulo:tituloSemPontoFinal(item.titulo),serie:'temas',data:'',dataAproximada:true,youtubeId:'',audio:'',pdf:'',apresentacaoOriginal:'',statusAudio:'sem-fonte',statusPdf:'sem-arquivo',ativo:true};working.push(p);}
  if(item.titulo)p.titulo=tituloSemPontoFinal(item.titulo);if(item.data)p.data=item.data;if(y){p.youtubeId=y;if(!p.audio)p.statusAudio='pendente';}
+ if(material)p.materialApresentacao=material;if(serie)p.serie=serie;
+ if(linkpdf){p.pdf=linkpdf;p.statusPdf='existente';}
  if(item.arquivo){p.apresentacaoOriginal=item.arquivo;if(!p.pdf)p.statusPdf='pendente';}
  changes.push(`${isNew?'NOVA':'ATUALIZAR'} ${p.pid}: ${p.titulo}`);
  }
@@ -465,8 +471,8 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
 function baixarCSV(rows,nome){
  if(!rows.length){msg('Nenhuma palestra corresponde aos filtros atuais.','alerta');return;}
  const escape=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
- const lines=[['ID','Titulo','Data','YouTube','Apresentacao'].join(',')];
- for(const p of rows)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal].map(escape).join(','));
+ const lines=[['ID','Titulo','Data','YouTube','Apresentacao','MaterialApresentacao','Serie','LinkPDF'].join(',')];
+ for(const p of rows)lines.push([p.pid,p.titulo,p.data,p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'',p.apresentacaoOriginal,p.materialApresentacao||'nao-informado',p.serie,p.pdf].map(escape).join(','));
  const url=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));
  const a=document.createElement('a');a.href=url;a.download=nome;a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);
 }
