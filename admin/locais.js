@@ -381,6 +381,13 @@ function lerFormulario(){
   if(duplicado){mensagem('Já existe um local cadastrado com esse nome.','erro');return null;}
   return obj;
 }
+function confirmarCoordenadasManuais(local){
+ if(local.latitude&&local.longitude&&(!local.verificacaoCoordenadas||local.verificacaoCoordenadas==='conferido')){
+  local.verificacaoCoordenadas='conferido';
+  local.verificacaoEndereco='responsavel';
+ }
+ return local;
+}
 function salvar(){
   const obj=lerFormulario();if(!obj)return;
   if(estado.selecionado){
@@ -398,15 +405,16 @@ function salvar(){
       [anterior.nome,anterior.endereco,anterior.bairro,anterior.cidade,anterior.uf,anterior.maps].map(normalizar).join('|'))
      atual.verificacaoCoordenadas=sugestao.origem;
     estado.sugestaoCoordenadas=null;
+    confirmarCoordenadasManuais(atual);
     estado.locais[i]=atual;
     if(assinaturaLocal(anterior)!==assinaturaLocal(atual)){
       estado.verificacao.delete(atual.id);
-      estado.pendentesNovos.add(atual.id);
+      if(!atual.verificacaoEndereco)estado.pendentesNovos.add(atual.id);else estado.pendentesNovos.delete(atual.id);
     }
   }else{
     let id=slug(obj.nome),i=2;while(estado.locais.some(l=>l.id===id)){id=slug(obj.nome).slice(0,55)+'-'+i++;}
-    estado.locais.push({...obj,id});estado.selecionado=id;
-    estado.pendentesNovos.add(id);
+    estado.locais.push(confirmarCoordenadasManuais({...obj,id}));estado.selecionado=id;
+    if(!obj.latitude||!obj.longitude)estado.pendentesNovos.add(id);
   }
   salvarHistoricoVerificacao();
   estado.sugestaoCoordenadas=null;

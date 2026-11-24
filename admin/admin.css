@@ -165,10 +165,10 @@
 .pagina-locais .status-coordenadas-local.confirmada{border-color:#c9e8d5;background:#ecf7f0;color:#266846}
 
 /* Pendências identificadas sem misturar validação do endereço com coordenadas. */
-.pagina-locais .pendencias-enderecos{font-size:10.5px;line-height:1.45;color:#6e4e22;background:#fff8ec;border:1px solid #ead9ba;border-radius:8px;padding:8px 9px;max-height:135px;overflow-y:auto;overflow-wrap:anywhere}
+.pagina-locais .pendencias-enderecos{font-size:10.5px;line-height:1.45;color:#6e4e22;background:transparent;border-top:1px solid #e5e9ec;padding:6px 0 0;max-height:135px;overflow-y:auto;overflow-wrap:anywhere}
 .pagina-locais .pendencias-enderecos[hidden],.pagina-locais .status-endereco-local[hidden]{display:none}
 .pagina-locais .indicador .pendencias-enderecos strong{display:block;margin-bottom:4px;font-size:11px;line-height:1.35;color:#6e4e22;font-weight:600}
 .pagina-locais .indicador-verificacao:not(.tem-erros) .numero-erros strong{color:#287b5c}
-.pagina-locais .pendencias-enderecos ul{margin:0;padding-left:15px}
+.pagina-locais .pendencias-enderecos ul{margin:0;padding-left:0;list-style:none;color:var(--muted)}
 .pagina-locais .pendencias-enderecos li+li{margin-top:5px}
 .pagina-locais .status-endereco-local{margin:2px 0 9px;padding:8px 10px;background:#eef8f2;border:1px solid #d2e8d9;border-radius:8px;color:#276b46;font-size:11px;line-height:1.45}

@@ -36,7 +36,9 @@
       "cidade": "Rio de Janeiro",
       "uf": "RJ",
       "latitude": "-22.9713295",
-      "longitude": "-43.1908104"
+      "longitude": "-43.1908104",
+      "verificacaoCoordenadas": "conferido",
+      "verificacaoEndereco": "responsavel"
     },
     {
       "id": "cruzada-dos-militares-espiritas",
