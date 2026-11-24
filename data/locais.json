@@ -8,7 +8,9 @@
       "cidade": "Rio de Janeiro",
       "uf": "RJ",
       "latitude": "-22.9599842",
-      "longitude": "-43.2053666"
+      "longitude": "-43.2053666",
+      "verificacaoCoordenadas": "conferido",
+      "verificacaoEndereco": "responsavel"
     },
     {
       "id": "associacao-espirita-uniao-fraterna",

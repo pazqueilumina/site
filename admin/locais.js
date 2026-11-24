@@ -431,7 +431,17 @@ async function publicar(){
   if(estado.formularioAlterado){mensagem('Salve ou descarte as alterações do formulário antes de publicar.','alerta');return;}
   if(!estado.alterado)return;
   $('publicarLocais').disabled=true;mensagem('Publicando cadastro…');
-  try{const r=await fetch(API,{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:estado.sha,locais:estado.locais})});const d=await r.json();if(!r.ok)throw new Error(d.erro||`HTTP ${r.status}`);estado.sha=d.sha;estado.alterado=false;renderizar();mensagem(d.aviso||'Cadastro publicado.','sucesso');}
+  try{const r=await fetch(API,{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({sha:estado.sha,locais:estado.locais.map(l=>confirmarCoordenadasManuais({...l}))})});const d=await r.json();if(!r.ok)throw new Error(d.erro||`HTTP ${r.status}`);estado.sha=d.sha;estado.alterado=false;
+   const selecionado=estado.selecionado;
+   try{
+    const leitura=await fetch(API,{cache:'no-store',credentials:'same-origin'});
+    const atualizado=await leitura.json();
+    if(!leitura.ok||!Array.isArray(atualizado.locais)||!atualizado.sha)throw Error('Não foi possível reler o cadastro.');
+    estado.locais=atualizado.locais;estado.sha=atualizado.sha;
+    restaurarHistoricoVerificacao();estado.pendentesNovos.clear();
+    if(selecionado&&estado.locais.some(l=>l.id===selecionado))selecionar(selecionado);else limpar();
+    mensagem(d.aviso||'Cadastro publicado.','sucesso');
+   }catch(e){renderizar();mensagem('Cadastro publicado, mas a atualização dos dados falhou. Atualize a página.','alerta');}}
   catch(e){mensagem('Erro ao publicar: '+e.message,'erro');atualizarResumo();}
 }
 function separarCoordenadasColadas(texto){

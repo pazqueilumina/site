@@ -172,3 +172,6 @@
 .pagina-locais .pendencias-enderecos ul{margin:0;padding-left:0;list-style:none;color:var(--muted)}
 .pagina-locais .pendencias-enderecos li+li{margin-top:5px}
 .pagina-locais .status-endereco-local{margin:2px 0 9px;padding:8px 10px;background:#eef8f2;border:1px solid #d2e8d9;border-radius:8px;color:#276b46;font-size:11px;line-height:1.45}
+
+/* Exemplos de preenchimento: somente no cadastro de locais. */
+.pagina-locais #formLocal input::placeholder{color:#8995a0;font-weight:400;opacity:1}
