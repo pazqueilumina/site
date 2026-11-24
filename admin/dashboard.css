@@ -248,3 +248,5 @@
 
 /* Quadro independente do acervo, sem alterar os demais widgets. */
 .acervo-metrics{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:9px}.acervo-metrics .email-monitor-metric{min-width:0}.acervo-metrics .email-monitor-metric span{white-space:normal;overflow-wrap:anywhere}@media(max-width:1000px){.acervo-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:560px){.acervo-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.kpi-coral{background:linear-gradient(120deg,#f5b9c0,#fce5e8)}.kpi-coral .kpi-icon{background:linear-gradient(145deg,#e05260,#bd3045)}.kpi-coral small{color:#963344}
