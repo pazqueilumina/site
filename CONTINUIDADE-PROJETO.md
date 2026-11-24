@@ -879,3 +879,10 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Resultado esperado no filtro novembro/2026:** **Slides (PDF) Total = 19; Novos = +12**. O indicador **Apresentações Novos** permanece **+5**, pois segue a data da palestra.
 - **Preservação:** sem alterações de PDF binário, links, títulos, datas das palestras, outros 67 registros, PDFs históricos, Dashboard, Worker, API, aplicativo Windows ou outras funcionalidades.
 - **Validação:** comparação estrutural dos 79 registros, confirmando alteração exclusivamente no campo `publicacoes.pdf` dos 12 IDs, e cálculo do total de 19 PDFs e 12 novos em novembro.
+
+## 23/11/2026 — Correção do formato das datas dos 12 PDFs (erro de validação PAL-0069)
+
+- **Origem do problema:** o commit `815dac7609b3250147d27f360323ae5731ad8a0c` inseriu `publicacoes.pdf = "2026-11-24T02:42:38Z"` nos 12 PDFs seguros. O validador `server_lib/palestras.js` exige ISO UTC com exatamente três dígitos de milissegundos, como `2026-11-24T02:42:38.000Z`. O erro aparece na primeira palestra inválida em ordem de leitura, PAL-0069, mesmo que o usuário esteja editando PAL-0036.
+- **Correção:** somente os 12 campos `publicacoes.pdf` introduzidos anteriormente passaram a `2026-11-24T02:42:38.000Z`, preservando o instante original. Nenhum outro dado, PDF, link, frontend, backend, Worker ou aplicativo foi alterado.
+- **Validação:** todos os `53` timestamps de publicação do cadastro seguem o padrão exigido, sem datas inválidas; 79 registros comparados, somente os 12 campos alterados; Dashboard esperado: PDFs Total 19, Novos novembro 12.
+- **Observação operacional:** a publicação manual de uma página aberta antes do commit ainda pode resultar em conflito 409. Se houver edições locais não publicadas, copiá-las antes de recarregar e aplicar novamente depois.
