@@ -628,8 +628,8 @@
       "pid": "PAL-0036",
       "youtubeId": "uvJeB8s0Wag",
       "titulo": "UM TOQUE DE ESPERANÇA - A HISTÓRIA DA MULHER HEMORROÍSSA",
-      "data": "2026-08-07",
-      "dataAproximada": true,
+      "data": "2026-07-27",
+      "dataAproximada": false,
       "serie": "evangelho",
       "duracao": "00:43:30",
       "audio": "https://audio.pazqueilumina.com.br/PAL-0036.mp3",
@@ -637,10 +637,13 @@
       "pdf": "",
       "apresentacaoOriginal": "",
       "statusAudio": "existente",
-      "statusPdf": "pendente",
+      "statusPdf": "sem-arquivo",
       "publicacoes": {
         "audio": "2026-11-23T20:49:37.876Z"
-      }
+      },
+      "ativo": true,
+      "eventoId": "",
+      "centroId": ""
     },
     {
       "pid": "PAL-0037",
