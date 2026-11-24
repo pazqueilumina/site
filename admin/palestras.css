@@ -84,7 +84,9 @@ body > footer.rodape{padding:20px;border-top:1px solid var(--line);margin-top:0;
 #formP .upload-r2 > strong{margin-bottom:7px}
 #formP .upload-r2 label{margin-bottom:3px}
 
-.pdf-indicador{font-weight:inherit;white-space:nowrap}.pdf-disponivel{color:#26703b}.pdf-pendente{color:#9b640c}.pdf-sem{color:var(--muted)}.pdf-desconhecido{color:var(--ink)}
+.pdf-indicador{font-weight:inherit;white-space:nowrap}.pdf-disponivel{color:inherit}.pdf-pendente{color:inherit}.pdf-sem{color:inherit}.pdf-desconhecido{color:inherit}
 
 /* Indicador PDF permanece na mesma linha de Vídeo e MP3. */
-.evento-corpo small .pdf-indicador{display:inline;margin:0;font-size:inherit;line-height:inherit}.evento-corpo small .pdf-disponivel{color:#26703b}.evento-corpo small .pdf-pendente{color:#9b640c}.evento-corpo small .pdf-sem{color:var(--muted)}.evento-corpo small .pdf-desconhecido{color:var(--ink)}
+.evento-corpo small .pdf-indicador{display:inline;margin:0;font-size:inherit;line-height:inherit}.evento-corpo small .pdf-disponivel{color:inherit}.evento-corpo small .pdf-pendente{color:inherit}.evento-corpo small .pdf-sem{color:inherit}.evento-corpo small .pdf-desconhecido{color:inherit}
+
+.pdf-vinculado{font-size:12px;color:var(--muted);margin:0 0 9px;overflow-wrap:anywhere}.pdf-vinculado .vinculado{color:#26703b}.pdf-vinculado a{color:var(--navy);white-space:nowrap}.pdf-vinculado #pdfVinculadoDetalhes{display:flex;gap:8px;align-items:baseline;justify-content:space-between}.pdf-vinculado #pdfVinculadoNome{min-width:0}

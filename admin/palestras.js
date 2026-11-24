@@ -62,6 +62,15 @@ function atualizarUploadPdf(){
  const ocupado=state.pdfUploading||state.r2Uploading||state.autoSaving||state.statusSaving;
  const semMaterial=$('materialApresentacao').value==='nao-utiliza';
  $('blocoPdf').hidden=semMaterial;
+ const vinculo=$('pdf').value.trim();
+ let url=null;try{if(vinculo){const u=new URL(vinculo,location.origin);if(u.protocol==='https:'||u.protocol==='http:')url=u;}}catch{}
+ $('pdfVinculadoEstado').textContent=vinculo?'PDF vinculado':'Nenhum PDF vinculado.';
+ $('pdfVinculadoEstado').classList.toggle('vinculado',!!vinculo);
+ $('pdfVinculadoDetalhes').hidden=!vinculo;
+ let nome=vinculo; if(url){nome=url.pathname.split('/').filter(Boolean).pop()||url.hostname;try{nome=decodeURIComponent(nome);}catch{}}
+ $('pdfVinculadoNome').textContent=nome;
+ $('pdfVinculadoLink').hidden=!url;if(url)$('pdfVinculadoLink').href=url.href;else $('pdfVinculadoLink').removeAttribute('href');
+ $('rotuloArquivoPdf').textContent=vinculo?'Substituir PDF (até 20 MiB)':'Arquivo PDF (até 20 MiB)';
  $('materialApresentacao').disabled=ocupado;
  const selecionado=$('arquivoPdfGithub').files.length>0;
  $('arquivoPdfGithub').disabled=semMaterial||!(state.aba==='nova'||existe)||ocupado;

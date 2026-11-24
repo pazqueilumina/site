@@ -7,9 +7,9 @@
   <meta name="referrer" content="same-origin">
   <title>Palestras | Administração</title>
   <link rel="stylesheet" href="/admin/admin.css?v=locais1">
-  <link rel="stylesheet" href="/admin/palestras.css?v=pdf-normal-20261124">
+  <link rel="stylesheet" href="/admin/palestras.css?v=pdf-vinculado-20261124">
   <script defer src="/js/titulos.js?v=titulos-ze-20261124"></script>
-  <script defer src="/admin/palestras.js?v=-deploy-status-20261124"></script>
+  <script defer src="/admin/palestras.js?v=pdf-vinculado-20261124"></script>
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32" href="/favicon.ico?v=20261123a">
 <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg?v=20261123a">
 </head>
@@ -65,7 +65,7 @@
               <small id="avisoEvento">Para alterar a data, o horário ou o local, edite o evento na Agenda.</small>
             </div>
             <div id="dadosSemAgenda">
-              <label>Centro Espírita ou You Tube (opcional)<select id="centroId"><option value="" selected>Selecione um centro ou You Tube (opcional)</option><option value="youtube">You Tube</option></select></label>
+              <label>Centro Espírita ou You Tube (opcional)<select id="centroId"><option value="" selected>Selecione um Centro ou You Tube</option><option value="youtube">You Tube</option></select></label>
               <p class="ajuda">Sem evento na Agenda, informe o centro ou cadastre-o em <a href="/admin/locais.html">Locais</a>.</p>
               <div class="duas-colunas"><label>Data de referência (sem Agenda)<input id="data" type="date"></label><label>Data aproximada<select id="aproximada"><option value="sim">Sim</option><option value="nao">Não</option></select></label></div>
               <p class="ajuda ajuda-historica">Sem evento na Agenda, marque como aproximada a data obtida pelo YouTube.</p>
@@ -85,7 +85,8 @@
             <div id="blocoPdf" class="upload-r2 upload-pdf" aria-labelledby="tituloUploadPdf">
               <strong id="tituloUploadPdf">Enviar PDF do computador para o GitHub</strong>
               
-              <label for="arquivoPdfGithub">Arquivo PDF (até 20 MiB)
+              <div id="pdfVinculado" class="pdf-vinculado"><div id="pdfVinculadoEstado">Nenhum PDF vinculado.</div><div id="pdfVinculadoDetalhes" hidden><span id="pdfVinculadoNome"></span> <a id="pdfVinculadoLink" target="_blank" rel="noopener noreferrer">Visualizar ↗</a></div></div>
+              <label for="arquivoPdfGithub"><span id="rotuloArquivoPdf">Arquivo PDF (até 20 MiB)</span>
                 <input id="arquivoPdfGithub" type="file" accept=".pdf,application/pdf">
               </label>
               <div id="avisoPdfGithub" class="upload-aviso" role="status" aria-live="polite"><p id="statusPdfGithub" class="upload-r2-status">Selecione um PDF e clique em Salvar na lista.</p><button id="fecharStatusPdfGithub" type="button" class="fechar-mensagem" aria-label="Fechar aviso de PDF" title="Fechar aviso">×</button></div>

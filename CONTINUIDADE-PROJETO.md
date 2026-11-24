@@ -1149,3 +1149,5 @@ Quando eu autorizar uma implementação, execute somente o escopo aprovado, vali
 - Correção autorizada: indicador PDF inline, sem margem própria, na mesma linha de Vídeo e MP3; cores preservadas. Causa: regra global `.evento-corpo span` aplicava display block. Nenhum outro ajuste visual ou de dados.
 
 - Correção autorizada: retirar exclusivamente o negrito do indicador PDF, herdando o peso de Vídeo e MP3. Manter linha, cores e símbolos.
+
+- 24/11/2026: autorizado mostrar PDF vinculado no bloco de envio, nome derivado da URL, link Visualizar e rótulo Substituir PDF; sem PDF, mensagem correspondente. Mantida ocultação quando não utiliza apresentação, sem apagar vínculos. Indicador PDF do Acervo herda exatamente a cor e tipografia dos demais indicadores; símbolos preservados. Placeholder alterado para “Selecione um Centro ou You Tube”, título intacto. Nenhuma alteração no catálogo, CSV ou upload. Conferência visual autenticada pendente.
