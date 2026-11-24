@@ -886,3 +886,13 @@ O texto atualizado para copiar no início do próximo chat está na seção **6 
 - **Correção:** somente os 12 campos `publicacoes.pdf` introduzidos anteriormente passaram a `2026-11-24T02:42:38.000Z`, preservando o instante original. Nenhum outro dado, PDF, link, frontend, backend, Worker ou aplicativo foi alterado.
 - **Validação:** todos os `53` timestamps de publicação do cadastro seguem o padrão exigido, sem datas inválidas; 79 registros comparados, somente os 12 campos alterados; Dashboard esperado: PDFs Total 19, Novos novembro 12.
 - **Observação operacional:** a publicação manual de uma página aberta antes do commit ainda pode resultar em conflito 409. Se houver edições locais não publicadas, copiá-las antes de recarregar e aplicar novamente depois.
+
+## 24/11/2026 — Formulário compacto e material de apresentação
+
+- **Autorização:** usuário solicitou executar o deploy dos ajustes combinados no formulário de palestras.
+- **Ajuda contextual:** três textos (Agenda, Centro/Locais, Data aproximada) resumidos a uma linha cada, com links de Agenda e Locais preservados. Removidos somente os dois parágrafos de instruções longas de envio de MP3/PDF; títulos, limites, campos, avisos e envio automático pelo botão Salvar na lista mantidos.
+- **Material de apresentação:** novo seletor na própria seção de PDF: `Não informado` (padrão), `Possui apresentação`, `Não utiliza apresentação`. Campos de link PDF, envio GitHub e nome PPTX/PDF visíveis apenas em `Possui apresentação`. Se houver link, nome ou PDF selecionado, não permite ocultar os campos até o usuário removê-los explicitamente, evitando perda de dados. Valor persistido em `materialApresentacao` e validado no servidor. `Possui` sem PDF = `statusPdf: pendente`; os demais sem arquivo = `sem-arquivo`.
+- **Compatibilidade:** registros antigos sem o campo são inferidos como `Possui` quando já têm link PDF ou nome de apresentação; caso contrário, `Não informado`. Não presumir ausência de slides por ser uma palestra no YouTube.
+- **Registros explicitamente confirmados:** PAL-0036 (YouTube, sem slides) = `nao`; PAL-0047 (presencial, utiliza slides, PDF ainda não associado) = `possui`. Não enviar ou associar automaticamente HEMORROÍSSA.pdf; os outros 77 registros não são modificados.
+- **Preservado:** 79 palestras, 19 PDFs existentes, MP3/R2, uploads de PDF/GitHub, filtros, busca, CSV, Dashboard, publicações e todas as outras funcionalidades. Sem mudanças de CSS, apenas atualização do cache de JS no HTML.
+- **Arquivos:** `admin/palestras.html`, `admin/palestras.js`, `server_lib/palestras.js`, `data/palestras.json`, `CONTINUIDADE-PROJETO.md`.

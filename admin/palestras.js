@@ -33,11 +33,26 @@ function limparSelecaoPdf(){
  $('arquivoPdfGithub').value='';$('statusPdfGithub').className='upload-r2-status';
  $('statusPdfGithub').textContent='';$('avisoPdfGithub').hidden=true;
 }
+function materialDaPalestra(p){
+ return ['possui','nao','nao-informado'].includes(p?.materialApresentacao)?p.materialApresentacao:(p?.pdf||p?.apresentacaoOriginal?'possui':'nao-informado');
+}
+function atualizarMaterialApresentacao(){
+ const possui=$('materialApresentacao').value==='possui';
+ $('camposMaterialApresentacao').hidden=!possui;
+ atualizarUploadPdf();
+}
+function selecionarMaterialApresentacao(){
+ if($('materialApresentacao').value!=='possui'&&($('pdf').value.trim()||$('arquivo').value.trim()||$('arquivoPdfGithub').files.length)){
+  $('materialApresentacao').value='possui';
+  msg('Remova o link, o nome de apresentação ou o PDF selecionado antes de mudar a classificação.','alerta');
+ }
+ atualizarMaterialApresentacao();
+}
 function atualizarUploadPdf(){
  const existe=state.aba==='editar'&&!!state.selecionado;
  const ocupado=state.pdfUploading||state.r2Uploading||state.autoSaving||state.statusSaving;
  const selecionado=$('arquivoPdfGithub').files.length>0;
- $('arquivoPdfGithub').disabled=!(state.aba==='nova'||existe)||ocupado;
+ $('arquivoPdfGithub').disabled=$('materialApresentacao').value!=='possui'||!(state.aba==='nova'||existe)||ocupado;
  if(state.pdfUploading||state.autoSaving)return;
  const status=$('statusPdfGithub');
  if(status.className!=='upload-r2-status')return;
@@ -224,6 +239,7 @@ function preencher(p){
   $('eventoId').value=p.eventoId||'';atualizarVinculoAgenda();
  $('youtube').value=p.youtubeId?'https://www.youtube.com/watch?v='+p.youtubeId:'';
  $('audio').value=p.audio||'';$('pdf').value=p.pdf||'';$('arquivo').value=p.apresentacaoOriginal||'';$('serie').value=p.serie||'temas';
+ $('materialApresentacao').value=materialDaPalestra(p);atualizarMaterialApresentacao();
  const centro=$('centroId');if(p.centroId&&!Array.from(centro.options).some(o=>o.value===p.centroId)){
   const opt=document.createElement('option');opt.value=p.centroId;opt.textContent='Centro não encontrado: '+p.centroId;centro.append(opt);
  }centro.value=p.centroId||'';
@@ -243,7 +259,7 @@ function trocarAba(aba){
  if(!confirmarDescarte())return false;
  state.formDirty=false;state.tituloEditado=false;
  if(aba==='nova'){
-  state.selecionado=null;$('formP').reset();$('centroId').value='';limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
+  state.selecionado=null;$('formP').reset();$('centroId').value='';limparSelecaoMp3();limparSelecaoPdf();atualizarMaterialApresentacao();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
  }else if(aba==='editar'&&state.selecionado){
   const p=state.dados.palestras.find(x=>x.pid===state.selecionado);
   if(p)preencher(p);
@@ -258,7 +274,7 @@ function selecionar(pid){
 }
 function limpar(force=false){
  if(!force&&!confirmarDescarte())return;
- state.selecionado=null;state.formDirty=false;state.tituloEditado=false;$('formP').reset();$('centroId').value='';limparSelecaoMp3();limparSelecaoPdf();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
+ state.selecionado=null;state.formDirty=false;state.tituloEditado=false;$('formP').reset();$('centroId').value='';limparSelecaoMp3();limparSelecaoPdf();atualizarMaterialApresentacao();$('pid').value=novoId();$('tituloP').textContent='Nova palestra';$('eventoId').value='';atualizarVinculoAgenda();
  state.aba='nova';atualizarAbas();render();
 }
 function descartarFormulario(){
@@ -266,22 +282,23 @@ function descartarFormulario(){
  state.formDirty=false;state.tituloEditado=false;
  if(state.aba==='editar'&&state.selecionado){
   const p=state.dados.palestras.find(x=>x.pid===state.selecionado);if(p)preencher(p);
- }else{$('formP').reset();$('centroId').value='';$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();}
+ }else{$('formP').reset();$('centroId').value='';atualizarMaterialApresentacao();$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();}
  msg('Alterações não salvas do formulário descartadas.','alerta');
 }
 function salvar(preservarArquivos=false,interno=false){if(state.r2Uploading||state.pdfUploading||state.statusSaving||(state.autoSaving&&!interno)){msg('Aguarde o envio do arquivo terminar.','alerta');return false;}if(!$('formP').reportValidity())return false;
  const id=idYoutube($('youtube').value);if(id===null){msg('URL do You Tube inválida.','erro');return false;}
  const duplicate=id&&state.dados.palestras.find(p=>p.youtubeId===id&&p.pid!==state.selecionado);
  if(duplicate){msg('Este vídeo já pertence a '+duplicate.pid+'. Abra o registro existente.','erro');return false;}
- const audio=$('audio').value.trim(),pdf=$('pdf').value.trim(),arquivo=$('arquivo').value.trim();
+ const audio=$('audio').value.trim(),pdf=$('pdf').value.trim(),arquivo=$('arquivo').value.trim(),material=$('materialApresentacao').value;
+ if(material!=='possui'&&(pdf||arquivo||$('arquivoPdfGithub').files.length)){msg('Esta palestra já possui um PDF ou arquivo de apresentação. Remova o vínculo antes de alterar a classificação.','erro');return false;}
  if([audio,pdf].some(v=>v&&!/^(https:\/\/|\/)/.test(v))){msg('Links de áudio e PDF devem começar com https:// ou /.','erro');return false;}
  if(arquivo&&(/[\\/]/.test(arquivo)||!/\.(ppt|pptx|pdf)$/i.test(arquivo))){msg('Informe apenas o nome do arquivo .ppt, .pptx ou .pdf, sem caminhos.','erro');return false;}
  const eventoId=$('eventoId').value,evento=eventoDaAgenda(eventoId);
   if(eventoId&&!evento){msg('O evento vinculado não foi encontrado na Agenda. Selecione outro ou remova o vínculo.','erro');return false;}
   const pid=state.selecionado||novoId();const old=state.dados.palestras.find(p=>p.pid===pid)||{};
  const titulo=state.selecionado&&!state.tituloEditado&&old.titulo?old.titulo:tituloSemPontoFinal($('titulo').value);
- const p={...old,pid,titulo,ativo:old.ativo!==false,eventoId:eventoId||'',data:evento?(old.data||''):$('data').value,dataAproximada:evento?(old.dataAproximada??true):$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:evento?(evento.localId||old.centroId||''):$('centroId').value,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
-  statusAudio:audio?'existente':id?'pendente':'sem-fonte',statusPdf:pdf?'existente':arquivo?'pendente':'sem-arquivo'};
+ const p={...old,pid,titulo,ativo:old.ativo!==false,eventoId:eventoId||'',data:evento?(old.data||''):$('data').value,dataAproximada:evento?(old.dataAproximada??true):$('aproximada').value==='sim',youtubeId:id||'',serie:$('serie').value,centroId:evento?(evento.localId||old.centroId||''):$('centroId').value,materialApresentacao:material,audio,audioPlataforma:audio.startsWith('https://audio.pazqueilumina.com.br/')?'Cloudflare R2':audio===(old.audio||'')?(old.audioPlataforma||''):'',pdf,apresentacaoOriginal:arquivo,
+  statusAudio:audio?'existente':id?'pendente':'sem-fonte',statusPdf:pdf?'existente':material==='possui'?'pendente':'sem-arquivo'};
  delete p.horario;
   if(!p.titulo){msg('Título obrigatório.','erro');return false;}
  const i=state.dados.palestras.findIndex(x=>x.pid===pid);if(i>=0)state.dados.palestras[i]=p;else state.dados.palestras.push(p);
@@ -454,7 +471,7 @@ function importar(items){if(!confirmarDescarte())return;const working=structured
  if(problems.length){alert('Importação não aplicada. Corrija os problemas:\n'+problems.slice(0,25).join('\n'));return;}
  if(!changes.length){msg('Nenhuma linha válida encontrada.','alerta');return;}
  if(!confirm(`Prévia da importação (${changes.length} linhas):\n\n${changes.slice(0,18).join('\n')}${changes.length>18?'\n…':''}\n\nAplicar à lista? A publicação no GitHub será separada.`))return;
- state.dados.palestras=working;state.dirty=true;state.formDirty=false;state.selecionado=null;state.aba='importar';$('formP').reset();$('centroId').value='';$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();atualizarAbas();render();msg(`${changes.length} linhas preparadas. Confira e publique quando estiver pronto.`, 'alerta');
+ state.dados.palestras=working;state.dirty=true;state.formDirty=false;state.selecionado=null;state.aba='importar';$('formP').reset();$('centroId').value='';atualizarMaterialApresentacao();$('pid').value=novoId();$('eventoId').value='';atualizarVinculoAgenda();atualizarAbas();render();msg(`${changes.length} linhas preparadas. Confira e publique quando estiver pronto.`, 'alerta');
 }
 function baixarCSV(rows,nome){
  if(!rows.length){msg('Nenhuma palestra corresponde aos filtros atuais.','alerta');return;}
@@ -468,6 +485,7 @@ function exportar(){baixarCSV(state.dados.palestras,'palestras-com-ids.csv');}
 function exportarFiltrado(){baixarCSV(palestrasVisiveis(),'palestras-'+$('filtroP').value+'.csv');}
 $('fecharMensagemP').addEventListener('click',()=>{ $('mensagemP').hidden=true; });
 $('eventoId').addEventListener('change',atualizarVinculoAgenda);
+$('materialApresentacao').addEventListener('change',selecionarMaterialApresentacao);
 $('formP').addEventListener('submit',e=>{e.preventDefault();salvarEEnviar();});$('formP').addEventListener('input',e=>{if(e.target.id==='titulo')state.tituloEditado=true;if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});$('formP').addEventListener('change',e=>{if(!['arquivoMp3R2','arquivoPdfGithub'].includes(e.target.id))state.formDirty=true;});
  $('fecharStatusAudioR2').addEventListener('click',()=>{$('avisoAudioR2').hidden=true;});
  $('fecharStatusPdfGithub').addEventListener('click',()=>{$('avisoPdfGithub').hidden=true;});
