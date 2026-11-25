@@ -175,3 +175,5 @@
 
 /* Exemplos de preenchimento: somente no cadastro de locais. */
 .pagina-locais #formLocal input::placeholder{color:#8995a0;font-weight:400;opacity:1}
+
+.pagina-locais .status-coordenadas-local[hidden]{display:none}

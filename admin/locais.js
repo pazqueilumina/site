@@ -220,10 +220,11 @@ function atualizarResumoVerificacao(){
  $('statusCoordenadasLocais').textContent=textoConfirmadas+' · '+textoSemCoordenadas+textoPendentes+textoPreparaveis;
  const local=estado.locais.find(l=>l.id===estado.selecionado);
  const enderecoConfirmado=$('statusEnderecoLocal');
- enderecoConfirmado.hidden=!local?.verificacaoEndereco;
+ enderecoConfirmado.hidden=true;
  enderecoConfirmado.textContent=local?.verificacaoEndereco==='responsavel'
   ?'Endereço e coordenadas conferidos no mapa pelo responsável. Confirmação registrada no cadastro.':'';
  const status=$('statusCoordenadasLocal');
+ status.hidden=!local||Boolean(local.verificacaoCoordenadas);
  const resultado=local&&resultadoLocal(local);
  status.className='status-coordenadas-local'+(local?.verificacaoCoordenadas?' confirmada':'');
  status.textContent=!local?'Selecione um local para consultar a confirmação das coordenadas.'

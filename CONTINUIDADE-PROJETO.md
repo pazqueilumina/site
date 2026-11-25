@@ -1181,3 +1181,5 @@ Quando eu autorizar uma implementação, execute somente o escopo aprovado, vali
 - 24/11/2026: autorizado padrão global de placeholders de inputs e textareas, cinza #8995a0, peso normal, via css/placeholders.css nas 19 páginas públicas e administrativas, inclusive campos dinâmicos. Valores preenchidos preservados. Ponto de retorno `69c96bb5db8cbb9a634866de1ba5661ed4d9277d`. Validação visual pendente.
 
 - 24/11/2026: autorizado iniciar grupos expansíveis da navegação Dashboard, Gestão e Acervo fechados nos três dashboards (Administrativo, Palestrante, Estatísticas), somente na largura móvel existente de até 760px. Indicadores e conteúdo permanecem visíveis; desktop mantém estado inicial anterior. Sintaxe validada; teste visual móvel pendente. Retorno `642fe600a254060ac1750da79cc1d919b9a6b5a6`.
+
+- 24/11/2026: autorizado retirar as duas mensagens verdes redundantes de confirmação no formulário Locais, preservando confirmações internas, indicadores e avisos de pendência. Status de coordenadas oculto também quando nenhum local está selecionado. Retorno `068a50a077ee32519c5acb40524d2d268bf8fb2e`. Sintaxe validada; teste visual pendente.
