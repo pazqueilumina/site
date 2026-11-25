@@ -18,7 +18,11 @@
       "endereco": "Rua Diniz Cordeiro, 23",
       "bairro": "Botafogo",
       "cidade": "Rio de Janeiro",
-      "uf": "RJ"
+      "uf": "RJ",
+      "latitude": "-22.9586519",
+      "longitude": "-43.1919592",
+      "verificacaoCoordenadas": "conferido",
+      "verificacaoEndereco": "responsavel"
     },
     {
       "id": "centro-espirita-cristofilos",
@@ -50,7 +54,11 @@
       "endereco": "Praça General Tibúrcio, 83 – Subsolo, Coluna 25 (Edifício Praia Vermelha)",
       "bairro": "Urca",
       "cidade": "Rio de Janeiro",
-      "uf": "RJ"
+      "uf": "RJ",
+      "latitude": "-22.9539073",
+      "longitude": "-43.1668124",
+      "verificacaoCoordenadas": "conferido",
+      "verificacaoEndereco": "responsavel"
     },
     {
       "id": "grupo-espirita-fabiano",
@@ -58,7 +66,11 @@
       "endereco": "Rua Paulo Silva Araújo, 52",
       "bairro": "Méier",
       "cidade": "Rio de Janeiro",
-      "uf": "RJ"
+      "uf": "RJ",
+      "latitude": "-22.900077",
+      "longitude": "-43.2844397",
+      "verificacaoCoordenadas": "conferido",
+      "verificacaoEndereco": "responsavel"
     },
     {
       "id": "grupo-espirita-saint-germain",
