@@ -78,7 +78,11 @@
       "endereco": "Rua Domingos Cabral, 111",
       "bairro": "Freguesia",
       "cidade": "Rio de Janeiro",
-      "uf": "RJ"
+      "uf": "RJ",
+      "latitude": "-22.9369374",
+      "longitude": "-43.3490318",
+      "verificacaoCoordenadas": "conferido",
+      "verificacaoEndereco": "responsavel"
     },
     {
       "id": "lar-de-frei-luiz",
