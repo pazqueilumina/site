@@ -403,6 +403,198 @@ const DADOS = {
       "endereco": "Rua Paulo Silva Araújo, 52",
       "bairro": "Méier",
       "localId": "grupo-espirita-fabiano"
+    },
+    {
+      "id": "evt-10013245",
+      "data": "2027-01-04",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013246",
+      "data": "2027-01-26",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013247",
+      "data": "2027-02-10",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013248",
+      "data": "2027-02-27",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013249",
+      "data": "2027-03-10",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013250",
+      "data": "2027-03-29",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013251",
+      "data": "2027-04-14",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013252",
+      "data": "2027-04-26",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013253",
+      "data": "2027-05-08",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013254",
+      "data": "2027-05-25",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013255",
+      "data": "2027-06-07",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013256",
+      "data": "2027-06-23",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013257",
+      "data": "2027-07-05",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013258",
+      "data": "2027-07-20",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013259",
+      "data": "2027-08-16",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013260",
+      "data": "2027-08-25",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013261",
+      "data": "2027-09-08",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013262",
+      "data": "2027-09-25",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013263",
+      "data": "2027-10-04",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013264",
+      "data": "2027-10-19",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013265",
+      "data": "2027-11-16",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013266",
+      "data": "2027-11-27",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013267",
+      "data": "2027-12-06",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-10013268",
+      "data": "2027-12-18",
+      "horario": "20:00",
+      "titulo": "Tema a definir",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
     }
   ],
 
