@@ -1234,3 +1234,11 @@ Quando eu autorizar uma implementação, execute somente o escopo aprovado, vali
 - Estudo semanal: desenvolvimento completo, commits na main e deploy privado autorizados. Liberação pública exige autorização expressa.
 - Usar somente as 16 questões piloto; conversão integral e validação textual ficam para depois da implementação do site.
 - Proteger página, dados, APIs e domínios alternativos antes de publicar; ocultar menu não constitui proteção.
+
+
+### 26/11/2026 — Estudo semanal: decisão definitiva sobre avaliação e certificação
+
+- O Estudo semanal e Minha jornada de luz não terão testes, provas, questionários avaliativos, notas ou certificação, inclusive certificados simbólicos de conclusão.
+- Esta decisão substitui todas as sugestões anteriores de certificação para esta funcionalidade. Não implementar nem apresentar essas opções como melhorias futuras.
+- A conclusão representa exclusivamente o progresso de leitura autodeclarado, com marcações individuais e por estudo, indicadores e marcos simbólicos, sem avaliação de conhecimento ou evolução espiritual.
+- A decisão aplica-se ao Estudo semanal; eventuais cursos independentes não fazem parte desta definição.
