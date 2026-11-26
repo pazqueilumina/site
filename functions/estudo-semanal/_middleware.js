@@ -4,8 +4,9 @@ export async function onRequest(context) {
   const headers = {"Cache-Control":"private, no-store","X-Robots-Tag":"noindex, nofollow"};
   const deny = () => new Response("Acesso restrito", {status:403, headers});
   try {
-    const team = env.ESTUDO_ACCESS_TEAM;
-    const aud = env.ESTUDO_ACCESS_AUD;
+    const team = env.ESTUDO_ACCESS_TEAM || 'soft-scene-0696';
+    const aud = env.ESTUDO_ACCESS_AUD || '512d093301285ea5286eb13072c8f7471021cfc03365bc7d9764da8dca1f9d2a';
+    if (new URL(request.url).hostname !== 'pazqueilumina.com.br') return deny();
     if (!team || !aud || !/^[a-z0-9-]+$/.test(team)) return deny();
     const issuer = "https://" + team + ".cloudflareaccess.com";
     const token = request.headers.get("Cf-Access-Jwt-Assertion");
@@ -16,7 +17,7 @@ export async function onRequest(context) {
     const parse = s => JSON.parse(new TextDecoder().decode(decode(s)));
     const head = parse(parts[0]), claims = parse(parts[1]);
     const now = Math.floor(Date.now()/1000);
-    if (head.alg !== "RS256" || claims.iss !== issuer || !Array.isArray(claims.aud) || !claims.aud.includes(aud) || !Number.isFinite(claims.exp) || claims.exp <= now || (claims.nbf && claims.nbf > now) || claims.email !== "pazqueilumina@gmail.com") return deny();
+    if (head.alg !== "RS256" || claims.iss !== issuer || !Array.isArray(claims.aud) || !claims.aud.includes(aud) || !Number.isFinite(claims.exp) || claims.exp <= now || (claims.nbf && claims.nbf > now) || !["pazqueilumina@gmail.com","alexmalves352005@gmail.com"].includes(claims.email)) return deny();
     const response = await fetch(issuer+"/cdn-cgi/access/certs");
     if (!response.ok) return deny();
     const {keys} = await response.json();
