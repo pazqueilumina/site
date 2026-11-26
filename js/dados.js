@@ -297,6 +297,14 @@ const DADOS = {
       "localId": "grupo-espirita-saint-germain"
     },
     {
+      "id": "evt-10013244-3ebe-4e5b-b7b7-05f17640b393",
+      "data": "2026-12-02",
+      "horario": "20:00",
+      "titulo": "A noite em que o céu tocou a Terra: O nascimento de Jesus",
+      "local": "Aliança do Divino Pastor",
+      "localId": "alianca-do-divino-pastor"
+    },
+    {
       "id": "evt-20bb8585-820c-4a84-90c3-dec31b149cca",
       "data": "2026-12-02",
       "horario": "20:00",
