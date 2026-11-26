@@ -88,6 +88,7 @@ function lerFormulario() {
 }
 function salvarNaLista({ silencioso = false } = {}) {
   const obj=lerFormulario();if(!obj)return false;
+  obj.titulo=normalizarTituloCadastro(obj.titulo);$('titulo').value=obj.titulo;
   if(estado.selecionado){
     const i=estado.agenda.findIndex(e=>e._key===estado.selecionado);if(i<0)return false;
     estado.agenda[i]={...obj,id:estado.agenda[i].id || novoEventoId(),_key:estado.selecionado};
@@ -231,7 +232,7 @@ function validarEventoCsv(item) {
   if (e.link && !/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/i.test(e.link)) return { erro: 'O link deve começar por https:// e ser válido.' };
   const local=encontrarLocal(e.local);
   if(!local) return { erro: 'Centro/Local não cadastrado. Cadastre-o na aba Locais antes de importar.' };
-  return { evento: { data:e.data, horario:e.horario, titulo:e.titulo, local:local.nome, localId:local.id, ...(e.link?{link:e.link}:{}) } };
+  return { evento: { data:e.data, horario:e.horario, titulo:normalizarTituloCadastro(e.titulo), local:local.nome, localId:local.id, ...(e.link?{link:e.link}:{}) } };
 }
 function identidadeEventoCsv(e) {
   return [e.data, e.horario, normalizarCsv(e.titulo), normalizarCsv(e.local)].join('|');

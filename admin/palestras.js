@@ -29,7 +29,7 @@ function msg(s,type=''){ $('mensagemTexto').textContent=s;$('mensagemP').classNa
 // Remove pontuação terminal dos títulos, preservando abreviações como d.C.
 function tituloSemPontoFinal(titulo){
  const texto=String(titulo||'').trim();
- return formatarTituloSite(/\b(?:d\.\s*C\.|a\.\s*C\.)$/i.test(texto)?texto:texto.replace(/\.+$/,'').trimEnd());
+ return normalizarTituloCadastro(/\b(?:d\.\s*C\.|a\.\s*C\.)$/i.test(texto)?texto:texto.replace(/\.+$/,'').trimEnd());
 }
 function tituloFraseAdmin(titulo) {
   return formatarTituloSite(titulo);

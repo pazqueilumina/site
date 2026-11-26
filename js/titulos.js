@@ -32,6 +32,14 @@ function formatarTituloSite(titulo) {
     texto = texto.replace(new RegExp("(^|[^\\p{L}])(" + nome + ")(?=$|[^\\p{L}])", "giu"),
       (_, antes) => antes + grafia);
   }
-  return texto.replace(/(^|[.!?]\s+|\s+[-–—]\s+)([\p{L}])/gu,
+  return texto.replace(/(^|[.!?:]\s+|\s+[-–—]\s+)([\p{L}])/gu,
     (_, inicio, letra) => inicio + letra.toLocaleUpperCase("pt-BR"));
+}
+
+/* Normaliza caixa alta sem alterar títulos já escritos em caixa mista. */
+function normalizarTituloCadastro(titulo) {
+ const texto=String(titulo||'').trim();
+ if(texto!==texto.toLocaleUpperCase('pt-BR')||texto===texto.toLocaleLowerCase('pt-BR'))return texto;
+ const siglas={eua:'EUA',tdah:'TDAH',toc:'TOC',ibge:'IBGE',pdf:'PDF',csv:'CSV',onu:'ONU',oms:'OMS',youtube:'YouTube',instagram:'Instagram',feb:'FEB'};
+ return formatarTituloSite(texto).replace(/[\p{L}]+/gu,p=>siglas[p.toLocaleLowerCase('pt-BR')]||p);
 }

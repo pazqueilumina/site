@@ -15,15 +15,7 @@ function youtubeId(valor){
   return /^[a-zA-Z0-9_-]{11}$/.test(id||'')?id:null;
  }catch{return null;}
 }
-function formatarTitulo(titulo){
- const limpo=String(titulo||'').trim().replace(/\s+/g,' ');
- // Converter somente títulos inteiramente em caixa alta; respeitar títulos mistos.
- if(limpo!==limpo.toLocaleUpperCase('pt-BR')||limpo===limpo.toLocaleLowerCase('pt-BR'))return limpo;
- const nomes={deus:'Deus',jesus:'Jesus',chico:'Chico',xavier:'Xavier',allan:'Allan',kardec:'Kardec',brasil:'Brasil',youtube:'YouTube',eua:'EUA',tdah:'TDAH',toc:'TOC'};
- return limpo.toLocaleLowerCase('pt-BR')
-  .replace(/(^|[.!?]\s*)(\p{L})/gu,(_,inicio,letra)=>inicio+letra.toLocaleUpperCase('pt-BR'))
-  .replace(/[\p{L}]+/gu,palavra=>nomes[palavra]||palavra);
-}
+function formatarTitulo(titulo){return normalizarTituloCadastro(String(titulo||'').trim().replace(/\s+/g,' '));}
 function idNovo(){return 'SHO-'+String(estado.dados.proximoId).padStart(4,'0');}
 function normalizarOrdem(){estado.dados.shorts.forEach((s,i)=>s.ordem=i+1);}
 function listaOrdenada(){return [...estado.dados.shorts].sort((a,b)=>a.ordem-b.ordem||a.sid.localeCompare(b.sid));}
