@@ -305,14 +305,6 @@ const DADOS = {
       "localId": "alianca-do-divino-pastor"
     },
     {
-      "id": "evt-20bb8585-820c-4a84-90c3-dec31b149cca",
-      "data": "2026-12-02",
-      "horario": "20:00",
-      "titulo": "A NOITE EM QUE O CÉU TOCOU A TERRA: O NASCIMENTO DE JESUS",
-      "local": "Aliança do Divino Pastor",
-      "localId": "alianca-do-divino-pastor"
-    },
-    {
       "id": "evt-0016",
       "data": "2026-12-04",
       "horario": "20:00",
