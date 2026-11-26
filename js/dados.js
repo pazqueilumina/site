@@ -333,6 +333,14 @@ const DADOS = {
       "link": "https://www.youtube.com/c/WebRadioCristoConsolador"
     },
     {
+      "id": "evt-6e9557ee-e448-48f4-b63d-d70f1924d25a",
+      "data": "2026-12-16",
+      "horario": "17:00",
+      "titulo": "O Cristo que precisamos descobrir",
+      "local": "Lar Paulo de Tarso",
+      "localId": "lar-paulo-de-tarso"
+    },
+    {
       "id": "evt-0020",
       "data": "2026-12-16",
       "horario": "19:30",
