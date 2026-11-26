@@ -1226,3 +1226,11 @@ Quando eu autorizar uma implementação, execute somente o escopo aprovado, vali
 - Escopo planejado: extração e conferência da obra, agrupamentos, página responsiva, histórico/pesquisa/navegação, jornada de luz, admin, calendário automático, segurança privada e testes. Definições suficientes para iniciar após autorização; não confundir planejamento com release produzido.
 - Antes de implementar, ler integralmente este documento, conferir HEAD e arquivos relevantes, preservar funcionalidades existentes. Testar integridade das 1019 questões, agrupamentos, datas, persistência/progresso, acessibilidade, desktop/mobile, permissões e regressões. Aguardar autorização separada para implementação e deploy privado; lançamento público somente após aprovação.
 - Estado desta atualização: apenas registro documental. Nenhum arquivo funcional, configuração de infraestrutura ou conteúdo da obra criado/modificado.
+
+
+### 26/11/2026 — Acesso privado e autorização de desenvolvimento
+
+- E-mail exclusivo padrão para testes privados do projeto: `pazqueilumina@gmail.com`.
+- Estudo semanal: desenvolvimento completo, commits na main e deploy privado autorizados. Liberação pública exige autorização expressa.
+- Usar somente as 16 questões piloto; conversão integral e validação textual ficam para depois da implementação do site.
+- Proteger página, dados, APIs e domínios alternativos antes de publicar; ocultar menu não constitui proteção.
