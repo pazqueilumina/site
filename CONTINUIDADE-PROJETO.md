@@ -1283,3 +1283,24 @@ Status: proposta em discussão, não implementar nem publicar sem aprovação. N
 ### Prompt para continuidade em novo chat
 
 Estamos continuando o projeto Paz que Ilumina, repositório pazqueilumina/site, branch main. Leia CONTINUIDADE-PROJETO.md integralmente, especialmente o registro de 27/11/2026 após rollback, confira HEAD e arquivos relevantes. O layout vigente do Estudo semanal é o restaurado no commit 8525a49 (conteúdo de 8d9c579). Não reintroduza a integração por abas rejeitada. Não retire informações, não altere Worker, não faça deploy ou nova implementação sem autorização específica. Antes de qualquer mudança visual, preserve ponto de retorno, reproduza fielmente o exemplo aprovado e valide o resultado renderizado; se não puder validar visualmente, informe antes de publicar. Aguarde minha próxima instrução.
+
+
+## 27/11/2026 — Gamificação de incentivo: mensagens aprovadas
+
+Diretriz aprovada: incentivar sem classificar o leitor. Não atribuir níveis, títulos, rótulos de evolução, rankings ou penalidades por ausência. Preservar o Pomar do Conhecimento e o progresso individual.
+
+Mensagens contextuais aprovadas (variar a redação em situações semelhantes):
+
+| Situação | Mensagem |
+|---|---|
+| Primeira leitura | 🌱 Que bom ter você aqui! |
+| Primeira questão lida | 🍎 Nasceu o seu primeiro fruto! |
+| Estudo concluído | 🎉 Muito bem! Mais um estudo concluído! |
+| Avanço durante a semana | 😊 Você está avançando. Continue assim! |
+| Retorno após alguns dias | ☀️ Que bom ter você de volta! |
+| Próximo de 100 questões | ✨ Você está quase lá! |
+| 100 questões lidas | 🎉 Parabéns! Você já leu 100 questões! |
+| Metade do livro | 🌳 Olha só quanto você já caminhou! |
+| Livro concluído | 💛 Que jornada maravilhosa! |
+
+Mensagens devem refletir eventos e progresso reais, sem inferir evolução espiritual. Para mensagens semanais e de retorno, será necessário registrar datas de leitura; inicialmente no navegador, enquanto não houver login. Evitar repetição excessiva. A substituição do quadro Marcos da jornada por Meu progresso e animações discretas permanecem propostas para implementação posterior. Este registro não autoriza alteração do código funcional ou deploy específico da gamificação.
