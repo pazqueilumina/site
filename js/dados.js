@@ -274,9 +274,10 @@ const DADOS = {
       "id": "evt-0012",
       "data": "2026-11-27",
       "horario": "19:00",
-      "titulo": "O Quinto Dos Últimos Dias de Jesus (Parte 2)",
-      "local": "Cristo Consolador",
-      "endereco": "YouTube (online)"
+      "titulo": "O Sexto dos Últimos Dias de Jesus: Jesus diante de Pilatos",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "link": "https://www.youtube.com/watch?v=mFmnlpiIo-I&t=251s",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0013",
