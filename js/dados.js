@@ -247,6 +247,14 @@ const DADOS = {
       "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro"
     },
     {
+      "id": "evt-346a4526-2dcd-4dcd-be70-2c003e4dd667",
+      "data": "2026-11-11",
+      "horario": "19:30",
+      "titulo": "A noite em que o céu tocou a Terra: O nascimento de Jesus",
+      "local": "Grupo Espírita Fonte Viva",
+      "localId": "grupo-espirita-fonte-viva"
+    },
+    {
       "id": "evt-0010",
       "data": "2026-11-13",
       "horario": "19:00",
