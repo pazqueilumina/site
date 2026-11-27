@@ -307,7 +307,7 @@ function proximosEventos() {
   const chave = dataHojeAgenda();
   return (DADOS.agenda || [])
     .filter((e) => e.data >= chave)
-    .sort((x, y) => (x.data > y.data ? 1 : -1));
+    .sort((x, y) => x.data.localeCompare(y.data) || (x.horario || "99:99").localeCompare(y.horario || "99:99"));
 }
 
 /* ---------------- MENU (BARRA LATERAL) ---------------- */
@@ -533,7 +533,7 @@ function linkCalendarioAgenda(e) {
   const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(fim).map(p=>[p.type,p.value]));
   const fimLocal=parts.year+parts.month+parts.day+'T'+parts.hour+parts.minute+parts.second;
   const local=eventoOnlineAgenda(e)?(linkDiretoAgenda(e)||e.local||'Online'):(enderecoExibidoAgenda(e)||e.local||'');
-  return 'https://calendar.google.com/calendar/render?'+new URLSearchParams({action:'TEMPLATE',text:e.titulo||'Palestra',dates:inicio+'/'+fimLocal,ctz:'America/Sao_Paulo',location:local,details:'Duração estimada em 1 hora. Confirme a duração com o organizador.'}).toString();
+  return 'https://calendar.google.com/calendar/render?'+new URLSearchParams({action:'TEMPLATE',text:tituloFraseApresentacao(e.titulo)||'Palestra',dates:inicio+'/'+fimLocal,ctz:'America/Sao_Paulo',location:local,details:'Duração estimada em 1 hora. Confirme a duração com o organizador.'}).toString();
 }
 function itemAgenda(evento, compacto) {
   const bloco = fmtAgendaBloco(evento.data);
@@ -560,7 +560,7 @@ function itemAgenda(evento, compacto) {
     return (
       '<article class="item-agenda' + classeHoje + '">' +
       '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + '</div></div>' +
-      '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(nomePlataformaVisivel(evento.titulo)) + '</h3>' +
+      '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(nomePlataformaVisivel(tituloFraseApresentacao(evento.titulo))) + '</h3>' +
       '<div class="agenda-detalhes"><span class="agenda-campo">' + local + '</span></div></div></article>'
     );
   }
@@ -580,7 +580,7 @@ function itemAgenda(evento, compacto) {
   return (
     '<article class="item-agenda' + classeHoje + '">' +
     '<div class="agenda-data"><div class="agenda-dia">' + bloco.dia + '</div><div class="agenda-mes">' + bloco.mes + '</div><div class="agenda-hora">' + escapar(hora) + '</div></div>' +
-    '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(nomePlataformaVisivel(evento.titulo)) + '</h3>' +
+    '<div class="agenda-info">' + etiquetaHoje + '<h3>' + escapar(nomePlataformaVisivel(tituloFraseApresentacao(evento.titulo))) + '</h3>' +
     '<div class="agenda-linha"><span class="agenda-centro">' + escapar(nomePlataformaVisivel(cadastroDoEventoAgenda(evento)?.nome || evento.local)) + '</span></div>' +
     linhaEndereco + linhaLink +
     '<div class="agenda-linha"><a class="agenda-endereco" href="' + escapar(linkCalendarioAgenda(evento)) + '" target="_blank" rel="noopener noreferrer" title="Adicionar ao Google Agenda; duração estimada de 1 hora">' + icone('agenda') + 'Adicionar ao calendário' + icone('externo') + '</a></div>' +
@@ -1080,7 +1080,7 @@ function renderizarAgenda() {
   const principal = document.getElementById('principal');
   const eventos = proximosEventos();
   const chaveHoje = dataHojeAgenda();
-  const passados = (DADOS.agenda || []).filter(e => e.data < chaveHoje).sort((a,b) => b.data.localeCompare(a.data));
+  const passados = (DADOS.agenda || []).filter(e => e.data < chaveHoje).sort((a,b) => b.data.localeCompare(a.data) || (a.horario || "99:99").localeCompare(b.horario || "99:99"));
   const todos = [...eventos, ...passados];
   const opcoes = new Map();
   for(const e of todos) {
