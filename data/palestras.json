@@ -1347,6 +1347,24 @@
       "publicacoes": {
         "audio": "2026-11-23T20:27:00.000Z"
       }
+    },
+    {
+      "pid": "PAL-0080",
+      "titulo": "A noite em que o céu tocou a Terra: O nascimento de Jesus",
+      "ativo": true,
+      "eventoId": "evt-10013244-3ebe-4e5b-b7b7-05f17640b393",
+      "data": "",
+      "dataAproximada": true,
+      "youtubeId": "",
+      "serie": "evangelho",
+      "centroId": "alianca-do-divino-pastor",
+      "audio": "",
+      "audioPlataforma": "",
+      "pdf": "",
+      "materialApresentacao": "possui",
+      "apresentacaoOriginal": "",
+      "statusAudio": "sem-fonte",
+      "statusPdf": "sem-arquivo"
     }
   ]
 }
