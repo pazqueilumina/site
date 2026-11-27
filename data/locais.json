@@ -73,6 +73,14 @@
       "verificacaoEndereco": "responsavel"
     },
     {
+      "id": "grupo-espirita-fonte-viva",
+      "nome": "Grupo Espírita Fonte Viva",
+      "endereco": "Av. Nossa Senhora de Copacabana, 1229",
+      "bairro": "Copacabana",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    {
       "id": "grupo-espirita-saint-germain",
       "nome": "Grupo Espírita Saint Germain",
       "endereco": "Rua Domingos Cabral, 111",
