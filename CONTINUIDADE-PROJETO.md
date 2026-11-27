@@ -1242,3 +1242,28 @@ Quando eu autorizar uma implementação, execute somente o escopo aprovado, vali
 - Esta decisão substitui todas as sugestões anteriores de certificação para esta funcionalidade. Não implementar nem apresentar essas opções como melhorias futuras.
 - A conclusão representa exclusivamente o progresso de leitura autodeclarado, com marcações individuais e por estudo, indicadores e marcos simbólicos, sem avaliação de conhecimento ou evolução espiritual.
 - REGRA GERAL DEFINITIVA: a proibição de testes, provas, questionários avaliativos, notas, avaliações de conhecimento e certificação (inclusive simbólica) aplica-se a todo o projeto Paz que Ilumina, incluindo Estudo semanal, Minha jornada de luz e quaisquer cursos atuais ou futuros. Esta regra prevalece sobre todas as definições anteriores em contrário, inclusive as relativas à arquitetura de cursos. Indicadores de leitura e marcos simbólicos permanecem permitidos, sem caráter avaliativo ou certificador.
+
+
+## Pendência — Minha jornada de luz: transformação visual de Jesus (27/11/2026)
+
+Status: proposta em discussão, não implementar nem publicar sem aprovação. Nenhuma imagem definitiva escolhida.
+
+- Na página de estudo, resumo lateral com recorte da mesma imagem de Jesus, progresso circular e acesso clicável ao dashboard pessoal Minha jornada de luz. No dashboard, imagem maior e possibilidade de apresentar também a árvore do conhecimento, sem sobrecarregar a leitura. Progresso local, sem login nesta fase.
+- Usar uma única imagem, preservando rosto, expressão e composição; aplicar máscaras por região, luminosidade e saturação graduais dentro de cada etapa, em vez de saturação uniforme pouco perceptível. Não gerar centenas de imagens.
+
+| Questões únicas lidas | Progresso aproximado | Transformação proposta |
+|---:|---:|---|
+| 0 | 0% | Inteiramente preto e branco |
+| 1 | 0,1% | Primeiro ponto de luz |
+| 16 | 1,6% | Rosto começa a ganhar luminosidade |
+| 50 | 4,9% | Rosto começa a recuperar cores |
+| 100 | 9,8% | Rosto completamente colorido |
+| 250 | 24,5% | Vestes ganham cores |
+| 500 | 49,1% | Paisagem começa a ganhar vida |
+| 750 | 73,6% | Céu e vegetação coloridos |
+| 1.000 | 98,1% | Imagem quase totalmente iluminada |
+| 1.019 | 100% | Imagem completa, colorida e iluminada |
+
+- Ao atingir um marco, transição suave de 2–3 segundos revelando a região correspondente. Dashboard com opção “Comparar com o início”. Considerar simulação interativa de 0 a 1.019 questões para validar visualmente as etapas antes da implementação. Mensagens propostas: O início da jornada; Os primeiros raios de luz; A luz começa a se revelar; Novas cores surgem; A imagem ganha vida; A paisagem se transforma; A plenitude das cores; Jornada concluída.
+- A transformação representa exclusivamente avanço na leitura, jamais evolução espiritual. Sem pontos, ranking, competição, provas ou certificação. Etapas e imagem sujeitas à aprovação.
+- Proposta relacionada em discussão: calendário semanal como orientação, sem bloquear leitura antecipada; distinguir estudo da semana de continuar de onde parei. Ambos alimentariam o mesmo progresso de questões únicas. Não tratar como alteração já aprovada.
