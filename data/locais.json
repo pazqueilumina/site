@@ -93,6 +93,14 @@
       "verificacaoEndereco": "responsavel"
     },
     {
+      "id": "grupo-espirita-yvonne-pereira",
+      "nome": "Grupo Espírita Yvonne Pereira",
+      "endereco": "Travessa Coelho Gomes, casa 6",
+      "bairro": "Icaraí",
+      "cidade": "Niterói",
+      "uf": "RJ"
+    },
+    {
       "id": "lar-de-frei-luiz",
       "nome": "Lar de Frei Luiz",
       "endereco": "Estrada da Boiúna, 1367",
