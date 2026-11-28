@@ -182,12 +182,12 @@ const DADOS = {
     },
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
-      "data": "2026-05-08",
-      "horario": "19:30",
+      "data": "2026-05-16",
+      "horario": "17:00",
       "titulo": "Nas Terras de Chico Parte 1 Pedro Leopoldo",
-      "local": "Grupo Espírita Fonte Viva",
+      "local": "Consolador - Comunidade Espírita Cristã",
       "link": "https://www.youtube.com/watch?v=FlC8A8V1Pnw&list=PLzyEmRoyAJYn2OMh6OP3r-1xJQeyj7Ov3",
-      "localId": "grupo-espirita-fonte-viva"
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0001",
