@@ -191,3 +191,13 @@ Aprovado em 28/11/2026. Projetar desde a primeira versão para celulares, tablet
 - Otimizar carregamento, imagens, JavaScript e consultas para conexões móveis lentas; evitar carregar toda a obra de uma vez.
 - Testar desde cada etapa em larguras de 320, 360, 390 e 430 px, tablets e desktop, Chrome Android e Safari iOS, orientação retrato e paisagem. Validar em dispositivos reais quando disponíveis; registrar limitações quando não disponíveis.
 - Critério de aceite: fluxos completos de inscrição, login, leitura, marcação, anotações, favoritos, Pomar e administração sem bloqueios ou sobreposição em telas pequenas. Não considerar uma etapa concluída sem validação responsiva.
+
+
+## Requisito obrigatório — Mobile First (28/11/2026)
+- Desenvolver prioritariamente para celulares, com experiência completa também em tablets e computadores. Responsividade não é ajuste posterior: integra arquitetura, protótipos, implementação e critérios de aceite de cada etapa.
+- Todas as funções do aluno devem funcionar plenamente no celular: inscrição, autenticação, leitura integral e por aula, ajuste de fonte Aa, busca, marcação de leitura, notas, favoritos, Pomar, calendário, materiais, PDFs, downloads e links de e-mail. Sem depender de mouse, hover ou orientação horizontal.
+- Interface adaptativa, sem rolagem horizontal da página, texto legível, controles de toque preferencialmente de pelo menos 44 CSS px, contraste adequado, navegação clara, suporte a zoom e teclado virtual, formulários simples e feedback de erros acessível.
+- Painel administrativo responsivo, incluindo professores; adaptar tabelas, filtros e formulários para telas estreitas, sem ocultar funcionalidades essenciais. Operações complexas podem ser mais confortáveis no desktop.
+- Otimizar carregamento em redes móveis: imagens responsivas, carregamento sob demanda de PDFs e recursos pesados, paginação quando adequada, evitar downloads automáticos e preservar progresso diante de falhas de conexão, sem prometer funcionamento offline.
+- Homologar em Android/Chrome e iOS/Safari, tablets e desktop, larguras representativas de 320, 360, 390, 768 e 1280 CSS px, orientação vertical/horizontal, fonte ampliada e conexão lenta. Testes em emuladores complementam, não substituem testes reais quando disponíveis. Validar navegação, formulários, teclado, leitura, materiais, Pomar e fluxos administrativos. Registrar limitações e corrigir bloqueios móveis antes da publicação.
+- Critério de lançamento: nenhuma funcionalidade essencial do aluno pode exigir computador. Requisito aprovado; implementação e testes ainda não realizados.
