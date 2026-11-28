@@ -172,6 +172,14 @@ const DADOS = {
      ============================================================ */
   agenda: [
     {
+      "id": "evt-8130b672-8317-4a3a-bc3c-8294db4ac426",
+      "data": "2026-01-20",
+      "horario": "14:30",
+      "titulo": "Eurípedes, o trabalhador da primeira hora.",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
       "id": "evt-e8f23a63-b2f6-440b-a563-c9f5c1a5b5f3",
       "data": "2026-03-24",
       "horario": "14:30",
