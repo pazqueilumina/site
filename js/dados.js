@@ -213,6 +213,14 @@ const DADOS = {
       "localId": "lar-paulo-de-tarso"
     },
     {
+      "id": "evt-5465b2e6-8f00-4829-813c-21ef6fd0f3b3",
+      "data": "2026-10-02",
+      "horario": "20:00",
+      "titulo": "As curas de Jesus",
+      "local": "Centro Espírita Tarefeiros do Bem",
+      "localId": "centro-espirita-tarefeiros-do-bem"
+    },
+    {
       "id": "evt-0001",
       "data": "2026-10-07",
       "horario": "18:00",
