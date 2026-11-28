@@ -182,12 +182,12 @@ const DADOS = {
     },
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
-      "data": "2026-05-29",
-      "horario": "19:00",
-      "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador",
-      "link": "https://www.youtube.com/watch?v=5OpTAvoGYiE&list=PLzyEmRoyAJYl_FI05c_Ei3xijFMYjg31k&index=4&t=642s",
-      "localId": "web-radio-cristo-consolador"
+      "data": "2026-05-08",
+      "horario": "19:30",
+      "titulo": "Nas Terras de Chico Parte 1 Pedro Leopoldo",
+      "local": "Grupo Espírita Fonte Viva",
+      "link": "https://www.youtube.com/watch?v=FlC8A8V1Pnw&list=PLzyEmRoyAJYn2OMh6OP3r-1xJQeyj7Ov3",
+      "localId": "grupo-espirita-fonte-viva"
     },
     {
       "id": "evt-0001",
