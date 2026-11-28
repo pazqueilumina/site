@@ -190,11 +190,11 @@ const DADOS = {
     },
     {
       "id": "evt-6c22bdef-f362-4778-bb9a-65cd5b4ee9b0",
-      "data": "2026-06-10",
-      "horario": "20:00",
-      "titulo": "Eurípedes, o trabalhador da primeira hora.",
-      "local": "Aliança do Divino Pastor",
-      "localId": "alianca-do-divino-pastor"
+      "data": "2026-06-23",
+      "horario": "14:30",
+      "titulo": "O Poder da Gratidão",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0001",
