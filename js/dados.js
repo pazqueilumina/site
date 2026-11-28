@@ -182,11 +182,11 @@ const DADOS = {
     },
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
-      "data": "2026-05-17",
-      "horario": "11:00",
-      "titulo": "AS Curas de Jesus",
-      "local": "Web Rádio Cristo Consolador",
-      "localId": "web-radio-cristo-consolador"
+      "data": "2026-05-26",
+      "horario": "19:30",
+      "titulo": "Fé Raciocinada",
+      "local": "Cruzada dos Militares Espíritas",
+      "localId": "cruzada-dos-militares-espiritas"
     },
     {
       "id": "evt-0001",
