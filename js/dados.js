@@ -198,7 +198,7 @@ const DADOS = {
     },
     {
       "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
-      "data": "2026-09-18",
+      "data": "2026-09-25",
       "horario": "19:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
       "local": "Web Rádio Cristo Consolador",
