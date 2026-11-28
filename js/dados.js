@@ -198,12 +198,11 @@ const DADOS = {
     },
     {
       "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
-      "data": "2026-09-25",
-      "horario": "19:00",
-      "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador",
-      "link": "https://www.youtube.com/watch?v=rom5Z6LIiPc&list=PLzyEmRoyAJYksXKE63NkcqGs36rrrnxE9&index=23&t=17s",
-      "localId": "web-radio-cristo-consolador"
+      "data": "2026-09-02",
+      "horario": "19:30",
+      "titulo": "A Lei do Progresso",
+      "local": "Associação Espírita União Fraterna",
+      "localId": "associacao-espirita-uniao-fraterna"
     },
     {
       "id": "evt-0001",
