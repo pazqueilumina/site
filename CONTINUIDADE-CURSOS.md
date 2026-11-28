@@ -180,3 +180,14 @@ Cron consulta outbox e calendário no fuso da turma, envia com idempotência e r
 5. Materiais e comunicações, ICS, dashboards/exportações.
 6. Testes privados ponta a ponta, acessibilidade, carga, custos e restauração; revisão visual, publicação separadamente autorizada.
 Critérios mínimos: duas turmas do mesmo curso/centros distintos, ausência de acesso cruzado, concorrência na última vaga, revogação, adiamento em feriado, questões repetidas sem duplicar fruto, notas privadas, e-mails sem duplicar, exportações e restauração. Nenhuma configuração externa, banco, código ou deploy foi executado nesta etapa. Pendentes: acesso/consumo real Cloudflare, provedor e domínio remetente, OAuth Google, edição licenciada, calendário/feriados, datas e docentes, validação técnica de SDKs e quotas.
+
+
+## Requisito obrigatório — Mobile-first e responsividade
+Aprovado em 28/11/2026. Projetar desde a primeira versão para celulares, tablets e computadores, priorizando a experiência móvel, especialmente dos alunos. Não tratar responsividade como ajuste posterior.
+- Todas as funcionalidades, inclusive administração, inscrição, autenticação, leitura, pesquisa, notas, favoritos, Pomar, calendário, materiais e relatórios, devem ser utilizáveis no celular.
+- Layout adaptativo sem rolagem horizontal da página; tabelas administrativas adaptadas ou com rolagem localizada; navegação e formulários adequados ao toque, sem depender de hover.
+- Texto legível sem zoom, ajuste Aa, controles com alvos de toque confortáveis, contraste e acessibilidade; leitura de aulas longas com navegação e retomada de posição.
+- PDFs com visualização e download compatíveis com dispositivos móveis; links externos e calendário ICS testados.
+- Otimizar carregamento, imagens, JavaScript e consultas para conexões móveis lentas; evitar carregar toda a obra de uma vez.
+- Testar desde cada etapa em larguras de 320, 360, 390 e 430 px, tablets e desktop, Chrome Android e Safari iOS, orientação retrato e paisagem. Validar em dispositivos reais quando disponíveis; registrar limitações quando não disponíveis.
+- Critério de aceite: fluxos completos de inscrição, login, leitura, marcação, anotações, favoritos, Pomar e administração sem bloqueios ou sobreposição em telas pequenas. Não considerar uma etapa concluída sem validação responsiva.
