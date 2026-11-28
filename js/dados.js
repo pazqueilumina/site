@@ -206,11 +206,11 @@ const DADOS = {
     },
     {
       "id": "evt-ec8d8a42-fdae-4ede-a597-73fe0731d643",
-      "data": "2026-09-20",
-      "horario": "11:00",
-      "titulo": "A mulher hemorroísa",
-      "local": "Web Rádio Cristo Consolador",
-      "localId": "web-radio-cristo-consolador"
+      "data": "2026-09-21",
+      "horario": "20:00",
+      "titulo": "Lei da Sociedade: Vivendo em Coletividade",
+      "local": "Lar Paulo de Tarso",
+      "localId": "lar-paulo-de-tarso"
     },
     {
       "id": "evt-0001",
