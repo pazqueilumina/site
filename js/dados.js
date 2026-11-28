@@ -297,7 +297,8 @@ const DADOS = {
       "horario": "20:00",
       "titulo": "Fixação Mental",
       "local": "Consolador - Comunidade Espírita Cristã",
-      "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro"
+      "link": "https://www.youtube.com/watch?v=Dsv3EV-JIfU&t=2s",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-346a4526-2dcd-4dcd-be70-2c003e4dd667",
