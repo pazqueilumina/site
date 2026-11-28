@@ -260,8 +260,9 @@ const DADOS = {
       "data": "2026-10-23",
       "horario": "19:00",
       "titulo": "O Terceiro Ano do Ministério de Jesus (Parte 14)",
-      "local": "Cristo Consolador",
-      "endereco": "YouTube (online)"
+      "local": "Web Rádio Cristo Consolador",
+      "link": "https://www.youtube.com/watch?v=3NcYFOePZrg&list=PLzyEmRoyAJYksXKE63NkcqGs36rrrnxE9&index=27&t=2s",
+      "localId": "web-radio-cristo-consolador"
     },
     {
       "id": "evt-0006",
