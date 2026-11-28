@@ -420,6 +420,14 @@ const DADOS = {
       "localId": "grupo-espirita-fonte-viva"
     },
     {
+      "id": "evt-466f657e-d821-4978-9bf9-482785ff2f81",
+      "data": "2026-12-11",
+      "horario": "19:30",
+      "titulo": "A noite em que o céu tocou a Terra: O nascimento de Jesus",
+      "local": "Grupo Espírita Fonte Viva",
+      "localId": "grupo-espirita-fonte-viva"
+    },
+    {
       "id": "evt-0019",
       "data": "2026-12-11",
       "horario": "20:00",
