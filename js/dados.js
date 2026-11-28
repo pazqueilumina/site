@@ -190,11 +190,11 @@ const DADOS = {
     },
     {
       "id": "evt-6c22bdef-f362-4778-bb9a-65cd5b4ee9b0",
-      "data": "2026-07-08",
-      "horario": "20:00",
-      "titulo": "O aborto sob a visão espírita",
-      "local": "Associação Espírita União Fraterna",
-      "localId": "associacao-espirita-uniao-fraterna"
+      "data": "2026-07-10",
+      "horario": "19:30",
+      "titulo": "A revelação da missão de Allan Kardec",
+      "local": "Grupo Espírita Fonte Viva",
+      "localId": "grupo-espirita-fonte-viva"
     },
     {
       "id": "evt-0001",
