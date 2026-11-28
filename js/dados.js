@@ -190,11 +190,11 @@ const DADOS = {
     },
     {
       "id": "evt-6c22bdef-f362-4778-bb9a-65cd5b4ee9b0",
-      "data": "2026-06-05",
+      "data": "2026-06-12",
       "horario": "19:00",
       "titulo": "Programa Pelos Caminhos de Jesus",
       "local": "Web Rádio Cristo Consolador",
-      "link": "https://www.youtube.com/watch?v=dv3OEzKY7Co&list=PLzyEmRoyAJYl_FI05c_Ei3xijFMYjg31k&index=6&t=3s",
+      "link": "https://www.youtube.com/watch?v=03UIWDPlG_U&list=PLzyEmRoyAJYl_FI05c_Ei3xijFMYjg31k&index=9&t=6s",
       "localId": "web-radio-cristo-consolador"
     },
     {
