@@ -198,12 +198,12 @@ const DADOS = {
     },
     {
       "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
-      "data": "2026-07-15",
-      "horario": "20:00",
-      "titulo": "O vaso escolhido",
-      "local": "Consolador - Comunidade Espírita Cristã",
+      "data": "2026-07-30",
+      "horario": "15:00",
+      "titulo": "O semeador. Em que solo cultivamos o Evangelho.",
+      "local": "Lar Paulo de Tarso",
       "link": "https://www.youtube.com/watch?v=g7OHiTcm08Q&t=2227s",
-      "localId": "consolador-comunidade-espirita-crista"
+      "localId": "lar-paulo-de-tarso"
     },
     {
       "id": "evt-0001",
