@@ -317,6 +317,14 @@ const DADOS = {
       "endereco": "YouTube (online)"
     },
     {
+      "id": "evt-bd7fed36-720f-48cc-a665-5a758c98eaec",
+      "data": "2026-11-13",
+      "horario": "19:30",
+      "titulo": "Prisioneiros dos Próprios Pensamentos",
+      "local": "Grupo Espírita Fonte Viva",
+      "localId": "grupo-espirita-fonte-viva"
+    },
+    {
       "id": "evt-0011",
       "data": "2026-11-20",
       "horario": "20:00",
