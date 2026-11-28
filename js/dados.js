@@ -182,11 +182,11 @@ const DADOS = {
     },
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
-      "data": "2026-05-16",
+      "data": "2026-05-30",
       "horario": "17:00",
-      "titulo": "Nas Terras de Chico Parte 1 Pedro Leopoldo",
+      "titulo": "Nas Terras de Chico Parte 2 Uberaba",
       "local": "Consolador - Comunidade Espírita Cristã",
-      "link": "https://www.youtube.com/watch?v=FlC8A8V1Pnw&list=PLzyEmRoyAJYn2OMh6OP3r-1xJQeyj7Ov3",
+      "link": "https://www.youtube.com/watch?v=kpLFAuhPpW8&list=PLzyEmRoyAJYn2OMh6OP3r-1xJQeyj7Ov3&index=2",
       "localId": "consolador-comunidade-espirita-crista"
     },
     {
