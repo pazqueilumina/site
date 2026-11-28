@@ -213,6 +213,15 @@ const DADOS = {
       "localId": "lar-paulo-de-tarso"
     },
     {
+      "id": "evt-5465b2e6-8f00-4829-813c-21ef6fd0f3b3",
+      "data": "2026-10-02",
+      "horario": "19:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador",
+      "link": "https://www.youtube.com/watch?v=i7nKBfsBjb4&list=PLzyEmRoyAJYksXKE63NkcqGs36rrrnxE9&index=24&t=1748s",
+      "localId": "web-radio-cristo-consolador"
+    },
+    {
       "id": "evt-0001",
       "data": "2026-10-07",
       "horario": "18:00",
@@ -252,15 +261,6 @@ const DADOS = {
       "titulo": "O Terceiro Ano do Ministério de Jesus (Parte 14)",
       "local": "Cristo Consolador",
       "endereco": "YouTube (online)"
-    },
-    {
-      "id": "evt-5465b2e6-8f00-4829-813c-21ef6fd0f3b3",
-      "data": "2026-10-28",
-      "horario": "20:00",
-      "titulo": "A ressurreição de Lázaro",
-      "local": "Aliança do Divino Pastor",
-      "link": "https://www.youtube.com/watch?v=ozvzhlxV9BQ&t=1267s",
-      "localId": "alianca-do-divino-pastor"
     },
     {
       "id": "evt-0006",
