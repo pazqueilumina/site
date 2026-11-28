@@ -32,3 +32,23 @@ Não implementar, criar infraestrutura, publicar ou fazer rollback sem autoriza�
 
 ## Próximo chat
 Ler integralmente CONTINUIDADE-PROJETO.md e este arquivo, conferir HEAD e arquivos relevantes. Consultar o DOCX original antes de implementar o programa didático; solicitar o arquivo se não estiver acessível. Preservar Estudo semanal. Aguardar autorização específica. As decisões deste documento sobre cursos prevalecem sobre propostas antigas conflitantes do documento geral, especialmente ordem das questões, acesso antecipado, login obrigatório e arquitetura independente.
+
+
+## 27/11/2026 — Gestão do programa didático e comunicações (aprovado conceitualmente)
+
+### Programa didático editável pelo painel administrativo
+- O DOCX original é a fonte inicial, não uma dependência operacional. Cadastrar integralmente seu conteúdo e permitir gestão posterior pelo site, sem edição de Word, GitHub, código ou deploy.
+- Área Programa didático dentro da administração de cursos: criar, editar, duplicar, dividir, juntar, reordenar e excluir aulas mediante confirmação e preservação do histórico. Gerenciar módulos e programas de diferentes obras.
+- Campos: número, módulo, título, tipo (estudo da obra, temática, palestra, revisão, feriado, evento especial), assuntos/subtemas/objetivos, referências de leitura, questões avulsas e intervalos combináveis (ex.: 1–16, 22, 35–40), materiais PDF, vídeo, texto e eventual áudio. Não impor questões numeradas a outras obras. Alertar sobre lacunas e sobreposições sem corrigir automaticamente.
+- Separar programa pedagógico (conteúdo, sequência, objetivos, materiais de referência) de calendário da turma (datas, horários, professores, facilitadores, reagendamentos e materiais específicos).
+- Versionar programas: duplicar versão original, adaptar e associar a novas turmas sem alterar histórico anterior. Permitir alteração de turma em andamento com aviso de impacto em aulas já estudadas e progresso; preservar registros e exigir confirmação. Não apagar histórico por edição ou exclusão.
+- Objetivo: criar e administrar um novo curso completo, módulos, aulas, turmas e matrículas sem programação ou deploy.
+
+### Comunicações por e-mail
+- Área Comunicações no painel administrativo. Envio semanal automático por turma, consultando o calendário vigente e o programa didático atualizado. Mensagem personalizada com nome do aluno, curso/turma, tema, questões ou referências de leitura, data, horário, professor/facilitador, link direto para aula autenticada e materiais complementares disponíveis.
+- Identidade visual coerente com a plataforma (azul-marinho, marfim e dourado), modelo responsivo, identificação da turma e preferências de comunicação. Datas, horários e facilitadores dos protótipos são ilustrativos.
+- Configurar por turma: ativar/desativar, dia da semana, horário, informações incluídas. Domingo às 08h foi exemplo, não horário definitivo. Considerar fuso da turma, feriados, recessos, cancelamentos e reagendamentos. Não enviar lembrete incorreto de aula cancelada.
+- Outros envios aprovados conceitualmente: aprovação de cadastro e confirmação de matrícula automáticas; alteração de horário e cancelamento mediante confirmação administrativa; aviso de material opcional; comunicado geral manual à turma.
+- Aluno matriculado em vários cursos recebe as comunicações das respectivas turmas, sem duplicação indevida. Restringir destinatários a matrículas autorizadas/ativas, manter histórico de envios e evitar duplicatas em reexecuções. Respeitar preferências de comunicação e privacidade; não expor endereços de outros alunos.
+- Serviço de envio e agendamento independente do Worker de agendas do site institucional. Não alterar o Worker atual. Avaliar provedor, custos, limites, entregabilidade e autenticação do domínio antes de implementar.
+- Estado: requisitos aprovados e documentados; nenhuma implementação, configuração de infraestrutura ou envio real autorizado nesta etapa.
