@@ -198,12 +198,12 @@ const DADOS = {
     },
     {
       "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
-      "data": "2026-08-25",
-      "horario": "14:30",
-      "titulo": "A transformação de Zaqueu",
-      "local": "Consolador - Comunidade Espírita Cristã",
+      "data": "2026-09-04",
+      "horario": "19:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador",
       "link": "https://www.youtube.com/watch?v=xu1KHYtiYPg&t=3s",
-      "localId": "consolador-comunidade-espirita-crista"
+      "localId": "web-radio-cristo-consolador"
     },
     {
       "id": "evt-0001",
