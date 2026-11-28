@@ -198,12 +198,11 @@ const DADOS = {
     },
     {
       "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
-      "data": "2026-07-30",
-      "horario": "15:00",
-      "titulo": "O semeador. Em que solo cultivamos o Evangelho.",
-      "local": "Lar Paulo de Tarso",
-      "link": "https://www.youtube.com/watch?v=g7OHiTcm08Q&t=2227s",
-      "localId": "lar-paulo-de-tarso"
+      "data": "2026-08-05",
+      "horario": "19:30",
+      "titulo": "Não saiba a vossa mão esquerda o que dá a vossa mão direita.",
+      "local": "Associação Espírita União Fraterna",
+      "localId": "associacao-espirita-uniao-fraterna"
     },
     {
       "id": "evt-0001",
