@@ -173,11 +173,11 @@ const DADOS = {
   agenda: [
     {
       "id": "evt-e8f23a63-b2f6-440b-a563-c9f5c1a5b5f3",
-      "data": "2026-03-04",
-      "horario": "17:00",
-      "titulo": "Céu ou Inferno: Estados da alma ou justiça divina?",
-      "local": "Lar Paulo de Tarso",
-      "localId": "lar-paulo-de-tarso"
+      "data": "2026-03-11",
+      "horario": "20:00",
+      "titulo": "As curas de Jesus",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0001",
