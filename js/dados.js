@@ -197,6 +197,14 @@ const DADOS = {
       "localId": "grupo-espirita-fonte-viva"
     },
     {
+      "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
+      "data": "2026-07-14",
+      "horario": "16:00",
+      "titulo": "As curas de Jesus",
+      "local": "Aliança do Divino Pastor",
+      "localId": "alianca-do-divino-pastor"
+    },
+    {
       "id": "evt-0001",
       "data": "2026-10-07",
       "horario": "18:00",
