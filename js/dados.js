@@ -205,6 +205,14 @@ const DADOS = {
       "localId": "associacao-espirita-uniao-fraterna"
     },
     {
+      "id": "evt-ec8d8a42-fdae-4ede-a597-73fe0731d643",
+      "data": "2026-09-09",
+      "horario": "20:00",
+      "titulo": "A transformação de Zaqueu",
+      "local": "Grupo Espírita Yvonne Pereira",
+      "localId": "grupo-espirita-yvonne-pereira"
+    },
+    {
       "id": "evt-0001",
       "data": "2026-10-07",
       "horario": "18:00",
