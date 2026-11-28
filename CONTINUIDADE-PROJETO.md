@@ -1304,3 +1304,13 @@ Mensagens contextuais aprovadas (variar a redação em situações semelhantes):
 | Livro concluído | 💛 Que jornada maravilhosa! |
 
 Mensagens devem refletir eventos e progresso reais, sem inferir evolução espiritual. Para mensagens semanais e de retorno, será necessário registrar datas de leitura; inicialmente no navegador, enquanto não houver login. Evitar repetição excessiva. A substituição do quadro Marcos da jornada por Meu progresso e animações discretas permanecem propostas para implementação posterior. Este registro não autoriza alteração do código funcional ou deploy específico da gamificação.
+
+
+## 27/11/2026 — Novo projeto: Plataforma de Cursos
+
+- Ler obrigatoriamente [CONTINUIDADE-CURSOS.md](CONTINUIDADE-CURSOS.md) integralmente junto deste documento em todo novo chat. Subdomínio cursos.pazqueilumina.com.br aprovado conceitualmente; infraestrutura independente proposta, ainda não criada. Cadastro e login únicos, multicursos, múltiplas turmas, Minha jornada espírita e programa didático integral. As decisões recentes do arquivo de cursos prevalecem sobre propostas antigas conflitantes de cursos. O DOCX original continua fonte obrigatória; solicitar se indisponível. Nenhuma implementação autorizada.
+- Atualizações recentes do site: seletor customizado de versões da Bíblia, commit 2e53582169a7fdd1af74c0d49461d82231d7bfc0; link Amazon do Livro atualizado para https://www.amazon.com.br/dp/6528000077/ no commit f47eb6ce20049fd3017cd38a3780c0e41549601f. Validação de sintaxe realizada; deploy e visual não confirmados independentemente.
+
+### Prompt atualizado para novo chat
+
+Estamos continuando o projeto Paz que Ilumina, repositório pazqueilumina/site, branch main. Leia integralmente CONTINUIDADE-PROJETO.md e CONTINUIDADE-CURSOS.md antes de responder ou propor alterações. Confira HEAD e arquivos relevantes. Para o programa didático, consulte também o DOCX original. Preserve as regras, dados e funcionalidades aprovadas. Não implemente, publique, altere Worker ou faça rollback sem autorização explícita. Aguarde minha próxima instrução.
