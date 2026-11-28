@@ -246,20 +246,20 @@ const DADOS = {
       "localId": "grupo-espirita-fabiano"
     },
     {
+      "id": "evt-5465b2e6-8f00-4829-813c-21ef6fd0f3b3",
+      "data": "2026-10-21",
+      "horario": "19:30",
+      "titulo": "A fé transporta montanhas",
+      "local": "Associação Espírita União Fraterna",
+      "localId": "associacao-espirita-uniao-fraterna"
+    },
+    {
       "id": "evt-0005",
       "data": "2026-10-23",
       "horario": "19:00",
       "titulo": "O Terceiro Ano do Ministério de Jesus (Parte 14)",
       "local": "Cristo Consolador",
       "endereco": "YouTube (online)"
-    },
-    {
-      "id": "evt-5465b2e6-8f00-4829-813c-21ef6fd0f3b3",
-      "data": "2026-10-28",
-      "horario": "16:00",
-      "titulo": "O retorno ao mundo espiritual",
-      "local": "Associação Espírita União Fraterna",
-      "localId": "associacao-espirita-uniao-fraterna"
     },
     {
       "id": "evt-0006",
