@@ -206,11 +206,11 @@ const DADOS = {
     },
     {
       "id": "evt-ec8d8a42-fdae-4ede-a597-73fe0731d643",
-      "data": "2026-09-15",
-      "horario": "16:00",
-      "titulo": "A mulher samaritana",
-      "local": "Aliança do Divino Pastor",
-      "localId": "alianca-do-divino-pastor"
+      "data": "2026-09-20",
+      "horario": "11:00",
+      "titulo": "A mulher hemorroísa",
+      "local": "Web Rádio Cristo Consolador",
+      "localId": "web-radio-cristo-consolador"
     },
     {
       "id": "evt-0001",
