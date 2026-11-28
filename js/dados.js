@@ -183,10 +183,10 @@ const DADOS = {
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
       "data": "2026-04-29",
-      "horario": "15:00",
-      "titulo": "Eurípedes, o trabalhador da primeira hora",
-      "local": "Lar Paulo de Tarso",
-      "localId": "lar-paulo-de-tarso"
+      "horario": "20:00",
+      "titulo": "A Maternidade à Luz da Doutrina Espírita",
+      "local": "Aliança do Divino Pastor",
+      "localId": "alianca-do-divino-pastor"
     },
     {
       "id": "evt-0001",
