@@ -189,6 +189,15 @@ const DADOS = {
       "localId": "associacao-espirita-uniao-fraterna"
     },
     {
+      "id": "evt-6c22bdef-f362-4778-bb9a-65cd5b4ee9b0",
+      "data": "2026-06-05",
+      "horario": "19:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador",
+      "link": "https://www.youtube.com/watch?v=dv3OEzKY7Co&list=PLzyEmRoyAJYl_FI05c_Ei3xijFMYjg31k&index=6&t=3s",
+      "localId": "web-radio-cristo-consolador"
+    },
+    {
       "id": "evt-0001",
       "data": "2026-10-07",
       "horario": "18:00",
