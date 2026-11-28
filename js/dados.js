@@ -182,12 +182,12 @@ const DADOS = {
     },
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
-      "data": "2026-04-25",
-      "horario": "17:00",
-      "titulo": "Nas Terras de Chico – Parte 1 (Pedro Leopoldo)",
-      "local": "Consolador - Comunidade Espírita Cristã",
-      "link": "https://www.youtube.com/watch?v=FlC8A8V1Pnw&list=PLzyEmRoyAJYn2OMh6OP3r-1xJQeyj7Ov3",
-      "localId": "consolador-comunidade-espirita-crista"
+      "data": "2026-04-17",
+      "horario": "19:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador",
+      "link": "https://www.youtube.com/watch?v=bXqtDG0sc_U&list=PLzyEmRoyAJYl_FI05c_Ei3xijFMYjg31k&index=8&t=16s",
+      "localId": "web-radio-cristo-consolador"
     },
     {
       "id": "evt-0001",
