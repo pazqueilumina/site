@@ -1205,7 +1205,7 @@ function renderizarLivro() {
     "<h1 class=\"titulo-pagina\">Livro</h1>" +
     '<p class="subtitulo-pagina">' + escapar("A Bênção da Dor — " + livro.autor) + "</p>" +
     '<div class="pagina-texto">' +
-    '<a href="https://a.co/d/009jVo22" target="_blank" rel="noopener" title="Conheça o livro na Amazon">' +
+    '<a href="https://www.amazon.com.br/dp/6528000077/" target="_blank" rel="noopener" title="Conheça o livro na Amazon">' +
     '<img class="livro-capa" src="img/capa-livro.png" alt="Capa do livro ' + escapar(livro.titulo) + '"></a>' +
     paragrafos +
     "</div>";
