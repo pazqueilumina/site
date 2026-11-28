@@ -181,6 +181,14 @@ const DADOS = {
       "localId": "consolador-comunidade-espirita-crista"
     },
     {
+      "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
+      "data": "2026-03-29",
+      "horario": "11:00",
+      "titulo": "As curas de Jesus",
+      "local": "Web Rádio Cristo Consolador",
+      "localId": "web-radio-cristo-consolador"
+    },
+    {
       "id": "evt-0001",
       "data": "2026-10-07",
       "horario": "18:00",
