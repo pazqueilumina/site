@@ -198,11 +198,12 @@ const DADOS = {
     },
     {
       "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
-      "data": "2026-07-14",
-      "horario": "16:00",
-      "titulo": "As curas de Jesus",
-      "local": "Aliança do Divino Pastor",
-      "localId": "alianca-do-divino-pastor"
+      "data": "2026-07-15",
+      "horario": "20:00",
+      "titulo": "O vaso escolhido",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "link": "https://www.youtube.com/watch?v=g7OHiTcm08Q&t=2227s",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0001",
