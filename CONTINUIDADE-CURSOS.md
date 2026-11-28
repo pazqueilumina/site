@@ -52,3 +52,90 @@ Ler integralmente CONTINUIDADE-PROJETO.md e este arquivo, conferir HEAD e arquiv
 - Aluno matriculado em vários cursos recebe as comunicações das respectivas turmas, sem duplicação indevida. Restringir destinatários a matrículas autorizadas/ativas, manter histórico de envios e evitar duplicatas em reexecuções. Respeitar preferências de comunicação e privacidade; não expor endereços de outros alunos.
 - Serviço de envio e agendamento independente do Worker de agendas do site institucional. Não alterar o Worker atual. Avaliar provedor, custos, limites, entregabilidade e autenticação do domínio antes de implementar.
 - Estado: requisitos aprovados e documentados; nenhuma implementação, configuração de infraestrutura ou envio real autorizado nesta etapa.
+
+
+## 28/11/2026 — Consolidação das 50 decisões (aprovadas)
+Esta seção prevalece sobre propostas e pendências anteriores conflitantes. Preservar o histórico acima. Autorização atual limitada à documentação, não à implementação.
+
+### A — Identidade
+01. Nome provisório: Estudos Espíritas. Destacar centro, curso e turma.
+02. Usar inicialmente o logotipo atual do Paz que Ilumina; revisar ao final. Rodapé em todas as páginas: “Uma iniciativa Paz que Ilumina”, link https://pazqueilumina.com.br e identificação de plataforma gratuita.
+03. Plataforma gratuita, independente, sem vínculo comercial ou institucional obrigatório com centros. Cadastro de centros (nome, logo opcional, endereço, cidade/UF, telefone, e-mail, site, redes, mapa, observações); vincular centro à turma, não ao curso. Administração centralizada, sem contas administrativas por centro. Permitir turmas simultâneas em centros diferentes.
+
+### B — Conta
+04. Nome completo e e-mail.
+05. Login por código temporário de e-mail e Google; associar métodos à mesma conta mediante verificação segura.
+06. Sessão persistente; duração a definir tecnicamente.
+07. Alteração de e-mail com confirmação do novo endereço e preservação dos dados.
+08. Sem perfil pessoal, foto, biografia ou perfil público; apenas configurações da conta e preferências.
+
+### C — Inscrição e matrícula
+09. Escolher curso e turma na inscrição; link específico já preseleciona ambos.
+10. Aprovar cadastro e matrícula em uma operação administrativa, mantendo registros separados.
+11. Capacidade opcional configurável desde a primeira versão, inicialmente sem limite.
+12. Período de inscrição configurável desde a primeira versão, inicialmente irrestrito.
+13. Permitir ingresso em turma em andamento quando inscrições abertas.
+14. Quem deixa de frequentar mantém acesso, sujeito às regras administrativas de acesso.
+
+### D — Permissões
+15. Apenas administrador geral, professor e aluno; sem perfil separado de coordenador/facilitador.
+16. Professor com login próprio e permissões restritas às turmas/aulas atribuídas.
+17. Professor e administrador podem incluir, editar e gerenciar materiais; professor não altera programa, calendário, matrículas ou configurações gerais.
+18. Publicação imediata sem aprovação prévia; administrador pode revisar, corrigir e retirar. Recomenda-se auditoria de autoria e alterações.
+
+### E — Obras e conteúdo
+19. Importar obra integral, preservar PDF original, converter preferencialmente para Markdown por capítulos, validar fidelidade e estruturar unidades de leitura no banco. Formato técnico a definir conforme a obra.
+20. Sem editor rico de conteúdo.
+21. Pesquisa independente por questão, palavra, trecho ou assunto.
+22. Biblioteca integral na estrutura original.
+23. Administrador pode corrigir transcrição pelo painel, com histórico e original preservado.
+24. Cada curso define edição/tradução de referência. Aulas referenciam unidades da edição sem duplicar texto; correções refletem nas aulas. Selecionar questões, capítulos, itens ou trechos; páginas como referência complementar. Estrutura genérica para outras obras. Verificar direitos de reprodução da edição antes da publicação.
+
+### F — Calendário
+25. Gerar todas as datas por início e periodicidade configurável, normalmente semanal.
+26. Detectar feriados e deslocar aulas seguintes automaticamente; permitir adiamentos manuais. Recomendações: feriados nacionais/estaduais/municipais conforme local, recessos, exceção de aula em feriado e prévia de impacto. Fonte de feriados a definir.
+27. Instituição, endereço, sala e horário; possibilidade de exceção por aula recomendada.
+28. Exportação ICS para Google Agenda, Outlook e celulares; assinatura sincronizável recomendada, a validar.
+
+### G — Leitura
+29. Marcar questão individual ou aula inteira como lida.
+30. Anotações privadas por questão e aula.
+31. Favoritos de questões e trechos.
+32. Ajuste de fonte Aa; sem modo escuro ou configurações avançadas.
+33. Acesso após conclusão por padrão. Estados em andamento, concluída (acesso mantido), arquivada (acesso à turma encerrado, dados preservados); administrador pode reativar. Preservar anotações, favoritos e conquistas.
+
+### H — Gamificação
+34. Indicadores independentes de leitura da obra e conclusão de aulas. Curso de O Livro dos Espíritos deverá contemplar todas as 1.019 questões; omissões do planejamento serão acertadas posteriormente, sem correção automática do original. Recomenda-se relatório de cobertura, lacunas e repetições.
+35. Um fruto por questão, mesmo repetida.
+36. Aulas especiais concluídas por botão, sem frutos adicionais.
+37. Pomar independente por obra.
+38. Releitura/repetição em nova turma preserva frutos e conquistas; progresso das aulas separado por turma.
+
+### I — Materiais
+39. Vídeos exclusivamente por links externos, sem upload.
+40. PDF visualizável e baixável.
+41. Biblioteca centralizada organizada por curso; apresentações e demais materiais vinculados ao curso e às aulas correspondentes.
+
+### J — Comunicações
+42. Envio automático sem aprovação prévia ou envio de teste obrigatório.
+43. Avisar quando não houver aula por feriado/recesso.
+44. Aluno pode desativar e-mails semanais, mantendo comunicados importantes de alteração/cancelamento. Manter demais requisitos de comunicação anteriores, sem interferir no Worker institucional.
+
+### K — Dashboard e relatórios
+45. Cursos/turmas ativos, alunos, solicitações pendentes, próximas aulas, e-mails enviados por mês, alunos por curso/turma; aulas totais, realizadas, restantes, percentual e previsão de término por turma. Estatísticas por centro possíveis.
+46. Administrador e professores autorizados consultam progresso individual de leitura; anotações privadas. Não equivale a presença, avaliação ou evolução espiritual.
+47. Exportar inscrições, matrículas, programas e relatórios em CSV, Excel e PDF.
+
+### L — Infraestrutura
+48. Priorizar serviços gratuitos nesta etapa; validar cotas, especialmente e-mail e autenticação, antes de implementar.
+49. Turma habitual 20–30 alunos, excepcional até 50. Dimensionamento sugerido (não limite obrigatório): 500 alunos iniciais na plataforma e crescimento para 1.000 ou mais. Capacidade real sujeita a validação técnica.
+50. Manter Estudo semanal atual exatamente como está, sem migração, substituição ou desativação. Plataforma de cursos independente em cursos.pazqueilumina.com.br; reutilização de conceitos/código sem modificar o ambiente existente.
+
+### Divulgação e inscrição por turma — primeira versão
+- Link público exclusivo e estável por turma, com centro, curso e turma preselecionados; página mostra nome/logo do centro, curso, local, horário e disponibilidade.
+- Painel gera link copiável, QR Code, código HTML para chamada no site do centro e compartilhamento por WhatsApp. Centro divulga sem acesso administrativo.
+- Link permanece funcional quando inscrições fechadas ou vagas esgotadas, informando indisponibilidade. Validar limites e período também no servidor.
+- Solicitação pública; conteúdo privado para matrículas aprovadas. Aprovação administrativa e confirmação automática por e-mail.
+
+### Próxima etapa
+50 questões respondidas. Antes de implementar: definir arquitetura e modelo de dados, validar serviços gratuitos, autenticação, e-mail, feriados, direitos das edições, backups/restauração, auditoria, permissões no servidor, LGPD, identificadores estáveis e plano de desenvolvimento/testes privados. Datas, professores e edição concreta da primeira turma ainda a definir. Nome/logo provisórios. Nenhuma infraestrutura, código, deploy ou migração autorizados por esta atualização documental.
