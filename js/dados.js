@@ -173,10 +173,11 @@ const DADOS = {
   agenda: [
     {
       "id": "evt-e8f23a63-b2f6-440b-a563-c9f5c1a5b5f3",
-      "data": "2026-02-09",
-      "horario": "20:00",
-      "titulo": "Eurípedes, o trabalhador da primeira hora.",
+      "data": "2026-02-24",
+      "horario": "14:30",
+      "titulo": "Nas Terras de Chico – Parte 1 (Pedro Leopoldo)",
       "local": "Consolador - Comunidade Espírita Cristã",
+      "link": "https://www.youtube.com/watch?v=FlC8A8V1Pnw&list=PLzyEmRoyAJYn2OMh6OP3r-1xJQeyj7Ov3",
       "localId": "consolador-comunidade-espirita-crista"
     },
     {
