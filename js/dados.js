@@ -190,12 +190,11 @@ const DADOS = {
     },
     {
       "id": "evt-6c22bdef-f362-4778-bb9a-65cd5b4ee9b0",
-      "data": "2026-06-26",
-      "horario": "19:00",
-      "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador",
-      "link": "https://www.youtube.com/watch?v=lKNpRlHrP5Q&list=PLzyEmRoyAJYl_FI05c_Ei3xijFMYjg31k&index=10&t=11s",
-      "localId": "web-radio-cristo-consolador"
+      "data": "2026-06-03",
+      "horario": "20:00",
+      "titulo": "O Poder da Gratidão",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0001",
