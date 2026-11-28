@@ -198,11 +198,11 @@ const DADOS = {
     },
     {
       "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
-      "data": "2026-08-05",
-      "horario": "19:30",
-      "titulo": "Não saiba a vossa mão esquerda o que dá a vossa mão direita.",
-      "local": "Associação Espírita União Fraterna",
-      "localId": "associacao-espirita-uniao-fraterna"
+      "data": "2026-08-19",
+      "horario": "20:00",
+      "titulo": "A transformação de Zaqueu",
+      "local": "Aliança do Divino Pastor",
+      "localId": "alianca-do-divino-pastor"
     },
     {
       "id": "evt-0001",
