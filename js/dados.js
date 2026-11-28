@@ -182,11 +182,11 @@ const DADOS = {
     },
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
-      "data": "2026-05-26",
+      "data": "2026-05-27",
       "horario": "19:30",
-      "titulo": "Fé Raciocinada",
-      "local": "Cruzada dos Militares Espíritas",
-      "localId": "cruzada-dos-militares-espiritas"
+      "titulo": "Bem-aventurados os que são brandos e pacíficos",
+      "local": "Associação Espírita União Fraterna",
+      "localId": "associacao-espirita-uniao-fraterna"
     },
     {
       "id": "evt-0001",
