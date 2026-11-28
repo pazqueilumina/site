@@ -173,11 +173,12 @@ const DADOS = {
   agenda: [
     {
       "id": "evt-e8f23a63-b2f6-440b-a563-c9f5c1a5b5f3",
-      "data": "2026-03-20",
-      "horario": "19:30",
-      "titulo": "As curas de Jesus",
-      "local": "Grupo Espírita Fonte Viva",
-      "localId": "grupo-espirita-fonte-viva"
+      "data": "2026-03-24",
+      "horario": "14:30",
+      "titulo": "Nas Terras de Chico – Parte 2 (Uberaba)",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "link": "https://www.youtube.com/watch?v=kpLFAuhPpW8&list=PLzyEmRoyAJYn2OMh6OP3r-1xJQeyj7Ov3&index=2",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0001",
