@@ -190,12 +190,11 @@ const DADOS = {
     },
     {
       "id": "evt-6c22bdef-f362-4778-bb9a-65cd5b4ee9b0",
-      "data": "2026-06-26",
-      "horario": "19:30",
-      "titulo": "Nas Terras de Chico - Parte 2 - Uberaba",
-      "local": "Grupo Espírita Fonte Viva",
-      "link": "https://www.youtube.com/watch?v=kpLFAuhPpW8&list=PLzyEmRoyAJYn2OMh6OP3r-1xJQeyj7Ov3&index=2",
-      "localId": "grupo-espirita-fonte-viva"
+      "data": "2026-06-29",
+      "horario": "20:00",
+      "titulo": "Inesquecível Chico",
+      "local": "Lar Paulo de Tarso",
+      "localId": "lar-paulo-de-tarso"
     },
     {
       "id": "evt-0001",
