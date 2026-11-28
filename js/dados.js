@@ -190,12 +190,11 @@ const DADOS = {
     },
     {
       "id": "evt-6c22bdef-f362-4778-bb9a-65cd5b4ee9b0",
-      "data": "2026-07-06",
+      "data": "2026-07-08",
       "horario": "20:00",
-      "titulo": "Espíritos que viveram no século XVI, na França, e reencarnaram no Brasil",
-      "local": "Consolador - Comunidade Espírita Cristã",
-      "link": "https://www.youtube.com/watch?v=6kYIvawPNjE",
-      "localId": "consolador-comunidade-espirita-crista"
+      "titulo": "O aborto sob a visão espírita",
+      "local": "Associação Espírita União Fraterna",
+      "localId": "associacao-espirita-uniao-fraterna"
     },
     {
       "id": "evt-0001",
