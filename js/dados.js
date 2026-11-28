@@ -198,11 +198,11 @@ const DADOS = {
     },
     {
       "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
-      "data": "2026-08-19",
-      "horario": "20:00",
+      "data": "2026-08-21",
+      "horario": "19:30",
       "titulo": "A transformação de Zaqueu",
-      "local": "Aliança do Divino Pastor",
-      "localId": "alianca-do-divino-pastor"
+      "local": "Grupo Espírita Fonte Viva",
+      "localId": "grupo-espirita-fonte-viva"
     },
     {
       "id": "evt-0001",
