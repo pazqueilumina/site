@@ -294,7 +294,7 @@ const DADOS = {
     {
       "id": "evt-0009",
       "data": "2026-11-09",
-      "horario": "20:00",
+      "horario": "19:30",
       "titulo": "Fixação Mental",
       "local": "Consolador - Comunidade Espírita Cristã",
       "link": "https://www.youtube.com/watch?v=Dsv3EV-JIfU&t=2s",
