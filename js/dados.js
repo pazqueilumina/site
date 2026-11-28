@@ -182,11 +182,12 @@ const DADOS = {
     },
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
-      "data": "2026-04-08",
-      "horario": "19:30",
-      "titulo": "Bem-aventurados os que têm puro coração.",
-      "local": "Associação Espírita União Fraterna",
-      "localId": "associacao-espirita-uniao-fraterna"
+      "data": "2026-04-10",
+      "horario": "19:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador",
+      "link": "https://www.youtube.com/watch?v=8WTBEBeBnzI&list=PLzyEmRoyAJYl_FI05c_Ei3xijFMYjg31k&index=2",
+      "localId": "web-radio-cristo-consolador"
     },
     {
       "id": "evt-0001",
