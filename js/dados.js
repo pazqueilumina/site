@@ -288,7 +288,8 @@ const DADOS = {
       "horario": "20:00",
       "titulo": "Do Outro Lado da Vida",
       "local": "Consolador - Comunidade Espírita Cristã",
-      "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro"
+      "link": "https://www.youtube.com/watch?v=Xpw_979dH5g&t=1112s",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0009",
