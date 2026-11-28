@@ -182,11 +182,12 @@ const DADOS = {
     },
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
-      "data": "2026-04-29",
-      "horario": "20:00",
-      "titulo": "A Maternidade à Luz da Doutrina Espírita",
-      "local": "Aliança do Divino Pastor",
-      "localId": "alianca-do-divino-pastor"
+      "data": "2026-05-01",
+      "horario": "19:00",
+      "titulo": "Programa Pelos Caminhos de Jesus",
+      "local": "Web Rádio Cristo Consolador",
+      "link": "https://www.youtube.com/watch?v=Dlpdfxi1InE&list=PLzyEmRoyAJYl_FI05c_Ei3xijFMYjg31k&index=3&t=7s",
+      "localId": "web-radio-cristo-consolador"
     },
     {
       "id": "evt-0001",
