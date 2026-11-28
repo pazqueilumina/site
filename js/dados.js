@@ -301,14 +301,6 @@ const DADOS = {
       "localId": "consolador-comunidade-espirita-crista"
     },
     {
-      "id": "evt-346a4526-2dcd-4dcd-be70-2c003e4dd667",
-      "data": "2026-11-11",
-      "horario": "19:30",
-      "titulo": "A noite em que o céu tocou a Terra: O nascimento de Jesus",
-      "local": "Grupo Espírita Fonte Viva",
-      "localId": "grupo-espirita-fonte-viva"
-    },
-    {
       "id": "evt-0010",
       "data": "2026-11-13",
       "horario": "19:00",
@@ -402,6 +394,14 @@ const DADOS = {
       "endereco": "Rua Cinco de Julho, 276, Copacabana, Rio de Janeiro",
       "bairro": "Copacabana",
       "localId": "consolador-comunidade-espirita-crista"
+    },
+    {
+      "id": "evt-5b5b3b33-7d40-4219-80b5-bae5be5b074d",
+      "data": "2026-12-11",
+      "horario": "19:30",
+      "titulo": "A noite em que o céu tocou a Terra: O nascimento de Jesus",
+      "local": "Grupo Espírita Fonte Viva",
+      "localId": "grupo-espirita-fonte-viva"
     },
     {
       "id": "evt-0019",
