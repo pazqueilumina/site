@@ -37,6 +37,14 @@
       "verificacaoEndereco": "responsavel"
     },
     {
+      "id": "centro-espirita-tarefeiros-do-bem",
+      "nome": "Centro Espírita Tarefeiros do Bem",
+      "endereco": "Rua Mena Barreto, 110",
+      "bairro": "Botafogo",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    {
       "id": "consolador-comunidade-espirita-crista",
       "nome": "Consolador - Comunidade Espírita Cristã",
       "endereco": "Rua Cinco de Julho, 276",
