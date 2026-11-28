@@ -198,8 +198,8 @@ const DADOS = {
     },
     {
       "id": "evt-128bf89c-61e7-42cd-b6ee-7a7cd52259f7",
-      "data": "2026-08-22",
-      "horario": "17:00",
+      "data": "2026-08-25",
+      "horario": "14:30",
       "titulo": "A transformação de Zaqueu",
       "local": "Consolador - Comunidade Espírita Cristã",
       "link": "https://www.youtube.com/watch?v=xu1KHYtiYPg&t=3s",
