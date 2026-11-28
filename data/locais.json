@@ -115,6 +115,13 @@
       "longitude": "-43.1941754",
       "verificacaoCoordenadas": "conferido",
       "verificacaoEndereco": "responsavel"
+    },
+    {
+      "id": "web-radio-cristo-consolador",
+      "nome": "Web Rádio Cristo Consolador",
+      "endereco": "Palestra on line",
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
     }
   ]
 }
