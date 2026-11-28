@@ -182,12 +182,11 @@ const DADOS = {
     },
     {
       "id": "evt-273602bb-b245-4eae-8ae7-a16eec81c5f9",
-      "data": "2026-04-24",
-      "horario": "19:00",
-      "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador",
-      "link": "https://www.youtube.com/watch?v=YjKGJhkIcP0&list=PLzyEmRoyAJYl_FI05c_Ei3xijFMYjg31k&index=2&t=5s",
-      "localId": "web-radio-cristo-consolador"
+      "data": "2026-04-29",
+      "horario": "15:00",
+      "titulo": "Eurípedes, o trabalhador da primeira hora",
+      "local": "Lar Paulo de Tarso",
+      "localId": "lar-paulo-de-tarso"
     },
     {
       "id": "evt-0001",
