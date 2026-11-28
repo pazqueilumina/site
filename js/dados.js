@@ -206,11 +206,11 @@ const DADOS = {
     },
     {
       "id": "evt-ec8d8a42-fdae-4ede-a597-73fe0731d643",
-      "data": "2026-09-09",
-      "horario": "20:00",
-      "titulo": "A transformação de Zaqueu",
-      "local": "Grupo Espírita Yvonne Pereira",
-      "localId": "grupo-espirita-yvonne-pereira"
+      "data": "2026-09-15",
+      "horario": "16:00",
+      "titulo": "A mulher samaritana",
+      "local": "Aliança do Divino Pastor",
+      "localId": "alianca-do-divino-pastor"
     },
     {
       "id": "evt-0001",
