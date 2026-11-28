@@ -228,14 +228,6 @@ const DADOS = {
       "endereco": "Instagram (online)"
     },
     {
-      "id": "evt-5465b2e6-8f00-4829-813c-21ef6fd0f3b3",
-      "data": "2026-10-13",
-      "horario": "16:00",
-      "titulo": "As Tentações de Jesus",
-      "local": "Aliança do Divino Pastor",
-      "localId": "alianca-do-divino-pastor"
-    },
-    {
       "id": "evt-0003",
       "data": "2026-10-16",
       "horario": "19:00",
@@ -260,6 +252,14 @@ const DADOS = {
       "titulo": "O Terceiro Ano do Ministério de Jesus (Parte 14)",
       "local": "Cristo Consolador",
       "endereco": "YouTube (online)"
+    },
+    {
+      "id": "evt-5465b2e6-8f00-4829-813c-21ef6fd0f3b3",
+      "data": "2026-10-28",
+      "horario": "16:00",
+      "titulo": "O retorno ao mundo espiritual",
+      "local": "Associação Espírita União Fraterna",
+      "localId": "associacao-espirita-uniao-fraterna"
     },
     {
       "id": "evt-0006",
