@@ -190,12 +190,12 @@ const DADOS = {
     },
     {
       "id": "evt-6c22bdef-f362-4778-bb9a-65cd5b4ee9b0",
-      "data": "2026-08-28",
-      "horario": "19:00",
-      "titulo": "Programa Pelos Caminhos de Jesus",
-      "local": "Web Rádio Cristo Consolador",
-      "link": "https://www.youtube.com/watch?v=PgYhANdnZTA&list=PLzyEmRoyAJYksXKE63NkcqGs36rrrnxE9&index=18&t=9s",
-      "localId": "web-radio-cristo-consolador"
+      "data": "2026-07-06",
+      "horario": "20:00",
+      "titulo": "Espíritos que viveram no século XVI, na França, e reencarnaram no Brasil",
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "link": "https://www.youtube.com/watch?v=6kYIvawPNjE",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0001",
