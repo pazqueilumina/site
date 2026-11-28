@@ -173,11 +173,11 @@ const DADOS = {
   agenda: [
     {
       "id": "evt-e8f23a63-b2f6-440b-a563-c9f5c1a5b5f3",
-      "data": "2026-01-23",
-      "horario": "19:30",
+      "data": "2026-02-09",
+      "horario": "20:00",
       "titulo": "Eurípedes, o trabalhador da primeira hora.",
-      "local": "Grupo Espírita Fonte Viva",
-      "localId": "grupo-espirita-fonte-viva"
+      "local": "Consolador - Comunidade Espírita Cristã",
+      "localId": "consolador-comunidade-espirita-crista"
     },
     {
       "id": "evt-0001",
